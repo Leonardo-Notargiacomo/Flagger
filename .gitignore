@@ -1,0 +1,226 @@
+# OS junk
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+.Spotlight-V100
+.DocumentRevisions-V100
+.fseventsd
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Remote AFP shares
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# VS Code (uncomment lines you want to keep)
+.vscode/
+# !.vscode/extensions.json
+# !.vscode/settings.json
+# !.vscode/tasks.json
+# !.vscode/launch.json
+
+# JetBrains (IntelliJ IDEA, Android Studio, AppCode, etc.)
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Eclipse
+.project
+.classpath
+.settings/
+
+# Xcode user data
+xcuserdata/
+*.xcuserstate
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Diagnostic reports
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+# Coverage
+coverage
+*.lcov
+.nyc_output
+
+# Common build outputs
+dist/
+.out/
+out/
+
+# Caches & temp
+.cache
+.parcel-cache
+.vite
+.next
+.nuxt
+.svelte-kit
+.docusaurus
+.astro
+.webpack/
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+.fusebox/
+.serverless/
+.dynamodb/
+.tern-port
+.vscode-test
+.turbo/
+.pnpm-store/
+
+# Dependency directories
+node_modules/
+jspm_packages/
+# Snowpack
+web_modules/
+
+# TypeScript
+*.tsbuildinfo
+
+# npm/yarn/pnpm/bun artifacts
+.npm
+.yarn-integrity
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+
+# Linters / tooling caches
+.eslintcache
+.stylelintcache
+
+# REPL history & packing
+.node_repl_history
+*.tgz
+
+# Framework-specific (uncomment as needed)
+# Gatsby: .cache/
+# public  # (only if NOT using Next.js)
+# Expo: .expo/
+# Vercel/Netlify deployment state (optional)
+.vercel
+.netlify
+
+# E2E tooling (optional)
+cypress/screenshots/
+cypress/videos/
+playwright-report/
+test-results/
+playwright/.cache/
+
+# Gradle
+.gradle/
+**/build/
+!src/**/build/
+gradle-app.setting
+.gradletasknamecache
+
+# Keep Gradle wrapper files in VCS
+!gradle-wrapper.jar
+!**/gradle-wrapper.properties
+
+# Android Studio / NDK
+captures/
+.externalNativeBuild/
+.cxx/
+
+# Android SDK config (local machine specific)
+local.properties
+
+# JVM heap dumps
+*.hprof
+
+# Keystores & secrets (DO NOT COMMIT)
+*.keystore
+*.jks
+keystore.properties
+
+# Xcode generic
+build/
+DerivedData/
+*.moved-aside
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+*.xcscmblueprint
+*.xccheckout
+
+# Obj-C/Swift specific
+*.hmap
+
+# App packaging
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Playgrounds
+timeline.xctimeline
+playground.xcworkspace
+
+# Swift Package Manager
+.swiftpm/
+.build/
+
+# Carthage
+Carthage/Build/
+
+# Accio
+Dependencies/
+.accio/
+
+# fastlane artifacts
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output
+
+# Code Injection
+iOSInjectionProject/
+
+# Environment files 
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Misc
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+Bun: bun.lockb
+
+# Generated files
+*.zip
+*.gz
+*.bz2
+*.7z
+*.tmp
+*.temp
