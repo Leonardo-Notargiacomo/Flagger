@@ -35,6 +35,7 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -78,14 +79,9 @@ dependencies {
     implementation("androidx.activity:activity-compose:1.9.0") // Use the latest stable version
 
 }
-secrets {
-    // To add your Maps API key to this project:
-    // 1. If the secrets.properties file does not exist, create it in the same folder as the local.properties file.
-    // 2. Add this line, where YOUR_API_KEY is your API key:
-    //        MAPS_API_KEY=YOUR_API_KEY
-    propertiesFileName = "secrets.properties"
 
-    // A properties file containing default secret values. This file can be
-    // checked in version control.
+// ✅ Kotlin DSL way to configure Secrets plugin
+extensions.configure<com.google.android.libraries.mapsplatform.secrets_gradle_plugin.SecretsPluginExtension> {
+    propertiesFileName = "secrets.properties"
     defaultPropertiesFileName = "local.defaults.properties"
 }
