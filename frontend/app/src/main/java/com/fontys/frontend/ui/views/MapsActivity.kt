@@ -1,4 +1,4 @@
-package com.fontys.frontend
+package com.fontys.frontend.ui.views
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -13,6 +13,7 @@ import com.fontys.frontend.databinding.ActivityMapsBinding
 import android.Manifest
 import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
+import com.fontys.frontend.R
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 
