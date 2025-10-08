@@ -4,7 +4,13 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.setupActionBarWithNavController
+import androidx.navigation.ui.setupWithNavController
+import com.fontys.frontend.databinding.ActivityMainBinding
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.fontys.frontend.utils.ExploreNotificationManager
@@ -13,6 +19,7 @@ import com.fontys.frontend.utils.NotificationPermissionHelper
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var binding: ActivityMainBinding
     private lateinit var notificationPermissionHelper: NotificationPermissionHelper
     private lateinit var notificationManager: ExploreNotificationManager
 
@@ -36,9 +43,12 @@ class MainActivity : AppCompatActivity() {
         notificationPermissionHelper = NotificationPermissionHelper(this)
         notificationManager = ExploreNotificationManager(this)
 
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         // Create notification channel (safe to call multiple times)
         notificationManager.createNotificationChannel()
 
+        val navView: BottomNavigationView = binding.navView
         // Request notification permission if not granted
         if (!notificationPermissionHelper.isNotificationPermissionGranted()) {
             notificationPermissionHelper.requestNotificationPermission()
@@ -48,6 +58,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+        val navController = findNavController(R.id.nav_host_fragment_activity_main)
+        // Passing each menu ID as a set of Ids because each
+        // menu should be considered as top level destinations.
+        val appBarConfiguration = AppBarConfiguration(
+            setOf(
+                R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications
+            )
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -89,6 +106,8 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "Failed to set up notifications", Toast.LENGTH_SHORT).show()
             }
         )
+        setupActionBarWithNavController(navController, appBarConfiguration)
+        navView.setupWithNavController(navController)
 
         // Subscribe to daily reminders topic
         // All users subscribed to this topic will receive the same daily notifications
