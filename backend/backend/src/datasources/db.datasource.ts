@@ -1,15 +1,12 @@
 import {inject, lifeCycleObserver, LifeCycleObserver} from '@loopback/core';
 import {juggler} from '@loopback/repository';
 
+
 const config = {
   name: 'db',
   connector: 'postgresql',
-  url: '',
-  host: '',
-  port: 0,
-  user: '',
-  password: '',
-  database: ''
+  url: process.env.DATABASE_URL ?? 'postgresql://project3_android_001_user:G1N08w9qp1AG41A5GsShhQns3jsX2kl2@dpg-d3h7qdp5pdvs73f21ssg-a.frankfurt-postgres.render.com/project3_android_001?ssl=true',
+ ssl: { rejectUnauthorized: false }, // node-postgres SSL on hosted DBs
 };
 
 // Observe application's life cycle to disconnect the datasource when
