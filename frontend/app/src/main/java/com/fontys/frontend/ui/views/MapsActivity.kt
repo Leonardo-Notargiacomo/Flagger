@@ -69,7 +69,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         fusedLocationClient.lastLocation.addOnSuccessListener { location ->
             if (location != null) {
                 val currentLatLng = LatLng(location.latitude, location.longitude)
-                mMap.addMarker(MarkerOptions().position(currentLatLng).title("You are here"))
+                mMap.addMarker(MarkerOptions().position(currentLatLng).title("location $currentLatLng"))
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 4f))
             }
         }
