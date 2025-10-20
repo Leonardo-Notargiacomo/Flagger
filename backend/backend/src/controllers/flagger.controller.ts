@@ -20,7 +20,7 @@ import {
 import {Flag} from '../models';
 import {FlagRepository} from '../repositories';
 
-export class FlagController {
+export class FlaggerController {
   constructor(
     @repository(FlagRepository)
     public flagRepository : FlagRepository,

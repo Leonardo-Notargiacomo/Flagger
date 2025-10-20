@@ -3,17 +3,23 @@ import {Entity, model, property} from '@loopback/repository';
 @model()
 export class Flag extends Entity {
   @property({
-    type: 'string',
-    required: true,
-  })
-  PlaceID: string;
-
-  @property({
     type: 'number',
     id: true,
     generated: true,
   })
-  ID?: number;
+  id?: number;
+
+  @property({
+    type: 'string',
+    required: true,
+  })
+  PlaceId: string;
+
+  @property({
+    type: 'string',
+    required: true,
+  })
+  GoUId: string;
 
 
   constructor(data?: Partial<Flag>) {

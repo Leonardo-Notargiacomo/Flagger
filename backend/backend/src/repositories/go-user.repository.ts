@@ -1,16 +1,16 @@
 import {inject} from '@loopback/core';
 import {DefaultCrudRepository} from '@loopback/repository';
 import {DbDataSource} from '../datasources';
-import {Flag, FlagRelations} from '../models';
+import {GoUser, GoUserRelations} from '../models';
 
-export class FlagRepository extends DefaultCrudRepository<
-  Flag,
-  typeof Flag.prototype.Id,
-  FlagRelations
+export class GoUserRepository extends DefaultCrudRepository<
+  GoUser,
+  typeof GoUser.prototype.id,
+  GoUserRelations
 > {
   constructor(
     @inject('datasources.db') dataSource: DbDataSource,
   ) {
-    super(Flag, dataSource);
+    super(GoUser, dataSource);
   }
 }
