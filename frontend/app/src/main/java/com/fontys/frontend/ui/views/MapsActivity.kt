@@ -12,6 +12,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.fontys.frontend.databinding.ActivityMapsBinding
 import android.Manifest
 import android.content.pm.PackageManager
+import android.widget.Button
 import androidx.core.app.ActivityCompat
 import com.fontys.frontend.R
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -31,8 +32,30 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         binding = ActivityMapsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        binding.btnZoomIn.setOnClickListener {
+            mMap.animateCamera(CameraUpdateFactory.zoomIn())
+        }
+        binding.btnZoomOut.setOnClickListener {
+            mMap.animateCamera(CameraUpdateFactory.zoomOut())
+        }
+        binding.btnRecenter.setOnClickListener {
+            fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+                if (location != null) {
+                    val currentLatLng = LatLng(location.latitude, location.longitude)
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15f))
+                }
+            }
+        }
+        val btnMapType = findViewById<Button>(R.id.btnMapType)
 
-
+        btnMapType.setOnClickListener {
+            mMap.mapType = when (mMap.mapType) {
+                GoogleMap.MAP_TYPE_NORMAL -> GoogleMap.MAP_TYPE_SATELLITE
+                GoogleMap.MAP_TYPE_SATELLITE -> GoogleMap.MAP_TYPE_TERRAIN
+                GoogleMap.MAP_TYPE_TERRAIN -> GoogleMap.MAP_TYPE_HYBRID
+                else -> GoogleMap.MAP_TYPE_NORMAL
+            }
+        }
         // Init fused location provider
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
