@@ -17,6 +17,7 @@ import androidx.core.app.ActivityCompat
 import com.fontys.frontend.R
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.model.MapStyleOptions
 
 
 private lateinit var mMap: GoogleMap
@@ -76,6 +77,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
      */
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
+        mMap?.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.map_style))
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
             != PackageManager.PERMISSION_GRANTED) {
