@@ -41,6 +41,10 @@ Badge Prioritization
 
 As a user, I want to pin or set priority to certain badges so that I can focus on the ones that mean the most or interest me the most.
 
+Badge Customization
+
+As a user, I want to be able to customize the flag so that I can personalize the game.
+
 ## Social & Community Features
 
 Add Friends
