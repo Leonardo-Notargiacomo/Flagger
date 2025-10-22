@@ -18,7 +18,7 @@ android {
 
     defaultConfig {
         applicationId = "com.fontys.frontend"
-        minSdk = 33
+        minSdk = 31
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
