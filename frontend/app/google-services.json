@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "917721291895",
+    "project_id": "prj3-1",
+    "storage_bucket": "prj3-1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:917721291895:android:939b6c969172a99eaa7a72",
+        "android_client_info": {
+          "package_name": "com.fontys.frontend"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "GOOGLE_SERVICES_API_KEY_REDACTED"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
