@@ -1,0 +1,74 @@
+# User Story Collection
+## Authentication & Profile Management
+
+Login
+
+As a user, I want to log in to my account so that I can securely access my personal data and progress.
+
+Registration
+
+As a new user, I want to register an account so that I can start using the app and save my activity.
+
+Profile Management
+
+As a user, I want to view and edit my profile information so that I can keep my account details accurate and up to date.
+
+Profile Picture
+
+As a user, I want to take or upload a profile picture so that my account feels personalized.
+
+## Location & Exploration Features
+
+Map and Location
+
+As a user, I want to view my current location on a map so that I can understand where I am in the app world.
+
+Geolocation Sharing
+
+As a user, I want to share my geolocation with the app so that location-based features can function properly.
+
+Mark Visited Places
+
+As a user, I want to mark the places I’ve visited so that I can track and remember my adventures.
+
+Photo Memories
+
+As a user, I want to take or attach photos when marking a location so that I can keep visual memories of my visits.
+
+## Gamification & Progress Tracking
+
+Badges and Achievements
+
+As a user, I want to earn badges for completing challenges so that I can see and celebrate my progress.
+
+Challenges
+
+As a user, I want to accept special challenges so that I can earn exclusive rewards and stay motivated.
+
+Badge Prioritization
+
+As a user, I want to pin or set priority to certain badges so that I can focus on the ones that mean the most or interest me the most.
+
+## Social & Community Features
+
+Add Friends
+
+As a user, I want to add friends so that I can share and compare my exploration progress with them.
+
+View Friends’ Progress
+
+As a user, I want to see where my friends have been and how many flags they’ve collected so that I can feel inspired and accountable.
+
+## Notifications & Reminders
+
+Flag Notifications
+
+As a user, I want to receive notifications when a flag or point of interest is nearby so that I don’t miss opportunities to explore.
+
+Daily Reminders
+
+As a user, I want to receive daily reminder notifications so that I’m encouraged to explore regularly.
+
+Notification Control
+
+As a user, I want to manage or mute notifications so that I’m not disturbed when I don’t want to be.
