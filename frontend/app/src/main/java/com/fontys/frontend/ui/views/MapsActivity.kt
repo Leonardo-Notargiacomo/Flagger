@@ -12,7 +12,10 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.fontys.frontend.databinding.ActivityMapsBinding
 import android.Manifest
 import android.content.pm.PackageManager
+import android.os.Build
 import android.widget.Button
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import com.fontys.frontend.R
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -29,6 +32,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var binding: ActivityMapsBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
 
         binding = ActivityMapsBinding.inflate(layoutInflater)
@@ -39,7 +43,24 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         binding.btnZoomOut.setOnClickListener {
             mMap.animateCamera(CameraUpdateFactory.zoomOut())
         }
-        binding.btnRecenter.setOnClickListener {
+        binding.btnRecenter.setOnClickListener @androidx.annotation.RequiresPermission(allOf = [android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION]) {
+            if (ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+
+            }
             fusedLocationClient.lastLocation.addOnSuccessListener { location ->
                 if (location != null) {
                     val currentLatLng = LatLng(location.latitude, location.longitude)
@@ -98,6 +119,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 4f))
             }
         }
+    }
+    fun checkPermissiom(){
+
     }
 }
 
