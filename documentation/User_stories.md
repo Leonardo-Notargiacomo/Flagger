@@ -3,7 +3,7 @@
 
 Login
 
-As a user, I want to log in to my account so that I can securely access my personal data and progress.
+As a user, I want to log in to my account so that I can securely access my progress.
 
 Registration
 
@@ -13,19 +13,11 @@ Profile Management
 
 As a user, I want to view and edit my profile information so that I can keep my account details accurate and up to date.
 
-Profile Picture
-
-As a user, I want to take or upload a profile picture so that my account feels personalized.
-
 ## Location & Exploration Features
 
 Map and Location
 
 As a user, I want to view my current location on a map so that I can understand where I am in the app world.
-
-Geolocation Sharing
-
-As a user, I want to share my geolocation with the app so that location-based features can function properly.
 
 Mark Visited Places
 
@@ -61,14 +53,10 @@ As a user, I want to see where my friends have been and how many flags they’ve
 
 ## Notifications & Reminders
 
-Flag Notifications
+[Flag Notifications]
 
 As a user, I want to receive notifications when a flag or point of interest is nearby so that I don’t miss opportunities to explore.
 
 Daily Reminders
 
 As a user, I want to receive daily reminder notifications so that I’m encouraged to explore regularly.
-
-Notification Control
-
-As a user, I want to manage or mute notifications so that I’m not disturbed when I don’t want to be.
