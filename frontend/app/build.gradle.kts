@@ -49,6 +49,9 @@ dependencies {
     implementation(libs.play.services.location)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.compose.material)
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("org.json:json:20240303")
+
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

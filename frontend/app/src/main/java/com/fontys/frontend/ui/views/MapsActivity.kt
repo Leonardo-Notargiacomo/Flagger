@@ -14,19 +14,27 @@ import android.Manifest
 import android.app.AlertDialog
 import android.content.pm.PackageManager
 import android.os.Build
+import android.telecom.Call
 import android.widget.Button
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.annotation.RequiresPermission
+import androidx.compose.material3.Snackbar
 import androidx.core.app.ActivityCompat
 import com.fontys.frontend.R
+import com.fontys.frontend.data.PlaceService
+import com.google.android.gms.common.api.Response
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.MapStyleOptions
+import okhttp3.*
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.RequestBody.Companion.toRequestBody
+import org.json.JSONObject
+import java.io.IOException
 
 
-
-class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
+class MapsActivity : AppCompatActivity(), OnMapReadyCallback  {
 
     private lateinit var mMap: GoogleMap
     private lateinit var binding: ActivityMapsBinding
@@ -180,8 +188,53 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             .create()
             .show()
     }
-    private fun markTheSpot(langitude: Double, longitude: Double){
+    private fun markTheSpot(latitude: Double, longitude: Double){
+        val client = OkHttpClient()
+        val jsonBody = JSONObject().apply {
+            put("includedTypes", listOf("restaurant"))
+            put("maxResultCount", 10)
+            put("locationRestriction", JSONObject().apply {
+                put("circle", JSONObject().apply {
+                    put("center", JSONObject().apply {
+                        put("latitude", latitude)
+                        put("longitude", longitude)
+                    })
+                    put("radius", 1000.0) // radius in meters
+                })
+            })
+        }
 
+        val requestBody = jsonBody.toString().toRequestBody("application/json".toMediaType())
+
+        val request = Request.Builder()
+            .url("https://places.googleapis.com/v1/places:searchNearby")
+            .addHeader("Content-Type", "application/json")
+            .addHeader("X-Goog-Api-Key", "AIzaSyBN163saa8N4v_Jie9lXD7yyiNvvLPQw9E")
+            .addHeader("X-Goog-FieldMask", "places.displayName,places.location,places.id") // controls what fields are returned
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+
+            override fun onFailure(call: okhttp3.Call, e: IOException) {
+                e.printStackTrace()
+            }
+
+            override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
+                response.use {
+                    if (!response.isSuccessful) {
+                        println("Error: ${response.code}")
+                    } else {
+                        val responseData = response.body?.string()
+                        println("Response: $responseData")
+                        // You can parse this JSON and add markers to your map
+                    }
+                }            }
+        })
+    }
+
+    private fun showLocsSelection(array: Array<PlaceService>){
+        //val popup = Snackbar().make()
     }
 }
 
