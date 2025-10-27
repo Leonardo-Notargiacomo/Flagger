@@ -80,6 +80,18 @@ export const sendDailyExplorationReminder = onSchedule({
       type: "daily_reminder",
       timestamp: Date.now().toString(),
     },
+    android: {
+      priority: "high" as const, // High priority for Samsung/Android devices
+      notification: {
+        channelId: "explore_daily_reminders",
+        priority: "max" as const, // Max priority for heads-up
+        visibility: "public" as const, // Show on lock screen
+        sound: "default",
+        defaultSound: true,
+        defaultVibrateTimings: true,
+        defaultLightSettings: true,
+      },
+    },
   };
 
   try {
