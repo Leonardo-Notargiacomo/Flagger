@@ -7,10 +7,10 @@
  * See a full list of supported triggers at https://firebase.google.com/docs/functions
  */
 
-import functions, {setGlobalOptions} from "firebase-functions";
+import {onSchedule} from "firebase-functions/v2/scheduler";
+import {setGlobalOptions} from "firebase-functions/v2";
+import * as admin from "firebase-admin";
 
-
-import admin from "firebase-admin";
 admin.initializeApp();
 
 // Array of exploration messages
@@ -32,37 +32,38 @@ const messages = [
 
 // Function runs every day at 6 PM (18:00)
 // Cron format: "0 18 * * *" = At 18:00 every day
-exports.sendDailyExplorationReminder = functions.pubsub
-  .schedule("0 18 * * *")
-  .timeZone("Europe/Amsterdam") // Change to your timezone
-  .onRun(async (_context) => {
-    // Pick a random message
-    const message = messages[Math.floor(Math.random() * messages.length)];
+export const sendDailyExplorationReminder = onSchedule({
+  schedule: "0 18 * * *",
+  timeZone: "Europe/Amsterdam",
+}, async (_event) => {
+  // Pick a random message
+  const message = messages[Math.floor(Math.random() * messages.length)];
 
-    // Send to all users subscribed to the topic
-    const payload = {
-      notification: {
-        title: "Time to Explore!",
-        body: message,
-        icon: "ic_launcher", // Your app icon
-      },
-      data: {
-        type: "daily_reminder",
-        timestamp: Date.now().toString(),
-      },
-    };
+  // Send to all users subscribed to the topic
+  const payload = {
+    notification: {
+      title: "Time to Explore!",
+      body: message,
+    },
+    data: {
+      type: "daily_reminder",
+      timestamp: Date.now().toString(),
+    },
+  };
 
-    try {
-      const response = await admin.messaging().sendToTopic(
-        "daily_exploration_reminders",
-        payload
-      );
-      console.log("Successfully sent daily reminder:", response);
-      return null;
-    } catch (error) {
-      console.error("Error sending notification:", error);
-      throw error;
-    }
-  });
+  try {
+    const response = await admin.messaging().sendAll([
+      {
+        topic: "daily_exploration_reminders",
+        notification: payload.notification,
+        data: payload.data,
+      },
+    ]);
+    console.log("Successfully sent daily reminder:", response);
+  } catch (error) {
+    console.error("Error sending notification:", error);
+    throw error;
+  }
+});
 
 setGlobalOptions({maxInstances: 10});
