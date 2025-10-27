@@ -1,11 +1,17 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.compose.compiler)
+
 }
 
 android {
     namespace = "com.fontys.frontend"
     compileSdk = 36
+
+    buildFeatures {
+        compose = true
+    }
 
     defaultConfig {
         applicationId = "com.fontys.frontend"
@@ -44,4 +50,17 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    // Jetpack Compose BOM (Bill of Materials) - manages versions for you
+    val composeBom = platform("androidx.compose:compose-bom:2024.05.00")
+    implementation(composeBom)
+    androidTestImplementation(composeBom)
+
+    // Essential Compose dependencies
+    implementation("androidx.compose.ui:ui")
+    implementation("androidx.compose.ui:ui-graphics")
+    implementation("androidx.compose.ui:ui-tooling-preview")
+    implementation("androidx.compose.material3:material3")
+    implementation("androidx.activity:activity-compose:1.9.0") // Use the latest stable version
+
 }
