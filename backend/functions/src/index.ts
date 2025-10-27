@@ -13,6 +13,22 @@ import * as admin from "firebase-admin";
 
 admin.initializeApp();
 
+// Array of exploration titles
+const titles = [
+  "Time to Explore!",
+  "Adventure Awaits! 🗺️",
+  "Ready to Discover?",
+  "Let's Go Exploring!",
+  "Your Next Adventure",
+  "Explore Something New",
+  "Adventure Time! 🌟",
+  "The World is Calling",
+  "Time for an Adventure",
+  "Go Explore Today!",
+  "Discovery Mode: ON",
+  "Ready for Adventure?",
+];
+
 // Array of exploration messages
 const messages = [
   "The world is waiting! Time to explore something new today 🌍",
@@ -30,19 +46,34 @@ const messages = [
   "5 minutes of exploration = endless memories!",
 ];
 
-// Function runs every day at 6 PM (18:00)
-// Cron format: "0 18 * * *" = At 18:00 every day
+// Runs every hour 9 AM - 5 PM, randomly sends ~2 notifications per day
+// TESTING: Every 1 minute with 30% chance
+// PRODUCTION: "0 9-17 * * *" (hourly 9 AM-5 PM) with 22% chance = ~2/day
 export const sendDailyExplorationReminder = onSchedule({
-  schedule: "0 18 * * *",
+  schedule: "*/1 * * * *", // Every 1 minute (for testing)
+  // Production: schedule: "0 9-17 * * *" (every hour 9 AM - 5 PM)
   timeZone: "Europe/Amsterdam",
 }, async (_event) => {
-  // Pick a random message
+  // Random chance to send
+  // Testing: 100% chance (every minute for testing)
+  // Production: 22% chance across 9 hours = ~2 notifications per day
+  const sendProbability = 1.0; // Change to 0.22 for production
+  const shouldSend = Math.random() < sendProbability;
+
+  if (!shouldSend) {
+    console.log("Skipping notification this time (random chance)");
+    return;
+  }
+
+  // Pick random title and message
+  const title = titles[Math.floor(Math.random() * titles.length)];
   const message = messages[Math.floor(Math.random() * messages.length)];
 
   // Send to all users subscribed to the topic
   const payload = {
+    topic: "daily_exploration_reminders",
     notification: {
-      title: "Time to Explore!",
+      title: title,
       body: message,
     },
     data: {
@@ -52,14 +83,9 @@ export const sendDailyExplorationReminder = onSchedule({
   };
 
   try {
-    const response = await admin.messaging().sendAll([
-      {
-        topic: "daily_exploration_reminders",
-        notification: payload.notification,
-        data: payload.data,
-      },
-    ]);
+    const response = await admin.messaging().send(payload);
     console.log("Successfully sent daily reminder:", response);
+    console.log(`Title: ${title}, Message: ${message}`);
   } catch (error) {
     console.error("Error sending notification:", error);
     throw error;
