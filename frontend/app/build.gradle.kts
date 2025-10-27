@@ -46,6 +46,9 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
 
+    // Firebase Cloud Messaging
+    implementation("com.google.firebase:firebase-messaging-ktx:24.1.0")
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
