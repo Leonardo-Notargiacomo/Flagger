@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Frontend">
         <activity
-            android:name=".common.MainActivity"
+            android:name="com.fontys.frontend.common.MainActivity"
             android:exported="false" />
     </application>
 
