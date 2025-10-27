@@ -50,6 +50,15 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         binding.btnZoomOut.setOnClickListener {
             mMap.animateCamera(CameraUpdateFactory.zoomOut())
         }
+        binding.btnAddMarker.setOnClickListener {
+            if(hasLocationPermission()){
+                fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+                    location?.let {
+                        markTheSpot(it.latitude, it.longitude);
+                        }
+                    }
+                }
+        }
         binding.btnRecenter.setOnClickListener {
             if (hasLocationPermission()) {
                 fusedLocationClient.lastLocation.addOnSuccessListener { location ->
@@ -170,6 +179,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             .setNegativeButton("Cancel", null)
             .create()
             .show()
+    }
+    private fun markTheSpot(langitude: Double, longitude: Double){
+
     }
 }
 
