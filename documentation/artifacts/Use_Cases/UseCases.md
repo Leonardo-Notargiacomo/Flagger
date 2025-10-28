@@ -42,9 +42,10 @@ This document outlines the use cases for the project. Each use case describes a 
 
 **Precondition:** 
 - The user has granted notification permissions to the application
+- The user is logged in
 
 **Scenario:**
-1. User opens the application for the first time in the day
+1. User opens the application and allows to receive notifications
 2. System triggers the daily notifications
 3. System creates a notification with appropriate title, message, and icon
 4. System displays the notification in the device's notification tray
