@@ -34,7 +34,7 @@ export class ExplorationEvent extends Entity {
     type: 'date',
     default: () => new Date(),
   })
-  completedAt?: string;
+  completedAt?: Date;
 
   @property({
     type: 'string',

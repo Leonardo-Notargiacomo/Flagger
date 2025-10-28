@@ -26,7 +26,7 @@ export class UserBadge extends Entity {
     type: 'date',
     default: () => new Date(),
   })
-  unlockedAt?: string;
+  unlockedAt?: Date;
 
   @property({
     type: 'boolean',
