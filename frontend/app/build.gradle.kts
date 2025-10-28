@@ -88,6 +88,6 @@ dependencies {
 
 // ✅ Kotlin DSL way to configure Secrets plugin
 extensions.configure<com.google.android.libraries.mapsplatform.secrets_gradle_plugin.SecretsPluginExtension> {
-    propertiesFileName = "secrets.properties"
-    defaultPropertiesFileName = "local.defaults.properties"
+    propertiesFileName = "local.properties"
+    defaultPropertiesFileName = "local.properties.example"
 }
