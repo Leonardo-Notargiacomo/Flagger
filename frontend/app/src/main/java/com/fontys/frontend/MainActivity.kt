@@ -43,12 +43,9 @@ class MainActivity : AppCompatActivity() {
         notificationPermissionHelper = NotificationPermissionHelper(this)
         notificationManager = ExploreNotificationManager(this)
 
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
         // Create notification channel (safe to call multiple times)
         notificationManager.createNotificationChannel()
 
-        val navView: BottomNavigationView = binding.navView
         // Request notification permission if not granted
         if (!notificationPermissionHelper.isNotificationPermissionGranted()) {
             notificationPermissionHelper.requestNotificationPermission()
@@ -58,13 +55,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-        val navController = findNavController(R.id.nav_host_fragment_activity_main)
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
-        val appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications
-            )
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -106,8 +96,6 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "Failed to set up notifications", Toast.LENGTH_SHORT).show()
             }
         )
-        setupActionBarWithNavController(navController, appBarConfiguration)
-        navView.setupWithNavController(navController)
 
         // Subscribe to daily reminders topic
         // All users subscribed to this topic will receive the same daily notifications
