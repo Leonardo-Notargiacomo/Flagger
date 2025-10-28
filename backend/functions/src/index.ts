@@ -65,10 +65,9 @@ export const sendDailyExplorationReminder = onSchedule({
   timeZone: "Europe/Amsterdam",
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
 }, async (_event) => {
-  // Random chance to send
-  // Testing: 100% chance (every minute for testing)
-  // Production: 22% chance across 9 hours = ~2 notifications per day
-  const sendProbability = 1.0; // Change to 0.22 for production
+  // PRODUCTION MODE: 22% chance each hour = ~2 notifications per day
+  // Math: 9 hours (9 AM - 5 PM) × 22% = ~1.98 notifications/day
+  const sendProbability = 0.22;
   const shouldSend = Math.random() < sendProbability;
 
   if (!shouldSend) {
