@@ -59,11 +59,9 @@ const messages = [
 ];
 
 // Runs every hour 9 AM - 5 PM, randomly sends ~2 notifications per day
-// TESTING: Every 1 minute with 30% chance
-// PRODUCTION: "0 9-17 * * *" (hourly 9 AM-5 PM) with 22% chance = ~2/day
+// PRODUCTION MODE: Hourly checks with 22% probability = ~2 notifications/day
 export const sendDailyExplorationReminder = onSchedule({
-  schedule: "*/1 * * * *", // Every 1 minute (for testing)
-  // Production: schedule: "0 9-17 * * *" (every hour 9 AM - 5 PM)
+  schedule: "0 9-17 * * *", // Every hour 9 AM - 5 PM (Europe/Amsterdam)
   timeZone: "Europe/Amsterdam",
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
 }, async (_event) => {
