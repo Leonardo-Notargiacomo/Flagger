@@ -17,33 +17,45 @@ admin.initializeApp();
 const titles = [
   "Time to Explore!",
   "Adventure Awaits! 🗺️",
-  "Ready to Discover?",
-  "Let's Go Exploring!",
-  "Your Next Adventure",
-  "Explore Something New",
-  "Adventure Time! 🌟",
-  "The World is Calling",
-  "Time for an Adventure",
-  "Go Explore Today!",
-  "Discovery Mode: ON",
-  "Ready for Adventure?",
+  "We Miss You...",
+  "Still There?",
+  "Hello? 👀",
+  "Don't Make This Awkward",
+  "We Need to Talk",
+  "This Is Your Final Warning",
+  "You've Left Us No Choice",
+  "Deploy Guilt Trip? ✅",
+  "The Consequences..."
 ];
 
 // Array of exploration messages
 const messages = [
+  // Friendly reminders (days 1-2)
   "The world is waiting! Time to explore something new today 🌍",
   "Your next adventure is just around the corner...",
   "Discover something amazing in your neighborhood today!",
-  "Don't let today's exploration opportunities pass you by!",
-  "The best discoveries happen when you step outside 📍",
-  "Your exploration streak is calling! Keep it going!",
-  "What will you discover today? Let's find out!",
-  "The world around you is full of surprises. Go explore!",
-  "Time to add a new place to your explored list!",
-  "Adventure mode: ON. Are you ready to explore?",
+
+  // Getting personal (days 3-4)
   "We noticed you haven't explored today... yet 😉",
-  "Your local area has secrets waiting to be discovered!",
-  "5 minutes of exploration = endless memories!",
+  "Your exploration streak is crying in the corner right now",
+  "Remember when you used to explore? Those were good times...",
+  "Your local area has secrets. Don't you want to know them?",
+
+  // Passive aggressive (days 5-6)
+  "I'm not mad. Just disappointed. 💔",
+  "Go is sad. You wouldn't like Go when Go is sad.",
+  "I see how it is. We're just not important to you anymore.",
+  "Other users are exploring right now. Just saying. 👀",
+
+  // Unhinged territory (day 7+)
+  "I know where you live. Because you haven't explored anywhere else.",
+  "Your plants are watered. Your pets are fed. But your exploration streak? Dead.",
+  "We'll remember this. We have a very particular set of skills... in guilt-tripping.",
+  "Spanish or vanish? More like EXPLORE OR... we'll be sad 🥺",
+  "5 minutes of exploration = not having to see this notification tomorrow",
+  "Fine. Don't explore. See if we care. (We care very much please come back)",
+  "Your ancestors didn't explore new lands for you to stay on the couch",
+  "We're not angry, we're just... *checks notes* ...actually we're pretty angry",
 ];
 
 // Runs every hour 9 AM - 5 PM, randomly sends ~2 notifications per day
