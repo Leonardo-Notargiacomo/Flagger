@@ -25,7 +25,7 @@ const titles = [
   "This Is Your Final Warning",
   "You've Left Us No Choice",
   "Deploy Guilt Trip? ✅",
-  "The Consequences..."
+  "The Consequences...",
 ];
 
 // Array of exploration messages
@@ -49,13 +49,13 @@ const messages = [
 
   // Unhinged territory (day 7+)
   "I know where you live. Because you haven't explored anywhere else.",
-  "Your plants are watered. Your pets are fed. But your exploration streak? Dead.",
-  "We'll remember this. We have a very particular set of skills... in guilt-tripping.",
+  "Your plants are watered. Your pets fed. Exploration streak? Dead.",
+  "We have a very particular set of skills... in guilt-tripping.",
   "Spanish or vanish? More like EXPLORE OR... we'll be sad 🥺",
   "5 minutes of exploration = not having to see this notification tomorrow",
   "Fine. Don't explore. See if we care. (We care very much please come back)",
   "Your ancestors didn't explore new lands for you to stay on the couch",
-  "We're not angry, we're just... *checks notes* ...actually we're pretty angry",
+  "We're not angry, just... *checks notes* ...actually we're pretty angry",
 ];
 
 // Runs every hour 9 AM - 5 PM, randomly sends ~2 notifications per day
@@ -65,6 +65,7 @@ export const sendDailyExplorationReminder = onSchedule({
   schedule: "*/1 * * * *", // Every 1 minute (for testing)
   // Production: schedule: "0 9-17 * * *" (every hour 9 AM - 5 PM)
   timeZone: "Europe/Amsterdam",
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
 }, async (_event) => {
   // Random chance to send
   // Testing: 100% chance (every minute for testing)
