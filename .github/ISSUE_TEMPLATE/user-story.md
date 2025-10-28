@@ -16,28 +16,31 @@ assignees: ''
 ## Mandatory Requirements
 
 ### 1. Use Case Description and User Story
+- [ ] The user story is in `/documentation/README.md`?
 - [ ] Update the use case description in `UseCases.md`
-- [ ] The user story is in `user_stories.md`?
 
-### 2. Tests
-- [ ] Write and commit tests
+### 2. Acceptance Criteria
+- [ ] The User Story is represented on the Kanban Board
+- [ ] Create and maintain Use-Case-Scenario 
+- [ ] Each User Stories is divided into Tasks
+- [ ] Tasks follow the Kanban Board
+- [ ] The User-Story is completed when all the Task passed the Kanban Board to 'Done'
+- [ ] Manual testing is necessary
 
-### 3. Acceptance Criteria
-- [ ] Define specific acceptance criteria for the user story
-
-### 4. Final Steps
+### 3. Final Steps
 - [ ] Create a **pull request** once done
 - [ ] Check the steps 1-3
 
 ---
 
-## Optional Requirements
+## Optional Goals
 
-### 5. Use Case Diagram
-- [ ] Update `Use Case Diagram.svg`
+### 4. Testing
+- [ ] TestScenarios
+- [ ] Manual Testing
+- [ ] Automatic/Unit testing
 
-### 6. Class Diagram
-- [ ] Update or create class diagram components
-
-### 7. Sequence Diagram
+### 5. Optional AADE Diagrams
+- [ ] Create or update `Use Case Diagram.svg`
 - [ ] Create or update the sequence diagram
+- [ ] Create or update class diagram components
