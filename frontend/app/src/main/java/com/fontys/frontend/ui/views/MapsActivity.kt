@@ -15,6 +15,7 @@ import android.app.AlertDialog
 import android.content.pm.PackageManager
 import android.os.Build
 import android.telecom.Call
+import android.util.Log
 import android.widget.Button
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
@@ -30,8 +31,10 @@ import com.google.android.gms.maps.model.MapStyleOptions
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
+import org.json.JSONArray
 import org.json.JSONObject
 import java.io.IOException
+
 
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback  {
@@ -62,7 +65,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback  {
             if(hasLocationPermission()){
                 fusedLocationClient.lastLocation.addOnSuccessListener { location ->
                     location?.let {
-                        markTheSpot(it.latitude, it.longitude);
+                        val currentLatLng = LatLng(it.latitude, it.longitude)
+                        markTheSpot(currentLatLng);
                         }
                     }
                 }
@@ -188,18 +192,17 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback  {
             .create()
             .show()
     }
-    private fun markTheSpot(latitude: Double, longitude: Double){
+    private fun markTheSpot(latlng: LatLng){
         val client = OkHttpClient()
         val jsonBody = JSONObject().apply {
-            put("includedTypes", listOf("restaurant"))
             put("maxResultCount", 10)
             put("locationRestriction", JSONObject().apply {
                 put("circle", JSONObject().apply {
                     put("center", JSONObject().apply {
-                        put("latitude", latitude)
-                        put("longitude", longitude)
+                        put("latitude", latlng.latitude)
+                        put("longitude", latlng.longitude)
                     })
-                    put("radius", 1000.0) // radius in meters
+                    put("radius", 10.0) // radius in meters
                 })
             })
         }
@@ -209,32 +212,99 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback  {
         val request = Request.Builder()
             .url("https://places.googleapis.com/v1/places:searchNearby")
             .addHeader("Content-Type", "application/json")
-            .addHeader("X-Goog-Api-Key", "AIzaSyBN163saa8N4v_Jie9lXD7yyiNvvLPQw9E")
-            .addHeader("X-Goog-FieldMask", "places.displayName,places.location,places.id") // controls what fields are returned
+            .addHeader("X-Goog-Api-Key", "AIzaSyA43OMJ6H8ComtRoUCLaRfMzGM2NmOMPog")
+            .addHeader("X-Goog-FieldMask", "places.displayName,places.location,places.id,places.iconBackgroundColor,places.iconMaskBaseUri") // controls what fields are returned
             .post(requestBody)
             .build()
 
         client.newCall(request).enqueue(object : Callback {
 
             override fun onFailure(call: okhttp3.Call, e: IOException) {
-                e.printStackTrace()
+                Log.e("PlacesAPI", "Request failed", e)
+
             }
 
             override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
                 response.use {
                     if (!response.isSuccessful) {
                         println("Error: ${response.code}")
+                        Log.e("PlacesAPI", "Response Body: ${response.body?.string()}")
+
                     } else {
                         val responseData = response.body?.string()
                         println("Response: $responseData")
-                        // You can parse this JSON and add markers to your map
+                        if (responseData != null) {
+                            try {
+                                val json = JSONObject(responseData)
+                                val placesArray = json.getJSONArray("places")
+                                val list = arrayListOf<PlaceService>()
+                                for (i in 0 until placesArray.length()) {
+                                    val place = placesArray.getJSONObject(i)
+                                    val placeId = place.getString("id")
+                                    val displayNameObj = place.getJSONObject("displayName")
+                                    val name = displayNameObj.getString("text")
+                                    val iconMaskBaseUri = place.getString("iconMaskBaseUri");
+                                    val iconBackgroundColor = place.getString("iconMaskBaseUri")
+                                    val locationObj = place.getJSONObject("location")
+                                    val lat = locationObj.getDouble("latitude")
+                                    val lng = locationObj.getDouble("longitude")
+                                    val dto = PlaceService(placeId,name,iconMaskBaseUri,iconBackgroundColor, lat,lng);
+                                    list.add(dto);
+//
+
+//
+//                                    Log.i("PlacesAPI", "Found: $name ($placeId) at $lat,$lng")
+//                                    runOnUiThread {
+//                                        val position = LatLng(lat, lng)
+//                                        mMap.addMarker(MarkerOptions().position(position).title(name))
+//                                    }
+                                }
+                                runOnUiThread {
+                                    showLocsSelection(list)
+                                }
+
+                            } catch (e: Exception) {
+                                Log.e("PlacesAPI", "Error parsing response", e)
+                            }
+                        }
+
                     }
-                }            }
+                }
+            }
         })
     }
 
-    private fun showLocsSelection(array: Array<PlaceService>){
-        //val popup = Snackbar().make()
+
+
+    private fun showLocsSelection(places: List<PlaceService>){
+        if (places.isEmpty()) {
+            AlertDialog.Builder(this)
+                .setTitle("No places found")
+                .setMessage("Try again or move to another location.")
+                .setPositiveButton("OK", null)
+                .show()
+            return
+        }
+
+        val placeNames = places.map { it.displayName }.toTypedArray()
+
+        AlertDialog.Builder(this)
+            .setTitle("Select a place to mark")
+            .setItems(placeNames) { _, which ->
+                val selected = places[which]
+
+                // Add marker for the chosen place
+                val position = LatLng(selected.latitude, selected.longitude)
+                mMap.addMarker(
+                    MarkerOptions()
+                        .position(position)
+                        .title(selected.displayName)
+                )
+
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(position, 16f))
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 }
 
