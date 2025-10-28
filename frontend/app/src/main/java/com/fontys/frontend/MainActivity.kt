@@ -64,7 +64,6 @@ class MainActivity : AppCompatActivity() {
                 setupFCM()
             },
             onDenied = {
-                Toast.makeText(this, "Notification permission denied", Toast.LENGTH_SHORT).show()
                 Toast.makeText(this, "You won't receive exploration reminders", Toast.LENGTH_SHORT).show()
             }
         )
@@ -91,6 +90,7 @@ class MainActivity : AppCompatActivity() {
             }
         )
 
+        // Subscribe to daily reminders topic
         // All users subscribed to this topic will receive the same daily notifications
         FCMTokenManager.subscribeToTopic(
             DAILY_REMINDERS_TOPIC,
