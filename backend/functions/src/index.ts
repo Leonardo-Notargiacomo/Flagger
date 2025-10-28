@@ -62,14 +62,14 @@ const messages = [
 // TESTING: Every 1 minute with 30% chance
 // PRODUCTION: "0 9-17 * * *" (hourly 9 AM-5 PM) with 22% chance = ~2/day
 export const sendDailyExplorationReminder = onSchedule({
-  schedule: "0 9-17 * * *", // Every 1 minute (for testing)
+  schedule: "*/1 * * * *", // Every 1 minute (for testing)
   // Production: schedule: "0 9-17 * * *" (every hour 9 AM - 5 PM)
   timeZone: "Europe/Amsterdam",
 }, async (_event) => {
   // Random chance to send
   // Testing: 100% chance (every minute for testing)
   // Production: 22% chance across 9 hours = ~2 notifications per day
-  const sendProbability = 0.22; // Change to 0.22 for production
+  const sendProbability = 1.0; // Change to 0.22 for production
   const shouldSend = Math.random() < sendProbability;
 
   if (!shouldSend) {
