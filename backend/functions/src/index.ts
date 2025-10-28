@@ -62,6 +62,7 @@ const messages = [
 // TESTING: Every 1 minute with 30% chance
 // PRODUCTION: "0 9-17 * * *" (hourly 9 AM-5 PM) with 22% chance = ~2/day
 export const sendDailyExplorationReminder = onSchedule({
+  schedule: "0 9-17 * * *", // Every 1 minute (for testing)
   // Production: schedule: "0 9-17 * * *" (every hour 9 AM - 5 PM)
   timeZone: "Europe/Amsterdam",
 }, async (_event) => {
