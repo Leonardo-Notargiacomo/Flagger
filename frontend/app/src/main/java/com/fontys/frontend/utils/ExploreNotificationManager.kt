@@ -7,8 +7,8 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
-import com.fontys.frontend.MainActivity
 import com.fontys.frontend.R
+import com.fontys.frontend.ui.views.MapsActivity
 
 class ExploreNotificationManager(private val context: Context) {
 
@@ -45,8 +45,8 @@ class ExploreNotificationManager(private val context: Context) {
      * Used by Firebase Cloud Messaging to display push notifications
      */
     fun showCustomExplorationReminder(title: String, message: String) {
-        // Create an intent to open MainActivity when notification is tapped
-        val intent = Intent(context, MainActivity::class.java).apply {
+        // Create an intent to open MapsActivity when notification is tapped
+        val intent = Intent(context, MapsActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
 
