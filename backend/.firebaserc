@@ -1,0 +1,8 @@
+{
+  "projects": {
+    "default": "prj3-1",
+    "dev": "prj3-1"
+  },
+  "targets": {},
+  "etags": {}
+}
