@@ -22,15 +22,13 @@ import {GoUserRepository} from '../repositories';
 import {inject} from '@loopback/core';
 import {
   TokenServiceBindings,
-  MyUserService,
   UserServiceBindings,
-  UserRepository, Credentials,
 } from '@loopback/authentication-jwt';
 import {authenticate, TokenService} from '@loopback/authentication';
 import {SecurityBindings, securityId, UserProfile} from '@loopback/security';
 import {genSalt, hash} from 'bcryptjs';
 import _ from 'lodash';
-
+import {Credentials, MyUserService} from '../services';
 
 
 @model()
@@ -73,7 +71,7 @@ export class GoUserController {
     public userService: MyUserService,
     @inject(SecurityBindings.USER, {optional: true})
     public user: UserProfile, 
-    @repository(UserRepository) protected userRepository: GoUserRepository,
+    @repository(GoUserRepository) protected userRepository: GoUserRepository,
 
     @repository(GoUserRepository)
     public goUserRepository : GoUserRepository,
