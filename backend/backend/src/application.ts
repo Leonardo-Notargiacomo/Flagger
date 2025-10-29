@@ -1,4 +1,4 @@
-import {BootMixin} from '@loopback/boot';
+import {BootComponent, BootMixin} from '@loopback/boot';
 import {ApplicationConfig} from '@loopback/core';
 import {
   RestExplorerBindings,
@@ -10,6 +10,14 @@ import {ServiceMixin} from '@loopback/service-proxy';
 import path from 'path';
 import {MySequence} from './sequence';
 
+// ---------- ADD JWT IMPORTS -------------
+import {AuthenticationComponent} from '@loopback/authentication';
+import {
+  JWTAuthenticationComponent,
+  UserServiceBindings,
+} from '@loopback/authentication-jwt';
+import {DbDataSource} from './datasources';
+// ------------------------------------
 export {ApplicationConfig};
 
 export class BackendApplication extends BootMixin(
@@ -40,5 +48,13 @@ export class BackendApplication extends BootMixin(
         nested: true,
       },
     };
+    // ------ JWT Code ---------
+    // Mount authentication system
+    this.component(AuthenticationComponent);
+    // Mount jwt component
+    this.component(JWTAuthenticationComponent);
+    // Bind datasource
+    this.dataSource(DbDataSource, UserServiceBindings.DATASOURCE_NAME);
+    // ------------- End of JWT -------------
   }
 }
