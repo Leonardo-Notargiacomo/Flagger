@@ -26,7 +26,7 @@ export class Flag extends Entity {
     type: 'date',
     required: true,
   })
-  dateTaken: string;
+  dateTaken: Date;
 
   @property({
     type: 'number',

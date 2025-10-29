@@ -4,11 +4,11 @@ import {GoUser} from "./go-user.model";
 @model()
 export class GoUserCredentials extends Entity {
   @property({
-    type: 'string',
+    type: 'number',
     id: true,
     generated: true,
   })
-  id?: string;
+  id?: number;
 
   @property({
     type: 'string',
@@ -16,10 +16,7 @@ export class GoUserCredentials extends Entity {
   })
   password: string;
 
-  @property({
-    type: 'number',
-    required: 'true'
-  })
+  @belongsTo(() => GoUser)
   goUserId: number;
 
   constructor(data?: Partial<GoUserCredentials>) {
@@ -28,7 +25,7 @@ export class GoUserCredentials extends Entity {
 }
 
 export interface GoUserCredentialsRelations {
-  // describe navigational properties here
+  goUser?: GoUser;
 }
 
 export type GoUserCredentialsWithRelations = GoUserCredentials & GoUserCredentialsRelations;

@@ -1,4 +1,5 @@
-import {Entity, model, property} from '@loopback/repository';
+import {Entity, hasOne, model, property} from '@loopback/repository';
+import {GoUserCredentials} from './go-user-credentials.model';
 
 @model()
 export class GoUser extends Entity {
@@ -23,7 +24,6 @@ export class GoUser extends Entity {
 
   @property({
     type: 'number',
-    default: 'Blank',
   })
   userImage?: number;
 
@@ -33,8 +33,8 @@ export class GoUser extends Entity {
   })
   bio?: string;
 
-//  @hasOne(() => GoUserCredentials)
-  //gUCToGU: GoUserCredentials;
+  @hasOne(() => GoUserCredentials, {keyTo: 'goUserId'})
+  goUserCredentials: GoUserCredentials;
 
   constructor(data?: Partial<GoUser>) {
     super(data);
@@ -42,7 +42,7 @@ export class GoUser extends Entity {
 }
 
 export interface GoUserRelations {
-  // describe navigational properties here
+  goUserCredentials?: GoUserCredentials;
 }
 
 export type GoUserWithRelations = GoUser & GoUserRelations;

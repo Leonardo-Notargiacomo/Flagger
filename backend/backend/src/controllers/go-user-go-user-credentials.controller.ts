@@ -42,7 +42,7 @@ export class GoUserGoUserCredentialsController {
     @param.path.number('id') id: number,
     @param.query.object('filter') filter?: Filter<GoUserCredentials>,
   ): Promise<GoUserCredentials> {
-    return this.goUserRepository.gUCToGU(id).get(filter);
+    return this.goUserRepository.goUserCredentials(id).get(filter);
   }
 
   @post('/go-users/{id}/go-user-credentials', {
@@ -67,7 +67,7 @@ export class GoUserGoUserCredentialsController {
       },
     }) goUserCredentials: Omit<GoUserCredentials, 'id'>,
   ): Promise<GoUserCredentials> {
-    return this.goUserRepository.gUCToGU(id).create(goUserCredentials);
+    return this.goUserRepository.goUserCredentials(id).create(goUserCredentials);
   }
 
   @patch('/go-users/{id}/go-user-credentials', {
@@ -90,7 +90,7 @@ export class GoUserGoUserCredentialsController {
     goUserCredentials: Partial<GoUserCredentials>,
     @param.query.object('where', getWhereSchemaFor(GoUserCredentials)) where?: Where<GoUserCredentials>,
   ): Promise<Count> {
-    return this.goUserRepository.gUCToGU(id).patch(goUserCredentials, where);
+    return this.goUserRepository.goUserCredentials(id).patch(goUserCredentials, where);
   }
 
   @del('/go-users/{id}/go-user-credentials', {
@@ -105,6 +105,6 @@ export class GoUserGoUserCredentialsController {
     @param.path.number('id') id: number,
     @param.query.object('where', getWhereSchemaFor(GoUserCredentials)) where?: Where<GoUserCredentials>,
   ): Promise<Count> {
-    return this.goUserRepository.gUCToGU(id).delete(where);
+    return this.goUserRepository.goUserCredentials(id).delete(where);
   }
 }
