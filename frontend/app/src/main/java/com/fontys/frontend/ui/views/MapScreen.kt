@@ -5,49 +5,43 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.fontys.frontend.data.PlaceService
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.fontys.frontend.ui.viewmodels.MapsViewModel
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.*
 
-
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MapsScreen(viewModel: MapsViewModel = androidx.lifecycle.viewmodel.compose.viewModel()) {
+fun MapsScreen(viewModel: MapsViewModel = viewModel()) {
     val userLocation by viewModel.userLocation.collectAsState()
     val places by viewModel.places.collectAsState()
-    val isLoading by viewModel.isLoading.collectAsState()
-    val error by viewModel.error.collectAsState()
+    val cameraPositionState = rememberCameraPositionState()
 
-    var showDialog by remember { mutableStateOf(false) }
-    var selectedMarkerList by remember { mutableStateOf(emptyList<PlaceService>()) }
+    LaunchedEffect(Unit) { viewModel.loadUserLocation() }
 
-    val context = LocalContext.current
-
-    LaunchedEffect(Unit) {
-        viewModel.loadUserLocation()
+    userLocation?.let {
+        LaunchedEffect(it) {
+            cameraPositionState.animate(
+                CameraUpdateFactory.newLatLngZoom(it, 15f)
+            )
+        }
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
-
+    Box(Modifier.fillMaxSize()) {
         GoogleMap(
             modifier = Modifier.fillMaxSize(),
+            cameraPositionState = cameraPositionState,
             onMapClick = { latLng ->
                 viewModel.fetchNearbyPlaces(latLng)
-                showDialog = true
-            }
+            },
+            properties = MapProperties(
+                isMyLocationEnabled = true,
+            )
         ) {
-            // User marker
-            userLocation?.let {
-                Marker(
-                    state = MarkerState(position = it),
-                    title = "You are here"
-                )
-            }
-
-            // Selected markers
-            selectedMarkerList.forEach { place ->
+            places.forEach { place ->
                 Marker(
                     state = MarkerState(position = LatLng(place.latitude, place.longitude)),
                     title = place.displayName
@@ -55,39 +49,27 @@ fun MapsScreen(viewModel: MapsViewModel = androidx.lifecycle.viewmodel.compose.v
             }
         }
 
-        if (isLoading) {
-            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-        }
+        // Zoom + Recenter Controls
+        Column(
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(16.dp),
+            horizontalAlignment = Alignment.End
+        ) {
+            Button(onClick = {
+            }) { Text("＋") }
 
-        if (!error.isNullOrEmpty()) {
-            Snackbar(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(8.dp)
-            ) {
-                Text(error!!)
-            }
-        }
+            Spacer(Modifier.height(8.dp))
 
-        if (showDialog && places.isNotEmpty()) {
-            AlertDialog(
-                onDismissRequest = { showDialog = false },
-                title = { Text("Select a place") },
-                text = {
-                    Column {
-                        places.forEach { place ->
-                            TextButton(onClick = {
-                                selectedMarkerList = selectedMarkerList + place
-                                showDialog = false
-                            }) {
-                                Text(place.displayName)
-                            }
-                        }
-                    }
-                },
-                confirmButton = {}
-            )
+            Button(onClick = {
+            }) { Text("－") }
+
+            Spacer(Modifier.height(8.dp))
+
+            Button(onClick = {
+                userLocation?.let {
+                }
+            }) { Text("Center") }
         }
     }
 }
-

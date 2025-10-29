@@ -74,7 +74,7 @@ class MapsViewModel(application: Application) : AndroidViewModel(application) {
             val request = Request.Builder()
                 .url("https://places.googleapis.com/v1/places:searchNearby")
                 .addHeader("Content-Type", "application/json")
-                .addHeader("X-Goog-Api-Key", "YOUR_API_KEY")
+                .addHeader("X-Goog-Api-Key", "AIzaSyA43OMJ6H8ComtRoUCLaRfMzGM2NmOMPog")
                 .addHeader(
                     "X-Goog-FieldMask",
                     "places.displayName,places.location,places.id,places.iconMaskBaseUri,places.iconBackgroundColor"
