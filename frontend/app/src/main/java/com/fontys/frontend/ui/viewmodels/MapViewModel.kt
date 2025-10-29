@@ -4,6 +4,7 @@ package com.fontys.frontend.ui.viewmodels
 import android.Manifest
 import android.app.Application
 import android.content.pm.PackageManager
+import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -52,10 +53,10 @@ class MapsViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun fetchNearbyPlaces(latlng: LatLng) {
-        viewModelScope.launch {
+    fun fetchNearbyPlaces(latlng: LatLng) : ArrayList<PlaceService>{
             _isLoading.value = true
             _error.value = null
+            val list = ArrayList<PlaceService>()
 
             val jsonBody = JSONObject().apply {
                 put("maxResultCount", 10)
@@ -86,6 +87,8 @@ class MapsViewModel(application: Application) : AndroidViewModel(application) {
                 override fun onFailure(call: okhttp3.Call, e: IOException) {
                     _isLoading.value = false
                     _error.value = e.localizedMessage ?: "Network error"
+                    println(_error.value)
+
                 }
 
                 override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
@@ -93,14 +96,23 @@ class MapsViewModel(application: Application) : AndroidViewModel(application) {
                         _isLoading.value = false
                         if (!response.isSuccessful) {
                             _error.value = "Error: ${response.code}"
+                            println(_error.value)
                             return
                         }
 
                         val responseData = response.body?.string() ?: return
+                        println("Response body: $responseData")
+                        println(response.message)
                         try {
                             val json = JSONObject(responseData)
+
+                            if (!json.has("places")) {
+                                _error.value = "No places found or API error: $responseData"
+                                println(_error.value)
+                                return
+                            }
+
                             val placesArray = json.getJSONArray("places")
-                            val list = mutableListOf<PlaceService>()
                             for (i in 0 until placesArray.length()) {
                                 val place = placesArray.getJSONObject(i)
                                 val id = place.getString("id")
@@ -115,10 +127,13 @@ class MapsViewModel(application: Application) : AndroidViewModel(application) {
                             _places.value = list
                         } catch (e: Exception) {
                             _error.value = "Parse error: ${e.message}"
+                            println(_error.value)
                         }
                     }
                 }
             })
-        }
+        println(list)
+        return list
     }
 }
+

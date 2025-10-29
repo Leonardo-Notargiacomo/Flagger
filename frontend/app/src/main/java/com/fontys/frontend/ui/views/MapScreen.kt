@@ -5,13 +5,19 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.fontys.frontend.R
+import com.fontys.frontend.data.PlaceService
 import com.fontys.frontend.ui.viewmodels.MapsViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMapOptions
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.maps.android.compose.*
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -19,7 +25,9 @@ fun MapsScreen(viewModel: MapsViewModel = viewModel()) {
     val userLocation by viewModel.userLocation.collectAsState()
     val places by viewModel.places.collectAsState()
     val cameraPositionState = rememberCameraPositionState()
-
+    var showDialog by remember{ mutableStateOf(false) }
+    var selectedPlace by remember { mutableStateOf<PlaceService?>(null) }
+    val context = LocalContext.current
     LaunchedEffect(Unit) { viewModel.loadUserLocation() }
 
     userLocation?.let {
@@ -29,22 +37,26 @@ fun MapsScreen(viewModel: MapsViewModel = viewModel()) {
             )
         }
     }
-
+    val googleMapOptions = remember {
+        GoogleMapOptions().mapId("349a2b06249ce52186cf3c94")
+    }
     Box(Modifier.fillMaxSize()) {
         GoogleMap(
             modifier = Modifier.fillMaxSize(),
             cameraPositionState = cameraPositionState,
-            onMapClick = { latLng ->
-                viewModel.fetchNearbyPlaces(latLng)
-            },
+
             properties = MapProperties(
                 isMyLocationEnabled = true,
-            )
+            ),
+            googleMapOptionsFactory = { googleMapOptions }
         ) {
-            places.forEach { place ->
+
+
+            selectedPlace?.let { place ->
                 Marker(
                     state = MarkerState(position = LatLng(place.latitude, place.longitude)),
-                    title = place.displayName
+                    title = place.displayName,
+                    snippet = "Selected by user"
                 )
             }
         }
@@ -52,24 +64,69 @@ fun MapsScreen(viewModel: MapsViewModel = viewModel()) {
         // Zoom + Recenter Controls
         Column(
             modifier = Modifier
-                .align(Alignment.BottomEnd)
+                .align(Alignment.BottomCenter)
                 .padding(16.dp),
             horizontalAlignment = Alignment.End
-        ) {
-            Button(onClick = {
-            }) { Text("＋") }
+        )
 
-            Spacer(Modifier.height(8.dp))
+        {
 
             Button(onClick = {
-            }) { Text("－") }
-
-            Spacer(Modifier.height(8.dp))
-
-            Button(onClick = {
-                userLocation?.let {
-                }
-            }) { Text("Center") }
+                viewModel.fetchNearbyPlaces(LatLng(userLocation.latitude,userLocation.longitude))
+                showDialog = true
+                selectedPlace = null
+            }) { Text("\uD83D\uDEA9") }
         }
     }
+
+    val coroutineScope = rememberCoroutineScope()
+
+    if (showDialog) {
+        if (places.isEmpty()) {
+            AlertDialog(
+                onDismissRequest = { showDialog = false },
+                title = { Text("No places found") },
+                text = { Text("Try again or move to another location.") },
+                confirmButton = {
+                    TextButton(onClick = { showDialog = false }) {
+                        Text("OK")
+                    }
+                }
+            )
+        } else {
+            AlertDialog(
+                onDismissRequest = { showDialog = false },
+                title = { Text("Select a place to mark") },
+                text = {
+                    Column {
+                        places.forEach { place ->
+                            TextButton(onClick = {
+                                selectedPlace = place
+                                showDialog = false
+                             // Move camera when selected
+                                coroutineScope.launch {
+                                    cameraPositionState.animate(
+                                        CameraUpdateFactory.newLatLngZoom(
+                                            LatLng(place.latitude, place.longitude),
+                                            16f
+                                        )
+                                    )
+                                }
+                            }) {
+                                Text(place.displayName)
+                            }
+                        }
+                    }
+                },
+                confirmButton = {},
+                dismissButton = {
+                    TextButton(onClick = { showDialog = false }) {
+                        Text("Cancel")
+                    }
+                }
+            )
+        }
+    }
+
 }
+
