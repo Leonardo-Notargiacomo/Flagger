@@ -1,4 +1,5 @@
-import {Entity, model, property} from '@loopback/repository';
+import {Entity, model, property, belongsTo} from '@loopback/repository';
+import {GoUser} from './go-user.model';
 
 @model()
 export class Flag extends Entity {
@@ -13,14 +14,28 @@ export class Flag extends Entity {
     type: 'string',
     required: true,
   })
-  PlaceId: string;
+  location_id: string;
 
   @property({
     type: 'string',
+    default: 'Blank',
+  })
+  photoCode?: string;
+
+  @property({
+    type: 'date',
     required: true,
   })
-  GoUId: string;
+  dateTaken: Date;
 
+  @property({
+    type: 'number',
+    required: true,
+  })
+  notification: number;
+
+  @belongsTo(() => GoUser)
+  userId: number;
 
   constructor(data?: Partial<Flag>) {
     super(data);

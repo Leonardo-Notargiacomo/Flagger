@@ -148,6 +148,7 @@ captures/
 
 # Android SDK config (local machine specific)
 local.properties
+secret.properties
 
 # JVM heap dumps
 *.hprof

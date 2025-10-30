@@ -35,6 +35,34 @@ This document outlines the use cases for the project. Each use case describes a 
 
 ---
 
+### Use Case: Receive Daily Notifications
+**Actor:** User
+
+**Description:** The user wants to receive daily notifications to stay motivated in exploring the world
+
+**Precondition:** 
+- The user has granted notification permissions to the application
+- The user is logged in
+
+**Scenario:**
+1. User opens the application and allows to receive notifications
+2. System triggers the daily notifications
+3. System creates a notification with appropriate title, message, and icon
+4. System displays the notification in the device's notification tray
+5. User views the notification on their device
+6. User taps on the notification
+7. System opens the application to the relevant screen/content
+   
+**Result:** The user successfully receives and views the daily notification, and can access related content by tapping the notification.
+
+**Exception:**
+- 4a. User has disabled notifications in device settings: Notification is not displayed, system logs the attempt
+- 4b. Device is in Do Not Disturb mode: Notification is queued and displayed when mode is disabled
+
+**Extensions:**
+- n/a
+
+
 ### Use Case: changing user information
 **Actor:** User
 

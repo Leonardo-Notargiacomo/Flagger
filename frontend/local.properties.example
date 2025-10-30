@@ -1,0 +1,10 @@
+## This file is an example template for local.properties
+## Copy this file to local.properties and add your actual values
+
+# Location of the Android SDK
+sdk.dir=/path/to/your/Android/Sdk
+
+# Google Maps API Key
+# Get your API key from: https://console.cloud.google.com/apis/credentials
+# Make sure to enable "Maps SDK for Android" in your Google Cloud Console
+MAPS_API_KEY=YOUR_API_KEY_HERE

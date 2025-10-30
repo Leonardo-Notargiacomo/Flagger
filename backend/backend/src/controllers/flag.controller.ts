@@ -19,8 +19,10 @@ import {
 } from '@loopback/rest';
 import {Flag} from '../models';
 import {FlagRepository} from '../repositories';
+import {authenticate} from '@loopback/authentication';
 
-export class FlaggerController {
+@authenticate('jwt') // <---- Apply the @authenticate decorator at the class level
+export class FlagController {
   constructor(
     @repository(FlagRepository)
     public flagRepository : FlagRepository,
