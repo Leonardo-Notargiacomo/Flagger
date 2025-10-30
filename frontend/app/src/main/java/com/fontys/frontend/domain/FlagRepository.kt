@@ -5,6 +5,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.scalars.ScalarsConverterFactory
 import retrofit2.http.POST
 
+
 class FlagRepository{
 
     val BASE_URL = "https://group-repository-2025-android-1.onrender.com/"
@@ -31,4 +32,18 @@ class FlagRepository{
             Result.failure(e)
         }
     }
+    suspend fun getFlags(userId: Int) : List<String>{
+        try {
+            val response = flagApiService.getCords(userId)
+
+            if(response.isSuccessful){
+
+                return listOf()
+            }
+        } catch (e: Exception) {
+
+        }
+        return TODO("Provide the return value")
+    }
+
 }
