@@ -49,46 +49,46 @@ android {
 }
 
 dependencies {
+    // Firebase
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
 
-    // Firebase Cloud Messaging
-    implementation("com.google.firebase:firebase-messaging-ktx:24.1.0")
-
+    // AndroidX & Material (View System)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
-    implementation(libs.material)
-    implementation(libs.play.services.maps)
+    implementation(libs.material) // For classic Material Components
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.activity)
-    implementation(libs.androidx.constraintlayout)
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
-    implementation(libs.play.services.maps)
-    implementation(libs.androidx.constraintlayout)
-    implementation(libs.play.services.location)
-    implementation(libs.androidx.material3)
-    implementation(libs.androidx.compose.material)
 
+    // Google Play Services
+    implementation(libs.play.services.maps)
+    implementation(libs.play.services.location)
+
+    // --- Jetpack Compose ---
+    // --- Jetpack Compose ---
+    implementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+
+    // Core Compose UI
+    implementation("androidx.compose.ui:ui")
+    implementation("androidx.compose.ui:ui-graphics")
+    implementation("androidx.compose.ui:ui-tooling-preview")
+    implementation("androidx.activity:activity-compose:1.9.0")
+
+    // Compose Material Libraries
+    implementation(libs.androidx.compose.material)           // For basic material components in Compose
+    implementation(libs.androidx.compose.material.icons.extended) // For the icons
+    implementation(libs.androidx.compose.material3)          // For Material 3 components
+
+    // Coil for image loading
+    implementation("io.coil-kt:coil-compose:2.5.0")
+
+    // --- Testing ---
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-
-    // Jetpack Compose BOM (Bill of Materials) - manages versions for you
-    val composeBom = platform("androidx.compose:compose-bom:2024.05.00")
-    implementation(composeBom)
-    androidTestImplementation(composeBom)
-
-    // Essential Compose dependencies
-    implementation("androidx.compose.ui:ui")
-    implementation("io.coil-kt:coil-compose:2.5.0")
-    implementation("androidx.compose.ui:ui-graphics")
-    implementation("androidx.compose.ui:ui-tooling")
-    implementation("androidx.compose.material3:material3")
-    implementation("androidx.activity:activity-compose:1.9.0") // Use the latest stable version
-
 }
+
 
 // ✅ Kotlin DSL way to configure Secrets plugin
 extensions.configure<com.google.android.libraries.mapsplatform.secrets_gradle_plugin.SecretsPluginExtension> {
