@@ -3,13 +3,14 @@ package com.fontys.frontend.common // Or your actual main package
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import com.fontys.frontend.ui.views.ProfileScreen
 import com.fontys.frontend.ui.views.UserView // Import your actual UserView
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            UserView()
+            ProfileScreen()
         }
     }
 }
