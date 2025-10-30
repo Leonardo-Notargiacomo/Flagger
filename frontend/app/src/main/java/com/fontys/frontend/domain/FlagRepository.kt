@@ -12,7 +12,4 @@ class FlagRepository{
         .baseUrl(BASE_URL)
         .build()
 
-    private FlagRepostory(){
-        
-    }
 }
