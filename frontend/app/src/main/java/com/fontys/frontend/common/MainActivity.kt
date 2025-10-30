@@ -1,15 +1,15 @@
-package com.fontys.frontend.common
+package com.fontys.frontend.common // Or your actual main package
 
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import com.fontys.frontend.R
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import com.fontys.frontend.ui.views.UserView // Import your actual UserView
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        setContent {
+            UserView()
+        }
     }
 }
