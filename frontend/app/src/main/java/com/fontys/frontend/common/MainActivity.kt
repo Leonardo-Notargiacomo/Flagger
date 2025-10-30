@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import com.fontys.frontend.ui.views.ProfileScreen
-import com.fontys.frontend.ui.views.UserView // Import your actual UserView
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
