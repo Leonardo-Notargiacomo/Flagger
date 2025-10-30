@@ -25,25 +25,20 @@ export class BadgeUnlockService {
    * @returns Array of newly unlocked badges
    */
   async checkAndUnlockBadges(userId: number): Promise<Badge[]> {
-    // Get all badges
     const allBadges = await this.badgeRepository.find();
 
-    // Get badges user already has
     const userBadges = await this.userBadgeRepository.find({
       where: {userId}
     });
     const unlockedBadgeIds = userBadges.map(ub => ub.badgeId);
 
-    // Get user stats
     const explorationCount = await this.explorationEventRepository.count({userId});
     const userStreak = await this.userStreakRepository.findOne({where: {userId}});
     const currentStreak = userStreak?.currentStreak ?? 0;
 
-    // Check each badge
     const newlyUnlocked: Badge[] = [];
 
     for (const badge of allBadges) {
-      // Skip if already unlocked
       if (unlockedBadgeIds.includes(badge.id!)) {
         continue;
       }
