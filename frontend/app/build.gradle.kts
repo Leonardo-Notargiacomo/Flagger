@@ -48,6 +48,13 @@ dependencies {
     // Firebase Cloud Messaging
     implementation("com.google.firebase:firebase-messaging-ktx:24.1.0")
 
+    // Retrofit for API calls
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.converter.gson)
+    implementation(libs.okhttp)
+    implementation(libs.okhttp.logging.interceptor)
+    implementation(libs.gson)
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
