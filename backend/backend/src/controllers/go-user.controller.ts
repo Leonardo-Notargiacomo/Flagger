@@ -200,7 +200,7 @@ export class GoUserController {
   }
 
 
- @post('/users/login', {
+ @post('/login', {
     responses: {
       '200': {
         description: 'Token',
@@ -222,13 +222,16 @@ export class GoUserController {
   async login(
     @requestBody(CredentialsRequestBody) credentials: Credentials,
   ): Promise<{token: string}> {
+    console.log("Starting login");
     // ensure the user exists, and the password is correct
     const user = await this.userService.verifyCredentials(credentials);
+    console.log("Verifying Credentials passed");
     // convert a User object into a UserProfile object (reduced set of properties)
     const userProfile = this.userService.convertToUserProfile(user);
-
+    console.log("It converted to a User Profile");
     // create a JSON Web Token based on the user profile
     const token = await this.jwtService.generateToken(userProfile);
+    console.log("Passed the JWT services");
     return {token};
   }
 
