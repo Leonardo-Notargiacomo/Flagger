@@ -29,6 +29,8 @@ fun MapsScreen(viewModel: MapsViewModel = viewModel()) {
     var selectedPlace by remember { mutableStateOf<PlaceService?>(null) }
     val context = LocalContext.current
     LaunchedEffect(Unit) { viewModel.loadUserLocation() }
+    val userFlags by viewModel.userFlags.collectAsState()
+
 
     userLocation?.let {
         LaunchedEffect(it) {
@@ -104,12 +106,14 @@ fun MapsScreen(viewModel: MapsViewModel = viewModel()) {
                                 selectedPlace = place
                                 showDialog = false
                              // Move camera when selected
+                                viewModel.markTheSpot(6,place.id)
                                 coroutineScope.launch {
                                     cameraPositionState.animate(
                                         CameraUpdateFactory.newLatLngZoom(
                                             LatLng(place.latitude, place.longitude),
                                             16f
                                         )
+
                                     )
                                 }
                             }) {

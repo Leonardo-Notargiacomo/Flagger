@@ -24,6 +24,7 @@ class MapRepository { // No need for companion object if we want an instance for
     private val client = OkHttpClient()
     private val API_KEY = "AIzaSyA43OMJ6H8ComtRoUCLaRfMzGM2NmOMPog"
 
+    private val FlagRepository = FlagRepository();
 
 
     suspend fun markTheSpot(latlng: LatLng): List<PlaceService> {
@@ -63,7 +64,7 @@ class MapRepository { // No need for companion object if we want an instance for
                 call.enqueue(object : Callback {
                     override fun onFailure(call: Call, e: IOException) {
                         Log.e("PlacesAPI", "Request failed", e)
-                        continuation.resumeWithException(e) // Resume with exception on failure
+                        continuation.resumeWithException(e)
                     }
 
                     override fun onResponse(call: Call, response: Response) {
@@ -79,19 +80,16 @@ class MapRepository { // No need for companion object if we want an instance for
 
                             val responseData = response.body?.string()
                             if (responseData.isNullOrEmpty()) {
-                                continuation.resume(emptyList()) // Resume with empty list if no data
+                                continuation.resume(emptyList())
                                 return
                             }
-
+                            var placeID = ""
                             try {
                                 val json = JSONObject(responseData)
-
-                                // Handle cases where 'places' might not exist or be empty
                                 if (!json.has("places") || json.getJSONArray("places").length() == 0) {
                                     continuation.resume(emptyList())
                                     return
                                 }
-
                                 val placesArray = json.getJSONArray("places")
                                 val list = mutableListOf<PlaceService>()
                                 for (i in 0 until placesArray.length()) {
@@ -114,10 +112,10 @@ class MapRepository { // No need for companion object if we want an instance for
                                     )
                                     list.add(dto)
                                 }
-                                continuation.resume(list) // Resume with the parsed list
+                                continuation.resume(list)
                             } catch (e: Exception) {
                                 Log.e("PlacesAPI", "Error parsing response", e)
-                                continuation.resumeWithException(e) // Resume with exception on parse error
+                                continuation.resumeWithException(e)
                             }
                         }
                     }

@@ -9,6 +9,7 @@ import androidx.core.app.ActivityCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.fontys.frontend.data.PlaceService
+import com.fontys.frontend.domain.FlagRepository
 import com.fontys.frontend.domain.MapRepository
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
@@ -25,8 +26,13 @@ class MapsViewModel(application: Application) : AndroidViewModel(application) {
 
     private val context = getApplication<Application>().applicationContext
     private val mapRepository = MapRepository()
+    private val flagRepository = FlagRepository()
     private val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
     private val client = OkHttpClient()
+
+    private val _userFlags = MutableStateFlow<List<String>>(emptyList())
+
+    val userFlags: StateFlow<List<String>> = _userFlags
 
     private val _userLocation = MutableStateFlow(LatLng(0.0, 0.0))
     val userLocation: StateFlow<LatLng> = _userLocation
@@ -52,6 +58,35 @@ class MapsViewModel(application: Application) : AndroidViewModel(application) {
             }
         } else {
             _error.value = "Location permission not granted."
+        }
+    }
+    fun markTheSpot(userId: Int, placeId: String) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            _error.value = null
+            try {
+                val result = flagRepository.addFlag(userId,placeId)
+            } catch (e: Exception) {
+                _error.value = e.localizedMessage ?: "The place has not been marked"
+                Log.e("MapsViewModel", "Error marking the place", e)
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+    fun getFlags(userId: Int){
+        viewModelScope.launch {
+            _isLoading.value = true
+            _error.value = null
+            try {
+                val result = flagRepository.getFlags(userId);
+                _userFlags.value =result
+            } catch (e: Exception) {
+                _error.value = e.localizedMessage ?: "The place has not been marked"
+                Log.e("MapsViewModel", "Error marking the place", e)
+            } finally {
+                _isLoading.value = false
+            }
         }
     }
 

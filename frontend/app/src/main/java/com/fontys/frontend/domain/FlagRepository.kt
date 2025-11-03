@@ -1,25 +1,62 @@
 package com.fontys.frontend.domain
 
+import android.util.Log
 import com.fontys.frontend.data.AddFlagRequest
+import com.fontys.frontend.data.PlaceService
+import com.google.gson.GsonBuilder
+import okhttp3.OkHttpClient
+import org.json.JSONObject
 import retrofit2.Retrofit
 import retrofit2.converter.scalars.ScalarsConverterFactory
+import retrofit2.converter.gson.GsonConverterFactory
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.http.POST
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import java.util.Date
 
 
 class FlagRepository{
 
     val BASE_URL = "https://group-repository-2025-android-1.onrender.com/"
+    var token ="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYiLCJuYW1lIjoic3BhY2VnaG9zdHB1cnJwIiwiZW1haWwiOiJ3d0B3dy53dyIsImlhdCI6MTc2MjE2NDQzNSwiZXhwIjoxNzYyMTg2MDM1fQ.w-WsvvHVhhMZ8hThMePIbC-V2mlxDl-it1kjRykyakQ"
+    private val loggingInterceptor = HttpLoggingInterceptor().apply {
+        level = HttpLoggingInterceptor.Level.BODY
+    }
 
+    private val okHttpClient =  OkHttpClient.Builder()
+        // No custom auth interceptor needed here if using @HeaderMap directly
+        .addInterceptor(loggingInterceptor) // Keep logging for debugging
+        .build()
+
+    private val gson = GsonBuilder()
+        .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+        .create()
     private val retrofit = Retrofit.Builder()
-        .addConverterFactory(ScalarsConverterFactory.create())
         .baseUrl(BASE_URL)
+        .client(okHttpClient) // Use the OkHttpClient
+        .addConverterFactory(GsonConverterFactory.create(gson))
+        .addConverterFactory(ScalarsConverterFactory.create())
         .build()
     private val flagApiService = retrofit.create(FlagApiService::class.java)
-
     suspend fun addFlag(userId: Int, placeId: String): Result<String> {
         return try {
-            val requestBody = AddFlagRequest(userId, placeId)
-            val response = flagApiService.addCords(requestBody)
+            val headers = HashMap<String, String>().apply {
+                put("Accept", "application/json")
+                put("Content-Type", "application/json")
+                token?.let { token ->
+                    put("Authorization", "Bearer $token") // Add JWT token if available
+                } ?: run {
+                    // Optional: Log a warning or throw an error if token is missing for authenticated endpoint
+                    // throw IllegalStateException("JWT token is missing for authenticated request")
+                }
+            }
+            val requestBody = AddFlagRequest(
+                placeId, Date(), 0,
+                userId,
+                ""
+            )
+            val response = flagApiService.addCords(headers,requestBody)
 
             if (response.isSuccessful) {
 
@@ -37,13 +74,29 @@ class FlagRepository{
             val response = flagApiService.getCords(userId)
 
             if(response.isSuccessful){
+                val responseData = response.body().toString()
+                println(responseData.toString())
+                if (responseData.isNullOrEmpty()) {
+                    return listOf()
+                }
+                try {
+                    val json = JSONObject(responseData)
+                    val placesArray = json.getJSONArray("places")
+                    val list = mutableListOf<String>()
+                    for (i in 0 until placesArray.length()) {
+                        val obj = placesArray.getJSONObject(i);
+                        list.add(obj.getString("placeId"))
+                    }
+                    return list;
+                } catch (e: Exception) {
+                    Log.e("FlagRepository", "Error parsing response", e)
+                }
 
-                return listOf()
             }
         } catch (e: Exception) {
 
         }
-        return TODO("Provide the return value")
+        return TODO()
     }
 
 }
