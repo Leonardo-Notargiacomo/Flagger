@@ -30,7 +30,12 @@ fun MapsScreen(viewModel: MapsViewModel = viewModel()) {
     val context = LocalContext.current
     LaunchedEffect(Unit) { viewModel.loadUserLocation() }
     val userFlags by viewModel.userFlags.collectAsState()
-
+    val currentUserId = 6
+    LaunchedEffect(currentUserId) {
+        if (currentUserId != null) {
+            viewModel.getFlags(currentUserId)
+        }
+    }
 
     userLocation?.let {
         LaunchedEffect(it) {
@@ -46,14 +51,19 @@ fun MapsScreen(viewModel: MapsViewModel = viewModel()) {
         GoogleMap(
             modifier = Modifier.fillMaxSize(),
             cameraPositionState = cameraPositionState,
-
             properties = MapProperties(
                 isMyLocationEnabled = true,
             ),
             googleMapOptionsFactory = { googleMapOptions }
         ) {
 
-
+        for(spot in userFlags){
+            Marker(
+                state = MarkerState(position = LatLng(spot.location.latitude, spot.location.longitude)),
+                title = spot.displayName,
+                snippet = "Selected by user"
+            )
+        }
             selectedPlace?.let { place ->
                 Marker(
                     state = MarkerState(position = LatLng(place.latitude, place.longitude)),
@@ -131,6 +141,5 @@ fun MapsScreen(viewModel: MapsViewModel = viewModel()) {
             )
         }
     }
-
 }
 

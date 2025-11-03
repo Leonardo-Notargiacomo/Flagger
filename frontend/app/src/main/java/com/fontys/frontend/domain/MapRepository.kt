@@ -1,9 +1,13 @@
 package com.fontys.frontend.domain
 
 import android.util.Log
+import androidx.compose.runtime.internal.FunctionKeyMeta
+import com.fontys.frontend.data.FlagDisplay
 import com.fontys.frontend.data.PlaceService
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import okhttp3.Call
@@ -81,6 +85,7 @@ class MapRepository { // No need for companion object if we want an instance for
                             val responseData = response.body?.string()
                             if (responseData.isNullOrEmpty()) {
                                 continuation.resume(emptyList())
+                                println(responseData)
                                 return
                             }
                             var placeID = ""
@@ -123,4 +128,47 @@ class MapRepository { // No need for companion object if we want an instance for
             }
         }
     }
-}
+    suspend fun getLatlngs(list: List<String>): Result<List<FlagDisplay>> = withContext(Dispatchers.IO) {
+        val cords = mutableListOf<FlagDisplay>()
+        val deferredResults = list.map { id ->
+            async {
+                val request = Request.Builder()
+                    .url("https://places.googleapis.com/v1/places/$id")
+                    .addHeader("Content-Type", "application/json")
+                    .addHeader("X-Goog-Api-Key", API_KEY)
+                    .addHeader("X-Goog-FieldMask", "displayName,location")
+                    .build()
+
+                try {
+                    client.newCall(request).execute().use { response ->
+                        if (response.isSuccessful) {
+                            val json = JSONObject(response.body?.string() ?: "{}")
+                            val name = json.getJSONObject("displayName").getString("text")
+                            val loc = json.getJSONObject("location")
+                            val lat = loc.getDouble("latitude")
+                            val lng = loc.getDouble("longitude")
+                            FlagDisplay(name, LatLng(lat, lng))
+                        } else {
+                            val errorBody = response.body?.string()
+                            Log.e("PlacesAPI", "Error fetching details for id=$id: ${response.code} - $errorBody")
+                            null // Return null on HTTP error
+                        }
+                    }
+                } catch (e: Exception) {
+                    Log.e("PlacesAPI", "Network error or parsing error for id=$id", e)
+                    null // Return null on exception
+                }
+            }
+        }
+
+        // Wait for all concurrent calls to complete
+        val results = deferredResults.awaitAll()
+
+        val successfulFlags = results.filterNotNull()
+        if (successfulFlags.isEmpty() && list.isNotEmpty()) {
+            return@withContext Result.failure(Exception("Failed to fetch details for any flagged places."))
+        }
+
+        Result.success(successfulFlags)
+    }
+    }

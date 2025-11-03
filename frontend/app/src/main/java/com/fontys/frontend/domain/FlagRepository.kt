@@ -14,6 +14,7 @@ import retrofit2.http.POST
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import java.util.Date
+import com.fontys.frontend.data.FlagResponse // Import your new FlagResponse data class
 
 
 class FlagRepository{
@@ -71,32 +72,31 @@ class FlagRepository{
     }
     suspend fun getFlags(userId: Int) : List<String>{
         try {
-            val response = flagApiService.getCords(userId)
+            val headers = HashMap<String, String>().apply {
+                put("Accept", "application/json")
+                put("Content-Type", "application/json")
+                token?.let { token ->
+                    put("Authorization", "Bearer $token") // Add JWT token if available
+                } ?: run {
+                    // Optional: Log a warning or throw an error if token is missing for authenticated endpoint
+                    // throw IllegalStateException("JWT token is missing for authenticated request")
+                }
+            }
+            val response = flagApiService.getCords(headers, userId)
 
-            if(response.isSuccessful){
-                val responseData = response.body().toString()
-                println(responseData.toString())
-                if (responseData.isNullOrEmpty()) {
-                    return listOf()
-                }
-                try {
-                    val json = JSONObject(responseData)
-                    val placesArray = json.getJSONArray("places")
-                    val list = mutableListOf<String>()
-                    for (i in 0 until placesArray.length()) {
-                        val obj = placesArray.getJSONObject(i);
-                        list.add(obj.getString("placeId"))
-                    }
-                    return list;
-                } catch (e: Exception) {
-                    Log.e("FlagRepository", "Error parsing response", e)
-                }
+            if (response.isSuccessful) {
+                val list = mutableListOf<String>()
+                val flags = response.body() ?: listOf<FlagResponse>()
+                println(flags.toString())
+                val locationIds = flags.map { it.locationId }
+                return locationIds
+            } else{
 
             }
         } catch (e: Exception) {
-
+            Log.e("FlagRepository", "Error parsing response", e)
         }
-        return TODO()
+        return listOf()
     }
 
 }

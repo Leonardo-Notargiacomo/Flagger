@@ -8,6 +8,7 @@ import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.fontys.frontend.data.FlagDisplay
 import com.fontys.frontend.data.PlaceService
 import com.fontys.frontend.domain.FlagRepository
 import com.fontys.frontend.domain.MapRepository
@@ -19,6 +20,7 @@ import kotlinx.coroutines.launch
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
+import org.checkerframework.checker.units.qual.m
 import org.json.JSONObject
 import java.io.IOException
 
@@ -30,9 +32,9 @@ class MapsViewModel(application: Application) : AndroidViewModel(application) {
     private val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
     private val client = OkHttpClient()
 
-    private val _userFlags = MutableStateFlow<List<String>>(emptyList())
+    private val _userFlags = MutableStateFlow<List<FlagDisplay>>(emptyList())
 
-    val userFlags: StateFlow<List<String>> = _userFlags
+    val userFlags: StateFlow<List<FlagDisplay>> = _userFlags
 
     private val _userLocation = MutableStateFlow(LatLng(0.0, 0.0))
     val userLocation: StateFlow<LatLng> = _userLocation
@@ -80,10 +82,12 @@ class MapsViewModel(application: Application) : AndroidViewModel(application) {
             _error.value = null
             try {
                 val result = flagRepository.getFlags(userId);
-                _userFlags.value =result
+
+                val spots = mapRepository.getLatlngs(result)
+                spots.onSuccess { details ->  _userFlags.value = details }
             } catch (e: Exception) {
-                _error.value = e.localizedMessage ?: "The place has not been marked"
-                Log.e("MapsViewModel", "Error marking the place", e)
+                _error.value = e.localizedMessage ?: "The flags are not gathered"
+                Log.e("MapsViewModel", "Error finding the places", e)
             } finally {
                 _isLoading.value = false
             }
