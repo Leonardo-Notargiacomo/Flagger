@@ -4,8 +4,6 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     id("com.google.gms.google-services")
     alias(libs.plugins.google.android.libraries.mapsplatform.secrets.gradle.plugin)
-    alias(libs.plugins.compose.compiler)
-
 }
 
 android {
