@@ -31,6 +31,8 @@ This document outlines the use cases for the project. Each use case describes a 
   3. [Return to main scenario step]
 - n/a [if no extensions apply]
 
+**link:** [link to the folder with artifacts]
+
 ---
 
 ### Use Case: Receive Daily Notifications
@@ -59,3 +61,21 @@ This document outlines the use cases for the project. Each use case describes a 
 
 **Extensions:**
 - n/a
+
+
+### Use Case: changing user information
+**Actor:** User
+
+**Description:** The user wants to update their personal information in the system.
+
+**Precondition:** The user is logged into their account.
+
+**Scenario:**
+1. User navigates to the "Profile" section.
+2. System displays the user's current information.
+3. User changes the info they want to change
+4. system updates the information and confirms the changes.
+
+**Result:** users info has changed.
+
+**Link:** [readme for further info](/documentation/artifacts/Use_Cases/change_user_info/README.md)
