@@ -30,7 +30,7 @@ export class UserStreak extends Entity {
   @property({
     type: 'date',
   })
-  lastActivityDate?: string;
+  lastActivityDate?: Date;
 
   @property({
     type: 'date',
