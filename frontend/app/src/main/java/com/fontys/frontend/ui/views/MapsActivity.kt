@@ -72,6 +72,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 checkLocationPermission()
             }
         }
+
+        // Navigate to BadgeActivity when Badges button is clicked
+        binding.btnBadges.setOnClickListener {
+            val intent = android.content.Intent(this, BadgeActivity::class.java)
+            startActivity(intent)
+        }
+
         val btnMapType = findViewById<Button>(R.id.btnMapType)
 
         btnMapType.setOnClickListener {
