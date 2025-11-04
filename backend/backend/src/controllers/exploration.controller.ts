@@ -93,27 +93,43 @@ export class ExplorationController {
 async getUserStats(
   @param.path.number('userId') userId: number,
 ) {
-  const explorationCount = await this.explorationEventRepository.count({userId});
-  const userStreak = await this.userStreakRepository.findOne({
-    where: {userId},
-  });
+  console.log(`[ExplorationController] getUserStats() called for userId: ${userId}`);
 
-  // ADD THESE LINES
-  const unlockedBadges = await this.userBadgeRepository.find({
-    where: {userId},
-    include: [{relation: 'badge'}],
-  }) as UserBadgeWithRelations[];
+  try {
+    console.log('[ExplorationController] Fetching exploration count');
+    const explorationCount = await this.explorationEventRepository.count({userId});
+    console.log(`[ExplorationController] Found ${explorationCount.count} explorations`);
 
-  return {
-    totalExplorations: explorationCount.count,
-    currentStreak: userStreak?.currentStreak ?? 0,
-    longestStreak: userStreak?.longestStreak ?? 0,
-    badges: unlockedBadges.map(ub => ({ // ADD THIS
-      id: ub.badgeId,
-      name: ub.badge?.name,
-      description: ub.badge?.description,
-      unlockedAt: ub.unlockedAt,
-    })),
-  };
+    console.log('[ExplorationController] Fetching user streak');
+    const userStreak = await this.userStreakRepository.findOne({
+      where: {userId},
+    });
+    console.log(`[ExplorationController] Current streak: ${userStreak?.currentStreak ?? 0}, Longest: ${userStreak?.longestStreak ?? 0}`);
+
+    console.log('[ExplorationController] Fetching unlocked badges');
+    const unlockedBadges = await this.userBadgeRepository.find({
+      where: {userId},
+      include: [{relation: 'badge'}],
+    }) as UserBadgeWithRelations[];
+    console.log(`[ExplorationController] Found ${unlockedBadges.length} unlocked badges`);
+
+    const result = {
+      totalExplorations: explorationCount.count,
+      currentStreak: userStreak?.currentStreak ?? 0,
+      longestStreak: userStreak?.longestStreak ?? 0,
+      badges: unlockedBadges.map(ub => ({
+        id: ub.badgeId,
+        name: ub.badge?.name,
+        description: ub.badge?.description,
+        unlockedAt: ub.unlockedAt,
+      })),
+    };
+
+    console.log('[ExplorationController] Returning user stats:', JSON.stringify(result, null, 2));
+    return result;
+  } catch (error) {
+    console.error(`[ExplorationController] Error in getUserStats for userId ${userId}:`, error);
+    throw error;
+  }
 }
 }
