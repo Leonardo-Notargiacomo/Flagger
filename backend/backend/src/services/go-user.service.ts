@@ -27,17 +27,23 @@ export class MyUserService implements UserService<GoUser, Credentials> {
 
   async verifyCredentials(credentials: Credentials): Promise<GoUser> {
     const invalidCredentialsError = 'Invalid email or password.';
+    console.log("Passed invalide Credentials");
 
     const foundUser = await this.userRepository.findOne({
       where: {email: credentials.email},
     });
+        console.log("found User");
+
     if (!foundUser) {
+      console.log("There is no user found!")
       throw new HttpErrors.Unauthorized(invalidCredentialsError);
     }
 
     const credentialsFound = await this.userRepository.findCredentials(
       foundUser.id,
     );
+        console.log("found Credentials for User");
+
     if (!credentialsFound) {
       throw new HttpErrors.Unauthorized(invalidCredentialsError);
     }
@@ -46,6 +52,7 @@ export class MyUserService implements UserService<GoUser, Credentials> {
       credentials.password,
       credentialsFound.password,
     );
+        console.log("Credentials Passoword match");
 
     if (!passwordMatched) {
       throw new HttpErrors.Unauthorized(invalidCredentialsError);
