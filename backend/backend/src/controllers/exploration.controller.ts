@@ -1,6 +1,7 @@
 import {post, get, param, requestBody, response} from '@loopback/rest';
 import {repository} from '@loopback/repository';
 import {ExplorationEventRepository, UserStreakRepository, UserBadgeRepository} from '../repositories';
+import {UserBadgeWithRelations} from '../models';
 import {inject} from '@loopback/core';
 import {BadgeUnlockService} from '../services/badge-unlock.service';
 import {StreakCalculatorService} from '../services/streak-calculator.service';
@@ -101,7 +102,7 @@ async getUserStats(
   const unlockedBadges = await this.userBadgeRepository.find({
     where: {userId},
     include: [{relation: 'badge'}],
-  });
+  }) as UserBadgeWithRelations[];
 
   return {
     totalExplorations: explorationCount.count,
@@ -115,4 +116,4 @@ async getUserStats(
     })),
   };
 }
-
+}

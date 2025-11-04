@@ -18,7 +18,7 @@ export class ExplorationEvent extends Entity {
   @property({
     type: 'string',
   })
-  LocationName?: string;
+  locationName?: string;
 
   @property({
     type: 'number',

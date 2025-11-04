@@ -37,8 +37,9 @@ export class Badge extends Entity {
     required: true,
   })
   unlockCriteria: {
-    type: 'exploration_count' / 'streak';
-    threshold: number;}
+    type: 'exploration_count' | 'streak';
+    threshold: number;
+  }
 
   @property({
     type: 'number',
