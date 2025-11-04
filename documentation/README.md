@@ -1,5 +1,6 @@
 # PRJ3 Documentation
 
+- As a user, I want to receive daily reminder notifications
 This Directory concerns itself with the creation of the Group app **'GO'**.
 
 ## Application Idea

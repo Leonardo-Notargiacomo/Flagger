@@ -4,8 +4,7 @@ import {juggler} from '@loopback/repository';
 const config = {
   name: 'db',
   connector: 'postgresql',
-  url: 'postgresql://project3_android_001_user:G1N08w9qp1AG41A5GsShhQns3jsX2kl2@dpg-d3h7qdp5pdvs73f21ssg-a.frankfurt-postgres.render.com/project3_android_001?ssl=true',
-
+  url: 'postgresql://prj3_group01_android_user:tFWrjSk52SUBmvQjGgQPcMolIIChnhyy@dpg-d41ju5ogjchc739ugf80-a.frankfurt-postgres.render.com/prj3_group01_android?sslmode=required'
 };
 
 // Observe application's life cycle to disconnect the datasource when
