@@ -33,6 +33,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Main map exploration activity -->
+        <activity
+            android:name=".ui.views.MapsActivity"
+            android:exported="false" />
+
+        <!-- Badge viewing activity -->
+        <activity
+            android:name=".ui.views.BadgeActivity"
+            android:exported="false" />
+
         <!-- Firebase Cloud Messaging Service -->
         <service
             android:name=".services.ExploreFirebaseMessagingService"
