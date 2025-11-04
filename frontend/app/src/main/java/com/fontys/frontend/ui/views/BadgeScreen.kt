@@ -1,4 +1,3 @@
-
 package com.fontys.frontend.ui.views
 
 import androidx.compose.foundation.background
@@ -147,8 +146,8 @@ fun BadgeStatsCard(earnedBadges: Int, totalBadges: Int) {
 fun BadgeItem(badge: Badge, onClick: () -> Unit) {
     Card(
         modifier = Modifier
-            .aspectRatio(1f)
-            .clickable(onClick = onClick),
+            .aspectRatio(1f),
+        onClick = onClick,
         colors = CardDefaults.cardColors(
             containerColor = if (badge.isUnlocked)
                 MaterialTheme.colorScheme.primaryContainer
