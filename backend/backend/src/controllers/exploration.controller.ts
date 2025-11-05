@@ -1,5 +1,6 @@
 import {post, get, param, requestBody, response} from '@loopback/rest';
 import {repository} from '@loopback/repository';
+import {UserBadgeWithRelations} from '../models';
 import {ExplorationEventRepository, UserStreakRepository, UserBadgeRepository} from '../repositories';
 import {inject} from '@loopback/core';
 import {BadgeUnlockService} from '../services/badge-unlock.service';
@@ -17,7 +18,8 @@ export class ExplorationController {
     public badgeUnlockService: BadgeUnlockService,
     @inject('services.StreakCalculatorService')
     public streakCalculatorService: StreakCalculatorService,
-  ) {}
+  ) {
+  }
 
   /**
    * POST /api/users/{userId}/explorations
@@ -85,34 +87,34 @@ export class ExplorationController {
    * GET /api/users/{userId}/stats
    * Get user's exploration statistics
    */
-@get('/api/users/{userId}/stats')
-@response(200, {
-  description: 'User exploration statistics',
-})
-async getUserStats(
-  @param.path.number('userId') userId: number,
-) {
-  const explorationCount = await this.explorationEventRepository.count({userId});
-  const userStreak = await this.userStreakRepository.findOne({
-    where: {userId},
-  });
+  @get('/api/users/{userId}/stats')
+  @response(200, {
+    description: 'User exploration statistics',
+  })
+  async getUserStats(
+    @param.path.number('userId') userId: number,
+  ) {
+    const explorationCount = await this.explorationEventRepository.count({userId});
+    const userStreak = await this.userStreakRepository.findOne({
+      where: {userId},
+    });
 
-  // ADD THESE LINES
-  const unlockedBadges = await this.userBadgeRepository.find({
-    where: {userId},
-    include: [{relation: 'badge'}],
-  });
+    // ADD THESE LINES
+    const unlockedBadges = await this.userBadgeRepository.find({
+      where: {userId},
+      include: [{relation: 'badge'}],
+    }) as UserBadgeWithRelations[];
 
-  return {
-    totalExplorations: explorationCount.count,
-    currentStreak: userStreak?.currentStreak ?? 0,
-    longestStreak: userStreak?.longestStreak ?? 0,
-    badges: unlockedBadges.map(ub => ({ // ADD THIS
-      id: ub.badgeId,
-      name: ub.badge?.name,
-      description: ub.badge?.description,
-      unlockedAt: ub.unlockedAt,
-    })),
-  };
+    return {
+      totalExplorations: explorationCount.count,
+      currentStreak: userStreak?.currentStreak ?? 0,
+      longestStreak: userStreak?.longestStreak ?? 0,
+      badges: unlockedBadges.map(ub => ({ // ADD THIS
+        id: ub.badgeId,
+        name: ub.badge?.name,
+        description: ub.badge?.description,
+        unlockedAt: ub.unlockedAt,
+      })),
+    };
+  }
 }
-

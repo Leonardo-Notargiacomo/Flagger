@@ -1,4 +1,4 @@
-import {Entity, model, property} from '@loopback/repository';
+import {Entity, model, property, belongsTo} from '@loopback/repository';
 import {Badge} from './badge.model';
 
 @model()
@@ -16,10 +16,7 @@ export class UserBadge extends Entity {
   })
   userId: number;
 
-  @property({
-    type: 'number',
-    required: true,
-  })
+  @belongsTo(() => Badge)
   badgeId: number;
 
   @property({
@@ -41,7 +38,7 @@ export class UserBadge extends Entity {
 }
 
 export interface UserBadgeRelations {
-  // describe navigational properties here
+  badge?: Badge;
 }
 
 export type UserBadgeWithRelations = UserBadge & UserBadgeRelations;
