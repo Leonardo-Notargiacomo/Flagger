@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import com.fontys.frontend.ui.theme.AppTheme
+import com.fontys.frontend.ui.theme.BadgeTheme
 
 class BadgeActivity : ComponentActivity() {
 
@@ -22,7 +22,7 @@ class BadgeActivity : ComponentActivity() {
         val userId = 1
 
         setContent {
-            AppTheme {
+            BadgeTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background

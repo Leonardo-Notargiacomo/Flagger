@@ -1,15 +1,22 @@
 package com.fontys.frontend.ui.views
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -33,26 +40,23 @@ fun BadgeScreen(
         viewModel.loadUserBadges(userId)
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("My Badges", fontWeight = FontWeight.Bold) },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    titleContentColor = MaterialTheme.colorScheme.onSurface
-                )
-            )
-        }
-    ) { paddingValues ->
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
+        // Custom Header
+        BadgeHeader()
+
         when (val state = uiState) {
             is BadgeUiState.Loading -> {
                 Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues),
+                    modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    CircularProgressIndicator()
+                    CircularProgressIndicator(
+                        color = MaterialTheme.colorScheme.primary
+                    )
                 }
             }
 
@@ -60,34 +64,32 @@ fun BadgeScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(paddingValues)
-                        .padding(horizontal = 16.dp)
+                        .padding(horizontal = 24.dp)
                 ) {
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(24.dp))
 
-                    // Stats card
-                    BadgeStatsCard(
+                    // Profile/Badge display section
+                    BadgeProfileSection(
                         earnedBadges = state.earnedBadges,
                         totalBadges = state.totalBadges
                     )
 
-                    Spacer(modifier = Modifier.height(24.dp))
+                    Spacer(modifier = Modifier.height(32.dp))
 
-                    // Section title
-                    Text(
-                        text = "All Badges",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.onSurface
+                    // Progress indicator with decorative line
+                    BadgeProgressLine(
+                        earnedBadges = state.earnedBadges,
+                        totalBadges = state.totalBadges
                     )
 
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(32.dp))
 
                     // Badge grid
                     LazyVerticalGrid(
                         columns = GridCells.Fixed(3),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
+                        modifier = Modifier.weight(1f)
                     ) {
                         items(state.badges) { badge ->
                             BadgeItem(
@@ -111,24 +113,189 @@ fun BadgeScreen(
 
             is BadgeUiState.Error -> {
                 Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues),
+                    modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.padding(24.dp)
+                    ) {
                         Text(
                             text = "Error: ${state.message}",
-                            color = MaterialTheme.colorScheme.error
+                            color = Color(0xFF8B4513),
+                            textAlign = TextAlign.Center
                         )
                         Spacer(modifier = Modifier.height(16.dp))
-                        Button(onClick = { viewModel.refreshBadges(userId) }) {
+                        Button(
+                            onClick = { viewModel.refreshBadges(userId) },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.primary
+                            )
+                        ) {
                             Text("Retry")
                         }
                     }
                 }
             }
         }
+    }
+}
+
+@Composable
+fun BadgeHeader() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.surface)
+            .padding(horizontal = 24.dp, vertical = 16.dp)
+    ) {
+        // Decorative dots on the left
+        Row(
+            modifier = Modifier.align(Alignment.CenterStart),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(12.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.primary)
+            )
+            Box(
+                modifier = Modifier
+                    .size(12.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.onSurface)
+            )
+        }
+
+        // Title - centered
+        Text(
+            text = "BADGES",
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onSurface,
+            letterSpacing = 2.sp,
+            modifier = Modifier.align(Alignment.Center)
+        )
+
+        // Decorative dots on the right
+        Row(
+            modifier = Modifier.align(Alignment.CenterEnd),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(12.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.primary)
+            )
+            Box(
+                modifier = Modifier
+                    .size(12.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.onSurface)
+            )
+            Box(
+                modifier = Modifier
+                    .size(12.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.primary)
+            )
+        }
+    }
+}
+
+@Composable
+fun BadgeProfileSection(earnedBadges: Int, totalBadges: Int) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        // Badge/Profile image container
+        Box(
+            modifier = Modifier
+                .size(140.dp)
+                .clip(RoundedCornerShape(20.dp))
+                .border(
+                    width = 4.dp,
+                    color = MaterialTheme.colorScheme.primary,
+                    shape = RoundedCornerShape(20.dp)
+                )
+                .background(MaterialTheme.colorScheme.primaryContainer),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "🏆",
+                fontSize = 64.sp
+            )
+        }
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        // Badge count display
+        Surface(
+            shape = RoundedCornerShape(24.dp),
+            color = MaterialTheme.colorScheme.surface,
+            modifier = Modifier.padding(horizontal = 32.dp)
+        ) {
+            Text(
+                text = "BADGE COLLECTION",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface,
+                letterSpacing = 1.sp,
+                modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp)
+            )
+        }
+    }
+}
+
+@Composable
+fun BadgeProgressLine(earnedBadges: Int, totalBadges: Int) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            // Left line
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .height(3.dp)
+                    .background(MaterialTheme.colorScheme.primary)
+            )
+
+            // Center circle indicator
+            Box(
+                modifier = Modifier
+                    .padding(horizontal = 12.dp)
+                    .size(16.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.surface)
+                    .border(3.dp, MaterialTheme.colorScheme.primary, CircleShape)
+            )
+
+            // Right line
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .height(3.dp)
+                    .background(MaterialTheme.colorScheme.primary)
+            )
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            text = "$earnedBadges / $totalBadges Unlocked",
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Medium,
+            color = MaterialTheme.colorScheme.onBackground
+        )
     }
 }
 
@@ -195,16 +362,25 @@ fun BadgeItem(badge: Badge, onClick: () -> Unit) {
     Card(
         onClick = onClick,
         modifier = Modifier
-            .aspectRatio(1f),
+            .aspectRatio(1f)
+            .border(
+                width = 2.dp,
+                color = if (badge.isUnlocked)
+                    MaterialTheme.colorScheme.primary
+                else
+                    MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
+                shape = RoundedCornerShape(16.dp)
+            ),
         elevation = CardDefaults.cardElevation(
-            defaultElevation = if (badge.isUnlocked) 4.dp else 1.dp
+            defaultElevation = if (badge.isUnlocked) 6.dp else 2.dp
         ),
         colors = CardDefaults.cardColors(
             containerColor = if (badge.isUnlocked)
-                MaterialTheme.colorScheme.secondaryContainer
+                MaterialTheme.colorScheme.primaryContainer
             else
-                MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
-        )
+                Color(0xFFD4C5B0) // Slightly darker cream for locked badges
+        ),
+        shape = RoundedCornerShape(16.dp)
     ) {
         Box(
             modifier = Modifier.fillMaxSize(),
@@ -225,29 +401,29 @@ fun BadgeItem(badge: Badge, onClick: () -> Unit) {
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(
                     text = badge.name,
-                    fontSize = 11.sp,
-                    fontWeight = if (badge.isUnlocked) FontWeight.SemiBold else FontWeight.Normal,
+                    fontSize = 10.sp,
+                    fontWeight = if (badge.isUnlocked) FontWeight.Bold else FontWeight.Normal,
                     maxLines = 2,
+                    textAlign = TextAlign.Center,
                     color = if (badge.isUnlocked)
-                        MaterialTheme.colorScheme.onSecondaryContainer
+                        MaterialTheme.colorScheme.onPrimaryContainer
                     else
-                        MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                        MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
                     modifier = Modifier.alpha(if (badge.isUnlocked) 1f else 0.5f)
                 )
             }
 
-            // Lock icon for locked badges
+            // Lock icon for locked badges in top-right corner
             if (!badge.isUnlocked) {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(8.dp),
+                        .padding(6.dp),
                     contentAlignment = Alignment.TopEnd
                 ) {
                     Text(
                         text = "🔒",
-                        fontSize = 12.sp,
-                        modifier = Modifier.alpha(0.6f)
+                        fontSize = 16.sp
                     )
                 }
             }
@@ -274,8 +450,8 @@ fun BadgeDetailDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        containerColor = MaterialTheme.colorScheme.surface,
-        shape = MaterialTheme.shapes.large,
+        containerColor = MaterialTheme.colorScheme.background,
+        shape = RoundedCornerShape(24.dp),
         title = null,
         text = {
             Column(
@@ -287,14 +463,23 @@ fun BadgeDetailDialog(
                 // Badge icon
                 Card(
                     modifier = Modifier
-                        .size(100.dp),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+                        .size(120.dp)
+                        .border(
+                            width = 3.dp,
+                            color = if (badge.isUnlocked)
+                                MaterialTheme.colorScheme.primary
+                            else
+                                MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
+                            shape = RoundedCornerShape(20.dp)
+                        ),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
                     colors = CardDefaults.cardColors(
                         containerColor = if (badge.isUnlocked)
                             MaterialTheme.colorScheme.primaryContainer
                         else
-                            MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
-                    )
+                            MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f)
+                    ),
+                    shape = RoundedCornerShape(20.dp)
                 ) {
                     Box(
                         modifier = Modifier.fillMaxSize(),
@@ -330,22 +515,23 @@ fun BadgeDetailDialog(
                     text = badge.name,
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = MaterialTheme.colorScheme.onBackground
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
 
                 // Badge category
                 Surface(
-                    shape = MaterialTheme.shapes.small,
-                    color = MaterialTheme.colorScheme.secondaryContainer
+                    shape = RoundedCornerShape(12.dp),
+                    color = MaterialTheme.colorScheme.surface
                 ) {
                     Text(
-                        text = badge.category,
+                        text = badge.category.uppercase(),
                         fontSize = 12.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer,
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        letterSpacing = 1.sp,
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                     )
                 }
 
@@ -353,13 +539,23 @@ fun BadgeDetailDialog(
 
                 // Status card
                 Card(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .border(
+                            width = 2.dp,
+                            color = if (badge.isUnlocked)
+                                MaterialTheme.colorScheme.primary
+                            else
+                                MaterialTheme.colorScheme.outline,
+                            shape = RoundedCornerShape(16.dp)
+                        ),
                     colors = CardDefaults.cardColors(
                         containerColor = if (badge.isUnlocked)
                             MaterialTheme.colorScheme.primaryContainer
                         else
-                            MaterialTheme.colorScheme.errorContainer
-                    )
+                            MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)
+                    ),
+                    shape = RoundedCornerShape(16.dp)
                 ) {
                     Row(
                         modifier = Modifier
@@ -375,18 +571,19 @@ fun BadgeDetailDialog(
                             color = if (badge.isUnlocked)
                                 MaterialTheme.colorScheme.onPrimaryContainer
                             else
-                                MaterialTheme.colorScheme.onErrorContainer
+                                MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Column {
                             Text(
-                                text = if (badge.isUnlocked) "Unlocked!" else "Locked",
+                                text = if (badge.isUnlocked) "UNLOCKED!" else "LOCKED",
                                 fontSize = 16.sp,
-                                fontWeight = FontWeight.SemiBold,
+                                fontWeight = FontWeight.Bold,
+                                letterSpacing = 1.sp,
                                 color = if (badge.isUnlocked)
                                     MaterialTheme.colorScheme.onPrimaryContainer
                                 else
-                                    MaterialTheme.colorScheme.onErrorContainer
+                                    MaterialTheme.colorScheme.onSurfaceVariant
                             )
                             if (badge.isUnlocked && formattedDate != null) {
                                 Text(
@@ -403,10 +600,11 @@ fun BadgeDetailDialog(
 
                 // Description
                 Text(
-                    text = "Unlock Criteria",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    text = "UNLOCK CRITERIA",
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = 1.sp,
+                    color = MaterialTheme.colorScheme.surface,
                     modifier = Modifier.align(Alignment.Start)
                 )
 
@@ -415,19 +613,29 @@ fun BadgeDetailDialog(
                 Text(
                     text = badge.description,
                     fontSize = 14.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    color = MaterialTheme.colorScheme.onBackground,
                     lineHeight = 20.sp
                 )
             }
         },
         confirmButton = {
-            TextButton(
+            Button(
                 onClick = onDismiss,
-                colors = ButtonDefaults.textButtonColors(
-                    contentColor = MaterialTheme.colorScheme.primary
-                )
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = Color.White
+                ),
+                shape = RoundedCornerShape(12.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
             ) {
-                Text("Close", fontWeight = FontWeight.Medium)
+                Text(
+                    "CLOSE",
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = 1.sp,
+                    modifier = Modifier.padding(vertical = 4.dp)
+                )
             }
         }
     )
