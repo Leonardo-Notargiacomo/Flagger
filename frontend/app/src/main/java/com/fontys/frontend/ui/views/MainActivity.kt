@@ -1,6 +1,5 @@
 package com.fontys.frontend.ui.views
 
-
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -11,7 +10,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.core.content.ContextCompat
 
-class MapsActivity : ComponentActivity() {
+class MainActivity : ComponentActivity() {
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
             if (isGranted) {

@@ -22,15 +22,16 @@
         android:theme="@style/Theme.Frontend">
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="${MAPS_API_KEY}" />
+            android:value="${MAPS_API_KEY}"/>
 
-        <!-- MainActivity as the default launcher -->
         <activity
             android:name=".common.MainActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:exported="true"
             android:theme="@style/Theme.Frontend">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
