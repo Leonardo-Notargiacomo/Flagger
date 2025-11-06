@@ -16,6 +16,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.fontys.frontend.data.models.Badge
 import com.fontys.frontend.ui.viewmodels.BadgeViewModel
 import com.fontys.frontend.ui.viewmodels.BadgeUiState
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -258,6 +260,18 @@ fun BadgeDetailDialog(
     badge: Badge,
     onDismiss: () -> Unit
 ) {
+    // Format the date if available
+    val formattedDate = badge.unlockedAt?.let { dateString ->
+        try {
+            val zonedDateTime = ZonedDateTime.parse(dateString)
+            val dateFormatter = DateTimeFormatter.ofPattern("d/M/yyyy")
+            val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+            "${zonedDateTime.format(dateFormatter)} at ${zonedDateTime.format(timeFormatter)}"
+        } catch (_: Exception) {
+            dateString // Fallback to original string if parsing fails
+        }
+    }
+
     AlertDialog(
         onDismissRequest = onDismiss,
         containerColor = MaterialTheme.colorScheme.surface,
@@ -374,9 +388,9 @@ fun BadgeDetailDialog(
                                 else
                                     MaterialTheme.colorScheme.onErrorContainer
                             )
-                            if (badge.isUnlocked && badge.unlockedAt != null) {
+                            if (badge.isUnlocked && formattedDate != null) {
                                 Text(
-                                    text = "Earned: ${badge.unlockedAt}",
+                                    text = "Earned: $formattedDate",
                                     fontSize = 12.sp,
                                     color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
                                 )
