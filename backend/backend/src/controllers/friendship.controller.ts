@@ -54,11 +54,20 @@ export class FriendshipController {
   ): Promise<object[]> {
     const userId = parseInt(currentUser.id);
 
-    // TODO: Implement logic
     // 1. Find all friendships where userId = current user
-    // 2. Include friend user details (userName, email, bio, userImage)
-    // 3. Return array with friend info
-    throw new HttpErrors.NotImplemented('Get friends list not yet implemented');
+    const friendships = await this.friendshipRepository.find({
+      where: {userId},
+      include: [{relation: 'friend'}],
+    });
+
+    // 2 & 3. Return array with friend info (userName, email, bio, userImage)
+    return friendships.map(friendship => ({
+      id: friendship.id,
+      userId: friendship.userId,
+      friendId: friendship.friendId,
+      createdAt: friendship.createdAt,
+      friendDetails: friendship.friend,
+    }));
   }
 
   /**
@@ -75,11 +84,14 @@ export class FriendshipController {
   ): Promise<void> {
     const userId = parseInt(currentUser.id);
 
-    // TODO: Implement logic
     // 1. Verify friendship exists
-    // 2. Delete both directions (userId→friendId and friendId→userId)
-    // 3. Use friendshipRepository.deleteBidirectional()
-    throw new HttpErrors.NotImplemented('Remove friend not yet implemented');
+    const exists = await this.friendshipRepository.friendshipExists(userId, friendId);
+    if (!exists) {
+      throw new HttpErrors.NotFound('Friendship not found');
+    }
+
+    // 2 & 3. Delete both directions using helper method
+    await this.friendshipRepository.deleteBidirectional(userId, friendId);
   }
 
   /**
@@ -104,10 +116,18 @@ export class FriendshipController {
   ): Promise<Flag[]> {
     const userId = parseInt(currentUser.id);
 
-    // TODO: Implement logic
     // 1. Verify friendship exists between current user and friendId
-    // 2. Get all flags where goUserId = friendId
+    const exists = await this.friendshipRepository.friendshipExists(userId, friendId);
+    if (!exists) {
+      throw new HttpErrors.Forbidden('You can only view flags of your friends');
+    }
+
+    // 2. Get all flags where userId = friendId
+    const flags = await this.flagRepository.find({
+      where: {userId: friendId},
+    });
+
     // 3. Return flags
-    throw new HttpErrors.NotImplemented('Get friend flags not yet implemented');
+    return flags;
   }
 }

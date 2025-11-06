@@ -13,7 +13,7 @@ import {
   HttpErrors,
 } from '@loopback/rest';
 import {SecurityBindings, UserProfile} from '@loopback/security';
-import {FriendRequest, Friendship} from '../models';
+import {FriendRequest} from '../models';
 import {FriendRequestRepository, FriendshipRepository, GoUserRepository} from '../repositories';
 
 @authenticate('jwt')
