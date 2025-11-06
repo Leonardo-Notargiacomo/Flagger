@@ -57,7 +57,7 @@ export class FriendRequestController {
     const {toUserId} = request;
 
     // 1. Check if toUser exists
-    const toUser = await this.goUserRepository.findById(toUserId).catch(() => {
+    await this.goUserRepository.findById(toUserId).catch(() => {
       throw new HttpErrors.NotFound(`User with id ${toUserId} not found`);
     });
 
