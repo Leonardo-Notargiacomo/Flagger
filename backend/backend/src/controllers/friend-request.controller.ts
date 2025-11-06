@@ -54,13 +54,46 @@ export class FriendRequestController {
     request: {toUserId: number},
   ): Promise<FriendRequest> {
     const fromUserId = parseInt(currentUser.id);
+    const {toUserId} = request;
 
-    // TODO: Implement logic
     // 1. Check if toUser exists
+    const toUser = await this.goUserRepository.findById(toUserId).catch(() => {
+      throw new HttpErrors.NotFound(`User with id ${toUserId} not found`);
+    });
+
+    // Prevent sending request to yourself
+    if (fromUserId === toUserId) {
+      throw new HttpErrors.BadRequest('Cannot send friend request to yourself');
+    }
+
     // 2. Check if already friends
-    // 3. Check if request already exists
+    const alreadyFriends = await this.friendshipRepository.friendshipExists(fromUserId, toUserId);
+    if (alreadyFriends) {
+      throw new HttpErrors.BadRequest('You are already friends with this user');
+    }
+
+    // 3. Check if request already exists (in either direction)
+    const existingRequests = await this.friendRequestRepository.find({
+      where: {
+        or: [
+          {fromUserId, toUserId, status: 'PENDING'},
+          {fromUserId: toUserId, toUserId: fromUserId, status: 'PENDING'},
+        ],
+      },
+    });
+
+    if (existingRequests.length > 0) {
+      throw new HttpErrors.Conflict('A pending friend request already exists between these users');
+    }
+
     // 4. Create friend request
-    throw new HttpErrors.NotImplemented('Friend request sending not yet implemented');
+    const friendRequest = await this.friendRequestRepository.create({
+      fromUserId,
+      toUserId,
+      status: 'PENDING',
+    });
+
+    return friendRequest;
   }
 
   /**
@@ -84,9 +117,19 @@ export class FriendRequestController {
   ): Promise<FriendRequest[]> {
     const userId = parseInt(currentUser.id);
 
-    // TODO: Implement logic
     // Get all requests where toUserId = current user and status = PENDING
-    throw new HttpErrors.NotImplemented('Get received requests not yet implemented');
+    const requests = await this.friendRequestRepository.find({
+      where: {
+        toUserId: userId,
+        status: 'PENDING',
+      },
+      include: [
+        {relation: 'fromUser'},
+        {relation: 'toUser'},
+      ],
+    });
+
+    return requests;
   }
 
   /**
@@ -110,9 +153,18 @@ export class FriendRequestController {
   ): Promise<FriendRequest[]> {
     const userId = parseInt(currentUser.id);
 
-    // TODO: Implement logic
     // Get all requests where fromUserId = current user
-    throw new HttpErrors.NotImplemented('Get sent requests not yet implemented');
+    const requests = await this.friendRequestRepository.find({
+      where: {
+        fromUserId: userId,
+      },
+      include: [
+        {relation: 'fromUser'},
+        {relation: 'toUser'},
+      ],
+    });
+
+    return requests;
   }
 
   /**
@@ -140,13 +192,39 @@ export class FriendRequestController {
   ): Promise<{message: string; friendRequest: FriendRequest}> {
     const userId = parseInt(currentUser.id);
 
-    // TODO: Implement logic
     // 1. Find the friend request
+    const friendRequest = await this.friendRequestRepository.findById(requestId).catch(() => {
+      throw new HttpErrors.NotFound('Friend request not found');
+    });
+
     // 2. Verify current user is the recipient (toUserId)
+    if (friendRequest.toUserId !== userId) {
+      throw new HttpErrors.Forbidden('You can only accept friend requests sent to you');
+    }
+
     // 3. Check status is PENDING
+    if (friendRequest.status !== 'PENDING') {
+      throw new HttpErrors.BadRequest(`Friend request is already ${friendRequest.status.toLowerCase()}`);
+    }
+
     // 4. Update status to ACCEPTED
+    await this.friendRequestRepository.updateById(requestId, {status: 'ACCEPTED'});
+    friendRequest.status = 'ACCEPTED';
+
     // 5. Create 2 Friendship records (A→B and B→A)
-    throw new HttpErrors.NotImplemented('Accept friend request not yet implemented');
+    await this.friendshipRepository.create({
+      userId: friendRequest.fromUserId,
+      friendId: friendRequest.toUserId,
+    });
+    await this.friendshipRepository.create({
+      userId: friendRequest.toUserId,
+      friendId: friendRequest.fromUserId,
+    });
+
+    return {
+      message: 'Friend request accepted successfully',
+      friendRequest,
+    };
   }
 
   /**
@@ -173,11 +251,27 @@ export class FriendRequestController {
   ): Promise<{message: string}> {
     const userId = parseInt(currentUser.id);
 
-    // TODO: Implement logic
     // 1. Find the friend request
+    const friendRequest = await this.friendRequestRepository.findById(requestId).catch(() => {
+      throw new HttpErrors.NotFound('Friend request not found');
+    });
+
     // 2. Verify current user is the recipient
+    if (friendRequest.toUserId !== userId) {
+      throw new HttpErrors.Forbidden('You can only reject friend requests sent to you');
+    }
+
+    // Check status is PENDING
+    if (friendRequest.status !== 'PENDING') {
+      throw new HttpErrors.BadRequest(`Friend request is already ${friendRequest.status.toLowerCase()}`);
+    }
+
     // 3. Update status to REJECTED
-    throw new HttpErrors.NotImplemented('Reject friend request not yet implemented');
+    await this.friendRequestRepository.updateById(requestId, {status: 'REJECTED'});
+
+    return {
+      message: 'Friend request rejected successfully',
+    };
   }
 
   /**
@@ -194,10 +288,17 @@ export class FriendRequestController {
   ): Promise<void> {
     const userId = parseInt(currentUser.id);
 
-    // TODO: Implement logic
     // 1. Find the friend request
+    const friendRequest = await this.friendRequestRepository.findById(requestId).catch(() => {
+      throw new HttpErrors.NotFound('Friend request not found');
+    });
+
     // 2. Verify current user is the sender (fromUserId)
+    if (friendRequest.fromUserId !== userId) {
+      throw new HttpErrors.Forbidden('You can only cancel friend requests you sent');
+    }
+
     // 3. Delete the request
-    throw new HttpErrors.NotImplemented('Cancel friend request not yet implemented');
+    await this.friendRequestRepository.deleteById(requestId);
   }
 }
