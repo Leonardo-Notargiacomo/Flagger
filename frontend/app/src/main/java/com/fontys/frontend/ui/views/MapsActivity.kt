@@ -21,6 +21,9 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.annotation.RequiresPermission
 import androidx.core.app.ActivityCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import com.fontys.frontend.R
 import com.fontys.frontend.utils.ExploreNotificationManager
 import com.fontys.frontend.utils.FCMTokenManager
@@ -51,6 +54,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         binding = ActivityMapsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // Enable immersive mode to hide system bars
+        setupImmersiveMode()
+
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
 
@@ -245,6 +252,26 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 Log.e(TAG, "Failed to subscribe to topic", exception)
             }
         )
+    }
+
+    private fun setupImmersiveMode() {
+        // Enable edge-to-edge display
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
+        // Hide system bars
+        val windowInsetsController = WindowCompat.getInsetsController(window, window.decorView)
+        windowInsetsController.apply {
+            hide(WindowInsetsCompat.Type.systemBars())
+            systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        }
+    }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (hasFocus) {
+            // Re-apply immersive mode when window regains focus
+            setupImmersiveMode()
+        }
     }
 }
 
