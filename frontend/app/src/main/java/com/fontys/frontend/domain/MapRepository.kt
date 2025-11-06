@@ -147,7 +147,8 @@ class MapRepository { // No need for companion object if we want an instance for
                             val loc = json.getJSONObject("location")
                             val lat = loc.getDouble("latitude")
                             val lng = loc.getDouble("longitude")
-                            FlagDisplay(name, LatLng(lat, lng))
+
+                            FlagDisplay(name, LatLng(lat, lng),id)
                         } else {
                             val errorBody = response.body?.string()
                             Log.e("PlacesAPI", "Error fetching details for id=$id: ${response.code} - $errorBody")

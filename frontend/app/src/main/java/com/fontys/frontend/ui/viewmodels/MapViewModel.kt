@@ -68,6 +68,7 @@ class MapsViewModel(application: Application) : AndroidViewModel(application) {
             _error.value = null
             try {
                 val result = flagRepository.addFlag(userId,placeId)
+                getFlags(userId)
             } catch (e: Exception) {
                 _error.value = e.localizedMessage ?: "The place has not been marked"
                 Log.e("MapsViewModel", "Error marking the place", e)

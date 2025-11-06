@@ -28,9 +28,10 @@ fun MapsScreen(viewModel: MapsViewModel = viewModel()) {
     var showDialog by remember{ mutableStateOf(false) }
     var selectedPlace by remember { mutableStateOf<PlaceService?>(null) }
     val context = LocalContext.current
+    val selectedPlaces = remember { mutableStateListOf<PlaceService>() }
     LaunchedEffect(Unit) { viewModel.loadUserLocation() }
     val userFlags by viewModel.userFlags.collectAsState()
-    val currentUserId = 6
+    val currentUserId = 1
     LaunchedEffect(currentUserId) {
         if (currentUserId != null) {
             viewModel.getFlags(currentUserId)
@@ -57,19 +58,23 @@ fun MapsScreen(viewModel: MapsViewModel = viewModel()) {
             googleMapOptionsFactory = { googleMapOptions }
         ) {
 
-        for(spot in userFlags){
-            Marker(
-                state = MarkerState(position = LatLng(spot.location.latitude, spot.location.longitude)),
-                title = spot.displayName,
-                snippet = "Selected by user"
-            )
-        }
-            selectedPlace?.let { place ->
+            userFlags.forEach { spot ->
                 Marker(
-                    state = MarkerState(position = LatLng(place.latitude, place.longitude)),
-                    title = place.displayName,
-                    snippet = "Selected by user"
+                    state = MarkerState(position = LatLng(spot.location.latitude, spot.location.longitude)),
+                    title = spot.displayName,
+                    snippet = "Flagged by you",
+                    alpha = 0.7f
                 )
+        }
+            places.forEach { place ->
+                val isAlreadyFlagged = userFlags.any { flaggedSpot -> flaggedSpot.lcoationId ==place.id }
+                if (!isAlreadyFlagged) {
+                    Marker(
+                        state = MarkerState(position = LatLng(place.latitude, place.longitude)),
+                        title = place.displayName,
+                        snippet = "Nearby"
+                    )
+                }
             }
         }
 
@@ -111,25 +116,32 @@ fun MapsScreen(viewModel: MapsViewModel = viewModel()) {
                 title = { Text("Select a place to mark") },
                 text = {
                     Column {
-                        places.forEach { place ->
+                        val unflaggedPlaces = places.filter { nearbyPlace ->
+                            !userFlags.any { flaggedSpot -> flaggedSpot.lcoationId == nearbyPlace.id }
+                        }
+                        if (unflaggedPlaces.isEmpty()) {
+                        Text("All nearby places are already flagged!")
+                        } else {
+                        unflaggedPlaces.forEach { place ->
                             TextButton(onClick = {
-                                selectedPlace = place
+
                                 showDialog = false
-                             // Move camera when selected
-                                viewModel.markTheSpot(6,place.id)
+                                viewModel.markTheSpot(currentUserId,place.id)
                                 coroutineScope.launch {
                                     cameraPositionState.animate(
                                         CameraUpdateFactory.newLatLngZoom(
                                             LatLng(place.latitude, place.longitude),
                                             16f
                                         )
+                                        )
 
-                                    )
                                 }
+
                             }) {
                                 Text(place.displayName)
                             }
                         }
+                    }
                     }
                 },
                 confirmButton = {},

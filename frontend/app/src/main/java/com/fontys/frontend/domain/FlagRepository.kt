@@ -19,8 +19,8 @@ import com.fontys.frontend.data.FlagResponse // Import your new FlagResponse dat
 
 class FlagRepository{
 
-    val BASE_URL = "https://group-repository-2025-android-1.onrender.com/"
-    var token ="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYiLCJuYW1lIjoic3BhY2VnaG9zdHB1cnJwIiwiZW1haWwiOiJ3d0B3dy53dyIsImlhdCI6MTc2MjE2NDQzNSwiZXhwIjoxNzYyMTg2MDM1fQ.w-WsvvHVhhMZ8hThMePIbC-V2mlxDl-it1kjRykyakQ"
+    val BASE_URL = "https://group-repository-2025-android-1-6of2.onrender.com/"
+    var token ="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJuYW1lIjoiZ2FuZ3N0YWxrZWQiLCJlbWFpbCI6Ind3d0B3dy53dyIsImlhdCI6MTc2MjQxNjk0MSwiZXhwIjoxNzYyNDM4NTQxfQ.xowNshI30rRavngwql8eIJ59NADVvpsHGXtXaPXJyFQ"
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY
     }
