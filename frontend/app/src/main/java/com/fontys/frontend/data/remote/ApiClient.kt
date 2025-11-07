@@ -26,4 +26,5 @@ object ApiClient {
         .build()
 
     val badgeApi: BadgeApi = retrofit.create(BadgeApi::class.java)
+    val friendsApi: FriendsApi = retrofit.create(FriendsApi::class.java)
 }
