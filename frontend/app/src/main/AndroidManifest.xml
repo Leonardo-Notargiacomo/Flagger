@@ -27,22 +27,13 @@
         <activity
             android:name=".common.MainActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-            android:exported="true"
-            android:theme="@style/Theme.Frontend">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <!-- MapsActivity without launcher intent -->
-        <activity
-            android:name=".ui.views.MapsActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-            android:exported="false"
-            android:label="@string/title_activity_maps" />
-
         <!-- Firebase Cloud Messaging Service -->
         <service
             android:name=".services.ExploreFirebaseMessagingService"

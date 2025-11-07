@@ -44,7 +44,7 @@ fun LoginView(
 
 
         Button(
-            modifier = Modifier.align(),
+            modifier = Modifier.align(Alignment.CenterHorizontally),
             onClick = { navController.navigate(RegistrationView) }
         ) {
             Text("Sign up")

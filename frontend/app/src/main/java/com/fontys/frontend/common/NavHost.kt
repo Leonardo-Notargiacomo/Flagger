@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.fontys.frontend.ui.views.LoginView
+import com.fontys.frontend.ui.views.MapsScreen
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -33,7 +34,7 @@ fun NavHost(
         startDestination = LoginView
     ) {
         composable<MapView> {
-            //MapsActivity()
+            MapsScreen(navController)
         }
         composable<FriendView> {
             //FriendView()

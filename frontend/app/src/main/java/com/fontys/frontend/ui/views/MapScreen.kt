@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.fontys.frontend.R
 import com.fontys.frontend.data.PlaceService
 import com.fontys.frontend.ui.viewmodels.MapsViewModel
@@ -18,10 +19,9 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.maps.android.compose.*
 import kotlinx.coroutines.launch
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MapsScreen(viewModel: MapsViewModel = viewModel()) {
+fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewModel()) {
     val userLocation by viewModel.userLocation.collectAsState()
     val places by viewModel.places.collectAsState()
     val cameraPositionState = rememberCameraPositionState()
@@ -48,7 +48,7 @@ fun MapsScreen(viewModel: MapsViewModel = viewModel()) {
     val googleMapOptions = remember {
         GoogleMapOptions().mapId("349a2b06249ce52186cf3c94")
     }
-    Box(Modifier.fillMaxSize()) {
+    Box(Modifier.fillMaxSize().padding(bottom = 130.dp)) {
         GoogleMap(
             modifier = Modifier.fillMaxSize(),
             cameraPositionState = cameraPositionState,
@@ -82,7 +82,7 @@ fun MapsScreen(viewModel: MapsViewModel = viewModel()) {
         Column(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(16.dp),
+                .padding(6.dp),
             horizontalAlignment = Alignment.End
         )
 
