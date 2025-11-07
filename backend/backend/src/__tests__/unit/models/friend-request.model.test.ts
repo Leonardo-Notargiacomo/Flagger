@@ -1,20 +1,21 @@
 import {expect} from '@loopback/testlab';
 import {FriendRequest} from '../../../models';
-import {
-  testdb,
-  givenEmptyDatabase,
-} from '../../helpers/database.helpers';
-import {FriendRequestRepository} from '../../../repositories';
+import {FriendRequestRepository, GoUserRepository, GoUserCredentialsRepository} from '../../../repositories';
+import {juggler} from '@loopback/repository';
 
 describe('FriendRequest Model (Unit Tests)', () => {
   let friendRequestRepository: FriendRequestRepository;
+  let testdb: juggler.DataSource;
 
   before(async () => {
-    await givenEmptyDatabase();
+    // Create in-memory database for testing
+    testdb = new juggler.DataSource({
+      name: 'testdb',
+      connector: 'memory',
+    });
 
     // Create mock getter for GoUserRepository
     const goUserRepositoryGetter = async () => {
-      const {GoUserRepository, GoUserCredentialsRepository} = await import('../../../repositories');
       const credentialsRepoGetter = async () => new GoUserCredentialsRepository(testdb);
       return new GoUserRepository(testdb, credentialsRepoGetter);
     };
