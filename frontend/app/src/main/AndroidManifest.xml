@@ -36,6 +36,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ui.views.FriendsActivity"
+            android:exported="false"
+            android:label="Friends" />
+
         <!-- Firebase Cloud Messaging Service -->
         <service
             android:name=".services.ExploreFirebaseMessagingService"

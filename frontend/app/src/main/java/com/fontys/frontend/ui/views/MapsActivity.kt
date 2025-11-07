@@ -12,6 +12,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.fontys.frontend.databinding.ActivityMapsBinding
 import android.Manifest
 import android.app.AlertDialog
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.widget.Button
@@ -81,6 +82,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 GoogleMap.MAP_TYPE_TERRAIN -> GoogleMap.MAP_TYPE_HYBRID
                 else -> GoogleMap.MAP_TYPE_NORMAL
             }
+        }
+
+        binding.btnFriends.setOnClickListener {
+            val intent = Intent(this, FriendsActivity::class.java)
+            startActivity(intent)
         }
         // Init fused location provider
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
