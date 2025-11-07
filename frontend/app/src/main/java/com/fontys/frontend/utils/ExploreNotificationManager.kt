@@ -8,7 +8,7 @@ import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.fontys.frontend.R
-import com.fontys.frontend.ui.views.MapsActivity
+import com.fontys.frontend.common.MainActivity
 
 class ExploreNotificationManager(private val context: Context) {
 
@@ -46,7 +46,7 @@ class ExploreNotificationManager(private val context: Context) {
      */
     fun showCustomExplorationReminder(title: String, message: String) {
         // Create an intent to open MapsActivity when notification is tapped
-        val intent = Intent(context, MapsActivity::class.java).apply {
+        val intent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
 

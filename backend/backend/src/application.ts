@@ -17,6 +17,8 @@ import {
   UserServiceBindings,
 } from '@loopback/authentication-jwt';
 import {DbDataSource} from './datasources';
+import {MyUserService} from './services';
+import {GoUserRepository} from './repositories';
 // ------------------------------------
 export {ApplicationConfig};
 
@@ -55,6 +57,10 @@ export class BackendApplication extends BootMixin(
     this.component(JWTAuthenticationComponent);
     // Bind datasource
     this.dataSource(DbDataSource, UserServiceBindings.DATASOURCE_NAME);
+    // Bind custom user service to override JWT component's default
+    this.bind(UserServiceBindings.USER_SERVICE).toClass(MyUserService as any);
+    // Bind custom user repository to override JWT component's default
+    this.bind(UserServiceBindings.USER_REPOSITORY).toClass(GoUserRepository as any);
     // ------------- End of JWT -------------
   }
 }
