@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">frontend</string>
     <string name="title_activity_maps">MapsActivity</string>
+    <string name="title_home">Home</string>
+    <string name="title_maps">Maps</string>
+    <string name="title_profile">Profile</string>
 </resources>

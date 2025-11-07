@@ -31,6 +31,8 @@ This document outlines the use cases for the project. Each use case describes a 
   3. [Return to main scenario step]
 - n/a [if no extensions apply]
 
+**link:** [link to the folder with artifacts]
+
 ---
 
 ### Use Case: Receive Daily Notifications
@@ -59,3 +61,55 @@ This document outlines the use cases for the project. Each use case describes a 
 
 **Extensions:**
 - n/a
+
+
+### Use Case: Earn Badges for Exploration Activity
+**Actor:** User
+
+**Description:** The user earns badges automatically by completing explorations and maintaining streaks. Badges serve as recognition for achievements.
+
+**Precondition:** The user is logged into their account and has access to exploration features.
+
+**Scenario:**
+1. User completes an exploration by logging a location visit.
+2. System records the exploration event and updates exploration count and streak data.
+3. System automatically checks all badge unlock criteria.
+4. System verifies if badge requirements are met (e.g., 5 explorations, 3-day streak).
+5. System awards corresponding badge(s) to user's profile with timestamp.
+6. System logs notification for newly earned badge(s).
+7. User navigates to badge screen to view collection.
+8. System displays all badges (locked/unlocked) with status and progress.
+9. User selects a badge to view detailed information.
+
+**Result:** User earns badge(s) for milestones, displayed in collection with unlock timestamps and progress tracking.
+
+**Exception:**
+- 2a. Exploration logging fails: System notifies user to retry.
+- 3b. Badge verification fails: System logs error internally and continues.
+- 5c. Badge awarding fails: System retries during next exploration event.
+- 8d. Badge loading fails: System displays error with retry button.
+
+**Extensions:**
+- 9a User views badge details: System shows detail dialog with name, description, category, icon, unlock date, and requirements for locked badges.
+- 7a User checks progress: System displays earned badge count and progress indicator (e.g., "3 / 9 badges earned").
+
+**Link:** [Full use case details](/documentation/artifacts/Use_Cases/[Badge]/TestScenario&Desc.md)
+
+---
+
+### Use Case: changing user information
+**Actor:** User
+
+**Description:** The user wants to update their personal information in the system.
+
+**Precondition:** The user is logged into their account.
+
+**Scenario:**
+1. User navigates to the "Profile" section.
+2. System displays the user's current information.
+3. User changes the info they want to change
+4. system updates the information and confirms the changes.
+
+**Result:** users info has changed.
+
+**Link:** [readme for further info](/documentation/artifacts/Use_Cases/change_user_info/README.md)
