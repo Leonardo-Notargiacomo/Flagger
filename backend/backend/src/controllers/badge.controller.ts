@@ -1,6 +1,7 @@
 import {get, param, response} from '@loopback/rest';
 import {repository} from '@loopback/repository';
 import {BadgeRepository, UserBadgeRepository} from '../repositories';
+import {Badge} from '../models';
 
 export class BadgeController {
   constructor(
@@ -74,7 +75,7 @@ export class BadgeController {
       const unlockedIds = new Set(userBadges.map(ub => ub.badgeId));
       console.log(`[BadgeController] Unlocked badge IDs: ${Array.from(unlockedIds).join(', ')}`);
 
-      const badgesWithStatus = allBadges.map(badge => ({
+      const badgesWithStatus = allBadges.map((badge: Badge) => ({
         ...badge,
         isUnlocked: unlockedIds.has(badge.id!),
         unlockedAt: userBadges.find(ub => ub.badgeId === badge.id)?.unlockedAt,
