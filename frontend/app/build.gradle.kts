@@ -84,9 +84,21 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling")
     implementation("androidx.compose.material3:material3")
-    implementation("androidx.compose.material:material-icons-extended")
+    implementation(libs.androidx.compose.material.icons.extended)
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.0")
     implementation("androidx.activity:activity-compose:1.9.0") // Use the latest stable version
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-scalars:2.9.0")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("org.json:json:20240303")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
 
+
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    // Gson Converter
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    // Coroutines for asynchronous calls
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 }
 
 // ✅ Kotlin DSL way to configure Secrets plugin

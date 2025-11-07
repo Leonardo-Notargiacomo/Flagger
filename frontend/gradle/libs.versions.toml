@@ -21,6 +21,7 @@ navigationFragmentKtx = "2.9.5"
 navigationUiKtx = "2.9.5"
 
 [libraries]
+androidx-compose-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }
