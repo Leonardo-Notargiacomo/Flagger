@@ -10,7 +10,6 @@ plugins {
 android {
     namespace = "com.fontys.frontend"
     compileSdk = 36
-
     defaultConfig {
         applicationId = "com.fontys.frontend"
         minSdk = 33
@@ -39,12 +38,12 @@ android {
     }
     buildFeatures {
         viewBinding = true
-        compose  = true
-
+        compose = true
     }
 }
 
 dependencies {
+    // Firebase - BOM manages versions
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
 
@@ -64,20 +63,33 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.material3)
     implementation(libs.jetbrains.kotlinx.serialization.json)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
 
+    // Retrofit for API calls
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.converter.gson)
+    implementation(libs.okhttp)
+    implementation(libs.okhttp.logging.interceptor)
+    implementation(libs.gson)
+
+    // AndroidX Core
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
-    implementation(libs.material)
-    implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.lifecycle.livedata.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
+
+    // Material Design
     implementation(libs.material)
+
+    // Google Play Services
     implementation(libs.play.services.maps)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.play.services.location)
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-scalars:2.9.0")    
+    implementation("com.squareup.retrofit2:converter-scalars:2.9.0")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("org.json:json:20240303")
 
@@ -108,6 +120,22 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-test-manifest")
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
 
+    // Jetpack Compose
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.ui.graphics)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.foundation)
+    implementation(libs.androidx.compose.runtime)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    debugImplementation(libs.androidx.compose.ui.tooling)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
+
+    // Image loading
+    implementation("io.coil-kt:coil-compose:2.5.0")
+
+    // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

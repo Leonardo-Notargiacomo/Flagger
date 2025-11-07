@@ -29,10 +29,12 @@
     "docker:run": "docker run -p 3000:3000 -d backend",
     "premigrate": "npm run build",
     "migrate": "node ./dist/migrate",
+    "seed": "node ./dist/seed-badges",
     "preopenapi-spec": "npm run build",
     "openapi-spec": "node ./dist/openapi-spec",
     "prestart": "npm run rebuild",
-    "start": "node -r source-map-support/register .",
+    "start": "npm run seed-if-needed && node -r source-map-support/register .",
+    "seed-if-needed": "node ./dist/seed-badges || true",
     "clean": "lb-clean dist *.tsbuildinfo .eslintcache",
     "rebuild": "npm run clean && npm run build"
   },
