@@ -8,7 +8,9 @@ import androidx.navigation.compose.composable
 import com.fontys.frontend.ui.views.BadgeScreen
 import com.fontys.frontend.ui.views.LoginView
 import com.fontys.frontend.ui.views.MapsScreen
+import com.fontys.frontend.ui.views.ProfileScreen
 import kotlinx.serialization.Serializable
+
 
 @Serializable
 object MapView
@@ -17,7 +19,7 @@ object MapView
 object FriendView
 
 @Serializable
-object UserView
+object ProfileView
 
 @Serializable
 object BadgeView
@@ -43,8 +45,8 @@ fun NavHost(
         composable<FriendView> {
             //FriendView()
         }
-        composable<UserView> {
-            //UserView()
+        composable<ProfileView> {
+            ProfileScreen()
         }
         composable<BadgeView> {
             // TODO: Get actual userId from auth system

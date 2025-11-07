@@ -20,7 +20,7 @@ import com.fontys.frontend.common.BadgeView
 import com.fontys.frontend.common.FriendView
 import com.fontys.frontend.common.MapView
 import com.fontys.frontend.common.NavHost
-import com.fontys.frontend.common.UserView
+import com.fontys.frontend.common.ProfileView
 
 @Composable
 fun NavBar() {
@@ -60,7 +60,7 @@ fun NavBar() {
                 )
                 NavigationBarItem(
                     selected = false,
-                    onClick = {navController.navigate(UserView)},
+                    onClick = {navController.navigate(ProfileView)},
                     icon = { Icon(
                         modifier = Modifier.size(40.dp),
                         imageVector = Icons.Default.AccountCircle,
