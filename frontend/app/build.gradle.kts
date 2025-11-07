@@ -46,33 +46,37 @@ dependencies {
     // Firebase - BOM manages versions
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
-
-    // Firebase Cloud Messaging
     implementation(libs.firebase.messaging.ktx)
 
-    // Compose BOM
-    implementation(libs.androidx.compose.material.icons.extended)
-
+    // Compose BOM and UI components
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
-    implementation(libs.androidx.navigation.compose)
-    implementation(libs.androidx.ui)
-    implementation(libs.androidx.lifecycle.viewmodel.ktx)
-    debugImplementation(libs.androidx.compose.ui.tooling)
+    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.foundation)
+    implementation(libs.androidx.compose.runtime)
+    implementation(libs.androidx.compose.material.icons.extended)
     implementation(libs.androidx.activity.compose)
-    implementation(libs.androidx.material3)
-    implementation(libs.jetbrains.kotlinx.serialization.json)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.navigation.compose)
+    debugImplementation(libs.androidx.compose.ui.tooling)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
     androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
 
-    // Retrofit for API calls
+    // Kotlin Serialization
+    implementation(libs.jetbrains.kotlinx.serialization.json)
+
+    // Networking - Retrofit & OkHttp
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter.gson)
+    implementation("com.squareup.retrofit2:converter-scalars:2.9.0")
     implementation(libs.okhttp)
     implementation(libs.okhttp.logging.interceptor)
     implementation(libs.gson)
 
-    // AndroidX Core
+    // AndroidX Core Libraries
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.constraintlayout)
@@ -84,56 +88,16 @@ dependencies {
     // Material Design
     implementation(libs.material)
 
-    // Google Play Services
+    // Google Play Services - Maps & Location
     implementation(libs.play.services.maps)
-    implementation(libs.androidx.constraintlayout)
     implementation(libs.play.services.location)
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-scalars:2.9.0")
-    implementation("com.squareup.okhttp3:okhttp:4.12.0")
-    implementation("org.json:json:20240303")
-
-    val composeBom = platform("androidx.compose:compose-bom:2025.10.01")
-    implementation(composeBom)
-    androidTestImplementation(composeBom)
-
-    implementation("androidx.compose.ui:ui")
-    implementation("androidx.compose.ui:ui-tooling-preview")
-    implementation("androidx.compose.material3:material3")
-    implementation("androidx.activity:activity-compose")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose")
-    implementation("androidx.compose.runtime:runtime-livedata")
-
     implementation("com.google.maps.android:maps-compose:4.3.3")
-    implementation("com.google.android.gms:play-services-maps:19.0.0")
-    implementation("com.google.android.gms:play-services-location:21.3.0")
-
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation("com.squareup.retrofit2:converter-scalars:2.9.0")
-
-    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
-    implementation("com.squareup.okhttp3:okhttp:4.12.0")
-
-
-    debugImplementation("androidx.compose.ui:ui-tooling")
-    debugImplementation("androidx.compose.ui:ui-test-manifest")
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
-
-    // Jetpack Compose
-    implementation(libs.androidx.activity.compose)
-    implementation(libs.androidx.compose.ui)
-    implementation(libs.androidx.compose.ui.graphics)
-    implementation(libs.androidx.compose.ui.tooling.preview)
-    implementation(libs.androidx.compose.material3)
-    implementation(libs.androidx.compose.foundation)
-    implementation(libs.androidx.compose.runtime)
-    implementation(libs.androidx.lifecycle.viewmodel.compose)
-    debugImplementation(libs.androidx.compose.ui.tooling)
-    debugImplementation(libs.androidx.compose.ui.test.manifest)
 
     // Image loading
     implementation("io.coil-kt:coil-compose:2.5.0")
+
+    // Other utilities
+    implementation("org.json:json:20240303")
 
     // Testing
     testImplementation(libs.junit)
