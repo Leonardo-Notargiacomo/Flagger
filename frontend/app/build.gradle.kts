@@ -1,7 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.compose)
     id("com.google.gms.google-services")
     alias(libs.plugins.google.android.libraries.mapsplatform.secrets.gradle.plugin)
 }
@@ -12,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId = "com.fontys.frontend"
-        minSdk = 33
+        minSdk = 31
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
@@ -29,6 +28,7 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -38,25 +38,15 @@ android {
     }
     buildFeatures {
         viewBinding = true
-        compose = true
     }
 }
 
 dependencies {
-
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
 
     // Firebase Cloud Messaging
     implementation("com.google.firebase:firebase-messaging-ktx:24.1.0")
-
-    // Compose BOM
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.compose.ui)
-    implementation(libs.androidx.compose.ui.tooling.preview)
-    debugImplementation(libs.androidx.compose.ui.tooling)
-    implementation(libs.androidx.activity.compose)
-    implementation(libs.androidx.material3)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -69,6 +59,8 @@ dependencies {
     implementation(libs.play.services.maps)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.play.services.location)
+    implementation(libs.androidx.material3)
+    implementation(libs.androidx.compose.material)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
