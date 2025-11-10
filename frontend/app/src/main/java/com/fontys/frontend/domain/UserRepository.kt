@@ -1,5 +1,6 @@
 package com.fontys.frontend.domain
 
+import android.util.Log
 import com.fontys.frontend.data.UserLogin
 import com.fontys.frontend.data.UserReturn
 import com.google.gson.GsonBuilder
@@ -16,7 +17,7 @@ import com.fontys.frontend.domain.UserAPIService
 
 object UserRepository {
 
-    val BASE_URL = "https://group-repository-2025-android-1-6of2.onrender.com/"
+    val BASE_URL = "https://group-repository-2025-android-1.onrender.com/"
     var token =""
     var userId=0
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
@@ -84,10 +85,12 @@ object UserRepository {
                 }
             }
             val response = userApiService.login(headers, UserLogin(email,password))
-            if(response.isSuccessful){
-                val json = response.body()?:""
-                token = json
-
+            if (response.isSuccessful) {
+                val res = response.body()
+                if (res != null) {
+                    token = res.token
+                    Log.d("TOKEN", "Logged in with token: $token")
+                }
             }
         } catch (
             e: Exception
@@ -97,17 +100,11 @@ object UserRepository {
     }
     suspend fun whoAmIm()  {
         try {
-            val headers = HashMap<String, String>().apply {
-                put("Accept", "application/json")
-                put("Content-Type", "application/json")
-                token?.let { token ->
-                    put("Authorization", "Bearer $token") // Add JWT token if available
-                }
-                    ?: run {
-                        // Optional: Log a warning or throw an error if token is missing for authenticated endpoint
-                        // throw IllegalStateException("JWT token is missing for authenticated request")
-                    }
-            }
+            val headers = mapOf(
+                "Accept" to "application/json",
+                "Content-Type" to "application/json",
+                "Authorization" to "Bearer $token"
+            )
             val response = userApiService.getId(headers)
             println(response)
             if(response.isSuccessful){
