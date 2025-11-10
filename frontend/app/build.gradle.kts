@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
     id("com.google.gms.google-services")
     alias(libs.plugins.google.android.libraries.mapsplatform.secrets.gradle.plugin)
 }
@@ -12,7 +13,7 @@ android {
 
     defaultConfig {
         applicationId = "com.fontys.frontend"
-        minSdk = 31
+        minSdk = 33
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
@@ -44,25 +45,43 @@ android {
 }
 
 dependencies {
+    // Firebase - BOM manages versions
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
 
-    // Firebase Cloud Messaging
-    implementation("com.google.firebase:firebase-messaging-ktx:24.1.0")
+    // Kotlin Serialization
+    implementation(libs.jetbrains.kotlinx.serialization.json)
 
+    // Networking - Retrofit & OkHttp
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.converter.gson)
+    implementation("com.squareup.retrofit2:converter-scalars:2.9.0")
+    implementation(libs.okhttp)
+    implementation(libs.okhttp.logging.interceptor)
+    implementation(libs.gson)
+
+    // AndroidX Core Libraries
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.lifecycle.livedata.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
+
+    // Material Design
     implementation(libs.material)
+
+    // Google Play Services - Maps & Location
     implementation(libs.play.services.maps)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.play.services.location)
-    implementation(libs.androidx.material3)
-    implementation(libs.androidx.compose.material)
+    implementation("com.google.maps.android:maps-compose:4.3.3")
+
+    // Image loading
+    implementation("io.coil-kt:coil-compose:2.5.0")
 
     // Retrofit
     implementation(libs.retrofit)
@@ -84,9 +103,15 @@ dependencies {
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.navigation.runtime.ktx)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
+    // Other utilities
+    implementation("org.json:json:20240303")
+
+    // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
