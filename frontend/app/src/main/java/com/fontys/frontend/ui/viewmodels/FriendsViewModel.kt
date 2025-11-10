@@ -13,6 +13,8 @@ data class FriendsUiState(
     val friends: List<FriendListItem> = emptyList(),
     val receivedRequests: List<FriendRequest> = emptyList(),
     val sentRequests: List<FriendRequest> = emptyList(),
+    val searchResults: List<User> = emptyList(),
+    val isSearching: Boolean = false,
     val isLoading: Boolean = false,
     val error: String? = null,
     val successMessage: String? = null
@@ -24,11 +26,40 @@ class FriendsViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(FriendsUiState())
     val uiState: StateFlow<FriendsUiState> = _uiState.asStateFlow()
 
-    // TODO: Replace with actual token management (SharedPreferences, DataStore, etc.)
-    private var authToken: String = ""
+    private var authToken: String = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjciLCJuYW1lIjoiVXNlciIsImVtYWlsIjoibm90QGxlby5jb20iLCJpYXQiOjE3NjI3NzY3NjYsImV4cCI6MTc2Mjc5ODM2Nn0.GWxH3NChPoeCpOO0rvBeIZ4aEljg_H1IiOYbpj0E0rQ"
 
     fun setAuthToken(token: String) {
         authToken = token
+    }
+
+    fun searchUsers(query: String) {
+        if (query.isBlank()) {
+            _uiState.value = _uiState.value.copy(searchResults = emptyList())
+            return
+        }
+
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isSearching = true, error = null)
+
+            repository.searchUsers(authToken, query).fold(
+                onSuccess = { users ->
+                    _uiState.value = _uiState.value.copy(
+                        searchResults = users,
+                        isSearching = false
+                    )
+                },
+                onFailure = { error ->
+                    _uiState.value = _uiState.value.copy(
+                        isSearching = false,
+                        error = error.message ?: "Failed to search users"
+                    )
+                }
+            )
+        }
+    }
+
+    fun clearSearch() {
+        _uiState.value = _uiState.value.copy(searchResults = emptyList())
     }
 
     fun loadFriends() {

@@ -6,6 +6,13 @@ import retrofit2.http.*
 
 interface FriendsApi {
 
+    // User search endpoint
+    @GET("go-users")
+    suspend fun searchUsers(
+        @Header("Authorization") token: String,
+        @Query("filter") filter: String
+    ): Response<List<User>>
+
     // Friend Requests endpoints
     @POST("friend-requests")
     suspend fun sendFriendRequest(

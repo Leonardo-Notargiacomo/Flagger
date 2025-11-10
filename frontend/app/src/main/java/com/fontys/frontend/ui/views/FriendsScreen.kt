@@ -58,6 +58,11 @@ fun FriendsScreen(
                     onClick = { selectedTab = 1 },
                     text = { Text("Requests") }
                 )
+                Tab(
+                    selected = selectedTab == 2,
+                    onClick = { selectedTab = 2 },
+                    text = { Text("Search") }
+                )
             }
 
             // Error message
@@ -134,6 +139,12 @@ fun FriendsScreen(
                         onAccept = { viewModel.acceptFriendRequest(it) },
                         onReject = { viewModel.rejectFriendRequest(it) },
                         onCancel = { viewModel.cancelFriendRequest(it) }
+                    )
+                    2 -> SearchTab(
+                        searchResults = uiState.searchResults,
+                        isSearching = uiState.isSearching,
+                        onSearch = { viewModel.searchUsers(it) },
+                        onSendFriendRequest = { viewModel.sendFriendRequest(it) }
                     )
                 }
             }
@@ -401,6 +412,148 @@ fun SentRequestItem(
                 OutlinedButton(onClick = onCancel) {
                     Text("Cancel")
                 }
+            }
+        }
+    }
+}
+
+@Composable
+fun SearchTab(
+    searchResults: List<com.fontys.frontend.data.models.User>,
+    isSearching: Boolean,
+    onSearch: (String) -> Unit,
+    onSendFriendRequest: (Int) -> Unit
+) {
+    var searchQuery by remember { mutableStateOf("") }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        // Search TextField
+        OutlinedTextField(
+            value = searchQuery,
+            onValueChange = {
+                searchQuery = it
+                onSearch(it)
+            },
+            modifier = Modifier.fillMaxWidth(),
+            placeholder = { Text("Search users by name or email...") },
+            leadingIcon = {
+                Icon(Icons.Default.Search, contentDescription = "Search")
+            },
+            trailingIcon = {
+                if (searchQuery.isNotEmpty()) {
+                    IconButton(onClick = {
+                        searchQuery = ""
+                        onSearch("")
+                    }) {
+                        Icon(Icons.Default.Close, contentDescription = "Clear")
+                    }
+                }
+            },
+            singleLine = true
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Search Results
+        if (isSearching) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        } else if (searchQuery.isEmpty()) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Icon(
+                        Icons.Default.Search,
+                        contentDescription = null,
+                        modifier = Modifier.size(64.dp),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = "Search for users to add as friends",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+        } else if (searchResults.isEmpty()) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "No users found",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        } else {
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(searchResults) { user ->
+                    SearchUserItem(
+                        user = user,
+                        onSendRequest = { user.id?.let { onSendFriendRequest(it) } }
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun SearchUserItem(
+    user: com.fontys.frontend.data.models.User,
+    onSendRequest: () -> Unit
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = user.userName ?: "Unknown User",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+                user.email?.let { email ->
+                    Text(
+                        text = email,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+                user.bio?.let { bio ->
+                    Text(
+                        text = bio,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
+                }
+            }
+
+            Button(onClick = onSendRequest) {
+                Icon(Icons.Default.PersonAdd, contentDescription = null)
+                Spacer(Modifier.width(4.dp))
+                Text("Add")
             }
         }
     }
