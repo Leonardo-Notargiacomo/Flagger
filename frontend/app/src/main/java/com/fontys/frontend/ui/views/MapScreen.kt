@@ -11,6 +11,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.fontys.frontend.R
 import com.fontys.frontend.data.PlaceService
+import com.fontys.frontend.domain.UserRepository
 import com.fontys.frontend.ui.viewmodels.MapsViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMapOptions
@@ -31,9 +32,9 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
     val selectedPlaces = remember { mutableStateListOf<PlaceService>() }
     LaunchedEffect(Unit) { viewModel.loadUserLocation() }
     val userFlags by viewModel.userFlags.collectAsState()
-    val currentUserId = 1
+    val currentUserId = UserRepository().userId
     LaunchedEffect(currentUserId) {
-        if (currentUserId != null) {
+        if (currentUserId != null || currentUserId !=0) {
             viewModel.getFlags(currentUserId)
         }
     }

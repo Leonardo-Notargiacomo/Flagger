@@ -49,7 +49,7 @@ fun LoginView(
 
         Button(
             modifier = Modifier.fillMaxWidth(),
-            onClick = {}
+            onClick = {viewModel.onLoginClick(email,password)}
         ) {
             Text("Sign in")
         }

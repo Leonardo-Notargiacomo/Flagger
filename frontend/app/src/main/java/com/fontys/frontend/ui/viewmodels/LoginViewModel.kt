@@ -2,6 +2,7 @@ package com.fontys.frontend.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.fontys.frontend.domain.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -17,6 +18,7 @@ data class LoginUiState(
 class LoginViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
+    private val userRepository = UserRepository()
 
     fun onEmailChange(newEmail: String) {
         _uiState.value = _uiState.value.copy(email = newEmail)
@@ -26,18 +28,13 @@ class LoginViewModel : ViewModel() {
         _uiState.value = _uiState.value.copy(password = newPassword)
     }
 
-    fun onLoginClick() {
+    fun onLoginClick(email: String, password: String) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
-
             try {
-                // TODO: Call your auth repository/API here
-                // val result = authRepository.login(_uiState.value.email, _uiState.value.password)
+                userRepository.login(email,password)
+                userRepository.whoAmIm()
 
-                // Simulate network call
-
-
-                // On success, navigate (handle in composable)
                 _uiState.value = _uiState.value.copy(isLoading = false)
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(

@@ -1,5 +1,6 @@
 package com.fontys.frontend.domain
 
+import com.fontys.frontend.data.UserLogin
 import com.fontys.frontend.data.UserReturn
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
@@ -9,12 +10,15 @@ import retrofit2.converter.scalars.ScalarsConverterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.http.*
-import com.fontys.frontend.services.UserAPIService
+import com.fontys.frontend.domain.UserAPIService
+
 
 
 class UserRepository {
+
     val BASE_URL = "https://group-repository-2025-android-1-6of2.onrender.com/"
-    var token ="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJuYW1lIjoiZ2FuZ3N0YWxrZWQiLCJlbWFpbCI6Ind3d0B3dy53dyIsImlhdCI6MTc2MjQxNjk0MSwiZXhwIjoxNzYyNDM4NTQxfQ.xowNshI30rRavngwql8eIJ59NADVvpsHGXtXaPXJyFQ"
+    var token =""
+    var userId=0
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY
     }
@@ -69,5 +73,54 @@ class UserRepository {
         }
 
     }
+    suspend fun login(email : String, password: String) {
+        try {
+            val headers = HashMap<String, String>().apply {
+                put("Accept", "application/json")
+                put("Content-Type", "application/json")
+                 ?: run {
+                    // Optional: Log a warning or throw an error if token is missing for authenticated endpoint
+                    // throw IllegalStateException("JWT token is missing for authenticated request")
+                }
+            }
+            val response = userApiService.login(headers, UserLogin(email,password))
+            if(response.isSuccessful){
+                val json = response.body()?:""
+                token = json
+
+            }
+        } catch (
+            e: Exception
+        ) {
+            println("Exception: ${e.message}")
+        }
+    }
+    suspend fun whoAmIm()  {
+        try {
+            val headers = HashMap<String, String>().apply {
+                put("Accept", "application/json")
+                put("Content-Type", "application/json")
+                token?.let { token ->
+                    put("Authorization", "Bearer $token") // Add JWT token if available
+                }
+                    ?: run {
+                        // Optional: Log a warning or throw an error if token is missing for authenticated endpoint
+                        // throw IllegalStateException("JWT token is missing for authenticated request")
+                    }
+            }
+            val response = userApiService.getId(headers)
+            println(response)
+            if(response.isSuccessful){
+                val json = response.body()?:0
+                userId =json
+            }
+        } catch (
+            e: Exception
+        ) {
+            println("Exception: ${e.message}")
+        }
+    }
+
+
 
 }
