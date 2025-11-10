@@ -29,6 +29,7 @@ fun NavBar() {
 
 
     Scaffold(
+        modifier = Modifier.fillMaxSize(),
         bottomBar = {
             NavigationBar {
                 NavigationBarItem(
