@@ -32,7 +32,7 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
     val selectedPlaces = remember { mutableStateListOf<PlaceService>() }
     LaunchedEffect(Unit) { viewModel.loadUserLocation() }
     val userFlags by viewModel.userFlags.collectAsState()
-    val currentUserId = UserRepository().userId
+    val currentUserId = UserRepository.userId
     LaunchedEffect(currentUserId) {
         if (currentUserId != null || currentUserId !=0) {
             viewModel.getFlags(currentUserId)

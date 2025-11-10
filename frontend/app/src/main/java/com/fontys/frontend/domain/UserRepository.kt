@@ -14,7 +14,7 @@ import com.fontys.frontend.domain.UserAPIService
 
 
 
-class UserRepository {
+object UserRepository {
 
     val BASE_URL = "https://group-repository-2025-android-1-6of2.onrender.com/"
     var token =""

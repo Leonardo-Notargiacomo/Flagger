@@ -21,7 +21,7 @@ import kotlinx.serialization.builtins.UIntArraySerializer
 class FlagRepository{
 
     val BASE_URL = "https://group-repository-2025-android-1.onrender.com/"
-    var token = UserRepository().token
+    var token = UserRepository.token
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY
     }
