@@ -13,6 +13,13 @@ interface FriendsApi {
         @Query("filter") filter: String
     ): Response<List<User>>
 
+    // Get user by ID
+    @GET("go-users/{id}")
+    suspend fun getUserById(
+        @Header("Authorization") token: String,
+        @Path("id") userId: Int
+    ): Response<User>
+
     // Friend Requests endpoints
     @POST("friend-requests")
     suspend fun sendFriendRequest(

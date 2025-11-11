@@ -13,6 +13,20 @@ class FriendsRepository {
         private const val TAG = "FriendsRepository"
     }
 
+    // User Operations
+    suspend fun getUserById(token: String, userId: Int): Result<User> {
+        Log.d(TAG, "getUserById() called with userId: $userId")
+        return try {
+            val response = api.getUserById("Bearer $token", userId)
+            Log.d(TAG, "getUserById() response code: ${response.code()}")
+            Log.d(TAG, "getUserById() response body: ${response.body()}")
+            handleResponse(response)
+        } catch (e: Exception) {
+            Log.e(TAG, "getUserById() error: ${e.message}", e)
+            Result.failure(e)
+        }
+    }
+
     // User Search
     suspend fun searchUsers(token: String, query: String): Result<List<User>> {
         Log.d(TAG, "searchUsers() called with query: $query")
