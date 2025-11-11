@@ -26,7 +26,10 @@ class FriendsViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(FriendsUiState())
     val uiState: StateFlow<FriendsUiState> = _uiState.asStateFlow()
 
-    private var authToken: String = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjciLCJuYW1lIjoiVXNlciIsImVtYWlsIjoibm90QGxlby5jb20iLCJpYXQiOjE3NjI3NzY3NjYsImV4cCI6MTc2Mjc5ODM2Nn0.GWxH3NChPoeCpOO0rvBeIZ4aEljg_H1IiOYbpj0E0rQ"
+    // TODO: Replace hardcoded token with actual auth token from auth system
+    // TODO: Auth developer - integrate with AuthRepository/TokenManager when ready
+    // TODO: This should be set via setAuthToken() after user logs in
+    private var authToken: String = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjIiLCJuYW1lIjoiTGVvIiwiZW1haWwiOiJsZW9AZ21haWwuY29tIiwiaWF0IjoxNzYyODUzMDY5LCJleHAiOjE3NjI4NzQ2Njl9.NpLukC1vOqcrdTYAoYGqs8L9mxg_RUsGEPl4d4h8xY0"
 
     fun setAuthToken(token: String) {
         authToken = token
