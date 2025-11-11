@@ -354,7 +354,7 @@ fun ReceivedRequestItem(
                 .padding(16.dp)
         ) {
             Text(
-                text = request.fromUser?.userName ?: "Unknown User",
+                text = request.fromUser?.userName ?: "User #${request.fromUserId}",
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
             )

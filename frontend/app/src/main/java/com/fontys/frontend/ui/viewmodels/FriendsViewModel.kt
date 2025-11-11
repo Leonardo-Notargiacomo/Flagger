@@ -29,9 +29,6 @@ class FriendsViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(FriendsUiState())
     val uiState: StateFlow<FriendsUiState> = _uiState.asStateFlow()
 
-    // Cache to store user data from search results and other sources
-    private val userCache = mutableMapOf<Int, User>()
-
     companion object {
         private const val TAG = "FriendsViewModel"
     }
@@ -39,10 +36,12 @@ class FriendsViewModel : ViewModel() {
     // TODO: Replace hardcoded token with actual auth token from auth system
     // TODO: Auth developer - integrate with AuthRepository/TokenManager when ready
     // TODO: This should be set via setAuthToken() after user logs in
-    private var authToken: String = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjIiLCJuYW1lIjoiTGVvIiwiZW1haWwiOiJsZW9AZ21haWwuY29tIiwiaWF0IjoxNzYyODUzMDY5LCJleHAiOjE3NjI4NzQ2Njl9.NpLukC1vOqcrdTYAoYGqs8L9mxg_RUsGEPl4d4h8xY0"
+    // IMPORTANT: You need to update this token to match user ID 1 (gangstalked / www@ww.ww)
+    // Current token is for user ID 2 (Leo). Get a valid token for user 1 by logging in as that user.
+    private var authToken: String = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJuYW1lIjoiZ2FuZ3N0YWxrZWQiLCJlbWFpbCI6Ind3d0B3dy53dyIsImlhdCI6MTc2Mjg2MDgyMCwiZXhwIjoxNzYyODgyNDIwfQ.HLsG-GJ4-68tnXRicsRhSqmA10qCi6v0w-x0QgoJnU8"
 
-    // TODO: Get from auth system - hardcoded to match token above (id: "2")
-    private var currentUserId: Int = 2
+    // TODO: Get from auth system - Changed to user ID 1 for testing received requests
+    private var currentUserId: Int = 1
 
     fun setAuthToken(token: String) {
         authToken = token
@@ -65,14 +64,9 @@ class FriendsViewModel : ViewModel() {
 
             repository.searchUsers(authToken, query).fold(
                 onSuccess = { users ->
-                    // Cache all users for later use
-                    users.forEach { user ->
-                        userCache[user.id] = user
-                    }
-
                     // Filter out current user from search results
                     val filteredUsers = users.filter { it.id != currentUserId }
-                    Log.d(TAG, "searchUsers() success: found ${users.size} users, cached ${users.size}, filtered to ${filteredUsers.size} (removed current user)")
+                    Log.d(TAG, "searchUsers() success: found ${users.size} users, filtered to ${filteredUsers.size} (removed current user)")
                     _uiState.value = _uiState.value.copy(
                         searchResults = filteredUsers,
                         isSearching = false
@@ -99,12 +93,7 @@ class FriendsViewModel : ViewModel() {
 
             repository.getFriends(authToken).fold(
                 onSuccess = { friends ->
-                    // Cache friend details
-                    friends.forEach { friendItem ->
-                        userCache[friendItem.friendId] = friendItem.friendDetails
-                    }
-                    Log.d(TAG, "loadFriends() cached ${friends.size} friend details")
-
+                    Log.d(TAG, "loadFriends() loaded ${friends.size} friends")
                     _uiState.value = _uiState.value.copy(
                         friends = friends,
                         isLoadingFriends = false
@@ -126,16 +115,45 @@ class FriendsViewModel : ViewModel() {
 
             repository.getReceivedRequests(authToken).fold(
                 onSuccess = { requests ->
-                    // Cache fromUser data from received requests
-                    requests.forEach { request ->
-                        request.fromUser?.let { user ->
-                            userCache[user.id] = user
+                    Log.d(TAG, "loadReceivedRequests() success: loaded ${requests.size} requests")
+
+                    // Identify requests with missing user data
+                    val missingUserIds = requests
+                        .filter { it.fromUser == null }
+                        .map { it.fromUserId }
+                        .distinct()
+
+                    Log.d(TAG, "loadReceivedRequests() found ${missingUserIds.size} missing users: $missingUserIds")
+
+                    // Fetch missing users from API
+                    val fetchedUsers = mutableMapOf<Int, User>()
+                    missingUserIds.forEach { userId ->
+                        repository.getUserById(authToken, userId).fold(
+                            onSuccess = { user ->
+                                fetchedUsers[user.id] = user
+                                Log.d(TAG, "loadReceivedRequests() fetched user: ${user.userName} (id=${user.id})")
+                            },
+                            onFailure = { error ->
+                                Log.e(TAG, "loadReceivedRequests() failed to fetch user $userId: ${error.message}")
+                            }
+                        )
+                    }
+
+                    // Populate fromUser with fetched data
+                    val enhancedRequests = requests.map { request ->
+                        if (request.fromUser == null && fetchedUsers.containsKey(request.fromUserId)) {
+                            request.copy(fromUser = fetchedUsers[request.fromUserId])
+                        } else {
+                            request
                         }
                     }
-                    Log.d(TAG, "loadReceivedRequests() cached ${requests.count { it.fromUser != null }} users from received requests")
+
+                    enhancedRequests.forEachIndexed { index, request ->
+                        Log.d(TAG, "loadReceivedRequests() request[$index]: fromUserId=${request.fromUserId}, userName=${request.fromUser?.userName}")
+                    }
 
                     _uiState.value = _uiState.value.copy(
-                        receivedRequests = requests,
+                        receivedRequests = enhancedRequests,
                         isLoadingRequests = false
                     )
                 },
@@ -158,19 +176,39 @@ class FriendsViewModel : ViewModel() {
                 onSuccess = { requests ->
                     Log.d(TAG, "loadSentRequests() success: loaded ${requests.size} requests")
 
-                    // Populate toUser from cache if null (backend bug workaround)
+                    // Identify requests with missing user data
+                    val missingUserIds = requests
+                        .filter { it.toUser == null }
+                        .map { it.toUserId }
+                        .distinct()
+
+                    Log.d(TAG, "loadSentRequests() found ${missingUserIds.size} missing users: $missingUserIds")
+
+                    // Fetch missing users from API
+                    val fetchedUsers = mutableMapOf<Int, User>()
+                    missingUserIds.forEach { userId ->
+                        repository.getUserById(authToken, userId).fold(
+                            onSuccess = { user ->
+                                fetchedUsers[user.id] = user
+                                Log.d(TAG, "loadSentRequests() fetched user: ${user.userName} (id=${user.id})")
+                            },
+                            onFailure = { error ->
+                                Log.e(TAG, "loadSentRequests() failed to fetch user $userId: ${error.message}")
+                            }
+                        )
+                    }
+
+                    // Populate toUser with fetched data
                     val enhancedRequests = requests.map { request ->
-                        if (request.toUser == null && userCache.containsKey(request.toUserId)) {
-                            val cachedUser = userCache[request.toUserId]
-                            Log.d(TAG, "loadSentRequests() populated toUser from cache for userId=${request.toUserId}, userName=${cachedUser?.userName}")
-                            request.copy(toUser = cachedUser)
+                        if (request.toUser == null && fetchedUsers.containsKey(request.toUserId)) {
+                            request.copy(toUser = fetchedUsers[request.toUserId])
                         } else {
                             request
                         }
                     }
 
                     enhancedRequests.forEachIndexed { index, request ->
-                        Log.d(TAG, "loadSentRequests() request[$index]: toUserId=${request.toUserId}, toUser=${request.toUser}, userName=${request.toUser?.userName}")
+                        Log.d(TAG, "loadSentRequests() request[$index]: toUserId=${request.toUserId}, userName=${request.toUser?.userName}")
                     }
                     _uiState.value = _uiState.value.copy(
                         sentRequests = enhancedRequests,
