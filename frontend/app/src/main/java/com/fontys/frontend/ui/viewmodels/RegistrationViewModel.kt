@@ -1,3 +1,5 @@
+package com.fontys.frontend.ui.viewmodels
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fontys.frontend.domain.UserRepository
