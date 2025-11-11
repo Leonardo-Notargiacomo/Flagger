@@ -1,5 +1,6 @@
 package com.fontys.frontend.data.repositories
 
+import android.util.Log
 import com.fontys.frontend.data.models.*
 import com.fontys.frontend.data.remote.ApiClient
 import retrofit2.Response
@@ -8,8 +9,13 @@ import org.json.JSONObject
 class FriendsRepository {
     private val api = ApiClient.friendsApi
 
+    companion object {
+        private const val TAG = "FriendsRepository"
+    }
+
     // User Search
     suspend fun searchUsers(token: String, query: String): Result<List<User>> {
+        Log.d(TAG, "searchUsers() called with query: $query")
         return try {
             // Escape special regex characters to treat query as literal string
             val escapedQuery = query.replace("\\", "\\\\")
@@ -50,21 +56,28 @@ class FriendsRepository {
             }.toString()
 
             val response = api.searchUsers("Bearer $token", filterJson)
+            Log.d(TAG, "searchUsers() response code: ${response.code()}")
+            Log.d(TAG, "searchUsers() response body: ${response.body()}")
             handleResponse(response)
         } catch (e: Exception) {
+            Log.e(TAG, "searchUsers() error: ${e.message}", e)
             Result.failure(e)
         }
     }
 
     // Friend Requests
     suspend fun sendFriendRequest(token: String, toUserId: Int): Result<FriendRequest> {
+        Log.d(TAG, "sendFriendRequest() called with toUserId: $toUserId")
         return try {
             val response = api.sendFriendRequest(
                 token = "Bearer $token",
                 body = SendFriendRequestBody(toUserId)
             )
+            Log.d(TAG, "sendFriendRequest() response code: ${response.code()}")
+            Log.d(TAG, "sendFriendRequest() response body: ${response.body()}")
             handleResponse(response)
         } catch (e: Exception) {
+            Log.e(TAG, "sendFriendRequest() error: ${e.message}", e)
             Result.failure(e)
         }
     }
@@ -79,10 +92,19 @@ class FriendsRepository {
     }
 
     suspend fun getSentRequests(token: String): Result<List<FriendRequest>> {
+        Log.d(TAG, "getSentRequests() called")
         return try {
             val response = api.getSentRequests("Bearer $token")
+            Log.d(TAG, "getSentRequests() response code: ${response.code()}")
+            Log.d(TAG, "getSentRequests() response body size: ${response.body()?.size}")
+            response.body()?.forEachIndexed { index, request ->
+                Log.d(TAG, "getSentRequests() request[$index]: id=${request.id}, toUserId=${request.toUserId}, status=${request.status}")
+                Log.d(TAG, "getSentRequests() request[$index].toUser: ${request.toUser}")
+                Log.d(TAG, "getSentRequests() request[$index].toUser.userName: ${request.toUser?.userName}")
+            }
             handleResponse(response)
         } catch (e: Exception) {
+            Log.e(TAG, "getSentRequests() error: ${e.message}", e)
             Result.failure(e)
         }
     }
@@ -120,10 +142,17 @@ class FriendsRepository {
 
     // Friendships
     suspend fun getFriends(token: String): Result<List<FriendListItem>> {
+        Log.d(TAG, "getFriends() called")
         return try {
             val response = api.getFriends("Bearer $token")
+            Log.d(TAG, "getFriends() response code: ${response.code()}")
+            Log.d(TAG, "getFriends() response body size: ${response.body()?.size}")
+            response.body()?.forEachIndexed { index, friend ->
+                Log.d(TAG, "getFriends() friend[$index]: friendId=${friend.friendId}, userName=${friend.friendDetails.userName}")
+            }
             handleResponse(response)
         } catch (e: Exception) {
+            Log.e(TAG, "getFriends() error: ${e.message}", e)
             Result.failure(e)
         }
     }
