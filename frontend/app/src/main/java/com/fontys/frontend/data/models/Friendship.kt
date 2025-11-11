@@ -34,5 +34,5 @@ data class FriendListItem(
     val createdAt: String?,
 
     @SerializedName("friendDetails")
-    val friendDetails: User
+    val friendDetails: User? = null
 )

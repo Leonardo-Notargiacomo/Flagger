@@ -94,8 +94,44 @@ class FriendsViewModel : ViewModel() {
             repository.getFriends(authToken).fold(
                 onSuccess = { friends ->
                     Log.d(TAG, "loadFriends() loaded ${friends.size} friends")
+
+                    // Identify friends with missing details
+                    val missingUserIds = friends
+                        .filter { it.friendDetails == null }
+                        .map { it.friendId }
+                        .distinct()
+
+                    Log.d(TAG, "loadFriends() found ${missingUserIds.size} missing friend details: $missingUserIds")
+
+                    // Fetch missing friend details from API
+                    val fetchedUsers = mutableMapOf<Int, User>()
+                    missingUserIds.forEach { userId ->
+                        repository.getUserById(authToken, userId).fold(
+                            onSuccess = { user ->
+                                fetchedUsers[user.id] = user
+                                Log.d(TAG, "loadFriends() fetched user: ${user.userName} (id=${user.id})")
+                            },
+                            onFailure = { error ->
+                                Log.e(TAG, "loadFriends() failed to fetch user $userId: ${error.message}")
+                            }
+                        )
+                    }
+
+                    // Populate friendDetails with fetched data
+                    val enhancedFriends = friends.map { friend ->
+                        if (friend.friendDetails == null && fetchedUsers.containsKey(friend.friendId)) {
+                            friend.copy(friendDetails = fetchedUsers[friend.friendId])
+                        } else {
+                            friend
+                        }
+                    }
+
+                    enhancedFriends.forEachIndexed { index, friend ->
+                        Log.d(TAG, "loadFriends() friend[$index]: friendId=${friend.friendId}, userName=${friend.friendDetails?.userName}")
+                    }
+
                     _uiState.value = _uiState.value.copy(
-                        friends = friends,
+                        friends = enhancedFriends,
                         isLoadingFriends = false
                     )
                 },

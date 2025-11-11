@@ -162,7 +162,7 @@ class FriendsRepository {
             Log.d(TAG, "getFriends() response code: ${response.code()}")
             Log.d(TAG, "getFriends() response body size: ${response.body()?.size}")
             response.body()?.forEachIndexed { index, friend ->
-                Log.d(TAG, "getFriends() friend[$index]: friendId=${friend.friendId}, userName=${friend.friendDetails.userName}")
+                Log.d(TAG, "getFriends() friend[$index]: friendId=${friend.friendId}, userName=${friend.friendDetails?.userName ?: "null"}")
             }
             handleResponse(response)
         } catch (e: Exception) {

@@ -205,18 +205,18 @@ fun FriendItem(
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = friend.friendDetails.userName ?: "Unknown User",
+                    text = friend.friendDetails?.userName ?: "User #${friend.friendId}",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
-                friend.friendDetails.email?.let { email ->
+                friend.friendDetails?.email?.let { email ->
                     Text(
                         text = email,
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
-                friend.friendDetails.bio?.let { bio ->
+                friend.friendDetails?.bio?.let { bio ->
                     Text(
                         text = bio,
                         style = MaterialTheme.typography.bodySmall,
@@ -239,7 +239,7 @@ fun FriendItem(
         AlertDialog(
             onDismissRequest = { showRemoveDialog = false },
             title = { Text("Remove Friend") },
-            text = { Text("Are you sure you want to remove ${friend.friendDetails.userName} from your friends?") },
+            text = { Text("Are you sure you want to remove ${friend.friendDetails?.userName ?: "this user"} from your friends?") },
             confirmButton = {
                 TextButton(
                     onClick = {
