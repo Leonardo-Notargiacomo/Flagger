@@ -100,27 +100,8 @@ export async function seedBadges() {
     console.log(`✅ Created ${badges.length} badges!`);
   }
 
-  // Unlock first 3 badges for user ID 1 as test data
-  console.log('🔍 Checking user badges for user ID 1...');
-  const existingUserBadges = await userBadgeRepo.find({where: {userId: 1}});
-
-  if (existingUserBadges.length > 0) {
-    console.log(`ℹ️  User 1 already has ${existingUserBadges.length} badges. Skipping.`);
-  } else {
-    console.log('🎁 Unlocking test badges for user ID 1...');
-    const allBadges = await badgeRepo.find({order: ['displayOrder ASC']});
-
-    // Unlock first 3 badges for testing
-    for (let i = 0; i < Math.min(3, allBadges.length); i++) {
-      await userBadgeRepo.create({
-        userId: 1,
-        badgeId: allBadges[i].id!,
-        unlockedAt: new Date(),
-        notificationSent: false,
-      });
-    }
-    console.log(`✅ Unlocked ${Math.min(3, allBadges.length)} badges for user 1!`);
-  }
+  // Note: Removed auto-unlocking badges for user 1 to properly test badge unlock functionality
+  console.log('ℹ️  Users start with 0 badges - badges unlock through exploration!')
 
   await app.stop();
   console.log('🎉 Badge seeding complete!');

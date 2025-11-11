@@ -11,6 +11,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.fontys.frontend.R
 import com.fontys.frontend.data.PlaceService
+import com.fontys.frontend.ui.components.BadgeUnlockDialog
 import com.fontys.frontend.ui.viewmodels.MapsViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMapOptions
@@ -130,7 +131,12 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
                             TextButton(onClick = {
 
                                 showDialog = false
-                                viewModel.markTheSpot(currentUserId,place.id)
+                                viewModel.markTheSpot(
+                                    userId = currentUserId,
+                                    placeId = place.id,
+                                    locationName = place.displayName,
+                                    latLng = LatLng(place.latitude, place.longitude)
+                                )
                                 coroutineScope.launch {
                                     cameraPositionState.animate(
                                         CameraUpdateFactory.newLatLngZoom(
@@ -156,6 +162,14 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
                 }
             )
         }
+    }
+
+    // Badge unlock celebration dialog
+    if (showBadgeDialog && newlyUnlockedBadges.isNotEmpty()) {
+        BadgeUnlockDialog(
+            badges = newlyUnlockedBadges,
+            onDismiss = { viewModel.dismissBadgeDialog() }
+        )
     }
 }
 
