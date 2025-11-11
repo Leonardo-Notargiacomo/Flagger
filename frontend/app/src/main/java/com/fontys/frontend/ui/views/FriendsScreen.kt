@@ -444,7 +444,8 @@ fun SearchTab(
     searchResults: List<com.fontys.frontend.data.models.User>,
     isSearching: Boolean,
     onSearch: (String) -> Unit,
-    onSendFriendRequest: (Int) -> Unit
+    onSendFriendRequest: (Int) -> Unit,
+    viewModel: FriendsViewModel = viewModel()
 ) {
     var searchQuery by remember { mutableStateOf("") }
 
@@ -524,8 +525,10 @@ fun SearchTab(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(searchResults) { user ->
+                    val relationshipStatus = viewModel.getRelationshipStatus(user.id)
                     SearchUserItem(
                         user = user,
+                        relationshipStatus = relationshipStatus,
                         onSendRequest = { user.id?.let { onSendFriendRequest(it) } }
                     )
                 }
@@ -537,6 +540,7 @@ fun SearchTab(
 @Composable
 fun SearchUserItem(
     user: com.fontys.frontend.data.models.User,
+    relationshipStatus: com.fontys.frontend.ui.viewmodels.RelationshipStatus,
     onSendRequest: () -> Unit
 ) {
     Card(
@@ -572,10 +576,44 @@ fun SearchUserItem(
                 }
             }
 
-            Button(onClick = onSendRequest) {
-                Icon(Icons.Default.PersonAdd, contentDescription = null)
-                Spacer(Modifier.width(4.dp))
-                Text("Add")
+            // Show different button based on relationship status
+            when (relationshipStatus) {
+                com.fontys.frontend.ui.viewmodels.RelationshipStatus.FRIENDS -> {
+                    Button(
+                        onClick = { /* Navigate to friend profile or manage */ },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.secondary
+                        )
+                    ) {
+                        Icon(Icons.Default.Check, contentDescription = null)
+                        Spacer(Modifier.width(4.dp))
+                        Text("Friends")
+                    }
+                }
+                com.fontys.frontend.ui.viewmodels.RelationshipStatus.PENDING_SENT -> {
+                    OutlinedButton(
+                        onClick = { /* Maybe cancel request? */ },
+                        enabled = false
+                    ) {
+                        Icon(Icons.Default.Schedule, contentDescription = null)
+                        Spacer(Modifier.width(4.dp))
+                        Text("Pending")
+                    }
+                }
+                com.fontys.frontend.ui.viewmodels.RelationshipStatus.PENDING_RECEIVED -> {
+                    Button(onClick = onSendRequest) {
+                        Icon(Icons.Default.Check, contentDescription = null)
+                        Spacer(Modifier.width(4.dp))
+                        Text("Accept")
+                    }
+                }
+                com.fontys.frontend.ui.viewmodels.RelationshipStatus.NONE -> {
+                    Button(onClick = onSendRequest) {
+                        Icon(Icons.Default.PersonAdd, contentDescription = null)
+                        Spacer(Modifier.width(4.dp))
+                        Text("Add")
+                    }
+                }
             }
         }
     }

@@ -23,6 +23,13 @@ data class FriendsUiState(
     val successMessage: String? = null
 )
 
+enum class RelationshipStatus {
+    NONE,           // No relationship
+    FRIENDS,        // Already friends
+    PENDING_SENT,   // Sent request waiting for response
+    PENDING_RECEIVED // Received request waiting for your response
+}
+
 class FriendsViewModel : ViewModel() {
     private val repository = FriendsRepository()
 
@@ -395,5 +402,27 @@ class FriendsViewModel : ViewModel() {
 
     fun clearSuccessMessage() {
         _uiState.value = _uiState.value.copy(successMessage = null)
+    }
+
+    // Helper function to determine relationship status with a user
+    fun getRelationshipStatus(userId: Int): RelationshipStatus {
+        val state = _uiState.value
+
+        // Check if already friends
+        if (state.friends.any { it.friendId == userId }) {
+            return RelationshipStatus.FRIENDS
+        }
+
+        // Check if there's a pending sent request
+        if (state.sentRequests.any { it.toUserId == userId && it.status == "PENDING" }) {
+            return RelationshipStatus.PENDING_SENT
+        }
+
+        // Check if there's a pending received request
+        if (state.receivedRequests.any { it.fromUserId == userId && it.status == "PENDING" }) {
+            return RelationshipStatus.PENDING_RECEIVED
+        }
+
+        return RelationshipStatus.NONE
     }
 }
