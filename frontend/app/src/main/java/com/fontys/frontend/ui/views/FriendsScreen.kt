@@ -119,34 +119,27 @@ fun FriendsScreen(
                 }
             }
 
-            // Loading indicator
-            if (uiState.isLoading) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
-            } else {
-                when (selectedTab) {
-                    0 -> FriendsListTab(
-                        friends = uiState.friends,
-                        onRemoveFriend = { viewModel.removeFriend(it) }
-                    )
-                    1 -> FriendRequestsTab(
-                        receivedRequests = uiState.receivedRequests,
-                        sentRequests = uiState.sentRequests,
-                        onAccept = { viewModel.acceptFriendRequest(it) },
-                        onReject = { viewModel.rejectFriendRequest(it) },
-                        onCancel = { viewModel.cancelFriendRequest(it) }
-                    )
-                    2 -> SearchTab(
-                        searchResults = uiState.searchResults,
-                        isSearching = uiState.isSearching,
-                        onSearch = { viewModel.searchUsers(it) },
-                        onSendFriendRequest = { viewModel.sendFriendRequest(it) }
-                    )
-                }
+            // Tab content
+            when (selectedTab) {
+                0 -> FriendsListTab(
+                    friends = uiState.friends,
+                    isLoading = uiState.isLoadingFriends,
+                    onRemoveFriend = { viewModel.removeFriend(it) }
+                )
+                1 -> FriendRequestsTab(
+                    receivedRequests = uiState.receivedRequests,
+                    sentRequests = uiState.sentRequests,
+                    isLoading = uiState.isLoadingRequests,
+                    onAccept = { viewModel.acceptFriendRequest(it) },
+                    onReject = { viewModel.rejectFriendRequest(it) },
+                    onCancel = { viewModel.cancelFriendRequest(it) }
+                )
+                2 -> SearchTab(
+                    searchResults = uiState.searchResults,
+                    isSearching = uiState.isSearching,
+                    onSearch = { viewModel.searchUsers(it) },
+                    onSendFriendRequest = { viewModel.sendFriendRequest(it) }
+                )
             }
         }
     }
@@ -155,17 +148,28 @@ fun FriendsScreen(
 @Composable
 fun FriendsListTab(
     friends: List<FriendListItem>,
+    isLoading: Boolean,
     onRemoveFriend: (Int) -> Unit
 ) {
-    if (friends.isEmpty()) {
+    if (isLoading) {
         Box(
             modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
+        }
+    } else if (friends.isEmpty()) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 32.dp),
             contentAlignment = Alignment.Center
         ) {
             Text(
                 text = "No friends yet. Send a friend request to get started!",
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center
             )
         }
     } else {
@@ -259,15 +263,24 @@ fun FriendItem(
 fun FriendRequestsTab(
     receivedRequests: List<FriendRequest>,
     sentRequests: List<FriendRequest>,
+    isLoading: Boolean,
     onAccept: (Int) -> Unit,
     onReject: (Int) -> Unit,
     onCancel: (Int) -> Unit
 ) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
+    if (isLoading && receivedRequests.isEmpty() && sentRequests.isEmpty()) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
+        }
+    } else {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
         // Received Requests Section
         item {
             Text(
@@ -320,6 +333,7 @@ fun FriendRequestsTab(
                     onCancel = { request.id?.let { onCancel(it) } }
                 )
             }
+        }
         }
     }
 }
@@ -397,14 +411,22 @@ fun SentRequestItem(
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = request.toUser?.userName ?: "Unknown User",
+                    text = request.toUser?.userName ?: "User #${request.toUserId}",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
+                request.toUser?.email?.let { email ->
+                    Text(
+                        text = email,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
                 Text(
                     text = "Status: ${request.status}",
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(top = if (request.toUser?.email != null) 4.dp else 0.dp)
                 )
             }
 
