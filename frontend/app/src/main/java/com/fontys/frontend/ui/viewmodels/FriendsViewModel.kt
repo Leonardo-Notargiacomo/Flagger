@@ -45,7 +45,7 @@ class FriendsViewModel : ViewModel() {
     // TODO: This should be set via setAuthToken() after user logs in
     // IMPORTANT: You need to update this token to match user ID 1 (gangstalked / www@ww.ww)
     // Current token is for user ID 2 (Leo). Get a valid token for user 1 by logging in as that user.
-    private var authToken: String = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjIiLCJuYW1lIjoiTGVvIiwiZW1haWwiOiJsZW9AZ21haWwuY29tIiwiaWF0IjoxNzYyOTM3NzQ2LCJleHAiOjE3NjI5NTkzNDZ9.A56Jk5jFzqhjtG0RW-N7CoTty_oZDdW2PLJP_0ZaO8M"
+    private var authToken: String = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjIiLCJuYW1lIjoiTGVvIiwiZW1haWwiOiJsZW9AZ21haWwuY29tIiwiaWF0IjoxNzYyOTQ4ODk2LCJleHAiOjE3NjI5NzA0OTZ9.snq2hGxTriXk775WTZ9_725gfQmaIWwvNZF9rZ7COCw"
 
     // TODO: Get from auth system - Changed to user ID 1 for testing received requests
     private var currentUserId: Int = 2
