@@ -1,5 +1,6 @@
 package com.fontys.frontend.ui.viewmodels
 
+import android.R
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fontys.frontend.domain.UserRepository
@@ -30,7 +31,7 @@ class RegistrationViewModel : ViewModel() {
         _uiState.value = _uiState.value.copy(password = newPassword,)
     }
 
-    fun onLoginClick(email: String, password: String) {
+    fun onSignUp(email: String, userName: String, password: String, bio: String) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
             try {
@@ -45,6 +46,9 @@ class RegistrationViewModel : ViewModel() {
                 )
             }
         }
+    }
+    fun route(){
+
     }
 }
 

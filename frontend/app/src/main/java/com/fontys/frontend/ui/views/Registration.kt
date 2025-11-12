@@ -1,6 +1,5 @@
 package com.fontys.frontend.ui.views
 
-import android.hardware.biometrics.BiometricPrompt
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -33,7 +32,10 @@ fun RegistrationView(
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
-    var Bio by remember { mutableStateOf("") }
+    var bio by remember { mutableStateOf("") }
+
+    var passwordsAllgin: Boolean by remember { mutableStateOf(false) }
+
 
     Column(
         modifier = Modifier.fillMaxSize().padding(16.dp)
@@ -68,22 +70,33 @@ fun RegistrationView(
             visualTransformation = PasswordVisualTransformation()
         )
         TextField(
-            value = Bio,
-            onValueChange = { Bio = it },
+            value = bio,
+            onValueChange = { bio = it },
             modifier = Modifier.align(Alignment.CenterHorizontally).fillMaxWidth().padding(top = 8.dp),
             label = { Text("Biometric") }
         )
 
-        Button(onClick = {}) {
-            Text("Sign in")
+        Button(onClick = {
+            if (passwordsAllgin){
+                viewModel.onSignUp(email, username, password, bio)}
+        }) {
+            Text("Sign Up")
+        }
+        if (!passwordsAllgin){
+            Text("Passwords do not match")
+        }
+        Button(
+            onClick = { viewModel.route()}
+        ) {
+            Text("Sign up")
         }
 
 
         Text("Already have an account?")
         Button(
-            onClick = { navController.navigate(LoginView()) }
+            onClick = { viewModel.route()}
         ) {
-            Text("Sign up")
+            Text("Sign in")
         }
     }
 }
