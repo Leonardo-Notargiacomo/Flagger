@@ -13,8 +13,8 @@ import com.fontys.frontend.services.UserAPIService
 
 
 class UserRepository {
-    val BASE_URL = "https://group-repository-2025-android-1-6of2.onrender.com/"
-    var token ="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjUiLCJuYW1lIjoiVXNlciIsImVtYWlsIjoiSGFua0BnbWFpbC5jb20iLCJpYXQiOjE3NjI5Mzg5ODEsImV4cCI6MTc2Mjk2MDU4MX0.SnXBtjBhfGv_6ZIc2Ip4zx1S951eMVcGG6srAsbs7C8"
+    val BASE_URL = "https://group-repository-2025-android-1-sq81.onrender.com"
+    var token ="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJuYW1lIjoiVXNlciIsImVtYWlsIjoiTWlndWVsQGdtYWlsLmNvbSIsImlhdCI6MTc2Mjk0MTc4NSwiZXhwIjoxNzYyOTYzMzg1fQ.fXwYphZI5nBBosO93Xudrh8E6iFU91GkxVZFnV_2134"
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY
     }
