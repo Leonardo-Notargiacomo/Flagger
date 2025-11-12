@@ -33,7 +33,7 @@ class LoginViewModel : ViewModel() {
             _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
             try {
                 userRepository.login(email,password)
-                userRepository.whoAmIm()
+                userRepository.whoAmIm()   
 
                 _uiState.value = _uiState.value.copy(isLoading = false)
             } catch (e: Exception) {
