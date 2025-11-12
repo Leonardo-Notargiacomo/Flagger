@@ -9,6 +9,8 @@ export class BadgeController {
     public badgeRepository: BadgeRepository,
     @repository(UserBadgeRepository)
     public userBadgeRepository: UserBadgeRepository,
+  ) {}
+
   @get('/api/badges')
   @response(200, {
     description: 'List of all badges',
@@ -43,11 +45,10 @@ export class BadgeController {
   @response(200, {
     description: 'User badges with unlock timestamps',
   })
-   * Get badges earned by specific user
+  async getUserBadges(
     @param.path.number('userId') userId: number,
   ) {
     console.log(`[BadgeController] getUserBadges() called for userId: ${userId}`);
-    description: 'User badges with unlock timestamps',
     try {
       // Get user's unlocked badges with badge details
       console.log(`[BadgeController] Fetching user badges for userId ${userId}`);
@@ -71,12 +72,21 @@ export class BadgeController {
 
       const badgesWithStatus = allBadges.map((badge: Badge) => ({
         ...badge,
-      // Map badges to include unlock status
-      console.log(`[BadgeController] Returning: ${result.earnedBadges}/${result.totalBadges} badges earned`);
-      return result;
-    } catch (error) {
-      const badgesWithStatus = allBadges.map((badge: Badge) => ({
-        ...badge,
         isUnlocked: unlockedIds.has(badge.id!),
         unlockedAt: userBadges.find(ub => ub.badgeId === badge.id)?.unlockedAt,
       }));
+
+      const result = {
+        badges: badgesWithStatus,
+        earnedBadges: userBadges.length,
+        totalBadges: allBadges.length,
+      };
+
+      console.log(`[BadgeController] Returning: ${result.earnedBadges}/${result.totalBadges} badges earned`);
+      return result;
+    } catch (error) {
+      console.error('[BadgeController] Error in getUserBadges:', error);
+      throw error;
+    }
+  }
+}
