@@ -41,14 +41,14 @@ class FriendsViewModel : ViewModel() {
     }
 
     // TODO: Replace hardcoded token with actual auth token from auth system
-    // TODO: Auth developer - integrate with AuthRepository/TokenManager when ready
+    // TODO: Auth developer - integrate with AuthRepository/TokenManager when ready.
     // TODO: This should be set via setAuthToken() after user logs in
     // IMPORTANT: You need to update this token to match user ID 1 (gangstalked / www@ww.ww)
     // Current token is for user ID 2 (Leo). Get a valid token for user 1 by logging in as that user.
-    private var authToken: String = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJuYW1lIjoiZ2FuZ3N0YWxrZWQiLCJlbWFpbCI6Ind3d0B3dy53dyIsImlhdCI6MTc2Mjg2MDgyMCwiZXhwIjoxNzYyODgyNDIwfQ.HLsG-GJ4-68tnXRicsRhSqmA10qCi6v0w-x0QgoJnU8"
+    private var authToken: String = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjIiLCJuYW1lIjoiTGVvIiwiZW1haWwiOiJsZW9AZ21haWwuY29tIiwiaWF0IjoxNzYyOTM3NzQ2LCJleHAiOjE3NjI5NTkzNDZ9.A56Jk5jFzqhjtG0RW-N7CoTty_oZDdW2PLJP_0ZaO8M"
 
     // TODO: Get from auth system - Changed to user ID 1 for testing received requests
-    private var currentUserId: Int = 1
+    private var currentUserId: Int = 2
 
     fun setAuthToken(token: String) {
         authToken = token
