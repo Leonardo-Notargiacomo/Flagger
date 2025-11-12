@@ -72,8 +72,8 @@ export class FriendRequestController {
       throw new HttpErrors.BadRequest('You are already friends with this user');
     }
 
-    // 3. Check if request already exists (in either direction)
-    const existingRequests = await this.friendRequestRepository.find({
+    // 3. Check if PENDING request already exists (in either direction)
+    const existingPendingRequests = await this.friendRequestRepository.find({
       where: {
         or: [
           {fromUserId, toUserId, status: 'PENDING'},
@@ -82,8 +82,24 @@ export class FriendRequestController {
       },
     });
 
-    if (existingRequests.length > 0) {
+    if (existingPendingRequests.length > 0) {
       throw new HttpErrors.Conflict('A pending friend request already exists between these users');
+    }
+
+    // 3b. Delete any old ACCEPTED or REJECTED requests between these users
+    // This allows users to re-send requests after deleting friendships
+    const oldRequests = await this.friendRequestRepository.find({
+      where: {
+        or: [
+          {fromUserId, toUserId},
+          {fromUserId: toUserId, toUserId: fromUserId},
+        ],
+        status: {inq: ['ACCEPTED', 'REJECTED']},
+      },
+    });
+
+    for (const oldRequest of oldRequests) {
+      await this.friendRequestRepository.deleteById(oldRequest.id!);
     }
 
     // 4. Create friend request
