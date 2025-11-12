@@ -5,8 +5,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -32,14 +32,14 @@ fun LoginView(
     Column(
         modifier = Modifier.fillMaxSize().padding(16.dp)
     ) {
-        TextField(
+        OutlinedTextField(
             value = email,
             onValueChange = { email = it },
             modifier = Modifier.align(Alignment.CenterHorizontally).fillMaxWidth(),
             label = { Text("Email") }
         )
 
-        TextField(
+        OutlinedTextField(
             value = password,
             onValueChange = { password = it },
             modifier = Modifier.align(Alignment.CenterHorizontally).fillMaxWidth().padding(top = 8.dp),
@@ -49,11 +49,10 @@ fun LoginView(
 
         Button(
             modifier = Modifier.fillMaxWidth(),
-            onClick = {}
+            onClick = {viewModel.submitLogin(email, password)}
         ) {
             Text("Sign in")
         }
-
 
         Button(
             modifier = Modifier.align(Alignment.CenterHorizontally),
