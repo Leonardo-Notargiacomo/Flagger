@@ -192,11 +192,15 @@ class FriendsViewModel : ViewModel() {
                     }
 
                     enhancedRequests.forEachIndexed { index, request ->
-                        Log.d(TAG, "loadReceivedRequests() request[$index]: fromUserId=${request.fromUserId}, userName=${request.fromUser?.userName}")
+                        Log.d(TAG, "loadReceivedRequests() request[$index]: fromUserId=${request.fromUserId}, userName=${request.fromUser?.userName}, status=${request.status}")
                     }
 
+                    // Filter to only show PENDING requests
+                    val pendingRequests = enhancedRequests.filter { it.status == "PENDING" }
+                    Log.d(TAG, "loadReceivedRequests() filtered to ${pendingRequests.size} PENDING requests (from ${enhancedRequests.size} total)")
+
                     _uiState.value = _uiState.value.copy(
-                        receivedRequests = enhancedRequests,
+                        receivedRequests = pendingRequests,
                         isLoadingRequests = false
                     )
                 },
@@ -251,10 +255,15 @@ class FriendsViewModel : ViewModel() {
                     }
 
                     enhancedRequests.forEachIndexed { index, request ->
-                        Log.d(TAG, "loadSentRequests() request[$index]: toUserId=${request.toUserId}, userName=${request.toUser?.userName}")
+                        Log.d(TAG, "loadSentRequests() request[$index]: toUserId=${request.toUserId}, userName=${request.toUser?.userName}, status=${request.status}")
                     }
+
+                    // Filter to only show PENDING requests
+                    val pendingRequests = enhancedRequests.filter { it.status == "PENDING" }
+                    Log.d(TAG, "loadSentRequests() filtered to ${pendingRequests.size} PENDING requests (from ${enhancedRequests.size} total)")
+
                     _uiState.value = _uiState.value.copy(
-                        sentRequests = enhancedRequests,
+                        sentRequests = pendingRequests,
                         isLoadingRequests = false
                     )
                 },
