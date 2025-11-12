@@ -1,5 +1,6 @@
 package com.fontys.frontend.ui.views
 
+import android.nfc.Tag
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -32,7 +33,7 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
     val selectedPlaces = remember { mutableStateListOf<PlaceService>() }
     LaunchedEffect(Unit) { viewModel.loadUserLocation() }
     val userFlags by viewModel.userFlags.collectAsState()
-    val currentUserId = 2
+    val currentUserId = 1
 
     // Badge unlock dialog state
     val showBadgeDialog by viewModel.showBadgeDialog.collectAsState()
@@ -109,6 +110,7 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
                 onDismissRequest = { showDialog = false },
                 title = { Text("No places found") },
                 text = { Text("Try again or move to another location.") },
+
                 confirmButton = {
                     TextButton(onClick = { showDialog = false }) {
                         Text("OK")
