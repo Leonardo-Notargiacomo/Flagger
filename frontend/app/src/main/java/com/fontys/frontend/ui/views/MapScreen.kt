@@ -72,7 +72,7 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
                 )
         }
             places.forEach { place ->
-                val isAlreadyFlagged = userFlags.any { flaggedSpot -> flaggedSpot.lcoationId ==place.id }
+                val isAlreadyFlagged = userFlags.any { flaggedSpot -> flaggedSpot.locationId ==place.id }
                 if (!isAlreadyFlagged) {
                     Marker(
                         state = MarkerState(position = LatLng(place.latitude, place.longitude)),
@@ -122,7 +122,7 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
                 text = {
                     Column {
                         val unflaggedPlaces = places.filter { nearbyPlace ->
-                            !userFlags.any { flaggedSpot -> flaggedSpot.lcoationId == nearbyPlace.id }
+                            !userFlags.any { flaggedSpot -> flaggedSpot.locationId == nearbyPlace.id }
                         }
                         if (unflaggedPlaces.isEmpty()) {
                         Text("All nearby places are already flagged!")
