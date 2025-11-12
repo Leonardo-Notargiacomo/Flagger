@@ -10,7 +10,6 @@ plugins {
 android {
     namespace = "com.fontys.frontend"
     compileSdk = 36
-
     defaultConfig {
         applicationId = "com.fontys.frontend"
         minSdk = 33
@@ -30,7 +29,6 @@ android {
             )
         }
     }
-
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -48,6 +46,24 @@ dependencies {
     // Firebase - BOM manages versions
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
+    implementation(libs.firebase.messaging.ktx)
+
+    // Compose BOM and UI components
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.ui.graphics)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.foundation)
+    implementation(libs.androidx.compose.runtime)
+    implementation(libs.androidx.compose.material.icons.extended)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.navigation.compose)
+    debugImplementation(libs.androidx.compose.ui.tooling)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
 
     // Kotlin Serialization
     implementation(libs.jetbrains.kotlinx.serialization.json)
@@ -63,8 +79,6 @@ dependencies {
     // AndroidX Core Libraries
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
-    implementation(libs.material)
-    implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
@@ -76,35 +90,11 @@ dependencies {
 
     // Google Play Services - Maps & Location
     implementation(libs.play.services.maps)
-    implementation(libs.androidx.constraintlayout)
     implementation(libs.play.services.location)
     implementation("com.google.maps.android:maps-compose:4.3.3")
 
     // Image loading
     implementation("io.coil-kt:coil-compose:2.5.0")
-
-    // Retrofit
-    implementation(libs.retrofit)
-    implementation(libs.retrofit.converter.gson)
-
-    // OkHttp
-    implementation(libs.okhttp)
-    implementation(libs.okhttp.logging.interceptor)
-
-    // Gson
-    implementation(libs.gson)
-
-    // Compose
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.compose.ui)
-    implementation(libs.androidx.compose.ui.graphics)
-    implementation(libs.androidx.compose.ui.tooling.preview)
-    implementation(libs.androidx.compose.material3)
-    implementation(libs.androidx.compose.foundation)
-    implementation(libs.androidx.activity.compose)
-    implementation(libs.androidx.lifecycle.viewmodel.compose)
-    debugImplementation(libs.androidx.compose.ui.tooling)
-    debugImplementation(libs.androidx.compose.ui.test.manifest)
 
     // Other utilities
     implementation("org.json:json:20240303")

@@ -1,5 +1,6 @@
 package com.fontys.frontend.ui.views
 
+import android.hardware.biometrics.BiometricPrompt
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,6 +19,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.fontys.frontend.common.LoginView
 import com.fontys.frontend.ui.viewmodels.RegistrationViewModel
 
 
@@ -96,7 +98,7 @@ fun RegistrationView(
         Button(
             onClick = { viewModel.route()}
         ) {
-            Text("Sign in")
+            Text("Sign up")
         }
     }
 }
