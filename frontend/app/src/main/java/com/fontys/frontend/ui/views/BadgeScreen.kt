@@ -252,39 +252,49 @@ fun BadgeProfileSection(earnedBadges: Int, totalBadges: Int) {
 
 @Composable
 fun BadgeProgressLine(earnedBadges: Int, totalBadges: Int) {
+    val progress = if (totalBadges > 0) earnedBadges.toFloat() / totalBadges else 0f
+    val progressPercentage = (progress * 100).toInt()
+
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
+        // Overall Progress Title
+        Text(
+            text = "Overall Progress",
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onBackground,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+
+        // Progress bar
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(24.dp)
+                .clip(RoundedCornerShape(12.dp))
+                .background(MaterialTheme.colorScheme.surfaceVariant)
         ) {
-            // Left line
+            // Filled progress
             Box(
                 modifier = Modifier
-                    .weight(1f)
-                    .height(3.dp)
+                    .fillMaxHeight()
+                    .fillMaxWidth(progress)
+                    .clip(RoundedCornerShape(12.dp))
                     .background(MaterialTheme.colorScheme.primary)
             )
 
-            // Center circle indicator
-            Box(
-                modifier = Modifier
-                    .padding(horizontal = 12.dp)
-                    .size(16.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.surface)
-                    .border(3.dp, MaterialTheme.colorScheme.primary, CircleShape)
-            )
-
-            // Right line
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(3.dp)
-                    .background(MaterialTheme.colorScheme.primary)
+            // Progress text overlay
+            Text(
+                text = "$progressPercentage% ($earnedBadges / $totalBadges)",
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Bold,
+                color = if (progress > 0.5f)
+                    MaterialTheme.colorScheme.onPrimary
+                else
+                    MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.align(Alignment.Center)
             )
         }
 
@@ -359,6 +369,10 @@ fun BadgeStatsCard(earnedBadges: Int, totalBadges: Int) {
 
 @Composable
 fun BadgeItem(badge: Badge, onClick: () -> Unit) {
+    val badgeProgress = if (badge.maxProgress > 0)
+        badge.currentProgress.toFloat() / badge.maxProgress
+    else 0f
+
     Card(
         onClick = onClick,
         modifier = Modifier
@@ -391,26 +405,78 @@ fun BadgeItem(badge: Badge, onClick: () -> Unit) {
                     .fillMaxSize()
                     .padding(8.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+                verticalArrangement = Arrangement.SpaceBetween
             ) {
-                Text(
-                    text = badge.iconUrl ?: "🏆",
-                    fontSize = 36.sp,
-                    modifier = Modifier.alpha(if (badge.isUnlocked) 1f else 0.3f)
-                )
-                Spacer(modifier = Modifier.height(6.dp))
-                Text(
-                    text = badge.name,
-                    fontSize = 10.sp,
-                    fontWeight = if (badge.isUnlocked) FontWeight.Bold else FontWeight.Normal,
-                    maxLines = 2,
-                    textAlign = TextAlign.Center,
-                    color = if (badge.isUnlocked)
-                        MaterialTheme.colorScheme.onPrimaryContainer
-                    else
-                        MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
-                    modifier = Modifier.alpha(if (badge.isUnlocked) 1f else 0.5f)
-                )
+                // Top section with icon and name
+                Column(
+                    modifier = Modifier.weight(1f),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = badge.iconUrl ?: "🏆",
+                        fontSize = 32.sp,
+                        modifier = Modifier.alpha(if (badge.isUnlocked) 1f else 0.3f)
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = badge.name,
+                        fontSize = 9.sp,
+                        fontWeight = if (badge.isUnlocked) FontWeight.Bold else FontWeight.Normal,
+                        maxLines = 2,
+                        textAlign = TextAlign.Center,
+                        color = if (badge.isUnlocked)
+                            MaterialTheme.colorScheme.onPrimaryContainer
+                        else
+                            MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+                        modifier = Modifier.alpha(if (badge.isUnlocked) 1f else 0.5f)
+                    )
+                }
+
+                // Progress indicator at bottom
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    // Progress text
+                    Text(
+                        text = "${badge.currentProgress}/${badge.maxProgress}",
+                        fontSize = 8.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = if (badge.isUnlocked)
+                            MaterialTheme.colorScheme.primary
+                        else
+                            MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                    )
+
+                    Spacer(modifier = Modifier.height(2.dp))
+
+                    // Mini progress bar
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(4.dp)
+                            .clip(RoundedCornerShape(2.dp))
+                            .background(
+                                if (badge.isUnlocked)
+                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
+                                else
+                                    MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f)
+                            )
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .fillMaxWidth(badgeProgress.coerceIn(0f, 1f))
+                                .clip(RoundedCornerShape(2.dp))
+                                .background(
+                                    if (badge.isUnlocked)
+                                        MaterialTheme.colorScheme.primary
+                                    else
+                                        MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                                )
+                        )
+                    }
+                }
             }
 
             // Lock icon for locked badges in top-right corner
@@ -423,7 +489,7 @@ fun BadgeItem(badge: Badge, onClick: () -> Unit) {
                 ) {
                     Text(
                         text = "🔒",
-                        fontSize = 16.sp
+                        fontSize = 14.sp
                     )
                 }
             }
@@ -592,6 +658,84 @@ fun BadgeDetailDialog(
                                     color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
                                 )
                             }
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Progress section
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .border(
+                            width = 2.dp,
+                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
+                            shape = RoundedCornerShape(16.dp)
+                        ),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surface
+                    ),
+                    shape = RoundedCornerShape(16.dp)
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "PROGRESS",
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Bold,
+                                letterSpacing = 1.sp,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                            Text(
+                                text = "${badge.currentProgress} / ${badge.maxProgress}",
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        // Progress bar
+                        val badgeProgress = if (badge.maxProgress > 0)
+                            badge.currentProgress.toFloat() / badge.maxProgress
+                        else 0f
+                        val badgePercentage = (badgeProgress * 100).toInt()
+
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(20.dp)
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(MaterialTheme.colorScheme.surfaceVariant)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxHeight()
+                                    .fillMaxWidth(badgeProgress.coerceIn(0f, 1f))
+                                    .clip(RoundedCornerShape(10.dp))
+                                    .background(MaterialTheme.colorScheme.primary)
+                            )
+
+                            Text(
+                                text = "$badgePercentage%",
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = if (badgeProgress > 0.4f)
+                                    MaterialTheme.colorScheme.onPrimary
+                                else
+                                    MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.align(Alignment.Center)
+                            )
                         }
                     }
                 }
