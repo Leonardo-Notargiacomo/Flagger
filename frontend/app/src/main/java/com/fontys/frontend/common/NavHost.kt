@@ -50,7 +50,7 @@ fun NavHost(
         }
         composable<BadgeView> {
             // TODO: Get actual userId from auth system
-            BadgeScreen(userId = 2)
+            BadgeScreen(userId = 1)
         }
         composable<LoginView> {
             LoginView(navController)
