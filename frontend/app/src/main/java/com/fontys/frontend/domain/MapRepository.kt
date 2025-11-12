@@ -42,7 +42,7 @@ class MapRepository { // No need for companion object if we want an instance for
                                 put("latitude", latlng.latitude)
                                 put("longitude", latlng.longitude)
                             })
-                            put("radius", 10.0)
+                            put("radius", 100.0)
                         })
                     })
                 }

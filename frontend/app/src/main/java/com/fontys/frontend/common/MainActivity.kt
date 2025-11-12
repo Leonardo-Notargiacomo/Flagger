@@ -15,6 +15,16 @@ import androidx.core.content.ContextCompat
 import com.fontys.frontend.ui.views.NavBar
 
 class MainActivity : ComponentActivity() {
+
+    //
+    val requestCameraPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+        } else {
+        }
+    }
+
     // Launcher for location permission
     private val requestLocationPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
@@ -42,6 +52,7 @@ class MainActivity : ComponentActivity() {
 
         checkLocationPermission()
         checkNotificationPermission()
+        checkCameraPermission()
 
         setContent {
             MaterialTheme {
@@ -76,6 +87,15 @@ class MainActivity : ComponentActivity() {
             ) != PackageManager.PERMISSION_GRANTED
         ) {
             requestNotificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
+    }
+    private fun checkCameraPermission(){
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.CAMERA
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            requestCameraPermissionLauncher.launch(Manifest.permission.CAMERA)
         }
     }
 }

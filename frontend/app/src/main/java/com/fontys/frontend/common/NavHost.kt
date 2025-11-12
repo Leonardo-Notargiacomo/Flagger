@@ -5,9 +5,12 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.fontys.frontend.domain.UserRepository
+import com.fontys.frontend.ui.viewmodels.CameraPreviewViewModel
 import com.fontys.frontend.ui.views.BadgeScreen
 import com.fontys.frontend.ui.views.LoginView
 import com.fontys.frontend.ui.views.MapsScreen
+import com.fontys.frontend.ui.views.PictureCaptureScreen
 import com.fontys.frontend.ui.views.ProfileScreen
 import kotlinx.serialization.Serializable
 
@@ -30,6 +33,9 @@ object LoginView
 @Serializable
 object RegistrationView
 
+@Serializable
+object CameraView
+
 @Composable
 fun NavHost(
     navController: NavHostController,
@@ -50,13 +56,16 @@ fun NavHost(
         }
         composable<BadgeView> {
             // TODO: Get actual userId from auth system
-            BadgeScreen(userId = 1)
+            BadgeScreen(UserRepository.userId)
         }
         composable<LoginView> {
             LoginView(navController)
         }
         composable<RegistrationView> {
             //RegistrationView()
+        }
+        composable<CameraView> {
+            PictureCaptureScreen(navController,CameraPreviewViewModel())
         }
     }
 }

@@ -5,13 +5,17 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.fontys.frontend.R
+import com.fontys.frontend.common.CameraView
 import com.fontys.frontend.data.PlaceService
 import com.fontys.frontend.domain.UserRepository
+import com.fontys.frontend.ui.viewmodels.CameraPreviewViewModel
 import com.fontys.frontend.ui.viewmodels.MapsViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMapOptions
@@ -64,7 +68,8 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
                     state = MarkerState(position = LatLng(spot.location.latitude, spot.location.longitude)),
                     title = spot.displayName,
                     snippet = "Flagged by you",
-                    alpha = 0.7f
+                    alpha = 0.7f,
+                    //icon = BitmapPainter()
                 )
         }
             places.forEach { place ->
@@ -91,8 +96,12 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
 
             Button(onClick = {
                 viewModel.fetchNearbyPlaces(LatLng(userLocation.latitude,userLocation.longitude))
-                showDialog = true
-                selectedPlace = null
+                if(places.size==1){
+                    viewModel.markTheSpot(currentUserId,places.get(0).id)
+                } else {
+                    showDialog = true
+                    selectedPlace = null
+                }
             }) { Text("\uD83D\uDEA9") }
         }
     }
@@ -122,7 +131,8 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
                         }
                         if (unflaggedPlaces.isEmpty()) {
                         Text("All nearby places are already flagged!")
-                        } else {
+                        }
+                        else {
                         unflaggedPlaces.forEach { place ->
                             TextButton(onClick = {
 
@@ -135,7 +145,7 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
                                             16f
                                         )
                                         )
-
+                                    navController.navigate(CameraView)
                                 }
 
                             }) {
