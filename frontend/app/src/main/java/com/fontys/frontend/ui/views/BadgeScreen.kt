@@ -61,46 +61,46 @@ fun BadgeScreen(
             }
 
             is BadgeUiState.Success -> {
-                Column(
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(3),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(horizontal = 24.dp)
+                        .padding(horizontal = 24.dp),
+                    contentPadding = PaddingValues(top = 24.dp, bottom = 16.dp)
                 ) {
-                    Spacer(modifier = Modifier.height(24.dp))
-
-                    // Profile/Badge display section
-                    BadgeProfileSection(
-                        earnedBadges = state.earnedBadges,
-                        totalBadges = state.totalBadges
-                    )
-
-                    Spacer(modifier = Modifier.height(32.dp))
-
-                    // Progress indicator with decorative line
-                    BadgeProgressLine(
-                        earnedBadges = state.earnedBadges,
-                        totalBadges = state.totalBadges
-                    )
-
-                    Spacer(modifier = Modifier.height(32.dp))
-
-                    // Badge grid
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(3),
-                        horizontalArrangement = Arrangement.spacedBy(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(16.dp),
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        items(state.badges) { badge ->
-                            BadgeItem(
-                                badge = badge,
-                                onClick = { selectedBadge = badge }
-                            )
-                        }
+                    item(span = { androidx.compose.foundation.lazy.grid.GridItemSpan(3) }) {
+                        BadgeProfileSection(
+                            earnedBadges = state.earnedBadges,
+                            totalBadges = state.totalBadges
+                        )
                     }
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                    item(span = { androidx.compose.foundation.lazy.grid.GridItemSpan(3) }) {
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+
+                    item(span = { androidx.compose.foundation.lazy.grid.GridItemSpan(3) }) {
+                        BadgeProgressLine(
+                            earnedBadges = state.earnedBadges,
+                            totalBadges = state.totalBadges
+                        )
+                    }
+
+                    item(span = { androidx.compose.foundation.lazy.grid.GridItemSpan(3) }) {
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+
+                    // Badge grid items
+                    items(state.badges) { badge ->
+                        BadgeItem(
+                            badge = badge,
+                            onClick = { selectedBadge = badge }
+                        )
+                    }
                 }
+
 
                 // Show badge detail dialog when a badge is selected
                 selectedBadge?.let { badge ->
@@ -403,38 +403,44 @@ fun BadgeItem(badge: Badge, onClick: () -> Unit) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(8.dp),
+                    .padding(6.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
                 // Top section with icon and name
                 Column(
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier
+                        .weight(1f, fill = true)
+                        .fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
                     Text(
                         text = badge.iconUrl ?: "🏆",
-                        fontSize = 32.sp,
+                        fontSize = 28.sp,
                         modifier = Modifier.alpha(if (badge.isUnlocked) 1f else 0.3f)
                     )
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(6.dp))
                     Text(
                         text = badge.name,
-                        fontSize = 9.sp,
+                        fontSize = 10.sp,
                         fontWeight = if (badge.isUnlocked) FontWeight.Bold else FontWeight.Normal,
                         maxLines = 2,
                         textAlign = TextAlign.Center,
+                        lineHeight = 11.sp,
                         color = if (badge.isUnlocked)
                             MaterialTheme.colorScheme.onPrimaryContainer
                         else
                             MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
-                        modifier = Modifier.alpha(if (badge.isUnlocked) 1f else 0.5f)
+                        modifier = Modifier
+                            .alpha(if (badge.isUnlocked) 1f else 0.5f)
+                            .padding(horizontal = 2.dp)
                     )
                 }
 
                 // Progress indicator at bottom
                 Column(
+                    modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     // Progress text
