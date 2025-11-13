@@ -11,9 +11,16 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
+import androidx.navigation.NavHostController
+import com.fontys.frontend.data.UserRegister
+import com.fontys.frontend.domain.UserRepository
+import com.fontys.frontend.ui.viewmodels.LoginViewModel
+import com.fontys.frontend.ui.views.LoginView
 import com.fontys.frontend.ui.views.NavBar
 
+
 class MainActivity : ComponentActivity() {
+
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
             if (isGranted) {
@@ -22,6 +29,8 @@ class MainActivity : ComponentActivity() {
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        var navController = NavHostController(this)
+
         super.onCreate(savedInstanceState)
 
         checkLocationPermission()
@@ -32,7 +41,11 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    NavBar()
+                    if(UserRepository.token.isEmpty()){
+                        LoginView(navController)
+                    }else{
+                        NavBar()
+                    }
                 }
             }
         }

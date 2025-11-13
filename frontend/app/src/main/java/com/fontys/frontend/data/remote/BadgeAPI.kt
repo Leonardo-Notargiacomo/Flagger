@@ -24,4 +24,6 @@ interface BadgeApi {
         @Path("userId") userId: Int,
         @Body event: ExplorationEvent
     ): Response<ExplorationResponse>
+
+    
 }

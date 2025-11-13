@@ -7,9 +7,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.fontys.frontend.ui.views.BadgeScreen
 import com.fontys.frontend.ui.views.LoginView
+import com.fontys.frontend.ui.views.RegistrationView
 import com.fontys.frontend.ui.views.MapsScreen
 import com.fontys.frontend.ui.views.ProfileScreen
 import kotlinx.serialization.Serializable
+import com.fontys.frontend.ui.views.NavBar
 
 
 @Serializable
@@ -26,6 +28,9 @@ object BadgeView
 
 @Serializable
 object LoginView
+
+@Serializable
+object NavigationView
 
 @Serializable
 object RegistrationView
@@ -56,7 +61,11 @@ fun NavHost(
             LoginView(navController)
         }
         composable<RegistrationView> {
-            //RegistrationView()
+            RegistrationView(navController)
+        }
+
+        composable <NavigationView>{
+            NavBar()
         }
     }
 }

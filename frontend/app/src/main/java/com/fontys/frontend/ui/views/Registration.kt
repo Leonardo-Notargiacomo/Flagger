@@ -1,6 +1,5 @@
 package com.fontys.frontend.ui.views
 
-import android.hardware.biometrics.BiometricPrompt
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.fontys.frontend.common.LoginView
+import com.fontys.frontend.common.NavigationView
 import com.fontys.frontend.ui.viewmodels.RegistrationViewModel
 
 
@@ -36,7 +36,9 @@ fun RegistrationView(
     var confirmPassword by remember { mutableStateOf("") }
     var bio by remember { mutableStateOf("") }
 
-    var passwordsAllgin: Boolean by remember { mutableStateOf(false) }
+    var passwordsAllign: Boolean by remember { mutableStateOf(false) }
+
+    var errors: Boolean by remember { mutableStateOf(false) }
 
 
     Column(
@@ -75,30 +77,33 @@ fun RegistrationView(
             value = bio,
             onValueChange = { bio = it },
             modifier = Modifier.align(Alignment.CenterHorizontally).fillMaxWidth().padding(top = 8.dp),
-            label = { Text("Biometric") }
+            label = { Text("Bio") }
         )
 
         Button(onClick = {
-            if (passwordsAllgin){
-                viewModel.onSignUp(email, username, password, bio)}
+            if (passwordsAllign){
+                viewModel.onSignUp(email, username, password, bio)
+                if (viewModel.isLoading){
+                    navController.navigate(NavigationView)
+                } else {
+                    errors = true
+                }
+            } else {
+                errors = true
+                }
         }) {
             Text("Sign Up")
         }
-        if (!passwordsAllgin){
+        if (errors){
             Text("Passwords do not match")
         }
-        Button(
-            onClick = { viewModel.route()}
-        ) {
-            Text("Sign up")
-        }
+    }
 
 
         Text("Already have an account?")
         Button(
-            onClick = { viewModel.route()}
+            onClick = { navController.navigate(LoginView)}
         ) {
-            Text("Sign up")
+            Text("Sign in")
         }
     }
-}

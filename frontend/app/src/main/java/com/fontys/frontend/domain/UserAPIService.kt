@@ -1,6 +1,7 @@
 package com.fontys.frontend.domain
 
 import com.fontys.frontend.data.UserLogin
+import com.fontys.frontend.data.UserRegister
 import com.fontys.frontend.data.UserReturn
 import com.fontys.frontend.data.UserUpdate
 import retrofit2.Response
@@ -22,4 +23,6 @@ interface UserAPIService {
     suspend fun login(@HeaderMap headers: Map<String,String>, @Body user: UserLogin) : Response<String>
     @GET("whoAmI")
     suspend fun getId(@HeaderMap headers: Map<String,String>): Response<Int>
+    @POST(value = "signup")
+    suspend fun signup(@HeaderMap headers: Map<String,String>,@Body user: UserRegister ): Response<String>
 }

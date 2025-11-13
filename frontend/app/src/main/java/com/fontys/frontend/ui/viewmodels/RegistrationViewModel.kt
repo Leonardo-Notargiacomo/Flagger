@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 data class RegistrationUiState(
     val email: String = "",
     val password: String = "",
+    val passwordRepeat: String = "",
 
     val errorMessage: String? = null,
     val isLoading: Boolean = false
@@ -22,23 +23,21 @@ class RegistrationViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(RegistrationUiState())
     val uiState: StateFlow<RegistrationUiState> = _uiState.asStateFlow()
     private val userRepository = UserRepository
-
-    fun onEmailChange(newEmail: String) {
-        _uiState.value = _uiState.value.copy(email = newEmail,)
-    }
-
-    fun onPasswordChange(newPassword: String) {
-        _uiState.value = _uiState.value.copy(password = newPassword,)
-    }
+    var isLoading = false
 
     fun onSignUp(email: String, userName: String, password: String, bio: String) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
             try {
-                userRepository.login(email,password)
-                userRepository.whoAmIm()
+                if (password != _uiState.value.passwordRepeat) {
+                    isLoading = userRepository.register(email, userName, password, bio)
 
-                _uiState.value = _uiState.value.copy(isLoading = false)
+                    userRepository.whoAmIm()
+
+                    _uiState.value = _uiState.value.copy(isLoading = false)
+                }else{
+                    throw Exception("Passwords do not match")
+                }
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
                     errorMessage = e.message ?: "Login failed",
@@ -46,9 +45,6 @@ class RegistrationViewModel : ViewModel() {
                 )
             }
         }
-    }
-    fun route(){
-
     }
 }
 
