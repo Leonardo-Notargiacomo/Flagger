@@ -66,9 +66,10 @@ fun BadgeScreen(
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     modifier = Modifier
-                        .fillMaxSize()
+                        .fillMaxWidth()
+                        .weight(1f)
                         .padding(horizontal = 24.dp),
-                    contentPadding = PaddingValues(top = 24.dp, bottom = 16.dp)
+                    contentPadding = PaddingValues(top = 24.dp, bottom = 100.dp)
                 ) {
                     item(span = { androidx.compose.foundation.lazy.grid.GridItemSpan(3) }) {
                         BadgeProfileSection(
