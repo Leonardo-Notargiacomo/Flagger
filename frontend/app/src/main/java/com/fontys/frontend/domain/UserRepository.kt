@@ -78,16 +78,14 @@ object UserRepository {
             val headers = HashMap<String, String>().apply {
                 put("Accept", "application/json")
                 put("Content-Type", "application/json")
-                 ?: run {
-                    // Optional: Log a warning or throw an error if token is missing for authenticated endpoint
-                    // throw IllegalStateException("JWT token is missing for authenticated request")
-                }
             }
             val response = userApiService.login(headers, UserLogin(email,password))
             if(response.isSuccessful){
-                val json = response.body()?:""
-                token = json
-
+                val loginResponse = response.body()
+                token = loginResponse?.token ?: ""
+                println("Login successful, token set: ${token.take(20)}...")
+            } else {
+                println("Login failed: ${response.code()} - ${response.message()}")
             }
         } catch (
             e: Exception
