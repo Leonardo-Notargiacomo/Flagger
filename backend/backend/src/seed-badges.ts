@@ -99,7 +99,22 @@ export async function seedBadges() {
   const existingBadges = await badgeRepo.find();
 
   if (existingBadges.length > 0) {
-    console.log(`ℹ️  Found ${existingBadges.length} existing badges. Skipping badge creation.`);
+    console.log(`ℹ️  Found ${existingBadges.length} existing badges. Updating if needed...`);
+
+    // Update or create badges
+    for (const badge of badges) {
+      const existing = existingBadges.find(b => b.name === badge.name);
+      if (existing) {
+        // Update existing badge
+        await badgeRepo.updateById(existing.id!, badge);
+        console.log(`✏️  Updated badge: ${badge.name}`);
+      } else {
+        // Create new badge
+        await badgeRepo.create(badge);
+        console.log(`➕ Created new badge: ${badge.name}`);
+      }
+    }
+    console.log(`✅ Processed ${badges.length} badges!`);
   } else {
     console.log('📝 Creating badges...');
     for (const badge of badges) {
