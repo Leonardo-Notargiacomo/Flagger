@@ -403,7 +403,7 @@ fun BadgeItem(badge: Badge, onClick: () -> Unit) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(6.dp),
+                    .padding(start = 6.dp, end = 6.dp, top = 6.dp, bottom = 12.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
