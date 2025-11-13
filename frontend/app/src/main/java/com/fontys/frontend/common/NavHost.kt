@@ -2,15 +2,18 @@ package com.fontys.frontend.common
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.fontys.frontend.domain.UserRepository
 import com.fontys.frontend.ui.viewmodels.CameraPreviewViewModel
 import com.fontys.frontend.ui.views.BadgeScreen
+import com.fontys.frontend.ui.views.CameraPreviewContent
 import com.fontys.frontend.ui.views.LoginView
 import com.fontys.frontend.ui.views.MapsScreen
-import com.fontys.frontend.ui.views.PictureCaptureScreen
+import com.fontys.frontend.ui.views.CameraPreviewContent
 import com.fontys.frontend.ui.views.ProfileScreen
 import kotlinx.serialization.Serializable
 
@@ -65,7 +68,7 @@ fun NavHost(
             //RegistrationView()
         }
         composable<CameraView> {
-            PictureCaptureScreen(navController,CameraPreviewViewModel())
+            CameraPreviewContent(CameraPreviewViewModel(), modifier = Modifier, lifecycleOwner = LocalLifecycleOwner.current)
         }
     }
 }
