@@ -33,7 +33,7 @@ enum class RelationshipStatus {
 
 class FriendsViewModel : ViewModel() {
     private val repository = FriendsRepository()
-    private val userRepository = UserRepository()
+    private val userRepository = UserRepository
 
     private val _uiState = MutableStateFlow(FriendsUiState())
     val uiState: StateFlow<FriendsUiState> = _uiState.asStateFlow()
