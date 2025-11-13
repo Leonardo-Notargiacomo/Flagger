@@ -85,33 +85,13 @@ export async function seedBadges() {
       unlockCriteria: {type: 'streak' as const, threshold: 30},
       displayOrder: 9,
     },
-    // Example: Adding a new badge is this easy!
-    // {
-    //   name: 'Night Owl',
-    //   description: 'Complete an exploration after 10 PM',
-    //   iconUrl: 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/nightlight/default/48px.svg',
-    //   category: 'Special',
-    //   unlockCriteria: {type: 'exploration_count' as const, threshold: 1},
-    //   displayOrder: 10,
-    // },
   ];
 
   // Check if badges already exist
   const existingBadges = await badgeRepo.find();
 
   if (existingBadges.length > 0) {
-    console.log(`ℹ️  Found ${existingBadges.length} existing badges. Updating icon URLs...`);
-    for (const badge of badges) {
-      const existing = existingBadges.find(b => b.name === badge.name);
-      if (existing) {
-        await badgeRepo.updateById(existing.id, {iconUrl: badge.iconUrl});
-        console.log(`   Updated ${badge.name} icon URL`);
-      } else {
-        await badgeRepo.create(badge);
-        console.log(`   Created new badge: ${badge.name}`);
-      }
-    }
-    console.log(`✅ Updated ${existingBadges.length} badges!`);
+    console.log(`ℹ️  Found ${existingBadges.length} existing badges. Skipping badge creation.`);
   } else {
     console.log('📝 Creating badges...');
     for (const badge of badges) {
