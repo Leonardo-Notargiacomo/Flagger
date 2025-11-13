@@ -550,7 +550,7 @@ fun BadgeDetailDialog(
                         containerColor = if (badge.isUnlocked)
                             MaterialTheme.colorScheme.primaryContainer
                         else
-                            MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f)
+                            Color(0xFFE8DCC8) // Solid muted beige for locked badges
                     ),
                     shape = RoundedCornerShape(20.dp)
                 ) {
