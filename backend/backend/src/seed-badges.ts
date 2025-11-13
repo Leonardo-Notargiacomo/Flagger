@@ -62,12 +62,20 @@ export async function seedBadges() {
       displayOrder: 6,
     },
     {
+        name: 'Avid Nature Enjoyer',
+        description: 'Complete 250 explorations. You really enjoy the outdoors!',
+        iconUrl: '🗿',
+        category: 'Chad',
+        unlockCriteria: {type: 'exploration_count' as const, threshold: 250},
+        displayOrder: 7,
+    },
+    {
       name: 'Daily Dedication',
       description: 'Maintain a 3-day streak',
       iconUrl: '🔥',
       category: 'Streak',
       unlockCriteria: {type: 'streak' as const, threshold: 3},
-      displayOrder: 7,
+      displayOrder: 8,
     },
     {
       name: 'Week Warrior',
@@ -75,7 +83,7 @@ export async function seedBadges() {
       iconUrl: '⚡',
       category: 'Streak',
       unlockCriteria: {type: 'streak' as const, threshold: 7},
-      displayOrder: 8,
+      displayOrder: 9,
     },
     {
       name: 'Consistency King',
@@ -83,7 +91,7 @@ export async function seedBadges() {
       iconUrl: '💎',
       category: 'Streak',
       unlockCriteria: {type: 'streak' as const, threshold: 30},
-      displayOrder: 9,
+      displayOrder: 10,
     },
   ];
 
