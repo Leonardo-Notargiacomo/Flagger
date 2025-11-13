@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fontys.frontend.data.models.*
 import com.fontys.frontend.data.repositories.FriendsRepository
+import com.fontys.frontend.domain.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -32,6 +33,7 @@ enum class RelationshipStatus {
 
 class FriendsViewModel : ViewModel() {
     private val repository = FriendsRepository()
+    private val userRepository = UserRepository()
 
     private val _uiState = MutableStateFlow(FriendsUiState())
     val uiState: StateFlow<FriendsUiState> = _uiState.asStateFlow()
@@ -40,23 +42,13 @@ class FriendsViewModel : ViewModel() {
         private const val TAG = "FriendsViewModel"
     }
 
-    // TODO: Replace hardcoded token with actual auth token from auth system
-    // TODO: Auth developer - integrate with AuthRepository/TokenManager when ready.
-    // TODO: This should be set via setAuthToken() after user logs in
-    // IMPORTANT: You need to update this token to match user ID 1 (gangstalked / www@ww.ww)
-    // Current token is for user ID 2 (Leo). Get a valid token for user 1 by logging in as that user.
-    private var authToken: String = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjIiLCJuYW1lIjoiTGVvIiwiZW1haWwiOiJsZW9AZ21haWwuY29tIiwiaWF0IjoxNzYyOTQ4ODk2LCJleHAiOjE3NjI5NzA0OTZ9.snq2hGxTriXk775WTZ9_725gfQmaIWwvNZF9rZ7COCw"
+    // Get auth token from UserRepository (populated after login)
+    private val authToken: String
+        get() = userRepository.token
 
-    // TODO: Get from auth system - Changed to user ID 1 for testing received requests
-    private var currentUserId: Int = 2
-
-    fun setAuthToken(token: String) {
-        authToken = token
-    }
-
-    fun setCurrentUserId(userId: Int) {
-        currentUserId = userId
-    }
+    // Get current user ID from UserRepository (populated after login)
+    private val currentUserId: Int
+        get() = userRepository.userId
 
     fun searchUsers(query: String) {
         Log.d(TAG, "searchUsers() called with query: '$query'")
