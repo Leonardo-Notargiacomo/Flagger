@@ -12,12 +12,11 @@ export async function seedBadges() {
   const userBadgeRepo = await app.getRepository(UserBadgeRepository);
 
   // Sample badges to seed
-  // Using Material Symbols PNG URLs from Google Fonts CDN
   const badges = [
     {
       name: 'First Steps',
       description: 'Complete your first exploration',
-      iconUrl: 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/stars/default/48px.svg',
+      iconUrl: '🎯',
       category: 'Beginner',
       unlockCriteria: {type: 'exploration_count' as const, threshold: 1},
       displayOrder: 1,
@@ -25,7 +24,7 @@ export async function seedBadges() {
     {
       name: 'Explorer',
       description: 'Complete 5 explorations',
-      iconUrl: 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/explore/default/48px.svg',
+      iconUrl: '🗺️',
       category: 'Explorer',
       unlockCriteria: {type: 'exploration_count' as const, threshold: 5},
       displayOrder: 2,
@@ -33,7 +32,7 @@ export async function seedBadges() {
     {
       name: 'Adventurer',
       description: 'Complete 10 explorations',
-      iconUrl: 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/hiking/default/48px.svg',
+      iconUrl: '🏔️',
       category: 'Explorer',
       unlockCriteria: {type: 'exploration_count' as const, threshold: 10},
       displayOrder: 3,
@@ -41,7 +40,7 @@ export async function seedBadges() {
     {
       name: 'Pathfinder',
       description: 'Complete 25 explorations',
-      iconUrl: 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/map/default/48px.svg',
+      iconUrl: '🧭',
       category: 'Explorer',
       unlockCriteria: {type: 'exploration_count' as const, threshold: 25},
       displayOrder: 4,
@@ -49,7 +48,7 @@ export async function seedBadges() {
     {
       name: 'World Traveler',
       description: 'Complete 50 explorations',
-      iconUrl: 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/travel_explore/default/48px.svg',
+      iconUrl: '🌍',
       category: 'Expert',
       unlockCriteria: {type: 'exploration_count' as const, threshold: 50},
       displayOrder: 5,
@@ -57,7 +56,7 @@ export async function seedBadges() {
     {
       name: 'Legend',
       description: 'Complete 100 explorations',
-      iconUrl: 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/emoji_events/default/48px.svg',
+      iconUrl: '👑',
       category: 'Legend',
       unlockCriteria: {type: 'exploration_count' as const, threshold: 100},
       displayOrder: 6,
@@ -65,7 +64,7 @@ export async function seedBadges() {
     {
       name: 'Daily Dedication',
       description: 'Maintain a 3-day streak',
-      iconUrl: 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/local_fire_department/default/48px.svg',
+      iconUrl: '🔥',
       category: 'Streak',
       unlockCriteria: {type: 'streak' as const, threshold: 3},
       displayOrder: 7,
@@ -73,7 +72,7 @@ export async function seedBadges() {
     {
       name: 'Week Warrior',
       description: 'Maintain a 7-day streak',
-      iconUrl: 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/bolt/default/48px.svg',
+      iconUrl: '⚡',
       category: 'Streak',
       unlockCriteria: {type: 'streak' as const, threshold: 7},
       displayOrder: 8,
@@ -81,7 +80,7 @@ export async function seedBadges() {
     {
       name: 'Consistency King',
       description: 'Maintain a 30-day streak',
-      iconUrl: 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/diamond/default/48px.svg',
+      iconUrl: '💎',
       category: 'Streak',
       unlockCriteria: {type: 'streak' as const, threshold: 30},
       displayOrder: 9,
