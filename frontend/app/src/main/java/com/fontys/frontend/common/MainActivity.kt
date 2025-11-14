@@ -11,12 +11,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
-import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.fontys.frontend.data.UserRegister
 import com.fontys.frontend.domain.UserRepository
 import com.fontys.frontend.ui.viewmodels.LoginViewModel
 import com.fontys.frontend.ui.views.LoginView
 import com.fontys.frontend.ui.views.NavBar
+import com.fontys.frontend.ui.views.RegistrationView as RegistrationViewComposable
 
 
 class MainActivity : ComponentActivity() {
@@ -29,22 +32,31 @@ class MainActivity : ComponentActivity() {
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        var navController = NavHostController(this)
-
         super.onCreate(savedInstanceState)
 
         checkLocationPermission()
 
         setContent {
+            val navController = rememberNavController()
+
             MaterialTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    if(UserRepository.token.isEmpty()){
-                        LoginView(navController)
-                    }else{
-                        NavBar()
+                    NavHost(
+                        navController = navController,
+                        startDestination = if(UserRepository.token.isEmpty()) "login" else "main"
+                    ) {
+                        composable("login") {
+                            LoginView(navController)
+                        }
+                        composable("registration") {
+                            RegistrationViewComposable(navController)
+                        }
+                        composable("main") {
+                            NavBar()
+                        }
                     }
                 }
             }

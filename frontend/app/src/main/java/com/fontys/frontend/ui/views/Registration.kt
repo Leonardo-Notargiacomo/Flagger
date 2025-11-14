@@ -18,8 +18,6 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.fontys.frontend.common.LoginView
-import com.fontys.frontend.common.NavigationView
 import com.fontys.frontend.ui.viewmodels.RegistrationViewModel
 
 
@@ -80,30 +78,34 @@ fun RegistrationView(
             label = { Text("Bio") }
         )
 
-        Button(onClick = {
-            if (passwordsAllign){
-                viewModel.onSignUp(email, username, password, bio)
-                if (viewModel.isLoading){
-                    navController.navigate(NavigationView)
+        Button(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = {
+                if (passwordsAllign){
+                    viewModel.onSignUp(email, username, password, bio)
+                    if (viewModel.isLoading){
+                        navController.navigate("main")
+                    } else {
+                        errors = true
+                    }
                 } else {
                     errors = true
                 }
-            } else {
-                errors = true
-                }
-        }) {
+            }
+        ) {
             Text("Sign Up")
         }
+
         if (errors){
             Text("Passwords do not match")
         }
-    }
-
 
         Text("Already have an account?")
         Button(
-            onClick = { navController.navigate(LoginView)}
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            onClick = { navController.navigate("login")}
         ) {
             Text("Sign in")
         }
     }
+}
