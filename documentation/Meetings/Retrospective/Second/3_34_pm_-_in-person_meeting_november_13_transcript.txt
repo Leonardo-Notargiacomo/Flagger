@@ -1,0 +1,395 @@
+Speaker 1 | 00:02
+Guys saw the new meeting. Starts sprint retrospective for sprint number two or three. Free correct.
+Speaker 2 | 00:16
+Time your shit and don't publish it this time.
+Want.
+You me stop or IT specialist he DES.
+[Laughter] okay, I say go, we can publish our starts go new right now, publish your starts.
+Speaker 1 | 05:37
+O okay I will stop because I am this ugly orange.
+Speaker 2 | 05:47
+No, but the first one is, I'm molesting Ro.
+Speaker 1 | 05:50
+Yeah, that's me. I'm okay, I'm changing. Yeah, my first one is holding each other more accountable for work and not done. This, of course, works for me because I feel like I could have done what I have done now in a shorter time, but I didn't. Can we talk about what you talked about earlier?
+So basically, I talk with Chief about how he wants to continue and one of the ways is through setting maybe more in-depth deadlines. So maybe going more in detail when we talk about task and task allocation.
+So I'm not saying, "Hey, this is what you have to do for the sprint," but maybe holding each other, and in particular him or someone saying, "Okay, you have to do this task in three or four days, and then this task has to be done in another few days." So we can keep each other other.
+Speaker 2 | 06:47
+Yeah, regulate this and not just impose something on them. But that's just what I feel like. At least in my case, for example, saying to me, "All right, you're doing the locker. Let's see that you have finished the front end of the locker and wood in this week, and then you do the backend, and then next week something like this."
+You know, just as an example, I do like it myself.
+So because you want to do is like for example when some one week planning, we give you a detail making challenges. So you would like to receive the tasks and the time estimates and someone else,
+but holding you accountable for them? Yeah, what does holding me accountable mean? It's
+like not too much because then I will be just storing, I think taking kicking your eyes [Laughter] we are not allowed to make backies with switches. Let's be honest, guys. You guys probably are thinking, why does this group take three weeks for luggage?
+And yeah, I'm thinking that myself, at least, and I have to be quite disappointed in myself. So that's why I talk with Rene now, like half an hour ago and hopefully will not know multiple hours about this whole topic.
+So I don't know. Okay? In that case, apparently it is Leon.
+Speaker 1 | 09:28
+But it depends. It depends on where we are. If you're in a daily standup, I'm responsible, and all the other time he's responsible because he's still the better of the product manager. Manager exactly that he is [Laughter].
+Speaker 2 | 09:47
+You're the leader. You are the server leader. [Laughter] Serve us. The team.
+Speaker 1 | 09:58
+Okay then I will do it. No.
+Speaker 2 | 10:01
+You can't.
+Sorry, I don't speak for May.
+In my mind it's Dutch, it's a duty. We said, like, so X-ray came off, [Laughter] guys don't have stuff. You guys, that's no. I just did some racism, okay? Yeah, that's why or you I'm connected so get out.
+So I.
+Speaker 1 | 10:53
+I thought about it that we in this spin planning we can say, okay, because estimation points, right story points. Yes, I know. Yeah, you're on topic on yourself, my friend. I love you so much you can't imagine, but you had a topic on yourself. Basically, story points means that if you have zero story points, it should be done in like a unit. I'm not going to say a workday because a workday is something completely different, but in a uni day.
+If it's wrong, it goes over this. If it's over one, that's why I actually proposed the 0, 1, or 2 much category. It's too complex to achieve, so it's like there's too many ingredients, so you should strip it down further. This is my thinking.
+So when we say, "Okay, this is login." Let's say, "Okay, we divide it into front-end, both views, models, and backend." Yeah, exactly. Retrofit, one view model, one front-end, zero. So it should be done at the end of the week at best. At best, maybe in the next session, at the end of the next session, you know? Yes.
+Speaker 2 | 12:19
+Like that might work because, for instance, the views and humors, they usually don't take as much right. And so you can estimate long tasks. Usually, the backend takes a bit more because it's more confusing.
+But for example, if we then look at the map, which is way more front-end than back-end. Then the sole estimation in Canada gets wonky. So if we do the estimation, I would say just keep.
+Speaker 1 | 12:56
+Yeah, of course.
+Speaker 2 | 12:57
+It's only if we just midway through the task realize. Okay, this test is weigh more heavily on the specific aspect that we did not account for that much raise issues. Yeah, so we can use it, but it's difficult to say.
+All right, we rated this as a one or two when the was making the map, and it turns out the map requires like eight points or even more. So that my package is sp.
+Speaker 1 | 13:53
+So next one cubing a rubric. I think it's self-explanatory. Task estimation points. So I'm going to fuse them together now when we talk about it. No, but this is like one thing together because it's a similar topic because when we say we want to hold someone accountable, we have to measure by what we hold them accountable. As I just mentioned, there are several ways to think about estimation points.
+For each of us, the estimation point is, of course, different, but we have to choose one ground on which we will work. So, for example, maybe it's 2 for me, but for you, it's 0. Simple.
+I think, yes, we'll start doing it next.
+Speaker 2 | 15:01
+Springit with estimation points S6 to are one.
+Speaker 1 | 15:16
+So several ways, several cuts of decks. Let me put it this way. The first one is, of course, the Fibonacci sequence, then there's the modified Fibonacci sequence, then the T-shirt-size power off.
+And of course, they are like custom decks, for example, 01 to 2, maybe for Mr. Tang, he had one like this. There are several planning poker, just planning poker.
+Speaker 2 | 15:52
+I don't know how you guys feel about that, because it's rather a bit more like larger time frames usually, and it's a little bit more straightforward with the estimations. But what if.
+Speaker 1 | 16:11
+But what is a day like, for me, it's. I have for seconds are.
+Speaker 2 | 16:19
+Since we are dividing a large use case into small tasks and they're doing pretty great in this case estimation point, they would make a lot of sense since we divide the use case into small ones.
+And we can estimate each. So that's why we should agree on that number for the use gate.
+Speaker 1 | 16:51
+In general and.
+Speaker 2 | 16:52
+That we are able to provide. No.
+Speaker 1 | 17:02
+What do you means.
+Speaker 2 | 17:07
+For example, the estimation is 6 points, and then you.
+Speaker 1 | 17:16
+But you don't estimate use cases, you estimate tasks.
+Speaker 2 | 17:23
+To this number of 6. So like, for example.
+Speaker 1 | 17:28
+Yeah, that is like an upper bound.
+Speaker 2 | 17:31
+Not necessarily an upper bound, but it's like making a set of points. And then he's taking these 100%, essentially, which might be three or six or whatever and splicing them up into how much each task for that feature might be.
+Yeah, because I make sense since we... Yes, since we basically can trace the progress of each with those points. And for example, in case of embedding, if you are running out of time to finish the whole use case within the sprint, we can see what you've done.
+So how many estimations do you have at this point? And then we do some actions regarding this situation. So we should definitely try this one. I would make a modified suggestion that we do the point system for the features and estimations.
+So should my estimations... Yeah, I do understand that this is like a crucial part of the entire project, but the task and you chas about it... It's important. Yes, but is it like.
+Speaker 1 | 19:19
+Yes, no, it's so the point is it's not about how you react when you estimate wrong, it's about the general estimation. If we don't do estimation, we're going to fail. Project all skill it's not all... You didn't estimate. We have to explain why.
+We saw it, we just didn't want to fail. In the end of the day, we have to experiment with it. And, from my understanding, now we mainly work with traditional estimation subjects such as the time, but I moved on to story points and said, "Okay, how long do you think this story takes?"
+How complex is it? And then break the task out of this. Yes, I will send a link
+Speaker 2 | 20:14
+Right now or after the retrospective. Yeah. Would it be that everyone will be included for each use case or.
+Speaker 1 | 20:26
+Everyone has to sit there, so it's a group thing.
+Speaker 2 | 20:34
+Would I explain? Like. Yeah, I think it's.
+Speaker 1 | 20:38
+Basically that.
+Speaker 2 | 20:43
+So I guess in that case, next Monday, we have a screen plan. I would say you take, for example, you take a certain use case and you quickly estimate this use case and you propose a number and then we discuss this number.
+If we are pretty much in agreement on this number, we do this. If we aren't in agreement, we discuss this and we find the appropriate... I mean, that's a normal process, but... So can you estimate in any way what this case might take? You can even though it's really inaccurate, still use your own stuff that you've done so far as a sort of guideline on how you want to estimate it.
+For example, you somewhat know how long the front-end will take now. So, for the front-end part, at least you have some sort of reference where you can say, "Okay, you want to take eight points over you." You know, you're just guessing.
+Yeah, show like that. Yeah.
+Speaker 1 | 22:06
+So first of all, the whole point of this is that some of us don't have a clue about it. So it's about how much time would it take you without any knowledge to implement it? If you really think I have no clue, most modern decks have question marks or coffee cups, which is like the equivalent to... I don't know, I'm going to take a break.
+So if you sit, then I'm like, "I don't know how purifications work." Maybe a hundred, maybe question mark, who knows? It's up to you. Of course, I would... I wouldn't... I wouldn't like, of course, question mark should be the last thing you choose because it's a really easy way out, and because in the end, we need to discuss.
+When he says one and I say a hundred, we need to say, "Why does he think one?" What does he what? Why do I think 100? You know.
+Speaker 2 | 23:05
+In the middle of the project, I would say the one who is assigned to a certain use case because the biggest priority in terms of selecting the number. So if a person knows and he is sure about the number,
+for example, he's sure that his estimation takes five points, and they asked us to propose that. The one who is assigned actually has more priority about selecting the number if there is confidence. I would say that makes only sense if you know that the person who's assigned actually has some experience in any fashion, even if it's just a little experience. Then.
+Okay, I am fine with that system. But that person has really no experience at all. And then he signed suit and says, "All right. I mean, if you say I will still take less time than what the group says, I guess."
+Yeah, you can say that, but you might still end up... Is the Rubick massive again?
+Speaker 1 | 24:25
+He didn't even work purposes on me. But I want to... Okay. [Laughter]. I think it is. It is a logical approach to take, but I think that it's wrong to go this way, because it's not that in the end, the estimation reflects the group or not the individual.
+So when you say, "Okay, this takes two, but all of us say five," then either we take a middle ground or we move me to the five direction. Because even though we all want to have a similar understanding of it, it is still distinct. You know what I
+it's better to have a group reflection. Say, "Okay, we did." So for example, in this case, if we would follow with my example, everyone in this group would do maybe 15 store points, but you would only do 5 because you estimate lower and your own staff low.
+But we estimate our own staff higher in that case. One time. Okay? In.
+Speaker 2 | 25:34
+The in the app.
+Speaker 1 | 25:40
+There is no priority. The point is you have to tell us why it is so easy and if you can do it. If I sit and say, "But this is complex," then they say, "Okay, it's an argumentation.
+Speaker 2 | 25:54
+As a person is able to... Yeah, and you can agree on the number at least, but in case if the person is... It's just a group discussion over the e.
+Speaker 1 | 26:13
+Okay, I'm gonna stress again how this works with planning poker. He's gonna read each user story and we won't discuss, we will vote directly. We will play a boring round of poker. This will be the first time you will ever play bowing poker.
+After that, we can discuss. Eventually, we vote, if you catch my drift.
+Speaker 2 | 26:36
+Yes.
+Speaker 1 | 26:38
+So we can talk about the argumentation at the end. Stop worrying about the future work and work on the one presented. Yeah, last time, towards the end, there were big discussions about future user stories and this and that and Ananas and let's do step by step.
+You know, we're still not done with our stuff. If we think we progress too fast, we can come to the end and think about new features to implement. But I want to still stress again. You're not done.
+Because you say you're done. If you do an AAF feature, but not all of the things that are implemented, then it doesn't really make sense to progress. I'm gonna be really mean
+if you program something but it has the wrong file, so maybe it's an XML. And I'm gonna be mean, but you already moved onwards and clicked it as done. But it's not done. This causes confusion, if you catch my drift.
+I'm right now cleaning up the login process, like moving there, then token, and registration have to move login and then move to NA house. Blah, blah. It's one step at a time. Sometimes you don't want a trip.
+I sound like an old man. In the end of the day, it's still uni. So, even in work, you can't progress so fast. But let me be really honest. The guy I work with, the lead developer, does his things clear.
+If you have a lead developer who takes it really seriously and isn't really all fun and giggles, you're going to have a shit time at work either. This is not meant in a negative way to talk to anyone, but please do your stuff. Sit down and say, "Is it done? Is it not done?"
+Then move on. If you see one of my teammates I did the project with, he got a better grade than I did. He killed his job after one and a half months because he said that he doesn't want a program anymore because it was just so strict with him, with the developer there. I don't program.
+That's why I'm still there. Okay, next, communication about work. Blah. Yeah, we should communicate a little bit more about who works on what and who wants to work on what. Prime example, the login.
+For example, I heard that you said that he can do it. That's why I was like, "That was confusing." Okay, but I think you meant something else. Then there was a little bit of miscommunication, so maybe try to communicate a little bit clearer on everything.
+Speaker 2 | 29:43
+Butdly. Remember how? He asked me. Would you mind if I worked on the locking and my.
+Speaker 1 | 30:02
+Yeah.
+Speaker 2 | 30:08
+The thing that he's asking me. But he asked me something where I would disagree and I agreed to disagree, which caused the confusion, I think. Yeah, I mean, I asked about... I mean, I proposed the authentic strop and I got really into the process and I went until the end, basically.
+So, yeah, there's been... This is a clear example of miscommunication. I would say, I mean, there is my secret note, and this is a general one, if you're interested in discipline improvement. I mean, let's okay, let's get on this conversation, and then we will get the discipline, and I think that we can spend some time on this topic, so let's... Yeah, let's get done with the...
+Yeah, with what?
+Speaker 1 | 31:09
+Yeah. Being clear on news selection, my god.
+Speaker 2 | 31:19
+For me, that wasn't really an issue. But the stuff I've heard.
+Speaker 1 | 31:26
+Yeah, and the login and register at the beginning of the sprint, like he asked me a few days ago, "Are you doing sign-up?" Yeah, isn't Chief doing that now? I was like, "No, not again." But in the end, sign inside up.
+Yeah.
+Speaker 2 | 31:47
+On maybe for yourself, maybe our...
+But in that case, that probably would have been unavoidable because we've had other instances of sharing the use case with other people. For example, me and Raul, we both cross for hay notifications.
+But then I was going to vest essentially, we agreed with him that he'll do the other use cases. And yeah, we are like the same but on a different level because we are doing it together. But this manages too... Disciplined improvement.
+Speaker 1 | 32:43
+What does that?
+Speaker 2 | 32:47
+I've. started seeing this during the last day of the week. The last week, like, it was on, if I'm not mistaken, on Friday or here on Friday, to be fair. I mean, I haven't been really happy with the discipline.
+For example, let's take today. The people don't believe it all. Luca now I'm not let. Luca So first of all, [Laughter] I YouTube videos. I mean I.
+Speaker 1 | 33:25
+I understand that.
+Speaker 2 | 33:26
+That's the last day of the project we exam. We've been pretty exhausted at this point. We will be full of full project stuff and I guess to a certain extent. But yeah, we need to be a bit more disciplined.
+For example, it's not about the presence and the behavior. It goes to the task selection and task assignment. So I would say when I asked you about the walking, it was never about discipline. I simply asked,
+and that's it. The way it should have been done is that we look at the government board, we look at this, and we look at the bus. We are three as a person. So just be a little bit... So, I'm so sorry for you.
+I mean.
+Speaker 1 | 34:37
+What does it sound like? Is he insulting us? I'm so sorry for.
+Speaker 2 | 34:39
+Youitting in a conversation and Chris is two of you. I'm so sorry, but I don't want to see any discourse on the laptops when we are discussing the retrospend. Yeah, this is a part of the discipline. I do gather that we are pretty exhausted from the projects, but it was project-related. It's not... I just want to stress that.
+Yeah, we are taking it pretty seriously because, I mean, I rolled it just again. So there is this, but it can be at a better level. So like I said, we easily improve.
+Yeah, but you just need to make sure that we are full of power and we are seriously... They are too serious to not be serious, but we are serious enough when we work on the process. So if you have any proposals to improve discipline.
+Yeah, not saying that we should stop being like doing what we're doing now, but it's like we are, we always have, a functioning aspect. We are quite far ahead, I would say, so that we shouldn't start.
+Yeah, I agree with K because I'm pretty sure.
+Speaker 1 | 36:37
+I'm sorry. I need to... Because I can't concentrate anymore. I'm at the point where I'm a little bit... Yeah, but for backend, we can help you sooner. Network is done.
+Speaker 2 | 36:57
+We are. We all finished the use case. So I don't think we need more. The thing is, sadly, the number is not something the...
+There is a roof, there is a sacramental... Wowed in that way, I think no one denies it. Yeah, it's just like they want to stay the second time, and it's not prevented. I enjoyed the pros during the first two days, but for example, today it was to be over the age. I would say today was kind of crazy.
+Yeah, but what? Yeah, that's people if you're done. I can say it like this, looking at rhy.
+Speaker 1 | 38:05
+Sen the thing is, for example, maybe you mean me partially in them so to what to do. But it's like the only thing I need to do now is push and maybe log a little bit more. That's the only things I have to do right now.
+I'm done with my stuff. And we should sit here and be actually really proud of ourselves. Because there are groups, they don't even have a back end running. I'm not looking at any group, but it's maybe sitting right across. Let me put it this way, Renda, no good there. No, not Brahm, who sits further behind the... Not ca, look completely...
+Yeah, they had that. They have some back-end issues. The last time I talked to them.
+Speaker 2 | 39:11
+This is pretty much there. However, it can be improved just to the idea level. At the same time, we just need to make sure that we are well vested as we are not exhausted by the process because I mean, that is part why everyone's kind of.
+Speaker 1 | 39:37
+What I want to say is.
+Speaker 2 | 39:44
+Not as much.
+Speaker 1 | 39:53
+Al from me, I had a lot of stuff to do with work. There's a lot happening right now. I can't really talk about it because I signed a contract and shit for this, but it should become better now.
+So, they have more time for uni.
+Speaker 2 | 40:14
+But for the next one, I think... Well, we love you. I love you too.
+I shade this: we are not as a suggestion. You don't have to do it. It's optional. So, for example, it gets me worried. So, we're now talking with the chief about the exams or the assessment. Now that we'll have to present most likely to the teachers, our goal... For example, I cannot vouch for everyone, but I can vouch for the picture that is not so... I can vouch for everyone.
+But the greater it depends on how we explain this. For example, would I have to be able to explain the ma? It might as your feature, but generally, it's going to other features, but on your feature, you have to do it in detail in which control the moment, but et cetera.
+All right, so if I want to do it, I'm not pushing this upon it, but someone wants to do it, Bill will be. It you have to do.
+Speaker 1 | 41:34
+I mean.
+Speaker 2 | 41:36
+Like you guys told me, there's the possibility that they don't do an assessment, which I guess can happen. But in the case they do an assessment, you guys want to be like kind of awar on what they might ask and how that might go.
+I mean, Rene had one year of experience of this esment, I think.
+Speaker 1 | 42:06
+Yeah, I did the retake, but the retake was... I don't act like I'll just say I didn't do it. It has its best... mental pain.
+Speaker 2 | 42:19
+For the second time. I did it with the retake, trying it properly. But I think it's... It's some contributions on holiday and shit, so you guys will find that out. Okay, so I have a controversial opinion on that. Guys, we are doing severe quite TED and we are very attached to the hours so...
+They asked about "s" that is much more than 50% of... The point is that as "e", depending how early we finish that application, the more time you have for the demo assessment at the car. So at this point I will drive with aja work and I just...
+Well, so at the end we could do some demo assessment as we are not going for now, let's focus on developing. We will have more than enough time on explanation and on the demos and on the learning of the other regions. Let's make sure that we are the experts of our personal fields so one we can properly explain every single we...
+So we completed only in this period and at this as... I mean we can see that some is about field but at the same time let's work goal, let's develop the skills are develop.
+Speaker 1 | 45:02
+Are you having sex with the table? I'm so sorry. Have you seen this? No bother. You was like this position. She was like, I was... I was like.
+Speaker 2 | 45:16
+Throw.
+Speaker 1 | 45:25
+Should I give you a massage? Should I give you more sauce?
+Speaker 2 | 45:39
+Have to do this every two weeks or seven. But someone, let's say, guys, would you do me the favor of doing a walk-up and taking it on? The people either say yes or no. Whoever says yes, they will do that with or I think that's the idea of
+the opportunities. It's really valuable. I can't guarantee that.
+So essentially, it says review, be ask more carefully if you see the as code to that. I know. So in Project 2, I had this great play who was working with him. He's a really great student software engineer.
+Whenever I would meet my team, I would send the PR and I would take a careful look of whatever. Sometimes he would call me out, like, "Why did you write this?" "Why did you write this?" I hope this couldn't make any sense.
+He was holding me to a flow that I was at the first intg 2, I had no connection to bet. I was doing everything in a short, and he noticed that and then to fix it and then understand it properly.
+So that's why I see that we need to test, but we do not do it as was intended to do. Now that was just like a "like" because someone told us the PO, but we just merged it to that. But maybe... Yeah, because, for example, I remember
+Dan, it was merging something into depth. And I noticed that some small error, which is because we're using the wrong backend, for example. But I did notice that because I wasn't given the PR to commit, but because I was really interested, I saw that.
+So for example, if you make a PR on the maps, someone could go, "Hey, we are using TR, it could be stopped earlier because we have someone else checking that." Okay, this makes sense. You put the documentation as there and therefore someone else can have to verify to get this work done as an important story. For example, with you, because I, as you all know, am best person with the club and therefore so I get...
+I will guarantee that if I'm done with the future, then I saw it's working. But for example, I cannot guarantee that it is the best way from a perspective, because I'm more interested in getting the feature understanding, the essentials, not each line of code.
+So for example, if you send a week person, for example, you say, "Well, why is doing this?" Because you're doing it in five as you in one way, they'll be easy to explain to teachers in the different ways as well.
+Yeah. Ideally, you won't talk much. This is the back-end. And there was like I think it was fine credentials function which first looks for if there is just any user's email, but does not return the user at that point.
+Then again, it checks a second time if the email is correct in the database. So it's like a.
+Speaker 1 | 49:19
+Yes I could.
+Speaker 2 | 49:23
+Even though it might be needed, my first intellectual talk is now. Alright, we go two-step search, and I think it is indeed just really...
+What the intent behind the PO is as an example, I don't want to say so I think it's helpful going properly through. We can, for example, just say, "All right, requests. We look at them each weekend and then go through them together with the first person who requested the pull and the first who is checking them." Then they just sit in this call together. For example.
+Yeah. But I don't have to leave at five because then I'm home at six, and I don't want to be late.
+But I'm late for dinner and my mom would get mad at me on Monday. I think it was six or this earlier we talked quite long. I was home at seven. Okay, not be shy. Who says this one building? That was me, not being shy about matching issues because I was hesitant of saying I have this issue and that. And
+then with Leonardo AI for starters. And now during the retrospection, the third time talking more and a little. I talk then now before to remain so, don't be shy about mentioning something if you're realizing it. I'm procrastinating just something rather me.
+Just quickly over, I noticed that for example, Roel and remain they ask to be more and they call it a problem, so therefore I could help them. So for example, they were saying, "Thank you for this process and a lot of time and effort." It's not worth a defaulting, some depends or pure. I was saying,
+"It is good that you were asking. This one is fine because we are still of like we still."
+Me. Okay, more contracts can I give this? This one is mine because we have the contract, we have the PUID. Nothing happened. This is just a part of professional skills which you will be assessed on. I would say that the only moment that has been bridged or because.
+Speaker 1 | 53:36
+I will bring sweet on Monday, I will bring sweets on money. I was late today. 20 minutes and we will see. Protein pancakes.
+Speaker 2 | 53:55
+These professional skills are not to... They're just as important as the implementation in this project.
+Speaker 1 | 54:02
+Where did you read that? No, I was just a.
+Speaker 2 | 54:07
+Like on the cars. Like every learning goal has an equal amount of weight, so the implementation has just as much impact on your grade as the professional skills as the grade name. Talking about simple fashional skills, [Laughter].
+Speaker 1 | 54:33
+Raise your arms next time.
+Speaker 2 | 54:38
+In that case, we need someone to be responsible for the contract because we are simply not strict. They are not strict about being like, for example, Roel today. Bring some food to close the eyes on the relationship and main focus on the professional skills and things.
+And to be honest, I see Vim as a great person for this role. Okay, I want to say, this is like a certain service leader job. Yeah, I mean, you're you.
+Speaker 1 | 55:29
+Just the leader of ant.
+Speaker 2 | 55:35
+Justifications, et cetera. So I would say Bill is a great person because he's able to close as of ever he to the election. He doesn't take personality, doesn't take.
+Speaker 1 | 55:53
+I want him to be the punisher, the slave owner, the mass... Yes. Look at him already doing his job.
+Speaker 2 | 56:20
+When it comes to being more strict, he's already ready.
+So, be accountable for not...
+I'm always really cautious with these things because they like to go a bit over the bounds, and at some point everything is just strict. You get.
+Speaker 1 | 57:06
+Trust me, this won't.
+Speaker 2 | 57:11
+These kind of things are that they're taking more. I will go to saying to free like you that we made up because in the end we will just send six students to university and doing a project. Not the real applications. No application.
+That is business. But yeah, I have no problem with being more exaggerated, I think. 12126. Yeah, you won. So I didn't know. Okay, so I have a couple of checks and I will go to the questions for you.
+So what I wanted to say is that I said that you misunderstood. Okay, so of course, no, of course, but like we will... This is immediate. The second point, which is to riddle the business. The whole point, I guess, of studying here is to make us ready to work in a business, which is why we even have professional skills.
+So I do actually think that it's important that you are held accountable because when you are at the... I have a job and you are late every day. I don't think you have a job anymore.
+I think things like that. Of course, I'm not going to... Fuck with your... You said that we've been pretty lenient. PH the question because there have been a lot of discussions when the person was lazy one hour and more.
+I would say that we haven't activated the contract that much. So yeah, we just need to be a little bit more... Change. So let's start with the... Be and let's see how it goes the next ST.
+Why do we want to assign one person to this? This is just against the entire idea of a theme. We are everyone should not be ashamed to call someone else. I guess I see it more as like final.
+Speaker 1 | 01:00:29
+He just wants to hold his power.
+Speaker 2 | 01:00:35
+Imagine so what is five hours? It doesn't... For home much. Yeah, so it's like an hour late and no one says anything else to it. If we have one person to get like a responsibility, make sure this getpth give it to me. I would say it's pretty clear that the group judgment didn't really work at all because as I agree, the
+whole... Well, as a whole, we clearly need it to do the work that well. I'm sorry if this is what happened that was so disastrous and someone worked.
+Speaker 1 | 01:01:29
+Why are you navedroping.
+Speaker 2 | 01:01:35
+So much about this when it happened? I think you were just today late. He was two times.
+Speaker 1 | 01:01:40
+And I love the Spanish person.
+Speaker 2 | 01:01:51
+Agreement is about one because we have all these like channels out and like we all like at least so much silence like you okay what this and then they will prepare all mentions then later, yeah. But yeah, okay, but that's supposed you go to six, but how many times have been made? My guess is more than once.
+Because I remember you on the day you bought the muon. You were late. It was because of the muon.
+So, no, let's try this. Let's try to print let's try to log a to be a project. Mas was not this way, and if it works, we will keep doing this. If it doesn't, well, it's another solution. So, let's see how those get.
+Yeah, but I think it makes perfect sense when most students are worried about it because most of the time, they will have almost the same situation as you both. It was for you both like to it one or one and a half to get here.
+I still think most of the time won't just get here in time as compared to it makes sense why he tests to have time and I.
+Speaker 1 | 01:03:32
+It's just evil.
+Speaker 2 | 01:03:35
+Just bureauc credit heart that's I will leave that's.
+How much is there does anyone but.
+Speaker 1 | 01:03:53
+Yes. Okay. I will start mine first. As a professional Scrum Master stopped making sprints in between sprints. It's really hard to coordinate everything, especially for the next product backlog. Then we have to say, okay, where are we running, where do we want to go? Do you even have something enough for the next sprint? Or is it like a perpetual cycle where you just have not enough from what you started last time into the next time and it's gonna be
+my part.
+Speaker 2 | 01:04:26
+I will exactly this the next. No saying that. Yeah, I know it's not a good brat, but you can.
+Speaker 1 | 01:04:32
+Use case XX we're not good for. Nor is the time for not... [Laughter].
+Speaker 2 | 01:04:43
+For probably some who practice that professionally or like maybe this can get not waste time on the project. Yeah, but of course generally it's better. Yeah, and the third one was I said that we all use cases, some of the use cases haven't been synchronized with the other ones.
+And so I mean, my escape is the case coming in sync with the other ones. I have to build some extra stuff because I was in a different timeline that might deepen the agenda. So the start of the spring must be different for me because I then consider this issue. We need to make sure that the next start from zero like including everyone.
+So we sit down and we make sure the guys. This is the zero, this is point zero, and from the point onwards until the end of that's it, yeah. So basically, yeah, we agree with that. This is where
+the start. Quickly now, I won't...
+Planning and res peoples. For the next time, we should make sure we do not put up
+the wings. Then
+some severe over that sort of year, I would say. So if he starts doing something interlockens per se, I do not have an issue with that. But if he then starts to do the whole work and thing all of a sudden like...
+In my case now I don't do really much, so I can kind of say it's all right, but in general, this should not be that. So yeah, probably I will say that with the opinion of a few more people and myself included because well, I'm aware of the fact that for example, for you, it takes longer to do the features for you know.
+But now this one will sound bad because of the laziness factor for the... Yeah, exactly. This is somewhat okay. I can see that. And that's why this would seem to me at some point we have to intervene.
+But that's not what I'm trying to say. Yeah. So essentially correct me if I'm if I will say the wrong step which is not think is true but for inn like because it was taking like too long and like we didn't know that you had like some problems with that that's where someone.
+It's just that like not to make in the middle of the. Yeah. So just like a regular, like sprinkler, which is you're on track and if someone interferes it, that's not good.
+But what did happen is that the use case was the part of the use case was small. It took too long way. But we need this like part of the use case. And therefore, yes, I know it got.
+Speaker 1 | 01:10:03
+Doing more frequent contributions, more for myself. Are you happy with how everything goes about the progress we do?
+Speaker 2 | 01:10:15
+From my perspective, you guys are kind of working consistently.
+Speaker 1 | 01:10:27
+Don't be so cases.
+Speaker 2 | 01:10:31
+Well I just did the network, which is justially two sides of content. So yeah, of course, I got an impression from that and felt like I did not work that much. So all this.
+Speaker 1 | 01:11:05
+Yes. So I wrote the orange one. I think everything was totally great. Of course, there were some problems with how we came late, maybe how we interact with the EDGA principles, but overall, this is really important for everyone here to understand. We're doing a really great job. We have a safe backend that is up and running. We have a front end that is up and running with maps that are visible. We can pick and say, "Look, this is our group, and this is what we did." We shouldn't be ashamed because we did so much. We did a really great job, and I'm really happy to be part of this.
+And of course, to hop pretty fast this time. [Laughter] Now, if I fail this one, I'm going to make a kebab shop in Fallow. There's another way for me. He said it to me. Plug... [Laughter] Shawarma, but good one and cheap. We need...
+Yeah, but this will be one thing, but I will have a lot of vegan and vegetarian food. Me in my kebab shop. But you... If I fail this product, I will... Yes.
+Speaker 2 | 01:12:33
+Like.
+Speaker 1 | 01:12:37
+Like stuff, yeah. But you are...
+What I wanted to do before I became the student assistant job. If I wouldn't have been a student assistant, I would've been... You want to be a master's tripper as well?
+Speaker 2 | 01:13:08
+13 minutes will be done with retrospective because later everyone will be gone. So while we still have time, just keep it for now to the point. So let's call it adult ARO because whatever should be...
+For example, I really like the fact that you asked me for help because I could talk and so on. My time was some independent CCs sales someone for it, but we saved... I think a lot of time. Both the teacher's voice and the two few people who complained about professionalism are doing that. What they just discontinued. Yes.
+So again, yes, because I use good tools and as well, I think I have a better understanding of approach. Well, give them an understanding of... If you just... Which is to focus on the tab and be able to get blurry, because as anyone else or meaning GL, because well, now it will sound like dragging.
+So I think it helped you save all this time. Yeah, we did. I'm just trying to say that project-wise, we don't spend much time on stuff we don't need to spend time on. That's my...
+Kitchen...
+Like so because of this.
+Speaker 1 | 01:14:46
+That we hustle.
+Speaker 2 | 01:14:51
+You know the meaning of "can help others" from skill in the traditional meaning of the... [Laughter].
+Speaker 1 | 01:15:10
+Okay, I guess everyone's burned out now.
+Speaker 2 | 01:15:13
+Yeah. Okay. So what are the action steps that we will take for the next PH?
+Speaker 1 | 01:15:18
+So I would say, of course, I will be more strict in my daily sprint in my scrum master role. And be more precise in saying what I expect from you. This means that the sprint planning is going to be more complex because we now have to create more detailed estimates. Then let's just program. Regarding everything else, the scrum master and watch smile. What a cut.
+And for the whole other regards, I mean it's just about I think most of them are just that we have to follow the other practices a bit harder. No finished.
+Speaker 2 | 01:16:25
+Yeah, we proposed another way that we can keep the team from... Because I think that was the point of that. We all needed to be more like the little mostlerable.
+Speaker 1 | 01:16:39
+More more accountable.
+Speaker 2 | 01:16:40
+I think if that happens, then it's automatically going to be fine. Yeah. So you think that is the... Yeah, if we followed the other thing, I think I would be most... Snaked. I don't know what people locked in I don't.
+Speaker 1 | 01:16:57
+Holding each other more accountable. No, I think the pro you first.
+Speaker 2 | 01:17:10
+At the same time, we need someone who will initiate this judge process. As they say. So during the previous sprint, when first was played, we didn't really pay attention sometimes and that's why.
+Speaker 1 | 01:17:32
+But two things. I think what Raul proposes is that not Vellum as the force of execution takes responsibility, but the person who comes too late. And I think regarding this, I think what a lot of them... What the biggest problem is not that you could go a few steps to the... It's not that you were too late, but that you were on top that you were late on top of the time. You already said you were late.
+You know, you said you were one hour late, but then you were two hours late, too. I think this is the problem. If you would have said, "I will come outside," of course, it'd be like, "Yeah, but we could estimate for you two hours."
+Sometimes we have to do some rituals because they take their time. You weren't there even though you said you would be there. I think this is.
+Speaker 2 | 01:18:40
+Going to make a cup for that. If it's nothing, or if it's saying, like, three hours longer or something like that, I don't know.
+What do you call it?
+We have a contract we decided to take the conversion for you, the passing off is going to be... If they ask you about how you follow the key contract, just because I said it all, every part of it.
+For the contract and stuff, it's just a pass-fail. Either you pass this or you fail the back with it. I know. You're not trying it right. But if you're laying down and pointing your hand like this, that's.
+Speaker 1 | 01:20:03
+What do you mean? What do you mean?
+Speaker 2 | 01:20:07
+What the fuck?
+Speaker 1 | 01:20:11
+But I expect him to do it againentially.
+Speaker 2 | 01:20:15
+It sounds like the problem with the company. It's not the fact that we are late, it's the fact that we are late without getting... I don't care that it was breaking the contract or no, I do care that some of these clauses of the contract get activated. I get the fact that it is not being put into fruition.
+If the contract doesn't make the change, nothing would change. Like if I have a contract that says you should know... If I say the N-word, I get smacked, and then I stay award, nothing happens. That mother is stopping me from the members from I work together. They're not like we're making the contract with actions and consequences.
+But there are not consequences to actions. We are not following the print. And that to me... This.
+Speaker 1 | 01:21:17
+I mean, in that case.
+Speaker 2 | 01:21:19
+Do we all agree on the what we this? I think the
+team is just that is responsibility and I am part of the team, so therefore I am responsible.
+Speaker 1 | 01:21:51
+How about we talk about this next week? Like doing... Because I think we have a lot but outs. It's a lot about the tomato. Tomato. You know, I don't want to sell meat, but it's all about two sides just talking to each other.
+He talked about that the contract has to be upheld. And you talked about that we should do it. And then I think, like, we're slightly talking like one C1 C and they're shooting in this
+know.
+Speaker 2 | 01:22:21
+I just want to make flow in the values topic. If we assign someone to this job, then it might end up being some weird. Yeah, not mean that might happen, but if we are unhappy with the dictator, then all of a sudden he just gets blamed for something that he did, which was supposed to be his job, and then it shifts for that person that reassigned, right?
+So that's kind of.
+Speaker 1 | 01:23:00
+Let's talk about it. So you talk, let's talk about it during the spring plan next week when we have a little bit fresher mind. It won't take long. Yeah, I'm going to be really short. Do we want to all group then sit there, let the person take accountability? Or do we want to have someone who does it for the person? I want to stress the point again, Immo on Roll's side, the person itself has to do it.
+Because if it's just, you're going to get punished for not doing it. Did the person really learn something out of it? I don't know, because he was late the last few times. I wasn't, but I'm going to bring cookies.
+Speaker 2 | 01:23:40
+So small thing. It's not about anything. I am not here next week. I have some doctor appointments next Monday, Monday.
