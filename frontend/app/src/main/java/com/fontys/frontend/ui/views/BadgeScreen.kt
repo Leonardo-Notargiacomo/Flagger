@@ -412,31 +412,33 @@ fun BadgeItem(badge: Badge, onClick: () -> Unit) {
                 // Top section with icon and name
                 Column(
                     modifier = Modifier
-                        .weight(1f, fill = true)
-                        .fillMaxWidth(),
+                        .weight(1f, fill = false)
+                        .fillMaxWidth()
+                        .wrapContentHeight(),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
+                    verticalArrangement = Arrangement.Top
                 ) {
+                    Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = badge.iconUrl ?: "🏆",
-                        fontSize = 28.sp,
+                        fontSize = 24.sp,
                         modifier = Modifier.alpha(if (badge.isUnlocked) 1f else 0.3f)
                     )
-                    Spacer(modifier = Modifier.height(6.dp))
+                    Spacer(modifier = Modifier.height(2.dp))
                     Text(
                         text = badge.name,
-                        fontSize = 11.sp,
+                        fontSize = 9.sp,
                         fontWeight = if (badge.isUnlocked) FontWeight.Bold else FontWeight.Normal,
-                        maxLines = 3,
+                        maxLines = 2,
                         textAlign = TextAlign.Center,
-                        lineHeight = 12.sp,
+                        lineHeight = 10.sp,
                         color = if (badge.isUnlocked)
                             MaterialTheme.colorScheme.onPrimaryContainer
                         else
-                            Color(0xFF4A4A4A),
+                            Color(0xFF000000),
                         modifier = Modifier
+                            .fillMaxWidth()
                             .padding(horizontal = 4.dp)
-                            .heightIn(min = 36.dp)
                     )
                 }
 
