@@ -41,9 +41,7 @@ fun RegistrationView(
     var confirmPassword by remember { mutableStateOf("") }
     var bio by remember { mutableStateOf("") }
 
-    var passwordsAllign: Boolean by remember { mutableStateOf(false) }
-
-    var errors: Boolean by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
 
 
     Column(
@@ -104,25 +102,35 @@ fun RegistrationView(
         Button(
             modifier = Modifier.fillMaxWidth(),
             onClick = {
-                if (passwordsAllign){
-                    viewModel.onSignUp(email, username, password, bio)
-                    if (viewModel.isLoading){
-                        navController.navigate("main")
-                    } else {
-                        errors = true
+                errorMessage = null
+                when {
+                    email.isBlank() || username.isBlank() || password.isBlank() || bio.isBlank() -> {
+                        errorMessage = "Please fill in all fields"
                     }
-                } else {
-                    errors = true
+                    password != confirmPassword -> {
+                        errorMessage = "Passwords do not match"
+                    }
+                    password.length < 6 -> {
+                        errorMessage = "Password must be at least 6 characters"
+                    }
+                    else -> {
+                        viewModel.onSignUp(email, username, password, bio)
+                        if (viewModel.isLoading){
+                            navController.navigate("main")
+                        } else {
+                            errorMessage = "Registration failed. Please try again."
+                        }
+                    }
                 }
             }
         ) {
             Text("Sign Up")
         }
 
-        if (errors){
+        errorMessage?.let {
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Passwords do not match",
+                text = it,
                 color = MaterialTheme.colorScheme.error
             )
         }
