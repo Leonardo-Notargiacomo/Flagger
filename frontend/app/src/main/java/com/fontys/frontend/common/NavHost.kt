@@ -68,8 +68,7 @@ fun NavHost(
             ProfileScreen()
         }
         composable<BadgeView> {
-            // TODO: Get actual userId from auth system
-            BadgeScreen(userId = 1)
+            BadgeScreen(userId = UserRepository.userId)
         }
         composable<LoginView> {
             LoginView(navController)

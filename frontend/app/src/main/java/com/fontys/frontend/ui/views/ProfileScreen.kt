@@ -19,6 +19,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.fontys.frontend.data.UserUpdate
+import com.fontys.frontend.domain.UserRepository
 import com.fontys.frontend.ui.components.*
 import com.fontys.frontend.ui.theme.ProfileColors
 import com.fontys.frontend.ui.viewmodels.ProfileViewModel
@@ -39,7 +40,7 @@ fun ProfileScreen(userViewModel: ProfileViewModel = viewModel()) {
 
     // Load user data once when screen opens
     LaunchedEffect(Unit) {
-        userViewModel.getUser("1") // You can replace "1" with dynamic ID
+        userViewModel.getUser(UserRepository.userId.toString())
     }
 
     Box(
