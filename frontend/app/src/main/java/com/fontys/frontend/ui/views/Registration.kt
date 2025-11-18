@@ -1,12 +1,19 @@
 package com.fontys.frontend.ui.views
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -40,43 +47,59 @@ fun RegistrationView(
 
 
     Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp)
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(32.dp)
+            .verticalScroll(rememberScrollState()),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
-        TextField(
+        OutlinedTextField(
             value = email,
             onValueChange = { email = it },
-            modifier = Modifier.align(Alignment.CenterHorizontally).fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             label = { Text("Email") }
         )
 
-        TextField(
+        Spacer(modifier = Modifier.height(16.dp))
+
+        OutlinedTextField(
             value = username,
             onValueChange = { username = it },
-            modifier = Modifier.align(Alignment.CenterHorizontally).fillMaxWidth().padding(top = 8.dp),
+            modifier = Modifier.fillMaxWidth(),
             label = { Text("Username") }
         )
 
-        TextField(
+        Spacer(modifier = Modifier.height(16.dp))
+
+        OutlinedTextField(
             value = password,
             onValueChange = { password = it },
-            modifier = Modifier.align(Alignment.CenterHorizontally).fillMaxWidth().padding(top = 8.dp),
+            modifier = Modifier.fillMaxWidth(),
             label = { Text("Password") },
             visualTransformation = PasswordVisualTransformation()
         )
 
-        TextField(
+        Spacer(modifier = Modifier.height(16.dp))
+
+        OutlinedTextField(
             value = confirmPassword,
             onValueChange = { confirmPassword = it },
-            modifier = Modifier.align(Alignment.CenterHorizontally).fillMaxWidth().padding(top = 8.dp),
+            modifier = Modifier.fillMaxWidth(),
             label = { Text("Confirm Password") },
             visualTransformation = PasswordVisualTransformation()
         )
-        TextField(
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        OutlinedTextField(
             value = bio,
             onValueChange = { bio = it },
-            modifier = Modifier.align(Alignment.CenterHorizontally).fillMaxWidth().padding(top = 8.dp),
+            modifier = Modifier.fillMaxWidth(),
             label = { Text("Bio") }
         )
+
+        Spacer(modifier = Modifier.height(24.dp))
 
         Button(
             modifier = Modifier.fillMaxWidth(),
@@ -97,13 +120,21 @@ fun RegistrationView(
         }
 
         if (errors){
-            Text("Passwords do not match")
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = "Passwords do not match",
+                color = MaterialTheme.colorScheme.error
+            )
         }
 
+        Spacer(modifier = Modifier.height(16.dp))
+
         Text("Already have an account?")
-        Button(
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            onClick = { navController.navigate("login")}
+
+        Spacer(modifier = Modifier.height(4.dp))
+
+        TextButton(
+            onClick = { navController.navigate("login") }
         ) {
             Text("Sign in")
         }

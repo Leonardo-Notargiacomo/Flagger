@@ -1,12 +1,17 @@
 package com.fontys.frontend.ui.views
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,32 +34,41 @@ fun LoginView(
     var password by remember { mutableStateOf("") }
 
     Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp)
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(32.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
-            modifier = Modifier.align(Alignment.CenterHorizontally).fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             label = { Text("Email") }
         )
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
-            modifier = Modifier.align(Alignment.CenterHorizontally).fillMaxWidth().padding(top = 8.dp),
+            modifier = Modifier.fillMaxWidth(),
             label = { Text("Password") },
             visualTransformation = PasswordVisualTransformation()
         )
 
+        Spacer(modifier = Modifier.height(24.dp))
+
         Button(
             modifier = Modifier.fillMaxWidth(),
-            onClick = {viewModel.onLoginClick(email,password)}
+            onClick = { viewModel.onLoginClick(email, password) }
         ) {
             Text("Sign in")
         }
 
-        Button(
-            modifier = Modifier.align(Alignment.CenterHorizontally),
+        Spacer(modifier = Modifier.height(8.dp))
+
+        TextButton(
             onClick = { navController.navigate("registration") }
         ) {
             Text("Sign up")
