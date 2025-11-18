@@ -424,18 +424,18 @@ fun BadgeItem(badge: Badge, onClick: () -> Unit) {
                     Spacer(modifier = Modifier.height(6.dp))
                     Text(
                         text = badge.name,
-                        fontSize = 10.sp,
+                        fontSize = 11.sp,
                         fontWeight = if (badge.isUnlocked) FontWeight.Bold else FontWeight.Normal,
-                        maxLines = 2,
+                        maxLines = 3,
                         textAlign = TextAlign.Center,
-                        lineHeight = 11.sp,
+                        lineHeight = 12.sp,
                         color = if (badge.isUnlocked)
                             MaterialTheme.colorScheme.onPrimaryContainer
                         else
-                            MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+                            Color(0xFF4A4A4A),
                         modifier = Modifier
-                            .alpha(if (badge.isUnlocked) 1f else 0.5f)
-                            .padding(horizontal = 2.dp)
+                            .padding(horizontal = 4.dp)
+                            .heightIn(min = 36.dp)
                     )
                 }
 
@@ -452,7 +452,7 @@ fun BadgeItem(badge: Badge, onClick: () -> Unit) {
                         color = if (badge.isUnlocked)
                             MaterialTheme.colorScheme.primary
                         else
-                            MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                            Color(0xFF666666)
                     )
 
                     Spacer(modifier = Modifier.height(2.dp))
