@@ -34,7 +34,7 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
     val selectedPlaces = remember { mutableStateListOf<PlaceService>() }
     LaunchedEffect(Unit) { viewModel.loadUserLocation() }
     val userFlags by viewModel.userFlags.collectAsState()
-    val currentUserId = UserRepository().userId
+    val currentUserId = UserRepository.userId
 
     // Badge unlock dialog state
     val showBadgeDialog by viewModel.showBadgeDialog.collectAsState()

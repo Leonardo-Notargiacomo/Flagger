@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 
 class ProfileViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val userRepository = UserRepository()
+    private val userRepository = UserRepository
 
     private val _user = MutableStateFlow<UserReturn?>(null)
     val user: StateFlow<UserReturn?> = _user

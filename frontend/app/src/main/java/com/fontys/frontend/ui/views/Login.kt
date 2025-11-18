@@ -18,7 +18,6 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.fontys.frontend.common.RegistrationView
 import com.fontys.frontend.ui.viewmodels.LoginViewModel
 
 @Composable
@@ -56,7 +55,7 @@ fun LoginView(
 
         Button(
             modifier = Modifier.align(Alignment.CenterHorizontally),
-            onClick = { navController.navigate(RegistrationView) }
+            onClick = { navController.navigate("registration") }
         ) {
             Text("Sign up")
         }

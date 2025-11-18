@@ -16,9 +16,19 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.fontys.frontend.data.UserRegister
+import com.fontys.frontend.domain.UserRepository
+import com.fontys.frontend.ui.viewmodels.LoginViewModel
+import com.fontys.frontend.ui.views.LoginView
 import com.fontys.frontend.ui.views.NavBar
+import com.fontys.frontend.ui.views.RegistrationView as RegistrationViewComposable
+
 
 class MainActivity : ComponentActivity() {
+
     // Launcher for location permission
     private val requestLocationPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
@@ -61,12 +71,27 @@ class MainActivity : ComponentActivity() {
         checkNotificationPermission()
 
         setContent {
+            val navController = rememberNavController()
+
             MaterialTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    NavBar()
+                    NavHost(
+                        navController = navController,
+                        startDestination = if(UserRepository.token.isEmpty()) "login" else "main"
+                    ) {
+                        composable("login") {
+                            LoginView(navController)
+                        }
+                        composable("registration") {
+                            RegistrationViewComposable(navController)
+                        }
+                        composable("main") {
+                            NavBar()
+                        }
+                    }
                 }
             }
         }

@@ -17,7 +17,7 @@ data class LoginUiState(
 class LoginViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
-    private val userRepository = UserRepository()
+    private val userRepository = UserRepository
 
     //introduce email and password variables if they are required later
 

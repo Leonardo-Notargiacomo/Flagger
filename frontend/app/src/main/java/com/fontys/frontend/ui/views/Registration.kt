@@ -18,17 +18,26 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.fontys.frontend.common.RegistrationView
-import com.fontys.frontend.ui.viewmodels.RegistrationVIewModel
+import com.fontys.frontend.ui.viewmodels.RegistrationViewModel
+
+
+
 
 @Composable
 fun RegistrationView(
     navController: NavHostController,
-    viewModel: RegistrationVIewModel = viewModel()
+    viewModel: RegistrationViewModel = viewModel()
 ) {
     var email by remember { mutableStateOf("") }
+    var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
+    var bio by remember { mutableStateOf("") }
+
+    var passwordsAllign: Boolean by remember { mutableStateOf(false) }
+
+    var errors: Boolean by remember { mutableStateOf(false) }
+
 
     Column(
         modifier = Modifier.fillMaxSize().padding(16.dp)
@@ -38,6 +47,13 @@ fun RegistrationView(
             onValueChange = { email = it },
             modifier = Modifier.align(Alignment.CenterHorizontally).fillMaxWidth(),
             label = { Text("Email") }
+        )
+
+        TextField(
+            value = username,
+            onValueChange = { username = it },
+            modifier = Modifier.align(Alignment.CenterHorizontally).fillMaxWidth().padding(top = 8.dp),
+            label = { Text("Username") }
         )
 
         TextField(
@@ -55,16 +71,41 @@ fun RegistrationView(
             label = { Text("Confirm Password") },
             visualTransformation = PasswordVisualTransformation()
         )
-
-        Button(onClick = {}) {
-            Text("Sign in")
-        }
-
+        TextField(
+            value = bio,
+            onValueChange = { bio = it },
+            modifier = Modifier.align(Alignment.CenterHorizontally).fillMaxWidth().padding(top = 8.dp),
+            label = { Text("Bio") }
+        )
 
         Button(
-            onClick = { navController.navigate(RegistrationView) }
+            modifier = Modifier.fillMaxWidth(),
+            onClick = {
+                if (passwordsAllign){
+                    viewModel.onSignUp(email, username, password, bio)
+                    if (viewModel.isLoading){
+                        navController.navigate("main")
+                    } else {
+                        errors = true
+                    }
+                } else {
+                    errors = true
+                }
+            }
         ) {
-            Text("Sign up")
+            Text("Sign Up")
+        }
+
+        if (errors){
+            Text("Passwords do not match")
+        }
+
+        Text("Already have an account?")
+        Button(
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            onClick = { navController.navigate("login")}
+        ) {
+            Text("Sign in")
         }
     }
 }
