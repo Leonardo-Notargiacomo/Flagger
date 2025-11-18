@@ -27,6 +27,8 @@ import com.fontys.frontend.ui.viewmodels.LoginViewModel
 import com.fontys.frontend.ui.views.LoginView
 import com.fontys.frontend.ui.views.NavBar
 import com.fontys.frontend.ui.views.RegistrationView as RegistrationViewComposable
+import com.fontys.frontend.utils.FCMTokenManager
+import android.util.Log
 
 
 class MainActivity : ComponentActivity() {
@@ -71,6 +73,9 @@ class MainActivity : ComponentActivity() {
 
         checkLocationPermission()
         checkNotificationPermission()
+
+        // Subscribe to FCM topic for daily notifications
+        subscribeToNotifications()
 
         setContent {
             val navController = rememberNavController()
@@ -130,6 +135,19 @@ class MainActivity : ComponentActivity() {
         ) {
             requestNotificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
+    }
+
+    private fun subscribeToNotifications() {
+        // Subscribe to the daily exploration reminders topic
+        FCMTokenManager.subscribeToTopic(
+            topic = "daily_exploration_reminders",
+            onSuccess = {
+                Log.d("MainActivity", "Successfully subscribed to daily_exploration_reminders")
+            },
+            onError = { exception ->
+                Log.e("MainActivity", "Failed to subscribe to notifications", exception)
+            }
+        )
     }
 }
 
