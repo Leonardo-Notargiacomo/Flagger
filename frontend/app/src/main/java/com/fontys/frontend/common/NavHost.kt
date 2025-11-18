@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.fontys.frontend.ui.views.BadgeScreen
+import com.fontys.frontend.ui.views.FriendsScreen
 import com.fontys.frontend.ui.views.LoginView
 import com.fontys.frontend.ui.views.RegistrationView
 import com.fontys.frontend.ui.views.MapsScreen
@@ -48,7 +49,10 @@ fun NavHost(
             MapsScreen(navController)
         }
         composable<FriendView> {
-            //FriendView()
+            // TODO: Pass actual auth token to FriendsViewModel when auth system is integrated
+            // Example: val viewModel: FriendsViewModel = viewModel()
+            //          viewModel.setAuthToken(authToken)
+            FriendsScreen()
         }
         composable<ProfileView> {
             ProfileScreen()
