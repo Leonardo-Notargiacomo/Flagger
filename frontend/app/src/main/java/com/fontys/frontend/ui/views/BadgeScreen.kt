@@ -23,6 +23,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.fontys.frontend.data.models.Badge
 import com.fontys.frontend.ui.viewmodels.BadgeViewModel
 import com.fontys.frontend.ui.viewmodels.BadgeUiState
+import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
@@ -513,9 +514,10 @@ fun BadgeDetailDialog(
     val formattedDate = badge.unlockedAt?.let { dateString ->
         try {
             val zonedDateTime = ZonedDateTime.parse(dateString)
+            val localDateTime = zonedDateTime.withZoneSameInstant(ZoneId.systemDefault())
             val dateFormatter = DateTimeFormatter.ofPattern("d/M/yyyy")
             val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
-            "${zonedDateTime.format(dateFormatter)} at ${zonedDateTime.format(timeFormatter)}"
+            "${localDateTime.format(dateFormatter)} at ${localDateTime.format(timeFormatter)}"
         } catch (_: Exception) {
             dateString // Fallback to original string if parsing fails
         }
