@@ -53,11 +53,11 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
 
             try {
                 val result = userRepository.updateUser(userId, userUpdate)
-                // Assuming the update is successful, re-fetch the user data
+                // Re-fetch the user data after successful update
+                getUser(userId)
             } catch (e: Exception) {
                 Log.e("UserViewModel", "Error updating user", e)
                 _error.value = e.localizedMessage ?: "Unknown error updating user"
-            } finally {
                 _isLoading.value = false
             }
         }
