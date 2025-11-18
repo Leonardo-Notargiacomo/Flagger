@@ -43,7 +43,7 @@ fun NavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = LoginView
+        startDestination = MapView
     ) {
         composable<MapView> {
             MapsScreen(navController)

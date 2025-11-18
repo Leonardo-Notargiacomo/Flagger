@@ -16,9 +16,11 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.fontys.frontend.data.UserRegister
 import com.fontys.frontend.domain.UserRepository
 import com.fontys.frontend.ui.viewmodels.LoginViewModel
@@ -82,8 +84,17 @@ class MainActivity : ComponentActivity() {
                         navController = navController,
                         startDestination = if(UserRepository.token.isEmpty()) "login" else "main"
                     ) {
-                        composable("login") {
-                            LoginView(navController)
+                        composable(
+                            route = "login?registrationSuccess={registrationSuccess}",
+                            arguments = listOf(
+                                navArgument("registrationSuccess") {
+                                    type = NavType.BoolType
+                                    defaultValue = false
+                                }
+                            )
+                        ) { backStackEntry ->
+                            val registrationSuccess = backStackEntry.arguments?.getBoolean("registrationSuccess") ?: false
+                            LoginView(navController, registrationSuccess = registrationSuccess)
                         }
                         composable("registration") {
                             RegistrationViewComposable(navController)

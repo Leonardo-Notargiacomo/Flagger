@@ -45,10 +45,12 @@ fun RegistrationView(
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var registrationSuccess by remember { mutableStateOf(false) }
 
-    // Navigate to main when registration succeeds
+    // Navigate to login when registration succeeds
     LaunchedEffect(registrationSuccess) {
         if (registrationSuccess) {
-            navController.navigate("main")
+            navController.navigate("login?registrationSuccess=true") {
+                popUpTo("registration") { inclusive = true }
+            }
         }
     }
 

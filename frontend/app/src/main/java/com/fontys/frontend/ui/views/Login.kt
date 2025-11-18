@@ -9,16 +9,19 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -28,10 +31,22 @@ import com.fontys.frontend.ui.viewmodels.LoginViewModel
 @Composable
 fun LoginView(
     navController: NavHostController,
-    viewModel: LoginViewModel = viewModel()
+    viewModel: LoginViewModel = viewModel(),
+    registrationSuccess: Boolean = false
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+    var loginSuccess by remember { mutableStateOf(false) }
+
+    // Navigate to main when login succeeds
+    LaunchedEffect(loginSuccess) {
+        if (loginSuccess) {
+            navController.navigate("main") {
+                popUpTo("login") { inclusive = true }
+            }
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -40,6 +55,16 @@ fun LoginView(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+        // Show success message if coming from registration
+        if (registrationSuccess) {
+            Text(
+                text = "Registration was successful, now you can log in with your credentials",
+                color = Color(0xFF4CAF50), // Green color
+                style = MaterialTheme.typography.bodyMedium
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
@@ -61,9 +86,25 @@ fun LoginView(
 
         Button(
             modifier = Modifier.fillMaxWidth(),
-            onClick = { viewModel.onLoginClick(email, password) }
+            onClick = {
+                errorMessage = null
+                viewModel.onLoginClick(
+                    email = email,
+                    password = password,
+                    onSuccess = { loginSuccess = true },
+                    onError = { error -> errorMessage = error }
+                )
+            }
         ) {
             Text("Sign in")
+        }
+
+        errorMessage?.let {
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = it,
+                color = MaterialTheme.colorScheme.error
+            )
         }
 
         Spacer(modifier = Modifier.height(8.dp))
