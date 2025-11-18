@@ -126,24 +126,11 @@ private fun BadgeItem(badge: Badge, isLarge: Boolean) {
                 .background(ProfileColors.Background),
             contentAlignment = Alignment.Center
         ) {
-            if (!badge.iconUrl.isNullOrEmpty()) {
-                AsyncImage(
-                    model = badge.iconUrl,
-                    contentDescription = badge.name,
-                    modifier = Modifier
-                        .size(if (isLarge) 100.dp else 60.dp)
-                        .clip(CircleShape),
-                    contentScale = ContentScale.Crop
-                )
-            } else {
-                // Fallback icon if no image URL
-                Icon(
-                    imageVector = Icons.Default.EmojiEvents,
-                    contentDescription = badge.name,
-                    modifier = Modifier.size(if (isLarge) 60.dp else 40.dp),
-                    tint = ProfileColors.Accent
-                )
-            }
+            // Display emoji or icon
+            Text(
+                text = badge.iconUrl ?: "🏆",
+                fontSize = if (isLarge) 64.sp else 48.sp
+            )
         }
 
         Spacer(modifier = Modifier.height(12.dp))
