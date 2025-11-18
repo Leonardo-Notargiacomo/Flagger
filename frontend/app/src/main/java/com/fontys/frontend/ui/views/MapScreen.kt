@@ -1,5 +1,7 @@
 package com.fontys.frontend.ui.views
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.nfc.Tag
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -8,6 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.fontys.frontend.R
@@ -36,6 +39,14 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
     val userFlags by viewModel.userFlags.collectAsState()
     val currentUserId = UserRepository.userId
 
+    // Check if location permission is granted
+    val hasLocationPermission = remember {
+        ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
     // Badge unlock dialog state
     val showBadgeDialog by viewModel.showBadgeDialog.collectAsState()
     val newlyUnlockedBadges by viewModel.newlyUnlockedBadges.collectAsState()
@@ -60,7 +71,7 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
             modifier = Modifier.fillMaxSize(),
             cameraPositionState = cameraPositionState,
             properties = MapProperties(
-                isMyLocationEnabled = true,
+                isMyLocationEnabled = hasLocationPermission,
             ),
             googleMapOptionsFactory = { googleMapOptions }
         ) {
