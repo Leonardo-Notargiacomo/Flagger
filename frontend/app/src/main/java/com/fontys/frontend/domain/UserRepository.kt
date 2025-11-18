@@ -124,15 +124,13 @@ object UserRepository {
             val headers = HashMap<String, String>().apply {
                 put("Accept", "application/json")
                 put("Content-Type", "application/json")
-                    ?: run {
-                        // Optional: Log a warning or throw an error if token is missing for authenticated endpoint
-                        // throw IllegalStateException("JWT token is missing for authenticated request")
-
-                    }
             }
             val response =
-                userApiService.signup(headers, UserRegister(userName, email, password, bio))
+                userApiService.signup(headers, UserRegister(userName, email, bio, password))
             if (response.isSuccessful) {
+                // Signup successful, now login to get token
+                login(email, password)
+                whoAmIm()
                 return true
             } else {
                 println("Error: ${response.code()} - ${response.message()}")

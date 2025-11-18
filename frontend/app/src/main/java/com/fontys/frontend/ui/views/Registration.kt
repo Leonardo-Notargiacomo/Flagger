@@ -15,6 +15,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,6 +43,14 @@ fun RegistrationView(
     var bio by remember { mutableStateOf("") }
 
     var errorMessage by remember { mutableStateOf<String?>(null) }
+    var registrationSuccess by remember { mutableStateOf(false) }
+
+    // Navigate to main when registration succeeds
+    LaunchedEffect(registrationSuccess) {
+        if (registrationSuccess) {
+            navController.navigate("main")
+        }
+    }
 
 
     Column(
@@ -114,12 +123,14 @@ fun RegistrationView(
                         errorMessage = "Password must be at least 6 characters"
                     }
                     else -> {
-                        viewModel.onSignUp(email, username, password, bio)
-                        if (viewModel.isLoading){
-                            navController.navigate("main")
-                        } else {
-                            errorMessage = "Registration failed. Please try again."
-                        }
+                        viewModel.onSignUp(
+                            email = email,
+                            userName = username,
+                            password = password,
+                            bio = bio,
+                            onSuccess = { registrationSuccess = true },
+                            onError = { error -> errorMessage = error }
+                        )
                     }
                 }
             }

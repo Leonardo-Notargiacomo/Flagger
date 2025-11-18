@@ -25,24 +25,35 @@ class RegistrationViewModel : ViewModel() {
     private val userRepository = UserRepository
     var isLoading = false
 
-    fun onSignUp(email: String, userName: String, password: String, bio: String) {
+    fun onSignUp(
+        email: String,
+        userName: String,
+        password: String,
+        bio: String,
+        onSuccess: () -> Unit,
+        onError: (String) -> Unit
+    ) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
+            isLoading = true
             try {
-                if (password != _uiState.value.passwordRepeat) {
-                    isLoading = userRepository.register(email, userName, password, bio)
-
-                    userRepository.whoAmIm()
-
+                val success = userRepository.register(userName, email, password, bio)
+                if (success) {
+                    isLoading = false
                     _uiState.value = _uiState.value.copy(isLoading = false)
-                }else{
-                    throw Exception("Passwords do not match")
+                    onSuccess()
+                } else {
+                    isLoading = false
+                    _uiState.value = _uiState.value.copy(isLoading = false)
+                    onError("Registration failed. Please try again.")
                 }
             } catch (e: Exception) {
+                isLoading = false
                 _uiState.value = _uiState.value.copy(
-                    errorMessage = e.message ?: "Login failed",
+                    errorMessage = e.message ?: "Registration failed",
                     isLoading = false
                 )
+                onError(e.message ?: "Registration failed")
             }
         }
     }
