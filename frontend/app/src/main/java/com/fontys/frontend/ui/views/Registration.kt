@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -44,6 +45,7 @@ fun RegistrationView(
 
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var registrationSuccess by remember { mutableStateOf(false) }
+    var isLoading by remember { mutableStateOf(false) }
 
     // Navigate to login when registration succeeds
     LaunchedEffect(registrationSuccess) {
@@ -112,6 +114,7 @@ fun RegistrationView(
 
         Button(
             modifier = Modifier.fillMaxWidth(),
+            enabled = !isLoading,
             onClick = {
                 errorMessage = null
                 when {
@@ -125,19 +128,30 @@ fun RegistrationView(
                         errorMessage = "Password must be at least 6 characters"
                     }
                     else -> {
+                        isLoading = true
                         viewModel.onSignUp(
                             email = email,
                             userName = username,
                             password = password,
                             bio = bio,
-                            onSuccess = { registrationSuccess = true },
-                            onError = { error -> errorMessage = error }
+                            onSuccess = {
+                                isLoading = false
+                                registrationSuccess = true
+                            },
+                            onError = { error ->
+                                isLoading = false
+                                errorMessage = error
+                            }
                         )
                     }
                 }
             }
         ) {
-            Text("Sign Up")
+            if (isLoading) {
+                CircularProgressIndicator()
+            } else {
+                Text("Sign Up")
+            }
         }
 
         errorMessage?.let {
