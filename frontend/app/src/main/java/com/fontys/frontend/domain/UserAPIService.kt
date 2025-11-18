@@ -18,7 +18,7 @@ interface UserAPIService {
     suspend fun getUser(@HeaderMap headers:Map<String,String>, @Path("id") userId: String): Response<UserReturn>
 
     @PATCH("go-users/{id}")
-    suspend fun updateUser(@Path("id") userId: String, @Body user: UserUpdate): Response<String>
+    suspend fun updateUser(@HeaderMap headers:Map<String,String>, @Path("id") userId: String, @Body user: UserUpdate): Response<String>
     @POST("login")
     suspend fun login(@HeaderMap headers: Map<String,String>, @Body user: UserLogin) : Response<String>
     @GET("whoAmI")

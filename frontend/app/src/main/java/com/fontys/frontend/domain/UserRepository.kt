@@ -3,6 +3,7 @@ package com.fontys.frontend.domain
 import com.fontys.frontend.data.UserLogin
 import com.fontys.frontend.data.UserRegister
 import com.fontys.frontend.data.UserReturn
+import com.fontys.frontend.data.UserUpdate
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
 import org.json.JSONObject
@@ -72,7 +73,6 @@ object UserRepository {
             println("Exception: ${e.message}")
             return null
         }
-
     }
 
     suspend fun login(email: String, password: String) {
@@ -126,8 +126,6 @@ object UserRepository {
         return false
     }
 
-
-
     suspend fun whoAmIm()  {
         try {
             val headers = HashMap<String, String>().apply {
@@ -154,6 +152,26 @@ object UserRepository {
         }
     }
 
-
-
+    suspend fun updateUser(userId: String, userUpdate: UserUpdate): String? {
+        return try {
+            val headers = HashMap<String, String>().apply {
+                put("Accept", "application/json")
+                put("Content-Type", "application/json")
+                token?.let { token ->
+                    put("Authorization", "Bearer $token") // Add JWT token if available
+                } ?: run {
+                    // Optional: Log a warning or throw an error if token is missing for authenticated endpoint
+                    // throw IllegalStateException("JWT token is missing for authenticated request")
+                }
+            }
+            val response = userApiService.updateUser(headers , userId, userUpdate)
+            if (response.isSuccessful) {
+                response.body()
+            } else {
+                "Error: ${response.code()} - ${response.message()}"
+            }
+        } catch (e: Exception) {
+            "Exception: ${e.message}"
+        }
+    }
 }
