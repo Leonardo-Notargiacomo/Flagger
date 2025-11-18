@@ -22,11 +22,17 @@ export class ExplorationEvent extends Entity {
 
   @property({
     type: 'number',
+    postgresql: {
+      dataType: 'double precision',
+    },
   })
   latitude?: number;
 
   @property({
     type: 'number',
+    postgresql: {
+      dataType: 'double precision',
+    },
   })
   longitude?: number;
 

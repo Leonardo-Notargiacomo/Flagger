@@ -6,7 +6,9 @@ data class Badge(
     val iconUrl: String?,
     val category: String,
     val isUnlocked: Boolean = false,
-    val unlockedAt: String? = null
+    val unlockedAt: String? = null,
+    val currentProgress: Int = 0,
+    val maxProgress: Int = 1
 )
 
 data class UserBadgesResponse(
