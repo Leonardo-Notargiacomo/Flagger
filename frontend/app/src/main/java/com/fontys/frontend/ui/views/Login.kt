@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -38,6 +39,7 @@ fun LoginView(
     var password by remember { mutableStateOf("") }
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var loginSuccess by remember { mutableStateOf(false) }
+    var isLoading by remember { mutableStateOf(false) }
 
     // Navigate to main when login succeeds
     LaunchedEffect(loginSuccess) {
@@ -86,17 +88,29 @@ fun LoginView(
 
         Button(
             modifier = Modifier.fillMaxWidth(),
+            enabled = !isLoading,
             onClick = {
                 errorMessage = null
+                isLoading = true
                 viewModel.onLoginClick(
                     email = email,
                     password = password,
-                    onSuccess = { loginSuccess = true },
-                    onError = { error -> errorMessage = error }
+                    onSuccess = {
+                        isLoading = false
+                        loginSuccess = true
+                    },
+                    onError = { error ->
+                        isLoading = false
+                        errorMessage = error
+                    }
                 )
             }
         ) {
-            Text("Sign in")
+            if (isLoading) {
+                CircularProgressIndicator()
+            } else {
+                Text("Sign in")
+            }
         }
 
         errorMessage?.let {
