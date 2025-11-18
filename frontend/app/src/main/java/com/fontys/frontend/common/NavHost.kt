@@ -1,10 +1,15 @@
 package com.fontys.frontend.common
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.fontys.frontend.domain.UserRepository
 import com.fontys.frontend.ui.views.BadgeScreen
 import com.fontys.frontend.ui.views.FriendsScreen
 import com.fontys.frontend.ui.views.LoginView
@@ -41,13 +46,18 @@ fun NavHost(
     navController: NavHostController,
     padding: PaddingValues
 ) {
-    NavHost(
-        navController = navController,
-        startDestination = MapView
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(padding)
     ) {
-        composable<MapView> {
-            MapsScreen(navController)
-        }
+        NavHost(
+            navController = navController,
+            startDestination = MapView
+        ) {
+            composable<MapView> {
+                MapsScreen(navController)
+            }
         composable<FriendView> {
             // TODO: Pass actual auth token to FriendsViewModel when auth system is integrated
             // Example: val viewModel: FriendsViewModel = viewModel()
@@ -70,6 +80,7 @@ fun NavHost(
 
         composable <NavigationView>{
             NavBar()
+        }
         }
     }
 }

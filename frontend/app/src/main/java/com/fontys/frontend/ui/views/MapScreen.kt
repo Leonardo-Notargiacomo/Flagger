@@ -66,7 +66,7 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
     val googleMapOptions = remember {
         GoogleMapOptions().mapId("349a2b06249ce52186cf3c94")
     }
-    Box(Modifier.fillMaxSize().padding(bottom = 130.dp)) {
+    Box(Modifier.fillMaxSize()) {
         GoogleMap(
             modifier = Modifier.fillMaxSize(),
             cameraPositionState = cameraPositionState,
