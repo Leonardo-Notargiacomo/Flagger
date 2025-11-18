@@ -15,12 +15,13 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import java.util.Date
 import com.fontys.frontend.data.FlagResponse // Import your new FlagResponse data class
+import kotlinx.serialization.builtins.UIntArraySerializer
 
 
 class FlagRepository{
 
-    val BASE_URL = "https://group-repository-2025-android-1-sq81.onrender.com"
-    var token ="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJuYW1lIjoiVXNlciIsImVtYWlsIjoiTWlndWVsQGdtYWlsLmNvbSIsImlhdCI6MTc2Mjk0MTc4NSwiZXhwIjoxNzYyOTYzMzg1fQ.fXwYphZI5nBBosO93Xudrh8E6iFU91GkxVZFnV_2134"
+    val BASE_URL = "https://group-repository-2025-android-1-6of2.onrender.com/"
+    var token = UserRepository().token
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY
     }

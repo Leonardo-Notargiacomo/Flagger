@@ -13,6 +13,7 @@ import androidx.navigation.NavController
 import com.fontys.frontend.R
 import com.fontys.frontend.data.PlaceService
 import com.fontys.frontend.ui.components.BadgeUnlockDialog
+import com.fontys.frontend.domain.UserRepository
 import com.fontys.frontend.ui.viewmodels.MapsViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMapOptions
@@ -33,13 +34,13 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
     val selectedPlaces = remember { mutableStateListOf<PlaceService>() }
     LaunchedEffect(Unit) { viewModel.loadUserLocation() }
     val userFlags by viewModel.userFlags.collectAsState()
-    val currentUserId = 1
+    val currentUserId = UserRepository().userId
 
     // Badge unlock dialog state
     val showBadgeDialog by viewModel.showBadgeDialog.collectAsState()
     val newlyUnlockedBadges by viewModel.newlyUnlockedBadges.collectAsState()
     LaunchedEffect(currentUserId) {
-        if (currentUserId != null) {
+        if (currentUserId != null || currentUserId !=0) {
             viewModel.getFlags(currentUserId)
         }
     }
