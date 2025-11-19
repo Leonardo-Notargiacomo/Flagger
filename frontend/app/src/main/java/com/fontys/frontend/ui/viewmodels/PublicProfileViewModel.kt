@@ -7,6 +7,8 @@ import androidx.lifecycle.viewModelScope
 import com.fontys.frontend.data.models.Flag
 import com.fontys.frontend.data.models.FriendRequest
 import com.fontys.frontend.data.models.User
+import com.fontys.frontend.data.models.UserStats
+import com.fontys.frontend.data.repositories.BadgeRepository
 import com.fontys.frontend.data.repositories.FriendsRepository
 import com.fontys.frontend.domain.MapRepository
 import com.fontys.frontend.domain.UserRepository
@@ -24,6 +26,8 @@ data class PublicProfileUiState(
     val flags: List<Flag> = emptyList(),
     val flagDisplayNames: Map<String, String> = emptyMap(),
     val flagLocations: Map<String, Pair<Double, Double>> = emptyMap(),
+    val userStats: UserStats? = null,
+    val badgesEarned: Int = 0,
     val friendRequestStatus: FriendRequestStatus = FriendRequestStatus.NotSent,
     val isLoading: Boolean = false,
     val error: String? = null
@@ -33,6 +37,7 @@ class PublicProfileViewModel(application: Application) : AndroidViewModel(applic
 
     private val friendsRepository = FriendsRepository()
     private val mapRepository = MapRepository()
+    private val badgeRepository = BadgeRepository()
 
     // Single state flow consolidating all UI state
     private val _uiState = MutableStateFlow(PublicProfileUiState())
@@ -57,6 +62,16 @@ class PublicProfileViewModel(application: Application) : AndroidViewModel(applic
     val flagLocations: StateFlow<Map<String, Pair<Double, Double>>> = MutableStateFlow<Map<String, Pair<Double, Double>>>(emptyMap()).apply {
         viewModelScope.launch {
             _uiState.collect { value = it.flagLocations }
+        }
+    }
+    val userStats: StateFlow<UserStats?> = MutableStateFlow<UserStats?>(null).apply {
+        viewModelScope.launch {
+            _uiState.collect { value = it.userStats }
+        }
+    }
+    val badgesEarned: StateFlow<Int> = MutableStateFlow(0).apply {
+        viewModelScope.launch {
+            _uiState.collect { value = it.badgesEarned }
         }
     }
     val friendRequestStatus: StateFlow<FriendRequestStatus> = MutableStateFlow<FriendRequestStatus>(FriendRequestStatus.NotSent).apply {
@@ -128,6 +143,22 @@ class PublicProfileViewModel(application: Application) : AndroidViewModel(applic
                     if (flagsList.isNotEmpty()) {
                         fetchPlaceNames(flagsList)
                     }
+                }
+
+                // Load user stats
+                val statsResult = badgeRepository.getUserStats(userId)
+                if (statsResult.isSuccess) {
+                    val stats = statsResult.getOrNull()
+                    _uiState.value = _uiState.value.copy(userStats = stats)
+                }
+
+                // Load badges earned count
+                val badgesResult = badgeRepository.getUserBadges(userId)
+                if (badgesResult.isSuccess) {
+                    val badgesResponse = badgesResult.getOrNull()
+                    _uiState.value = _uiState.value.copy(
+                        badgesEarned = badgesResponse?.earnedBadges ?: 0
+                    )
                 }
 
                 // Check friend request status

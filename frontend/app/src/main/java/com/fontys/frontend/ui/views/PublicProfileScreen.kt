@@ -107,6 +107,8 @@ fun PublicProfileScreen(
     val flags by viewModel.flags.collectAsState()
     val flagDisplayNames by viewModel.flagDisplayNames.collectAsState()
     val flagLocations by viewModel.flagLocations.collectAsState()
+    val userStats by viewModel.userStats.collectAsState()
+    val badgesEarned by viewModel.badgesEarned.collectAsState()
     val friendRequestStatus by viewModel.friendRequestStatus.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val error by viewModel.error.collectAsState()
@@ -182,7 +184,12 @@ fun PublicProfileScreen(
                             ProfileHeaderSection(user = user!!)
 
                             // Stats card - prominent placement
-                            StatsCard(flagCount = flags.size)
+                            EnhancedStatsCard(
+                                flagCount = flags.size,
+                                currentStreak = userStats?.currentStreak ?: 0,
+                                longestStreak = userStats?.longestStreak ?: 0,
+                                badgesEarned = badgesEarned
+                            )
 
                             // Bio section (if exists)
                             if (user!!.bio.isNullOrEmpty()) {
@@ -401,12 +408,17 @@ private fun ProfileHeaderSection(user: User) {
 }
 
 /**
- * Prominent stats card showing exploration count
- * Creates achievement-oriented visual anchor
+ * Enhanced stats card with 2x2 grid layout displaying key user statistics
+ * Features staggered entrance animation for visual interest
  */
 @Composable
-private fun StatsCard(flagCount: Int) {
-    // Subtle scale animation on appearance
+private fun EnhancedStatsCard(
+    flagCount: Int,
+    currentStreak: Int,
+    longestStreak: Int,
+    badgesEarned: Int
+) {
+    // Overall card entrance animation
     var visible by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         kotlinx.coroutines.delay(100)
@@ -419,7 +431,7 @@ private fun StatsCard(flagCount: Int) {
             dampingRatio = Spring.DampingRatioMediumBouncy,
             stiffness = Spring.StiffnessLow
         ),
-        label = "statsScale"
+        label = "statsCardScale"
     )
 
     Box(
@@ -431,51 +443,124 @@ private fun StatsCard(flagCount: Int) {
             }
             .clip(RoundedCornerShape(16.dp))
             .background(ProfileColors.Container)
-            .padding(24.dp)
+            .padding(16.dp)
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
+        Column(
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            // Flag icon
-            Box(
-                modifier = Modifier
-                    .size(48.dp)
-                    .clip(CircleShape)
-                    .background(ProfileColors.Accent.copy(alpha = 0.2f)),
-                contentAlignment = Alignment.Center
+            // Top row: Flags and Current Streak
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Icon(
-                    imageVector = Icons.Default.Flag,
-                    contentDescription = null,
-                    tint = ProfileColors.Accent,
-                    modifier = Modifier.size(28.dp)
+                StatItem(
+                    value = flagCount,
+                    label = "FLAGS",
+                    icon = Icons.Default.Flag,
+                    delay = 0,
+                    modifier = Modifier.weight(1f)
+                )
+                StatItem(
+                    value = currentStreak,
+                    label = "STREAK",
+                    icon = Icons.Default.LocalFireDepartment,
+                    delay = 80,
+                    modifier = Modifier.weight(1f)
                 )
             }
 
-            Spacer(modifier = Modifier.width(20.dp))
-
-            // Stats text
-            Column(
-                horizontalAlignment = Alignment.Start
+            // Bottom row: Longest Streak and Badges
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Text(
-                    text = flagCount.toString(),
-                    color = ProfileColors.Primary,
-                    fontSize = 36.sp,
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = (-0.5).sp
+                StatItem(
+                    value = longestStreak,
+                    label = "BEST STREAK",
+                    icon = Icons.Default.EmojiEvents,
+                    delay = 160,
+                    modifier = Modifier.weight(1f)
                 )
-                Text(
-                    text = "FLAGS",
-                    color = ProfileColors.Primary.copy(alpha = 0.6f),
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Medium,
-                    letterSpacing = 1.5.sp
+                StatItem(
+                    value = badgesEarned,
+                    label = "BADGES",
+                    icon = Icons.Default.Stars,
+                    delay = 240,
+                    modifier = Modifier.weight(1f)
                 )
             }
         }
+    }
+}
+
+/**
+ * Individual stat item with icon, value, and label
+ * Includes staggered entrance animation
+ */
+@Composable
+private fun StatItem(
+    value: Int,
+    label: String,
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    delay: Long,
+    modifier: Modifier = Modifier
+) {
+    var visible by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        kotlinx.coroutines.delay(delay)
+        visible = true
+    }
+
+    val alpha by animateFloatAsState(
+        targetValue = if (visible) 1f else 0f,
+        animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing),
+        label = "statAlpha"
+    )
+
+    val scale by animateFloatAsState(
+        targetValue = if (visible) 1f else 0.85f,
+        animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing),
+        label = "statScale"
+    )
+
+    Column(
+        modifier = modifier
+            .graphicsLayer {
+                this.alpha = alpha
+                scaleX = scale
+                scaleY = scale
+            }
+            .clip(RoundedCornerShape(12.dp))
+            .background(ProfileColors.Background)
+            .padding(12.dp),
+        horizontalAlignment = Alignment.Start,
+        verticalArrangement = Arrangement.spacedBy(6.dp)
+    ) {
+        // Icon
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = ProfileColors.Accent,
+            modifier = Modifier.size(24.dp)
+        )
+
+        // Value
+        Text(
+            text = value.toString(),
+            color = ProfileColors.Primary,
+            fontSize = 28.sp,
+            fontWeight = FontWeight.Bold,
+            letterSpacing = (-0.5).sp
+        )
+
+        // Label
+        Text(
+            text = label,
+            color = ProfileColors.Primary.copy(alpha = 0.6f),
+            fontSize = 10.sp,
+            fontWeight = FontWeight.Medium,
+            letterSpacing = 1.sp
+        )
     }
 }
 
