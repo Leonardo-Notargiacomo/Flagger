@@ -20,27 +20,32 @@ class LoginViewModel : ViewModel() {
     val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
     private val userRepository = UserRepository
 
-    fun onEmailChange(newEmail: String) {
-        _uiState.value = _uiState.value.copy(email = newEmail)
-    }
+    //introduce email and password variables if they are required later
 
     fun onPasswordChange(newPassword: String) {
         _uiState.value = _uiState.value.copy(password = newPassword)
     }
 
-    fun onLoginClick(email: String, password: String) {
+    fun onLoginClick(
+        email: String,
+        password: String,
+        onSuccess: () -> Unit,
+        onError: (String) -> Unit
+    ) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
             try {
-                userRepository.login(email,password)
+                userRepository.login(email, password)
                 userRepository.whoAmIm()
 
                 _uiState.value = _uiState.value.copy(isLoading = false)
+                onSuccess()
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
                     errorMessage = e.message ?: "Login failed",
                     isLoading = false
                 )
+                onError(e.message ?: "Login failed")
             }
         }
     }

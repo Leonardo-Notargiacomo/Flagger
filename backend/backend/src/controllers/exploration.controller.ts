@@ -1,4 +1,4 @@
-import {post, get, param, requestBody, response} from '@loopback/rest';
+import {post, get, del, param, requestBody, response} from '@loopback/rest';
 import {repository} from '@loopback/repository';
 import {ExplorationEventRepository, UserStreakRepository, UserBadgeRepository} from '../repositories';
 import {UserBadgeWithRelations} from '../models';
@@ -132,4 +132,62 @@ async getUserStats(
     throw error;
   }
 }
+
+  /**
+   * DELETE /api/users/{userId}/test-data
+   * Delete all test data for a user (badges, explorations, streak)
+   * WARNING: This deletes all progress for the user. Use only for testing!
+   */
+  @del('/api/users/{userId}/test-data')
+  @response(200, {
+    description: 'User test data deleted successfully',
+  })
+  async deleteUserTestData(
+    @param.path.number('userId') userId: number,
+  ) {
+    console.log(`[ExplorationController] Deleting test data for user ${userId}...`);
+
+    try {
+      // 1. Delete user badges
+      console.log('[ExplorationController] Deleting user badges...');
+      const deletedBadges = await this.userBadgeRepository.deleteAll({userId});
+      console.log(`[ExplorationController] Deleted ${deletedBadges.count} badge(s)`);
+
+      // 2. Delete exploration events
+      console.log('[ExplorationController] Deleting exploration events...');
+      const deletedExplorations = await this.explorationEventRepository.deleteAll({userId});
+      console.log(`[ExplorationController] Deleted ${deletedExplorations.count} exploration(s)`);
+
+      // 3. Delete user streak
+      console.log('[ExplorationController] Deleting user streak...');
+      const deletedStreaks = await this.userStreakRepository.deleteAll({userId});
+      console.log(`[ExplorationController] Deleted ${deletedStreaks.count} streak record(s)`);
+
+      // 4. Verify clean state
+      const remainingBadges = await this.userBadgeRepository.count({userId});
+      const remainingExplorations = await this.explorationEventRepository.count({userId});
+      const remainingStreaks = await this.userStreakRepository.count({userId});
+
+      const result = {
+        success: true,
+        message: `All test data deleted for user ${userId}`,
+        deleted: {
+          badges: deletedBadges.count,
+          explorations: deletedExplorations.count,
+          streaks: deletedStreaks.count,
+        },
+        remaining: {
+          badges: remainingBadges.count,
+          explorations: remainingExplorations.count,
+          streaks: remainingStreaks.count,
+        },
+      };
+
+      console.log('[ExplorationController] Cleanup result:', JSON.stringify(result, null, 2));
+      return result;
+    } catch (error) {
+      console.error(`[ExplorationController] Error deleting test data for user ${userId}:`, error);
+      throw error;
+    }
+  }
 }

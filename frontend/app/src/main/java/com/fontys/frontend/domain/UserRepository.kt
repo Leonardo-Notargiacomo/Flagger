@@ -1,8 +1,10 @@
 package com.fontys.frontend.domain
 
+import com.fontys.frontend.config.ApiConfig
 import com.fontys.frontend.data.UserLogin
 import com.fontys.frontend.data.UserRegister
 import com.fontys.frontend.data.UserReturn
+import com.fontys.frontend.data.UserUpdate
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
 import org.json.JSONObject
@@ -16,8 +18,6 @@ import com.fontys.frontend.domain.UserAPIService
 
 
 object UserRepository {
-
-    val BASE_URL = "https://group-repository-2025-android-1-6of2.onrender.com/"
     var token = ""
     var userId = 0
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
@@ -33,7 +33,7 @@ object UserRepository {
         .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
         .create()
     private val retrofit = Retrofit.Builder()
-        .baseUrl(BASE_URL)
+        .baseUrl(ApiConfig.BASE_URL)
         .client(okHttpClient) // Use the OkHttpClient
         .addConverterFactory(GsonConverterFactory.create(gson))
         .addConverterFactory(ScalarsConverterFactory.create())
@@ -72,62 +72,27 @@ object UserRepository {
             println("Exception: ${e.message}")
             return null
         }
-
     }
-
-    suspend fun login(email: String, password: String) {
+    suspend fun login(email : String, password: String) {
         try {
             val headers = HashMap<String, String>().apply {
                 put("Accept", "application/json")
                 put("Content-Type", "application/json")
-                    ?: run {
-                        // Optional: Log a warning or throw an error if token is missing for authenticated endpoint
-                        // throw IllegalStateException("JWT token is missing for authenticated request")
-
-                    }
             }
-            val response = userApiService.login(headers, UserLogin(email, password))
-            if (response.isSuccessful) {
-                val json = response.body() ?: ""
-                token = json
-
-            }
-        } catch (
-            e: Exception
-        ) {
-            println("Exception: ${e.message}")
-        }
-    }
-
-    suspend fun register(userName: String, email: String, password: String, bio: String): Boolean {
-        try {
-            val headers = HashMap<String, String>().apply {
-                put("Accept", "application/json")
-                put("Content-Type", "application/json")
-                    ?: run {
-                        // Optional: Log a warning or throw an error if token is missing for authenticated endpoint
-                        // throw IllegalStateException("JWT token is missing for authenticated request")
-
-                    }
-            }
-            val response =
-                userApiService.signup(headers, UserRegister(userName, email, password, bio))
-            if (response.isSuccessful) {
-                return true
+            val response = userApiService.login(headers, UserLogin(email,password))
+            if(response.isSuccessful){
+                val loginResponse = response.body()
+                token = loginResponse?.token ?: ""
+                println("Login successful, token set: ${token.take(20)}...")
             } else {
-                println("Error: ${response.code()} - ${response.message()}")
-                return false
+                println("Login failed: ${response.code()} - ${response.message()}")
             }
         } catch (
             e: Exception
         ) {
             println("Exception: ${e.message}")
         }
-        return false
     }
-
-
-
     suspend fun whoAmIm()  {
         try {
             val headers = HashMap<String, String>().apply {
@@ -154,6 +119,51 @@ object UserRepository {
         }
     }
 
+    suspend fun register(userName: String, email: String, password: String, bio: String): Boolean {
+        try {
+            val headers = HashMap<String, String>().apply {
+                put("Accept", "application/json")
+                put("Content-Type", "application/json")
+            }
+            val response =
+                userApiService.signup(headers, UserRegister(userName, email, bio, password))
+            if (response.isSuccessful) {
+                // Signup successful, now login to get token
+                login(email, password)
+                whoAmIm()
+                return true
+            } else {
+                println("Error: ${response.code()} - ${response.message()}")
+                return false
+            }
+        } catch (
+            e: Exception
+        ) {
+            println("Exception: ${e.message}")
+        }
+        return false
+    }
 
-
+    suspend fun updateUser(userId: String, userUpdate: UserUpdate): String? {
+        return try {
+            val headers = HashMap<String, String>().apply {
+                put("Accept", "application/json")
+                put("Content-Type", "application/json")
+                token?.let { token ->
+                    put("Authorization", "Bearer $token") // Add JWT token if available
+                } ?: run {
+                    // Optional: Log a warning or throw an error if token is missing for authenticated endpoint
+                    // throw IllegalStateException("JWT token is missing for authenticated request")
+                }
+            }
+            val response = userApiService.updateUser(headers , userId, userUpdate)
+            if (response.isSuccessful) {
+                response.body()
+            } else {
+                "Error: ${response.code()} - ${response.message()}"
+            }
+        } catch (e: Exception) {
+            "Exception: ${e.message}"
+        }
+    }
 }

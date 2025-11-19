@@ -1,5 +1,6 @@
 package com.fontys.frontend.domain
 
+import com.fontys.frontend.data.LoginResponse
 import com.fontys.frontend.data.UserLogin
 import com.fontys.frontend.data.UserRegister
 import com.fontys.frontend.data.UserReturn
@@ -18,11 +19,11 @@ interface UserAPIService {
     suspend fun getUser(@HeaderMap headers:Map<String,String>, @Path("id") userId: String): Response<UserReturn>
 
     @PATCH("go-users/{id}")
-    suspend fun updateUser(@Path("id") userId: String, @Body user: UserUpdate): Response<String>
+    suspend fun updateUser(@HeaderMap headers:Map<String,String>, @Path("id") userId: String, @Body user: UserUpdate): Response<String>
     @POST("login")
-    suspend fun login(@HeaderMap headers: Map<String,String>, @Body user: UserLogin) : Response<String>
+    suspend fun login(@HeaderMap headers: Map<String,String>, @Body user: UserLogin) : Response<LoginResponse>
     @GET("whoAmI")
     suspend fun getId(@HeaderMap headers: Map<String,String>): Response<Int>
     @POST(value = "signup")
-    suspend fun signup(@HeaderMap headers: Map<String,String>,@Body user: UserRegister ): Response<String>
+    suspend fun signup(@HeaderMap headers: Map<String,String>,@Body user: UserRegister ): Response<UserReturn>
 }

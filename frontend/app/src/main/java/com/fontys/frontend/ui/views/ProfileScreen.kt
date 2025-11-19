@@ -18,6 +18,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.fontys.frontend.data.UserUpdate
+import com.fontys.frontend.domain.UserRepository
 import com.fontys.frontend.ui.components.*
 import com.fontys.frontend.ui.theme.ProfileColors
 import com.fontys.frontend.ui.viewmodels.ProfileViewModel
@@ -38,7 +40,7 @@ fun ProfileScreen(userViewModel: ProfileViewModel = viewModel()) {
 
     // Load user data once when screen opens
     LaunchedEffect(Unit) {
-        userViewModel.getUser("1") // You can replace "1" with dynamic ID
+        userViewModel.getUser(UserRepository.userId.toString())
     }
 
     Box(
@@ -49,8 +51,8 @@ fun ProfileScreen(userViewModel: ProfileViewModel = viewModel()) {
     ) {
         Box(
             modifier = Modifier
-                .fillMaxWidth(0.95f)
-                .fillMaxHeight(0.9f)
+                .fillMaxWidth()
+                .fillMaxHeight()
         ) {
             Column(
                 modifier = Modifier
@@ -130,7 +132,14 @@ fun ProfileScreen(userViewModel: ProfileViewModel = viewModel()) {
                                     Button(
                                         onClick = {
                                             coroutineScope.launch {
-                                                // TODO: call userViewModel.updateUser() when implemented
+                                                val userUpdate = UserUpdate(
+                                                    id = 1,
+                                                    userName = editUsername,
+                                                    email = editEmail,
+                                                    bio = editBio,
+                                                    userImage = 0
+                                                )
+                                                userViewModel.updateUser(userData.id, userUpdate)
                                                 isEditing = false
                                             }
                                         },
