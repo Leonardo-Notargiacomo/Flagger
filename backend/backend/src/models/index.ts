@@ -7,3 +7,5 @@ export * from './flag.model';
 export * from './friend-request.model';
 export * from './friendship.model';
 export * from './go-user-credentials.model';
+export * from './challenge.model';
+export * from './user-challenge.model';
