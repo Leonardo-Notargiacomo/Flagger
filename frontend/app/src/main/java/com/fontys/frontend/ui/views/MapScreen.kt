@@ -1,5 +1,8 @@
 package com.fontys.frontend.ui.views
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.nfc.Tag
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -7,10 +10,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.fontys.frontend.R
 import com.fontys.frontend.data.PlaceService
+import com.fontys.frontend.ui.components.BadgeUnlockDialog
+import com.fontys.frontend.domain.UserRepository
 import com.fontys.frontend.ui.viewmodels.MapsViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMapOptions
@@ -31,9 +37,21 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
     val selectedPlaces = remember { mutableStateListOf<PlaceService>() }
     LaunchedEffect(Unit) { viewModel.loadUserLocation() }
     val userFlags by viewModel.userFlags.collectAsState()
-    val currentUserId = 1
+    val currentUserId = UserRepository.userId
+
+    // Check if location permission is granted
+    val hasLocationPermission = remember {
+        ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    // Badge unlock dialog state
+    val showBadgeDialog by viewModel.showBadgeDialog.collectAsState()
+    val newlyUnlockedBadges by viewModel.newlyUnlockedBadges.collectAsState()
     LaunchedEffect(currentUserId) {
-        if (currentUserId != null) {
+        if (currentUserId != null || currentUserId !=0) {
             viewModel.getFlags(currentUserId)
         }
     }
@@ -48,12 +66,12 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
     val googleMapOptions = remember {
         GoogleMapOptions().mapId("349a2b06249ce52186cf3c94")
     }
-    Box(Modifier.fillMaxSize().padding(bottom = 130.dp)) {
+    Box(Modifier.fillMaxSize()) {
         GoogleMap(
             modifier = Modifier.fillMaxSize(),
             cameraPositionState = cameraPositionState,
             properties = MapProperties(
-                isMyLocationEnabled = true,
+                isMyLocationEnabled = hasLocationPermission,
             ),
             googleMapOptionsFactory = { googleMapOptions }
         ) {
@@ -67,7 +85,7 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
                 )
         }
             places.forEach { place ->
-                val isAlreadyFlagged = userFlags.any { flaggedSpot -> flaggedSpot.lcoationId ==place.id }
+                val isAlreadyFlagged = userFlags.any { flaggedSpot -> flaggedSpot.locationId ==place.id }
                 if (!isAlreadyFlagged) {
                     Marker(
                         state = MarkerState(position = LatLng(place.latitude, place.longitude)),
@@ -104,6 +122,7 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
                 onDismissRequest = { showDialog = false },
                 title = { Text("No places found") },
                 text = { Text("Try again or move to another location.") },
+
                 confirmButton = {
                     TextButton(onClick = { showDialog = false }) {
                         Text("OK")
@@ -117,7 +136,7 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
                 text = {
                     Column {
                         val unflaggedPlaces = places.filter { nearbyPlace ->
-                            !userFlags.any { flaggedSpot -> flaggedSpot.lcoationId == nearbyPlace.id }
+                            !userFlags.any { flaggedSpot -> flaggedSpot.locationId == nearbyPlace.id }
                         }
                         if (unflaggedPlaces.isEmpty()) {
                         Text("All nearby places are already flagged!")
@@ -126,7 +145,12 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
                             TextButton(onClick = {
 
                                 showDialog = false
-                                viewModel.markTheSpot(currentUserId,place.id)
+                                viewModel.markTheSpot(
+                                    userId = currentUserId,
+                                    placeId = place.id,
+                                    locationName = place.displayName,
+                                    latLng = LatLng(place.latitude, place.longitude)
+                                )
                                 coroutineScope.launch {
                                     cameraPositionState.animate(
                                         CameraUpdateFactory.newLatLngZoom(
@@ -152,6 +176,14 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
                 }
             )
         }
+    }
+
+    // Badge unlock celebration dialog
+    if (showBadgeDialog && newlyUnlockedBadges.isNotEmpty()) {
+        BadgeUnlockDialog(
+            badges = newlyUnlockedBadges,
+            onDismiss = { viewModel.dismissBadgeDialog() }
+        )
     }
 }
 

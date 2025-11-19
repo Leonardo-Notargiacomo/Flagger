@@ -1,6 +1,7 @@
 package com.fontys.frontend.domain
 
 import android.util.Log
+import com.fontys.frontend.config.ApiConfig
 import com.fontys.frontend.data.AddFlagRequest
 import com.fontys.frontend.data.PlaceService
 import com.google.gson.GsonBuilder
@@ -15,12 +16,12 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import java.util.Date
 import com.fontys.frontend.data.FlagResponse // Import your new FlagResponse data class
+import kotlinx.serialization.builtins.UIntArraySerializer
 
 
 class FlagRepository{
 
-    val BASE_URL = "https://group-repository-2025-android-1-6of2.onrender.com/"
-    var token ="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJuYW1lIjoiZ2FuZ3N0YWxrZWQiLCJlbWFpbCI6Ind3d0B3dy53dyIsImlhdCI6MTc2MjQxNjk0MSwiZXhwIjoxNzYyNDM4NTQxfQ.xowNshI30rRavngwql8eIJ59NADVvpsHGXtXaPXJyFQ"
+    var token = UserRepository.token
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY
     }
@@ -34,7 +35,7 @@ class FlagRepository{
         .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
         .create()
     private val retrofit = Retrofit.Builder()
-        .baseUrl(BASE_URL)
+        .baseUrl(ApiConfig.BASE_URL)
         .client(okHttpClient) // Use the OkHttpClient
         .addConverterFactory(GsonConverterFactory.create(gson))
         .addConverterFactory(ScalarsConverterFactory.create())

@@ -62,12 +62,20 @@ export async function seedBadges() {
       displayOrder: 6,
     },
     {
+        name: 'Avid Nature Enjoyer',
+        description: 'Complete 250 explorations. You really enjoy the outdoors!',
+        iconUrl: '🗿',
+        category: 'Chad',
+        unlockCriteria: {type: 'exploration_count' as const, threshold: 250},
+        displayOrder: 7,
+    },
+    {
       name: 'Daily Dedication',
       description: 'Maintain a 3-day streak',
       iconUrl: '🔥',
       category: 'Streak',
       unlockCriteria: {type: 'streak' as const, threshold: 3},
-      displayOrder: 7,
+      displayOrder: 8,
     },
     {
       name: 'Week Warrior',
@@ -75,7 +83,7 @@ export async function seedBadges() {
       iconUrl: '⚡',
       category: 'Streak',
       unlockCriteria: {type: 'streak' as const, threshold: 7},
-      displayOrder: 8,
+      displayOrder: 9,
     },
     {
       name: 'Consistency King',
@@ -83,7 +91,7 @@ export async function seedBadges() {
       iconUrl: '💎',
       category: 'Streak',
       unlockCriteria: {type: 'streak' as const, threshold: 30},
-      displayOrder: 9,
+      displayOrder: 10,
     },
   ];
 
@@ -91,7 +99,22 @@ export async function seedBadges() {
   const existingBadges = await badgeRepo.find();
 
   if (existingBadges.length > 0) {
-    console.log(`ℹ️  Found ${existingBadges.length} existing badges. Skipping badge creation.`);
+    console.log(`ℹ️  Found ${existingBadges.length} existing badges. Updating if needed...`);
+
+    // Update or create badges
+    for (const badge of badges) {
+      const existing = existingBadges.find(b => b.name === badge.name);
+      if (existing) {
+        // Update existing badge
+        await badgeRepo.updateById(existing.id!, badge);
+        console.log(`✏️  Updated badge: ${badge.name}`);
+      } else {
+        // Create new badge
+        await badgeRepo.create(badge);
+        console.log(`➕ Created new badge: ${badge.name}`);
+      }
+    }
+    console.log(`✅ Processed ${badges.length} badges!`);
   } else {
     console.log('📝 Creating badges...');
     for (const badge of badges) {
@@ -100,27 +123,8 @@ export async function seedBadges() {
     console.log(`✅ Created ${badges.length} badges!`);
   }
 
-  // Unlock first 3 badges for user ID 1 as test data
-  console.log('🔍 Checking user badges for user ID 1...');
-  const existingUserBadges = await userBadgeRepo.find({where: {userId: 1}});
-
-  if (existingUserBadges.length > 0) {
-    console.log(`ℹ️  User 1 already has ${existingUserBadges.length} badges. Skipping.`);
-  } else {
-    console.log('🎁 Unlocking test badges for user ID 1...');
-    const allBadges = await badgeRepo.find({order: ['displayOrder ASC']});
-
-    // Unlock first 3 badges for testing
-    for (let i = 0; i < Math.min(3, allBadges.length); i++) {
-      await userBadgeRepo.create({
-        userId: 1,
-        badgeId: allBadges[i].id!,
-        unlockedAt: new Date(),
-        notificationSent: false,
-      });
-    }
-    console.log(`✅ Unlocked ${Math.min(3, allBadges.length)} badges for user 1!`);
-  }
+  // Note: Removed auto-unlocking badges for user 1 to properly test badge unlock functionality
+  console.log('ℹ️  Users start with 0 badges - badges unlock through exploration!')
 
   await app.stop();
   console.log('🎉 Badge seeding complete!');

@@ -114,3 +114,54 @@ This document outlines the use cases for the project. Each use case describes a 
 **Result:** users info has changed.
 
 **Link:** [readme for further info](/documentation/artifacts/Use_Cases/change_user_info/README.md)
+
+---
+
+### Use Case: Manage Friends and Friend Requests
+
+**Actor:** User
+
+**Description:** The user wants to add other users as friends
+
+**Precondition:**
+- The user is logged into their account
+- The user has network connectivity
+
+**Scenario:**
+1. User enters a username or email in the search field
+2. System displays matching users with relationship status
+3. User clicks "Add Friend" button on a desired user
+4. System sends a friend request to the selected user
+5. System displays success message "Friend request sent"
+6. User navigates to "Requests" tab
+7. System displays received and sent friend requests
+8. User accepts a received friend request
+9. System creates friendship relationship and updates both users' friends lists
+10. System displays success message "Friend request accepted"
+
+**Result:** The user successfully connects with other users, can view their friends list, manage incoming/outgoing friend requests, and has established friendships for sharing exploration progress.
+
+**Exception:**
+- 5a. No users found: System displays "No users found" message
+- 5b. Network error during search: System displays "Failed to search users" error with retry option
+- 7a. Request already exists: System displays "Friend request already sent" message
+- 11a. Request no longer exists: System displays error and refreshes requests list
+- 12a. Friendship creation fails: System displays error message and allows retry
+
+**Extensions:**
+- 10a User views sent requests:
+  1. User can cancel pending sent requests
+  2. System removes request from database
+  3. System updates sent requests list
+  4. Return to step 10
+- 10b User rejects received request:
+  1. User clicks "Reject" button
+  2. System deletes the friend request
+  3. System updates received requests list
+  4. Return to step 10
+- 2a User views friends list:
+  1. User selects "My Friends" tab
+  2. System displays all confirmed friendships with usernames and emails
+  3. User can remove a friend by clicking trash icon
+  4. System deletes friendship for both users
+  5. Return to step 2
