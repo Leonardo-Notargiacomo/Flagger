@@ -804,10 +804,23 @@ private fun FlagItem(
 }
 
 /**
- * Loading state with centered spinner
+ * Loading state with rotating compass animation
+ * More thematic than generic spinner for an exploration app
  */
 @Composable
 private fun LoadingState() {
+    // Infinite rotation animation for compass
+    val infiniteTransition = rememberInfiniteTransition(label = "compass")
+    val rotation by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 360f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(2000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "compassRotation"
+    )
+
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -816,10 +829,16 @@ private fun LoadingState() {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            CircularProgressIndicator(
-                color = ProfileColors.Accent,
-                strokeWidth = 3.dp,
-                modifier = Modifier.size(48.dp)
+            // Rotating compass icon
+            Icon(
+                imageVector = Icons.Default.Explore,
+                contentDescription = "Loading",
+                tint = ProfileColors.Accent,
+                modifier = Modifier
+                    .size(64.dp)
+                    .graphicsLayer {
+                        rotationZ = rotation
+                    }
             )
             Text(
                 text = "Loading profile...",
