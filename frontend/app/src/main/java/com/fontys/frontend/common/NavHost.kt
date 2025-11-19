@@ -18,6 +18,7 @@ import com.fontys.frontend.ui.views.MapsScreen
 import com.fontys.frontend.ui.views.ProfileScreen
 import kotlinx.serialization.Serializable
 import com.fontys.frontend.ui.views.NavBar
+import com.fontys.frontend.ui.views.PublicProfileScreen
 
 
 @Serializable
@@ -41,6 +42,9 @@ object NavigationView
 @Serializable
 object RegistrationView
 
+@Serializable
+data class PublicProfileView(val userId: Int)
+
 @Composable
 fun NavHost(
     navController: NavHostController,
@@ -58,27 +62,44 @@ fun NavHost(
             composable<MapView> {
                 MapsScreen(navController)
             }
-        composable<FriendView> {
-            // TODO: Pass actual auth token to FriendsViewModel when auth system is integrated
-            // Example: val viewModel: FriendsViewModel = viewModel()
-            //          viewModel.setAuthToken(authToken)
-            FriendsScreen()
-        }
-        composable<ProfileView> {
-            ProfileScreen()
-        }
-        composable<BadgeView> {
-            BadgeScreen(userId = UserRepository.userId)
-        }
-        composable<LoginView> {
-            LoginView(navController)
-        }
-        composable<RegistrationView> {
-            RegistrationView(navController)
-        }
 
-        composable <NavigationView>{
-            NavBar()
+            composable<FriendView> {
+                // TODO: Pass actual auth token to FriendsViewModel when auth system is integrated
+                // Example: val viewModel: FriendsViewModel = viewModel()
+                //          viewModel.setAuthToken(authToken)
+                FriendsScreen(navController = navController)
+            }
+
+            composable<ProfileView> {
+                ProfileScreen()
+            }
+
+            composable<BadgeView> {
+                BadgeScreen(userId = UserRepository.userId)
+            }
+
+            composable<LoginView> {
+                LoginView(navController)
+            }
+
+            composable<RegistrationView> {
+                RegistrationView(navController)
+            }
+
+            composable<NavigationView> {
+                NavBar()
+            }
+
+            composable<PublicProfileView> { backStackEntry ->
+            // Type-safe navigation with Kotlin serialization
+            // The route parameters are automatically parsed from the path
+            val args = backStackEntry.arguments
+            val userId = args?.getInt("userId") ?: 0
+
+            PublicProfileScreen(
+                userId = userId,
+                onNavigateBack = { navController.popBackStack() }
+            )
         }
         }
     }
