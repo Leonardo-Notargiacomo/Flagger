@@ -122,28 +122,38 @@ object UserRepository {
     }
 
     suspend fun register(userName: String, email: String, password: String, bio: String): Boolean {
-        try {
-            val headers = HashMap<String, String>().apply {
-                put("Accept", "application/json")
-                put("Content-Type", "application/json")
-            }
-            val response =
-                userApiService.signup(headers, UserRegister(userName, email, bio, password))
-            if (response.isSuccessful) {
-                // Signup successful, now login to get token
-                login(email, password)
-                whoAmIm()
-                return true
-            } else {
-                Log.e(TAG, "Registration error: ${response.code()} - ${response.message()}")
-                return false
-            }
-        } catch (
-            e: Exception
-        ) {
-            Log.e(TAG, "Exception during registration: ${e.message}", e)
+        val headers = HashMap<String, String>().apply {
+            put("Accept", "application/json")
+            put("Content-Type", "application/json")
         }
-        return false
+        val response =
+            userApiService.signup(headers, UserRegister(userName, email, bio, password))
+        if (response.isSuccessful) {
+            // Signup successful, now login to get token
+            login(email, password)
+            whoAmIm()
+            return true
+        } else {
+            val errorBody = response.errorBody()?.string()
+            Log.e(TAG, "Registration error: ${response.code()} - ${response.message()} - Body: $errorBody")
+
+            // Check if it's a duplicate user error based on response
+            val errorMessage = when {
+                response.code() == 500 -> {
+                    // Backend returns 500 for duplicate email constraints
+                    "This email is already registered. Please use a different email or try logging in."
+                }
+                response.code() == 409 -> {
+                    "This email is already registered. Please use a different email."
+                }
+                response.code() == 400 -> {
+                    "Invalid registration data. Please check your information."
+                }
+
+                else -> {}
+            }
+            throw Exception(errorMessage as String?)
+        }
     }
 
     suspend fun updateUser(userId: String, userUpdate: UserUpdate): String? {
