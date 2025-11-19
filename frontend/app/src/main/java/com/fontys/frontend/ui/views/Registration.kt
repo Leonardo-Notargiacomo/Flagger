@@ -124,8 +124,11 @@ fun RegistrationView(
                     password != confirmPassword -> {
                         errorMessage = "Passwords do not match"
                     }
-                    password.length < 6 -> {
-                        errorMessage = "Password must be at least 6 characters"
+                    password.length < 8 -> {
+                        errorMessage = "Password must be at least 8 characters"
+                    }
+                    password.contains("\"^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@\$!%*?&])[A-Za-z\\d@\$!%*?&]{8,}\$\"") -> {
+                        errorMessage = "Password must include at least one lowercase letter, one uppercase letter, one number, and one special character."
                     }
                     else -> {
                         isLoading = true
