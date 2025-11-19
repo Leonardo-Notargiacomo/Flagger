@@ -292,6 +292,30 @@ export class ChallengeController {
   }
 
   /**
+   * Get challenges by difficulty level
+   */
+  @get('/challenges/by-difficulty/{difficulty}')
+  @response(200, {
+    description: 'Array of challenges with specified difficulty',
+    content: {
+      'application/json': {
+        schema: {
+          type: 'array',
+          items: getModelSchemaRef(Challenge, {includeRelations: true}),
+        },
+      },
+    },
+  })
+  async findByDifficulty(
+    @param.path.string('difficulty') difficulty: 'easy' | 'novice' | 'advanced' | 'expert' | 'chad',
+  ): Promise<Challenge[]> {
+    return this.challengeRepository.find({
+      where: {difficulty, isActive: true},
+      order: ['displayOrder ASC'],
+    });
+  }
+
+  /**
    * Update all challenges matching a filter
    */
   @patch('/challenges')

@@ -76,6 +76,16 @@ export class Challenge extends Entity {
   isActive?: boolean;
 
   @property({
+    type: 'string',
+    required: true,
+    default: 'easy',
+    jsonSchema: {
+      enum: ['easy', 'novice', 'advanced', 'expert', 'chad'],
+    },
+  })
+  difficulty: 'easy' | 'novice' | 'advanced' | 'expert' | 'chad';
+
+  @property({
     type: 'number',
     default: 0,
   })

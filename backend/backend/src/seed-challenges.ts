@@ -15,8 +15,8 @@ export async function seedChallenges(app: BackendApplication) {
     {
       name: 'Explorer Novice',
       description: 'Complete 5 explorations in a single challenge',
-      iconUrl: '/badges/challenge-explorer-5.png',
-      category: '🌲',
+      iconUrl: '🌲',
+      category: 'challenge',
       unlockCriteria: {type: 'exploration_count' as const, threshold: 5},
       isChallengeBadge: true,
       displayOrder: 100,
@@ -96,6 +96,7 @@ export async function seedChallenges(app: BackendApplication) {
       cooldownHours: 24,
       expirationHours: 24, // 24-hour expiration for exploration challenges
       isActive: true,
+      difficulty: 'easy' as const,
       displayOrder: 0,
     },
     {
@@ -108,6 +109,7 @@ export async function seedChallenges(app: BackendApplication) {
       cooldownHours: 24,
       expirationHours: 24, // 24-hour expiration for exploration challenges
       isActive: true,
+      difficulty: 'advanced' as const,
       displayOrder: 1,
     },
     {
@@ -120,6 +122,7 @@ export async function seedChallenges(app: BackendApplication) {
       cooldownHours: 24,
       expirationHours: 24, // 24-hour expiration for exploration challenges
       isActive: true,
+      difficulty: 'chad' as const,
       displayOrder: 2,
     },
     {
@@ -132,6 +135,7 @@ export async function seedChallenges(app: BackendApplication) {
       cooldownHours: 24,
       expirationHours: 24, // 24-hour expiration for time-based challenges
       isActive: true,
+      difficulty: 'novice' as const,
       displayOrder: 3,
     },
     {
@@ -144,6 +148,7 @@ export async function seedChallenges(app: BackendApplication) {
       cooldownHours: 24,
       expirationHours: 24, // 24-hour expiration for time-based challenges
       isActive: true,
+      difficulty: 'expert' as const,
       displayOrder: 4,
     },
     {
@@ -156,6 +161,7 @@ export async function seedChallenges(app: BackendApplication) {
       cooldownHours: 24,
       expirationHours: 24, // 24-hour expiration for time-based challenges
       isActive: true,
+      difficulty: 'expert' as const,
       displayOrder: 5,
     },
   ];

@@ -335,15 +335,6 @@ export class ChallengeService {
           currentStreak: 0,
           targetStreak: challenge.conditionParams.days,
         };
-      case 'location':
-        return {
-          targetLocation: {
-            latitude: challenge.conditionParams.latitude,
-            longitude: challenge.conditionParams.longitude,
-            radius: challenge.conditionParams.radius,
-          },
-          completed: false,
-        };
       default:
         return {};
     }
