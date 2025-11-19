@@ -169,6 +169,11 @@ fun PublicProfileScreen(
                                 // Provide haptic feedback on press
                                 hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
                                 viewModel.sendFriendRequest(userId)
+                            },
+                            onCancelRequest = { requestId ->
+                                // Provide haptic feedback on press
+                                hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+                                viewModel.cancelFriendRequest(requestId)
                             }
                         )
 
@@ -553,10 +558,11 @@ private fun EmptyFlagsSection(
 @Composable
 private fun FriendRequestButton(
     status: FriendRequestStatus,
-    onSendRequest: () -> Unit
+    onSendRequest: () -> Unit,
+    onCancelRequest: (Int) -> Unit
 ) {
     // Button configuration based on status
-    val (buttonText, buttonColor, contentColor, icon, enabled) = when (status) {
+    val config = when (status) {
         is FriendRequestStatus.NotSent -> {
             ButtonConfig(
                 text = "SEND FRIEND REQUEST",
@@ -577,10 +583,19 @@ private fun FriendRequestButton(
         }
         is FriendRequestStatus.Pending -> {
             ButtonConfig(
-                text = "REQUEST PENDING",
+                text = "CANCEL REQUEST",
                 containerColor = ProfileColors.Container,
                 contentColor = ProfileColors.Primary,
-                icon = Icons.Default.Schedule,
+                icon = Icons.Default.Close,
+                enabled = true
+            )
+        }
+        is FriendRequestStatus.Cancelling -> {
+            ButtonConfig(
+                text = "CANCELLING...",
+                containerColor = ProfileColors.Container.copy(alpha = 0.6f),
+                contentColor = ProfileColors.Primary,
+                icon = Icons.Default.Close,
                 enabled = false
             )
         }
@@ -609,9 +624,13 @@ private fun FriendRequestButton(
     Button(
         onClick = {
             isPressed = true
-            onSendRequest()
+            when (status) {
+                is FriendRequestStatus.NotSent -> onSendRequest()
+                is FriendRequestStatus.Pending -> onCancelRequest(status.requestId)
+                else -> {}
+            }
         },
-        enabled = enabled,
+        enabled = config.enabled,
         modifier = Modifier
             .fillMaxWidth()
             .height(56.dp)
@@ -621,22 +640,22 @@ private fun FriendRequestButton(
             },
         shape = RoundedCornerShape(12.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = buttonColor,
-            contentColor = contentColor,
-            disabledContainerColor = buttonColor,
-            disabledContentColor = contentColor
+            containerColor = config.containerColor,
+            contentColor = config.contentColor,
+            disabledContainerColor = config.containerColor,
+            disabledContentColor = config.contentColor
         ),
         contentPadding = PaddingValues(horizontal = 24.dp),
         border = androidx.compose.foundation.BorderStroke(2.dp, ProfileColors.Border)
     ) {
         Icon(
-            imageVector = icon,
+            imageVector = config.icon,
             contentDescription = null,
             modifier = Modifier.size(20.dp)
         )
         Spacer(modifier = Modifier.width(12.dp))
         Text(
-            text = buttonText,
+            text = config.text,
             fontSize = 14.sp,
             fontWeight = FontWeight.Bold,
             letterSpacing = 1.sp

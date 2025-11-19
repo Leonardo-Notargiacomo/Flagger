@@ -222,6 +222,39 @@ class PublicProfileViewModel(application: Application) : AndroidViewModel(applic
         }
     }
 
+    fun cancelFriendRequest(requestId: Int) {
+        viewModelScope.launch {
+            try {
+                val token = getAuthToken() ?: run {
+                    _uiState.value = _uiState.value.copy(error = "No authentication token")
+                    return@launch
+                }
+
+                _uiState.value = _uiState.value.copy(
+                    friendRequestStatus = FriendRequestStatus.Cancelling(requestId)
+                )
+
+                val result = friendsRepository.cancelFriendRequest(token, requestId)
+                if (result.isSuccess) {
+                    _uiState.value = _uiState.value.copy(
+                        friendRequestStatus = FriendRequestStatus.NotSent
+                    )
+                } else {
+                    _uiState.value = _uiState.value.copy(
+                        error = "Failed to cancel friend request",
+                        friendRequestStatus = FriendRequestStatus.Pending(requestId)
+                    )
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Error cancelling friend request", e)
+                _uiState.value = _uiState.value.copy(
+                    error = e.localizedMessage ?: "Unknown error",
+                    friendRequestStatus = FriendRequestStatus.Pending(requestId)
+                )
+            }
+        }
+    }
+
     private fun fetchPlaceNames(flags: List<Flag>) {
         viewModelScope.launch {
             try {
@@ -263,4 +296,5 @@ sealed class FriendRequestStatus {
     object Sending : FriendRequestStatus()
     data class Pending(val requestId: Int) : FriendRequestStatus()
     object Accepted : FriendRequestStatus()
+    data class Cancelling(val requestId: Int) : FriendRequestStatus()
 }
