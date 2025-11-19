@@ -29,7 +29,7 @@
     "docker:run": "docker run -p 3000:3000 -d backend",
     "premigrate": "npm run build",
     "migrate": "node ./dist/migrate",
-    "seed": "node ./dist/seed-badges",
+    "seed": "node ./dist/seed-badges && node ./dist/seed-challenges",
     "seed-badges": "npm run build && node ./dist/seed-badges",
     "seed-challenges": "npm run build && node ./dist/seed-challenges",
     "preopenapi-spec": "npm run build",
