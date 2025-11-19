@@ -124,8 +124,8 @@ fun RegistrationView(
                     password != confirmPassword -> {
                         errorMessage = "Passwords do not match"
                     }
-                    password.length < 6 -> {
-                        errorMessage = "Password must be at least 6 characters"
+                    password.length < 8 -> {
+                        errorMessage = "Password must be at least 8 characters"
                     }
                     else -> {
                         isLoading = true
