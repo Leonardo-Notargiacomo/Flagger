@@ -118,7 +118,7 @@ fun RegistrationView(
             onClick = {
                 errorMessage = null
                 when {
-                    email.isBlank() || username.isBlank() || password.isBlank() || bio.isBlank() -> {
+                    email.isBlank() || username.isBlank() || password.isBlank() -> {
                         errorMessage = "Please fill in all fields"
                     }
                     password != confirmPassword -> {
