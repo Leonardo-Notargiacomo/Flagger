@@ -16,7 +16,7 @@ export async function seedChallenges(app: BackendApplication) {
       name: 'Explorer Novice',
       description: 'Complete 5 explorations in a single challenge',
       iconUrl: '/badges/challenge-explorer-5.png',
-      category: 'challenge',
+      category: '🌲',
       unlockCriteria: {type: 'exploration_count' as const, threshold: 5},
       isChallengeBadge: true,
       displayOrder: 100,
@@ -24,7 +24,7 @@ export async function seedChallenges(app: BackendApplication) {
     {
       name: 'Explorer Adept',
       description: 'Complete 10 explorations in a single challenge',
-      iconUrl: '/badges/challenge-explorer-10.png',
+      iconUrl: '🌳',
       category: 'challenge',
       unlockCriteria: {type: 'exploration_count' as const, threshold: 10},
       isChallengeBadge: true,
@@ -33,7 +33,7 @@ export async function seedChallenges(app: BackendApplication) {
     {
       name: 'Explorer Master',
       description: 'Complete 20 explorations in a single challenge',
-      iconUrl: '/badges/challenge-explorer-20.png',
+      iconUrl: '🌴',
       category: 'challenge',
       unlockCriteria: {type: 'exploration_count' as const, threshold: 20},
       isChallengeBadge: true,
@@ -42,7 +42,7 @@ export async function seedChallenges(app: BackendApplication) {
     {
       name: 'Night Owl',
       description: 'Flag a place at 10 PM',
-      iconUrl: '/badges/challenge-night-owl.png',
+      iconUrl: '🦉',
       category: 'challenge',
       unlockCriteria: {type: 'exploration_count' as const, threshold: 1},
       isChallengeBadge: true,
@@ -51,7 +51,7 @@ export async function seedChallenges(app: BackendApplication) {
     {
       name: 'Early Bird',
       description: 'Flag a place at 6 AM',
-      iconUrl: '/badges/challenge-early-bird.png',
+      iconUrl: '🐦',
       category: 'challenge',
       unlockCriteria: {type: 'exploration_count' as const, threshold: 1},
       isChallengeBadge: true,
@@ -60,7 +60,7 @@ export async function seedChallenges(app: BackendApplication) {
     {
       name: 'Midnight Explorer',
       description: 'Flag a place at 3 AM',
-      iconUrl: '/badges/challenge-midnight.png',
+      iconUrl: '🌙',
       category: 'challenge',
       unlockCriteria: {type: 'exploration_count' as const, threshold: 1},
       isChallengeBadge: true,
@@ -89,7 +89,7 @@ export async function seedChallenges(app: BackendApplication) {
     {
       name: '5 Explorations Challenge',
       description: 'Complete 5 explorations within 24 hours to earn the Explorer Novice badge',
-      iconUrl: '/badges/challenge-explorer-5.png',
+      iconUrl: '🌲',
       conditionType: 'exploration_count' as const,
       conditionParams: {count: 5},
       rewardBadgeId: badgeMap.get('Explorer Novice')!,
@@ -101,7 +101,7 @@ export async function seedChallenges(app: BackendApplication) {
     {
       name: '10 Explorations Challenge',
       description: 'Complete 10 explorations within 24 hours to earn the Explorer Adept badge',
-      iconUrl: '/badges/challenge-explorer-10.png',
+      iconUrl: '🌳',
       conditionType: 'exploration_count' as const,
       conditionParams: {count: 10},
       rewardBadgeId: badgeMap.get('Explorer Adept')!,
@@ -113,7 +113,7 @@ export async function seedChallenges(app: BackendApplication) {
     {
       name: '20 Explorations Challenge',
       description: 'Complete 20 explorations within 24 hours to earn the Explorer Master badge',
-      iconUrl: '/badges/challenge-explorer-20.png',
+      iconUrl: '🌴',
       conditionType: 'exploration_count' as const,
       conditionParams: {count: 20},
       rewardBadgeId: badgeMap.get('Explorer Master')!,
@@ -125,7 +125,7 @@ export async function seedChallenges(app: BackendApplication) {
     {
       name: 'Night Owl Challenge',
       description: 'Flag a place at exactly 10 PM within 24 hours to earn the Night Owl badge',
-      iconUrl: '/badges/challenge-night-owl.png',
+      iconUrl: '🦉',
       conditionType: 'time_based' as const,
       conditionParams: {hour: 22}, // 10 PM
       rewardBadgeId: badgeMap.get('Night Owl')!,
@@ -137,7 +137,7 @@ export async function seedChallenges(app: BackendApplication) {
     {
       name: 'Early Bird Challenge',
       description: 'Flag a place at exactly 6 AM within 24 hours to earn the Early Bird badge',
-      iconUrl: '/badges/challenge-early-bird.png',
+      iconUrl: '🐦',
       conditionType: 'time_based' as const,
       conditionParams: {hour: 6}, // 6 AM
       rewardBadgeId: badgeMap.get('Early Bird')!,
@@ -149,7 +149,7 @@ export async function seedChallenges(app: BackendApplication) {
     {
       name: 'Midnight Explorer Challenge',
       description: 'Flag a place at exactly 3 AM within 24 hours to earn the Midnight Explorer badge',
-      iconUrl: '/badges/challenge-midnight.png',
+      iconUrl: '🌙',
       conditionType: 'time_based' as const,
       conditionParams: {hour: 3}, // 3 AM
       rewardBadgeId: badgeMap.get('Midnight Explorer')!,
