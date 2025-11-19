@@ -19,10 +19,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -94,6 +95,7 @@ fun PublicProfileScreen(
     viewModel: PublicProfileViewModel = viewModel()
 ) {
     val context = LocalContext.current
+    val hapticFeedback = LocalHapticFeedback.current
     val user by viewModel.user.collectAsState()
     val flags by viewModel.flags.collectAsState()
     val flagDisplayNames by viewModel.flagDisplayNames.collectAsState()
@@ -163,7 +165,11 @@ fun PublicProfileScreen(
                         // Friend request button
                         FriendRequestButton(
                             status = friendRequestStatus,
-                            onSendRequest = { viewModel.sendFriendRequest(userId) }
+                            onSendRequest = {
+                                // Provide haptic feedback on press
+                                hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+                                viewModel.sendFriendRequest(userId)
+                            }
                         )
 
                         // Recent explorations or empty state
@@ -197,6 +203,9 @@ fun PublicProfileScreen(
                 }
             }
         }
+
+        // Celebration animation overlay
+        FriendRequestSuccessAnimation(status = friendRequestStatus)
     }
 }
 
@@ -376,7 +385,6 @@ private fun StatsCard(flagCount: Int) {
                 scaleX = scale
                 scaleY = scale
             }
-            .shadow(4.dp, RoundedCornerShape(16.dp))
             .clip(RoundedCornerShape(16.dp))
             .background(ProfileColors.Container)
             .border(2.dp, ProfileColors.Border, RoundedCornerShape(16.dp))
@@ -851,6 +859,97 @@ private fun ErrorState(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text("RETRY", fontSize = 14.sp, fontWeight = FontWeight.Bold)
+            }
+        }
+    }
+}
+
+/**
+ * Celebration animation overlay for successful friend request
+ * Displays a green checkmark with "Friend request sent!" message
+ */
+@Composable
+private fun FriendRequestSuccessAnimation(status: FriendRequestStatus) {
+    // Track previous status to detect when request is successfully sent
+    var previousStatus by remember { mutableStateOf<FriendRequestStatus>(FriendRequestStatus.NotSent) }
+    var showCelebration by remember { mutableStateOf(false) }
+
+    // Detect transition from Sending to Pending (successful send)
+    LaunchedEffect(status) {
+        if (previousStatus is FriendRequestStatus.Sending && status is FriendRequestStatus.Pending) {
+            showCelebration = true
+            kotlinx.coroutines.delay(2500) // Show for 2.5 seconds
+            showCelebration = false
+        }
+        previousStatus = status
+    }
+
+    // Celebration animation
+    AnimatedVisibility(
+        visible = showCelebration,
+        enter = fadeIn(animationSpec = tween(300)) + scaleIn(
+            initialScale = 0.8f,
+            animationSpec = spring(
+                dampingRatio = Spring.DampingRatioMediumBouncy,
+                stiffness = Spring.StiffnessMedium
+            )
+        ),
+        exit = fadeOut(animationSpec = tween(400))
+    ) {
+        Box(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            // Dark overlay with success card
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.4f)),
+                contentAlignment = Alignment.Center
+            ) {
+                // Success card
+                Column(
+                    modifier = Modifier
+                        .padding(32.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(ProfileColors.Container)
+                        .border(2.dp, Color(0xFF4CAF50), RoundedCornerShape(16.dp))
+                        .padding(32.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    // Green checkmark with animation
+                    Box(
+                        modifier = Modifier
+                            .size(80.dp)
+                            .clip(CircleShape)
+                            .background(Color(0xFF4CAF50).copy(alpha = 0.2f)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.CheckCircle,
+                            contentDescription = "Success",
+                            tint = Color(0xFF4CAF50),
+                            modifier = Modifier.size(56.dp)
+                        )
+                    }
+
+                    // Success message
+                    Text(
+                        text = "Friend request sent!",
+                        color = ProfileColors.Primary,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center
+                    )
+
+                    Text(
+                        text = "You'll be notified when they accept",
+                        color = ProfileColors.Primary.copy(alpha = 0.7f),
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Normal,
+                        textAlign = TextAlign.Center
+                    )
+                }
             }
         }
     }
