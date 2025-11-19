@@ -19,6 +19,7 @@ export class GoUser extends Entity {
   @property({
     type: 'string',
     required: true,
+    unique: true,
   })
   email: string;
 
