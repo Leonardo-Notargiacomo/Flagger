@@ -108,8 +108,10 @@ class MapsViewModel(application: Application) : AndroidViewModel(application) {
                     // Don't propagate error - flagging succeeded even if exploration logging failed
                 }
 
-                // 3. Refresh flags to show new marker
-                getFlags(userId)
+                // 3. Refresh flags to show new marker (runs in background, doesn't block badge dialog)
+                viewModelScope.launch {
+                    getFlags(userId)
+                }
             } catch (e: Exception) {
                 _error.value = e.localizedMessage ?: "The place has not been marked"
                 Log.e("MapsViewModel", "Error marking the place", e)

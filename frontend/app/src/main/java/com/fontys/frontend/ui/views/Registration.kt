@@ -125,6 +125,7 @@ fun RegistrationView(
                     }
                     password.length < 8 -> {
                         errorMessage = "Password must be at least 8 characters"
+ 
                     }
                     !password.contains("/^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^\\da-zA-Z]).{8,}\$/gm".toRegex()) -> {
                         errorMessage = "Password must include at least one lowercase letter, one uppercase letter, one number, and one special character."
