@@ -186,6 +186,7 @@ export async function seedChallenges(app: BackendApplication) {
 async function main() {
   const app = new BackendApplication();
   await app.boot();
+  await app.start();
   await seedChallenges(app);
   process.exit(0);
 }

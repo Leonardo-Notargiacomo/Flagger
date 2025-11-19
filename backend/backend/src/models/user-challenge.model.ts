@@ -54,6 +54,9 @@ export class UserChallenge extends Entity {
   @property({
     type: 'object',
     default: {},
+    postgresql: {
+      dataType: 'jsonb',
+    },
   })
   progressData?: {
     // Track progress for the challenge

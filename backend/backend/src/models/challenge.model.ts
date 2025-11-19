@@ -38,6 +38,9 @@ export class Challenge extends Entity {
   @property({
     type: 'object',
     required: true,
+    postgresql: {
+      dataType: 'jsonb',
+    },
   })
   conditionParams: {
     // For exploration_count: { count: number }
