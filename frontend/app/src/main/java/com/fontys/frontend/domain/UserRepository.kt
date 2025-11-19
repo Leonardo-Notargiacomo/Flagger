@@ -1,5 +1,6 @@
 package com.fontys.frontend.domain
 
+import android.util.Log
 import com.fontys.frontend.config.ApiConfig
 import com.fontys.frontend.data.UserLogin
 import com.fontys.frontend.data.UserRegister
@@ -18,6 +19,7 @@ import com.fontys.frontend.domain.UserAPIService
 
 
 object UserRepository {
+    private const val TAG = "UserRepository"
     var token = ""
     var userId = 0
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
@@ -62,14 +64,14 @@ object UserRepository {
                 return UserReturn(id, userName, email, userImage, bio)
             } else {
                 // Handle error response
-                println("Error: ${response.code()} - ${response.message()}")
+                Log.e(TAG, "Error getting user: ${response.code()} - ${response.message()}")
                 return null
             }
         } catch (
             e: Exception
         ) {
             // Handle exceptions such as network errors
-            println("Exception: ${e.message}")
+            Log.e(TAG, "Exception getting user: ${e.message}", e)
             return null
         }
     }
@@ -83,14 +85,14 @@ object UserRepository {
             if(response.isSuccessful){
                 val loginResponse = response.body()
                 token = loginResponse?.token ?: ""
-                println("Login successful, token set: ${token.take(20)}...")
+                Log.d(TAG, "Login successful, token set: ${token.take(20)}...")
             } else {
-                println("Login failed: ${response.code()} - ${response.message()}")
+                Log.e(TAG, "Login failed: ${response.code()} - ${response.message()}")
             }
         } catch (
             e: Exception
         ) {
-            println("Exception: ${e.message}")
+            Log.e(TAG, "Exception during login: ${e.message}", e)
         }
     }
     suspend fun whoAmIm()  {
@@ -107,7 +109,7 @@ object UserRepository {
                     }
             }
             val response = userApiService.getId(headers)
-            println(response)
+            Log.d(TAG, "whoAmIm response: $response")
             if(response.isSuccessful){
                 val json = response.body()?:0
                 userId =json
@@ -115,7 +117,7 @@ object UserRepository {
         } catch (
             e: Exception
         ) {
-            println("Exception: ${e.message}")
+            Log.e(TAG, "Exception in whoAmIm: ${e.message}", e)
         }
     }
 
@@ -133,13 +135,13 @@ object UserRepository {
                 whoAmIm()
                 return true
             } else {
-                println("Error: ${response.code()} - ${response.message()}")
+                Log.e(TAG, "Registration error: ${response.code()} - ${response.message()}")
                 return false
             }
         } catch (
             e: Exception
         ) {
-            println("Exception: ${e.message}")
+            Log.e(TAG, "Exception during registration: ${e.message}", e)
         }
         return false
     }
