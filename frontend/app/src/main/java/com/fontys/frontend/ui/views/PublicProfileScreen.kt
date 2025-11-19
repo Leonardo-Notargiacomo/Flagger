@@ -392,7 +392,6 @@ private fun StatsCard(flagCount: Int) {
             }
             .clip(RoundedCornerShape(16.dp))
             .background(ProfileColors.Container)
-            .border(2.dp, ProfileColors.Border, RoundedCornerShape(16.dp))
             .padding(24.dp)
     ) {
         Row(
@@ -645,8 +644,7 @@ private fun FriendRequestButton(
             disabledContainerColor = config.containerColor,
             disabledContentColor = config.contentColor
         ),
-        contentPadding = PaddingValues(horizontal = 24.dp),
-        border = androidx.compose.foundation.BorderStroke(2.dp, ProfileColors.Border)
+        contentPadding = PaddingValues(horizontal = 24.dp)
     ) {
         Icon(
             imageVector = config.icon,
