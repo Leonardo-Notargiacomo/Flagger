@@ -154,10 +154,10 @@ fun PublicProfileScreen(
                         StatsCard(flagCount = flags.size)
 
                         // Bio section (if exists)
-                        user!!.bio?.let { bio ->
-                            if (bio.isNotEmpty()) {
-                                BioSection(bio = bio)
-                            }
+                        if (user!!.bio.isNullOrEmpty()) {
+                            EmptyBioSection(username = user!!.userName ?: "This explorer")
+                        } else {
+                            BioSection(bio = user!!.bio!!)
                         }
 
                         // Friend request button
@@ -166,8 +166,13 @@ fun PublicProfileScreen(
                             onSendRequest = { viewModel.sendFriendRequest(userId) }
                         )
 
-                        // Recent explorations
-                        if (flags.isNotEmpty()) {
+                        // Recent explorations or empty state
+                        if (flags.isEmpty()) {
+                            EmptyFlagsSection(
+                                username = user!!.userName?.uppercase() ?: "THIS EXPLORER",
+                                friendRequestStatus = friendRequestStatus
+                            )
+                        } else {
                             RecentExplorationsSection(
                                 flags = flags.take(5),
                                 displayNames = flagDisplayNames,
@@ -463,6 +468,72 @@ private fun BioSection(bio: String) {
             fontSize = 14.sp,
             lineHeight = 20.sp,
             fontWeight = FontWeight.Normal
+        )
+    }
+}
+
+/**
+ * Empty bio section - encourages user to add a bio
+ * Friendly prompt to enhance profile completeness
+ */
+@Composable
+private fun EmptyBioSection(username: String) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
+            .background(ProfileColors.Container)
+            .border(1.dp, ProfileColors.Border.copy(alpha = 0.3f), RoundedCornerShape(12.dp))
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Text(
+            text = "$username hasn't added a bio yet :( \n\nSeems like you will have to talk irl to get to know each other (°□°˶)! \n\nOr you can go make some flags together ;)",
+            color = ProfileColors.Primary.copy(alpha = 0.6f),
+            fontSize = 14.sp,
+            lineHeight = 20.sp,
+            fontWeight = FontWeight.Normal,
+            fontStyle = androidx.compose.ui.text.font.FontStyle.Italic
+        )
+    }
+}
+
+/**
+ * Empty flags section - encourages user to explore and add flags
+ * Friendly prompt to motivate exploration
+ */
+@Composable
+private fun EmptyFlagsSection(
+    username: String,
+    friendRequestStatus: FriendRequestStatus
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
+            .background(ProfileColors.Container)
+            .border(1.dp, ProfileColors.Border.copy(alpha = 0.3f), RoundedCornerShape(12.dp))
+            .padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        // Main message
+        Text(
+            text = "$username HASN'T STARTED EXPLORING YET!!!",
+            color = ProfileColors.Primary,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center,
+            letterSpacing = 1.sp
+        )
+
+        // Call to action
+        Text(
+            text = "Send him/her a friend request to spark the interest in exploring otherwise - cooked",
+            color = ProfileColors.Primary.copy(alpha = 0.8f),
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Normal,
+            textAlign = TextAlign.Center
         )
     }
 }
