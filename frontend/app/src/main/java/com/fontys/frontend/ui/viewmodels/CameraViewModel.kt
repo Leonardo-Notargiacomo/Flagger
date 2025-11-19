@@ -1,60 +1,81 @@
 package com.fontys.frontend.ui.viewmodels
 
 import android.content.Context
-import androidx.camera.core.CameraControl
-import androidx.camera.core.CameraSelector.DEFAULT_BACK_CAMERA
-import androidx.camera.core.CameraSelector.DEFAULT_FRONT_CAMERA
-import androidx.camera.core.FocusMeteringAction
+import android.net.Uri
+import androidx.camera.core.CameraSelector
+import androidx.camera.core.ImageCapture
+import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.Preview
-import androidx.camera.core.SurfaceOrientedMeteringPointFactory
 import androidx.camera.core.SurfaceRequest
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.lifecycle.awaitInstance
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.geometry.Offset
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.awaitCancellation
+import com.fontys.frontend.domain.toBase64
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.update
+import java.io.File
 
 class CameraPreviewViewModel : ViewModel() {
-    // used to set up a link between the Camera and your UI.
     private val _surfaceRequest = MutableStateFlow<SurfaceRequest?>(null)
     val surfaceRequest: StateFlow<SurfaceRequest?> = _surfaceRequest
-    private var surfaceMeteringPointFactory: SurfaceOrientedMeteringPointFactory? = null
-    private var cameraControl: CameraControl? = null
+    private var  imageCapture: ImageCapture? = null;
 
+    private var cameraProvider: ProcessCameraProvider? = null
+
+    private val _base64 = MutableStateFlow<String?>("")
+    val base64: StateFlow<String?> = _base64
+    private fun buildImageCaptureUseCase(): ImageCapture {
+        return ImageCapture.Builder()
+            .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
+            .build().also {
+                imageCapture = it
+            }
+    }
     private val cameraPreviewUseCase = Preview.Builder().build().apply {
         setSurfaceProvider { newSurfaceRequest ->
-            _surfaceRequest.update { newSurfaceRequest }
-            surfaceMeteringPointFactory = SurfaceOrientedMeteringPointFactory(
-                newSurfaceRequest.resolution.width.toFloat(),
-                newSurfaceRequest.resolution.height.toFloat()
-            )
+            _surfaceRequest.value = newSurfaceRequest
         }
     }
 
     suspend fun bindToCamera(appContext: Context, lifecycleOwner: LifecycleOwner) {
-        val processCameraProvider = ProcessCameraProvider.awaitInstance(appContext)
-        val camera = processCameraProvider.bindToLifecycle(
-            lifecycleOwner, DEFAULT_BACK_CAMERA, cameraPreviewUseCase
+        cameraProvider = ProcessCameraProvider.awaitInstance(appContext)
+        cameraProvider?.bindToLifecycle(
+            lifecycleOwner,
+            CameraSelector.DEFAULT_BACK_CAMERA, // safer for emulator
+            cameraPreviewUseCase,
+            buildImageCaptureUseCase()
         )
-        cameraControl = camera.cameraControl
-
-        // Cancellation signals we're done with the camera
-        try { awaitCancellation() } finally {
-            processCameraProvider.unbindAll()
-            cameraControl = null
-        }
     }
 
-    fun tapToFocus(tapCoords: Offset) {
-        val point = surfaceMeteringPointFactory?.createPoint(tapCoords.x, tapCoords.y)
-        if (point != null) {
-            val meteringAction = FocusMeteringAction.Builder(point).build()
-            cameraControl?.startFocusAndMetering(meteringAction)
-        }
+    fun releaseCamera() {
+        cameraProvider?.unbindAll()
+    }
+    fun takePhoto(context: Context, onPhotoSaved: (Uri?) -> Unit) {
+        val imageCapture = imageCapture ?: return
+
+        val outputFileOptions = ImageCapture.OutputFileOptions.Builder(
+            File(
+                context.cacheDir,
+                "photo_${System.currentTimeMillis()}.jpg"
+            )
+        ).build()
+
+        imageCapture.takePicture(
+            outputFileOptions,
+            ContextCompat.getMainExecutor(context),
+            object : ImageCapture.OnImageSavedCallback {
+                override fun onImageSaved(output: ImageCapture.OutputFileResults) {
+                    _base64.value = toBase64(context,output.savedUri)
+                    onPhotoSaved(output.savedUri)
+                }
+
+                override fun onError(exception: ImageCaptureException) {
+                    exception.printStackTrace()
+                    onPhotoSaved(null)
+                }
+            }
+        )
     }
 }

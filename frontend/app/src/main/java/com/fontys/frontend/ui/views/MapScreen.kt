@@ -72,16 +72,7 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
                     //icon = BitmapPainter()
                 )
         }
-            places.forEach { place ->
-                val isAlreadyFlagged = userFlags.any { flaggedSpot -> flaggedSpot.lcoationId ==place.id }
-                if (!isAlreadyFlagged) {
-                    Marker(
-                        state = MarkerState(position = LatLng(place.latitude, place.longitude)),
-                        title = place.displayName,
-                        snippet = "Nearby"
-                    )
-                }
-            }
+
         }
 
         // Zoom + Recenter Controls
@@ -97,7 +88,8 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
             Button(onClick = {
                 viewModel.fetchNearbyPlaces(LatLng(userLocation.latitude,userLocation.longitude))
                 if(places.size==1){
-                    viewModel.markTheSpot(currentUserId,places.get(0).id)
+                    navController.navigate(CameraView)
+                    viewModel.markTheSpot(currentUserId,places.get(0).id,photoCode())
                 } else {
                     showDialog = true
                     selectedPlace = null
@@ -137,7 +129,6 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
                             TextButton(onClick = {
 
                                 showDialog = false
-                                viewModel.markTheSpot(currentUserId,place.id)
                                 coroutineScope.launch {
                                     cameraPositionState.animate(
                                         CameraUpdateFactory.newLatLngZoom(
@@ -146,6 +137,8 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
                                         )
                                         )
                                     navController.navigate(CameraView)
+                                    viewModel.markTheSpot(currentUserId,place.id,photoCode())
+
                                 }
 
                             }) {

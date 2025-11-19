@@ -41,7 +41,7 @@ class FlagRepository{
         .addConverterFactory(ScalarsConverterFactory.create())
         .build()
     private val flagApiService = retrofit.create(FlagApiService::class.java)
-    suspend fun addFlag(userId: Int, placeId: String): Result<String> {
+    suspend fun addFlag(userId: Int, placeId: String, photoCode :String): Result<String> {
         return try {
             val headers = HashMap<String, String>().apply {
                 put("Accept", "application/json")
@@ -56,7 +56,7 @@ class FlagRepository{
             val requestBody = AddFlagRequest(
                 placeId, Date(), 0,
                 userId,
-                ""
+                photoCode
             )
             val response = flagApiService.addCords(headers,requestBody)
 

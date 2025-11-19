@@ -62,12 +62,12 @@ class MapsViewModel(application: Application) : AndroidViewModel(application) {
             _error.value = "Location permission not granted."
         }
     }
-    fun markTheSpot(userId: Int, placeId: String) {
+    fun markTheSpot(userId: Int, placeId: String, photoId: String) {
         viewModelScope.launch {
             _isLoading.value = true
             _error.value = null
             try {
-                val result = flagRepository.addFlag(userId,placeId)
+                val result = flagRepository.addFlag(userId,placeId,photoId)
                 getFlags(userId)
             } catch (e: Exception) {
                 _error.value = e.localizedMessage ?: "The place has not been marked"
