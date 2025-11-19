@@ -62,6 +62,7 @@ This document outlines the use cases for the project. Each use case describes a 
 **Extensions:**
 - n/a
 
+---
 
 ### Use Case: Earn Badges for Exploration Activity
 **Actor:** User
