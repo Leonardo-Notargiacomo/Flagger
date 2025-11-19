@@ -149,4 +149,31 @@ export class FlagController {
   async deleteById(@param.path.number('id') id: number): Promise<void> {
     await this.flagRepository.deleteById(id);
   }
+
+  @get('/flags/user/{userId}')
+  @response(200, {
+    description: 'Array of Flag model instances for a given user',
+    content: {
+      'application/json': {
+        schema: {
+          type: 'array',
+          items: getModelSchemaRef(Flag, {includeRelations: true}),
+        },
+      },
+    },
+  })
+
+  async findFlagsByUserId(
+    @param.path.number('userId') userId: number,
+    @param.filter(Flag) filter?: Filter<Flag>,
+  ): Promise<Flag[]> {
+    const flagsFilter: Filter<Flag> = {
+      ...filter,
+      where: {
+        ...filter?.where,
+        userId: userId,
+      },
+    };
+    return this.flagRepository.find(flagsFilter);
+  }
 }
