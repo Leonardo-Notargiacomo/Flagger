@@ -5,6 +5,7 @@ import {UserBadgeWithRelations} from '../models';
 import {inject} from '@loopback/core';
 import {BadgeUnlockService} from '../services/badge-unlock.service';
 import {StreakCalculatorService} from '../services/streak-calculator.service';
+import {ChallengeService} from '../services/challenge.service';
 
 export class ExplorationController {
   constructor(
@@ -18,6 +19,8 @@ export class ExplorationController {
     public badgeUnlockService: BadgeUnlockService,
     @inject('services.StreakCalculatorService')
     public streakCalculatorService: StreakCalculatorService,
+    @inject('services.ChallengeService')
+    public challengeService: ChallengeService,
   ) {}
 
   /**
@@ -65,7 +68,10 @@ export class ExplorationController {
     // 3. Check for newly unlocked badges
     const newBadges = await this.badgeUnlockService.checkAndUnlockBadges(userId);
 
-    // 4. Return response with exploration confirmation and any new badges
+    // 4. Check for challenge completion
+    const challengeBadge = await this.challengeService.checkChallengeCompletion(userId);
+
+    // 5. Return response with exploration confirmation and any new badges
     return {
       success: true,
       event,
@@ -79,6 +85,13 @@ export class ExplorationController {
         description: b.description,
         iconUrl: b.iconUrl,
       })),
+      challengeCompleted: challengeBadge !== null,
+      challengeBadge: challengeBadge ? {
+        id: challengeBadge.id,
+        name: challengeBadge.name,
+        description: challengeBadge.description,
+        iconUrl: challengeBadge.iconUrl,
+      } : undefined,
     };
   }
 

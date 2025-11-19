@@ -42,6 +42,12 @@ export class Badge extends Entity {
   }
 
   @property({
+    type: 'boolean',
+    default: false,
+  })
+  isChallengeBadge?: boolean;
+
+  @property({
     type: 'number',
     default: 0,
   })

@@ -34,8 +34,6 @@ export class ChallengeController {
     public challengeService: ChallengeService,
   ) {}
 
-  // ============ USER ENDPOINTS ============
-
   /**
    * Get the current challenge status for the authenticated user
    */
@@ -185,7 +183,7 @@ export class ChallengeController {
   }
 
   /**
-   * Get all user challenges (history)
+   * Get all user challenges
    */
   @authenticate('jwt')
   @get('/challenges/history')
@@ -209,7 +207,7 @@ export class ChallengeController {
   }
 
   /**
-   * Manually check if active challenge is completed (useful for testing)
+   * Manually check if active challenge is completed for testing
    */
   @authenticate('jwt')
   @post('/challenges/check-completion')
@@ -238,10 +236,8 @@ export class ChallengeController {
     };
   }
 
-  // ============ ADMIN ENDPOINTS ============
-
   /**
-   * Create a new challenge (admin only)
+   * Create a new challenge
    */
   @post('/challenges')
   @response(200, {
