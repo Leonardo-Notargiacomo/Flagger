@@ -40,6 +40,7 @@ import java.util.*
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import androidx.core.net.toUri
 
 /**
  * Opens a location in Google Maps or falls back to browser if Maps is not installed.
@@ -55,21 +56,21 @@ private fun openLocationInGoogleMaps(
     longitude: Double,
     locationName: String = "Location"
 ) {
-    val uri = Uri.parse("geo:$latitude,$longitude?q=$latitude,$longitude($locationName)")
-    val mapsIntent = Intent(Intent.ACTION_VIEW, uri).apply {
-        setPackage("com.google.android.apps.maps")
-    }
+    try {
+        // Use https URL scheme with location name for better place recognition
+        // Including the name helps Google Maps find the actual place instead of just coordinates
+        val encodedName = Uri.encode(locationName)
+        val uri = "https://www.google.com/maps/search/?api=1&query=$encodedName&query_place_id=$latitude,$longitude".toUri()
 
-    // Check if Google Maps is installed
-    if (mapsIntent.resolveActivity(context.packageManager) != null) {
+        val mapsIntent = Intent(Intent.ACTION_VIEW, uri).apply {
+            // Let Android decide the best app (usually Google Maps)
+            // Using minimal flags to prevent flickering
+            addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+        }
+
         context.startActivity(mapsIntent)
-    } else {
-        // Fallback to browser if Google Maps is not installed
-        val browserIntent = Intent(
-            Intent.ACTION_VIEW,
-            Uri.parse("https://maps.google.com/?q=$latitude,$longitude")
-        )
-        context.startActivity(browserIntent)
+    } catch (e: Exception) {
+        android.util.Log.e("PublicProfileScreen", "Error opening Google Maps", e)
     }
 }
 
