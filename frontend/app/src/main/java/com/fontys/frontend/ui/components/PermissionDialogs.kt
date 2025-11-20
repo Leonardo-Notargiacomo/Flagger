@@ -259,7 +259,7 @@ fun NotificationSettingsDialog(
                 // GIF Image - more intense sad/crying GIF
                 val painter = rememberAsyncImagePainter(
                     model = ImageRequest.Builder(LocalContext.current)
-                        .data("https://media1.tenor.com/m/lx2WSGRk8bcAAAAC/pulp-fiction-john-travolta.gif")
+                        .data("https://media1.tenor.com/m/NFsmfmT6DzAAAAAd/funny-funnyfix.gif")
                         .build(),
                     imageLoader = imageLoader
                 )
@@ -368,7 +368,7 @@ fun LocationDeniedDialog(
                 // GIF Image - disappointed/confused GIF
                 val painter = rememberAsyncImagePainter(
                     model = ImageRequest.Builder(LocalContext.current)
-                        .data("https://media.tenor.com/bXJu8q1leksAAAAi/sad-cat-sad.gif")
+                        .data("https://media.tenor.com/u4mpua8vD3IAAAAi/%C3%BCzg%C3%BCnkedikuzeyefe.gif")
                         .build(),
                     imageLoader = imageLoader
                 )
@@ -482,7 +482,7 @@ fun LocationSettingsDialog(
                 // GIF Image - very sad/desperate GIF
                 val painter = rememberAsyncImagePainter(
                     model = ImageRequest.Builder(LocalContext.current)
-                        .data("https://media.tenor.com/W_QJ5jDbY6AAAAAi/cat-sad-cat.gif")
+                        .data("https://media1.tenor.com/m/PsLxxXWJu9AAAAAC/sad-cat-sad.gif")
                         .build(),
                     imageLoader = imageLoader
                 )
