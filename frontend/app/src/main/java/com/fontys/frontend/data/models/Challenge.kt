@@ -1,5 +1,11 @@
 package com.fontys.frontend.data.models
 
+enum class ChallengeType {
+    TIME_BASED,  // Challenges that need to be completed within 24 hours
+    COUNT,       // Challenges that require a certain count (e.g., drink 8 glasses)
+    STREAK       // Challenges that track consecutive days
+}
+
 data class Challenge(
     val id: Int,
     val name: String,
@@ -9,8 +15,18 @@ data class Challenge(
     val badgeId: Int?,
     val startDate: String,
     val endDate: String,
-    val isActive: Boolean = true
-)
+    val isActive: Boolean = true,
+    val challengeType: String? = "TIME_BASED" // Backend sends as string, can be null
+) {
+    // Helper to get the enum type
+    fun getType(): ChallengeType {
+        return when (challengeType?.uppercase()) {
+            "COUNT" -> ChallengeType.COUNT
+            "STREAK" -> ChallengeType.STREAK
+            else -> ChallengeType.TIME_BASED
+        }
+    }
+}
 
 data class UserChallenge(
     val id: Int,
@@ -18,7 +34,7 @@ data class UserChallenge(
     val currentProgress: Int,
     val isCompleted: Boolean,
     val completedAt: String?,
-    val startedAt: String
+    val startedAt: String? // Backend can return null for this field
 )
 
 data class ChallengeProgress(

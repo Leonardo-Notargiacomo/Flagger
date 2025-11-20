@@ -11,6 +11,45 @@ import kotlinx.coroutines.launch
 
 class ChallengeViewModel : ViewModel() {
 
+    companion object {
+        // Shared state flows that persist across ViewModel recreations
+        private val _sharedCanSelectChallenge = MutableStateFlow(true)
+        private val _sharedTimeUntilNextSelection = MutableStateFlow<Long>(0L)
+
+        // Cache the challenge start time AND the challenge ID to persist across ViewModel recreations
+        private var cachedChallengeStartTime: Long = 0L
+        private var cachedChallengeId: Int = -1
+        private var sharedTimerJob: kotlinx.coroutines.Job? = null
+
+        // Start the global timer once
+        init {
+            startGlobalCooldownTimer()
+        }
+
+        private fun startGlobalCooldownTimer() {
+            if (sharedTimerJob == null || sharedTimerJob?.isActive != true) {
+                sharedTimerJob = kotlinx.coroutines.GlobalScope.launch {
+                    while (true) {
+                        if (cachedChallengeStartTime > 0L) {
+                            val currentTimeMillis = System.currentTimeMillis()
+                            val elapsedMillis = currentTimeMillis - cachedChallengeStartTime
+                            val cooldownDuration = 24 * 60 * 60 * 1000L
+                            val remainingMillis = (cooldownDuration - elapsedMillis).coerceAtLeast(0L)
+
+                            _sharedTimeUntilNextSelection.value = remainingMillis
+                            _sharedCanSelectChallenge.value = remainingMillis <= 0L
+
+                            if (remainingMillis <= 0L) {
+                                cachedChallengeStartTime = 0L
+                            }
+                        }
+                        kotlinx.coroutines.delay(1000)
+                    }
+                }
+            }
+        }
+    }
+
     private val repository = ChallengeRepository()
 
     private val _uiState = MutableStateFlow<ChallengeUiState>(ChallengeUiState.Loading)
@@ -34,22 +73,64 @@ class ChallengeViewModel : ViewModel() {
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
 
+    // Expose shared flows as instance properties
+    val canSelectChallenge: StateFlow<Boolean> = _sharedCanSelectChallenge.asStateFlow()
+    val timeUntilNextSelection: StateFlow<Long> = _sharedTimeUntilNextSelection.asStateFlow()
+
     fun loadUserChallenges(userId: Int) {
         viewModelScope.launch {
-            _uiState.value = ChallengeUiState.Loading
-
             // Use getChallengeHistory to get all user challenges
             repository.getChallengeHistory()
                 .onSuccess { challenges ->
                     // Split into active and completed challenges
-                    _activeChallenges.value = challenges.filter { !it.isCompleted }
+                    val active = challenges.filter { !it.isCompleted }
+                    _activeChallenges.value = active
                     _completedChallenges.value = challenges.filter { it.isCompleted }
+
+                    // Check if user can select a new challenge (24-hour cooldown)
+                    if (active.isNotEmpty()) {
+                        val mostRecentChallenge = active.maxByOrNull { it.startedAt ?: "" }
+                        if (mostRecentChallenge != null) {
+                            // Only update cached time if this is a NEW challenge or first load
+                            // This prevents the timer from resetting on every load
+                            if (cachedChallengeId != mostRecentChallenge.id) {
+                                cachedChallengeId = mostRecentChallenge.id
+                                cachedChallengeStartTime = if (mostRecentChallenge.startedAt != null) {
+                                    parseDateTime(mostRecentChallenge.startedAt)
+                                } else {
+                                    System.currentTimeMillis()
+                                }
+                            }
+                        }
+                    } else {
+                        _sharedCanSelectChallenge.value = true
+                        _sharedTimeUntilNextSelection.value = 0L
+                        cachedChallengeStartTime = 0L
+                        cachedChallengeId = -1
+                    }
+                    
                     _uiState.value = ChallengeUiState.Success
                 }
                 .onFailure { error ->
                     _errorMessage.value = error.message ?: "Failed to load challenges"
                     _uiState.value = ChallengeUiState.Error(error.message ?: "Unknown error")
                 }
+        }
+    }
+
+
+
+    private fun parseDateTime(dateString: String): Long {
+        return try {
+            // Try to parse ISO 8601 format (e.g., "2025-11-20T10:30:00Z")
+            java.time.Instant.parse(dateString).toEpochMilli()
+        } catch (_: Exception) {
+            try {
+                // Fallback to another format if needed
+                java.time.LocalDateTime.parse(dateString).atZone(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli()
+            } catch (_: Exception) {
+                System.currentTimeMillis()
+            }
         }
     }
 
