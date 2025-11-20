@@ -670,14 +670,35 @@ private fun EmptyBioSection(username: String) {
 }
 
 /**
- * Empty flags section - encourages user to explore and add flags
- * Friendly prompt to motivate exploration
+ * Empty flags section - shows different messages based on friendship status
+ * - Not friends: Privacy message (flags are private)
+ * - Friends: User hasn't explored yet
  */
 @Composable
 private fun EmptyFlagsSection(
     username: String,
     friendRequestStatus: FriendRequestStatus
 ) {
+    // Determine message and icon based on friendship status
+    val (mainMessage, subMessage, showLockIcon) = when (friendRequestStatus) {
+        is FriendRequestStatus.Accepted -> {
+            // Already friends - they just don't have flags
+            Triple(
+                "$username HASN'T STARTED EXPLORING YET!!!",
+                "Invite them to discover new places together!",
+                false
+            )
+        }
+        else -> {
+            // Not friends - flags are private
+            Triple(
+                "🔒 EXPLORATIONS ARE PRIVATE",
+                "Become friends with $username to see where they've been exploring!",
+                true
+            )
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -688,9 +709,19 @@ private fun EmptyFlagsSection(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
+        // Lock icon for privacy state
+        if (showLockIcon) {
+            Icon(
+                imageVector = Icons.Default.Lock,
+                contentDescription = null,
+                tint = ProfileColors.Accent,
+                modifier = Modifier.size(48.dp)
+            )
+        }
+
         // Main message
         Text(
-            text = "$username HASN'T STARTED EXPLORING YET!!!",
+            text = mainMessage,
             color = ProfileColors.Primary,
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold,
@@ -698,13 +729,14 @@ private fun EmptyFlagsSection(
             letterSpacing = 1.sp
         )
 
-        // Call to action
+        // Sub message
         Text(
-            text = "Send him/her a friend request to spark the interest in exploring otherwise - cooked",
+            text = subMessage,
             color = ProfileColors.Primary.copy(alpha = 0.8f),
             fontSize = 14.sp,
             fontWeight = FontWeight.Normal,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            lineHeight = 20.sp
         )
     }
 }
