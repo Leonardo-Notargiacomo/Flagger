@@ -140,20 +140,38 @@ object UserRepository {
             // Try to parse error message from backend
             val errorMessage = try {
                 if (!errorBody.isNullOrBlank()) {
-                    val json = JSONObject(errorBody)
+                    // First, try to clean up the JSON if it has single quotes instead of double quotes
+                    val cleanedBody = errorBody.replace("'", "\"")
+                    val json = JSONObject(cleanedBody)
+
                     // Try to extract the error message from various possible fields
-                    when {
+                    val msg = when {
+                        json.has("error") && json.getJSONObject("error").has("message") -> {
+                            json.getJSONObject("error").getString("message")
+                        }
                         json.has("message") -> json.getString("message")
                         json.has("error") -> json.getString("error")
                         json.has("detail") -> json.getString("detail")
                         else -> null
                     }
+
+                    // Log the extracted message for debugging
+                    Log.d(TAG, "Extracted error message: $msg")
+                    msg
                 } else {
                     null
                 }
             } catch (e: Exception) {
-                Log.e(TAG, "Failed to parse error body: ${e.message}")
-                null
+                Log.e(TAG, "Failed to parse error body: ${e.message}. Raw body: $errorBody")
+                // Try regex as fallback to extract message from malformed JSON
+                try {
+                    val messagePattern = """['"']message['"']\s*:\s*['"']([^'"']+)['"']""".toRegex()
+                    val match = messagePattern.find(errorBody ?: "")
+                    match?.groupValues?.getOrNull(1)
+                } catch (regexError: Exception) {
+                    Log.e(TAG, "Regex extraction also failed: ${regexError.message}")
+                    null
+                }
             }
 
             // Use backend error message if available, otherwise use generic messages based on status code
@@ -177,6 +195,7 @@ object UserRepository {
                 }
             }
 
+            Log.d(TAG, "Final error message to display: $finalErrorMessage")
             throw Exception(finalErrorMessage)
         }
     }
