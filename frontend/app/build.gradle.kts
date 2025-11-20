@@ -95,6 +95,7 @@ dependencies {
 
     // Image loading
     implementation("io.coil-kt:coil-compose:2.5.0")
+    implementation("io.coil-kt:coil-gif:2.5.0")
 
     // Other utilities
     implementation("org.json:json:20240303")

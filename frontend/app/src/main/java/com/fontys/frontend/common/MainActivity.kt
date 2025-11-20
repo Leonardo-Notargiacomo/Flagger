@@ -8,10 +8,19 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -21,37 +30,45 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.fontys.frontend.data.UserRegister
+import coil.compose.rememberAsyncImagePainter
+import coil.ImageLoader
+import coil.decode.GifDecoder
+import coil.decode.ImageDecoderDecoder
+import coil.request.ImageRequest
 import com.fontys.frontend.domain.UserRepository
-import com.fontys.frontend.ui.viewmodels.LoginViewModel
 import com.fontys.frontend.ui.views.LoginView
 import com.fontys.frontend.ui.views.NavBar
 import com.fontys.frontend.ui.views.RegistrationView as RegistrationViewComposable
 import com.fontys.frontend.utils.FCMTokenManager
 import android.util.Log
-
+import androidx.compose.ui.layout.ContentScale
 
 class MainActivity : ComponentActivity() {
 
-    // Launcher for location permission
+    private var showLocationDialog by mutableStateOf(false)
+    private var showNotificationDialog by mutableStateOf(false)
+
+    // Launcher for location permission - keeps requesting until granted
     private val requestLocationPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
             if (isGranted) {
+                showLocationDialog = false
                 // Location permission granted, now check notification permission
                 checkNotificationPermission()
             } else {
-                // Location permission denied, but still check notification permission
-                checkNotificationPermission()
+                // Location permission denied, show dialog and ask again
+                showLocationDialog = true
             }
         }
 
-    // Launcher for notification permission (Android 13+)
+    // Launcher for notification permission - keeps requesting until granted
     private val requestNotificationPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
-            if (isGranted) {
-                // Notification permission granted
+            if (!isGranted) {
+                // Notification permission denied, show dialog and ask again
+                showNotificationDialog = true
             } else {
-                // Notification permission denied
+                showNotificationDialog = false
             }
         }
 
@@ -71,13 +88,20 @@ class MainActivity : ComponentActivity() {
             systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
         }
 
+        // Only check location permission first
         checkLocationPermission()
-        checkNotificationPermission()
 
         // Subscribe to FCM topic for daily notifications
         subscribeToNotifications()
 
         setContent {
+            // Create ImageLoader with GIF support
+            val imageLoader = ImageLoader.Builder(this)
+                .components {
+                    add(ImageDecoderDecoder.Factory())
+                }
+                .build()
+
             val navController = rememberNavController()
 
             MaterialTheme {
@@ -108,6 +132,33 @@ class MainActivity : ComponentActivity() {
                             NavBar()
                         }
                     }
+
+                    // Show permission dialogs
+                    if (showLocationDialog) {
+                        PermissionDialog(
+                            title = "🗺️ yo, where u at?",
+                            message = "we need to know your location don't ask why 🤷\n\nbut if you do want to know here are the reasons:\n\n📍 we can help you find interesting spots around u\n\n🏠 we can check on you if you are just rotting at home\n\n🔥 and track ur adventure streak\n\nno cap, it's gonna be fire 🚀",
+                            buttonText = "say less 💯",
+                            gifUrl = "https://media.tenor.com/bGK0XXfceUoAAAAi/baby-pear.gif", // Replace with your GIF URL
+                            imageLoader = imageLoader,
+                            onConfirm = {
+                                requestLocationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+                            }
+                        )
+                    }
+
+                    if (showNotificationDialog) {
+                        PermissionDialog(
+                            title = "🔔 don't ghost us!",
+                            message = "turn on the notifications so we can:\n\n✨ slide into ur dms with daily inspo\n👥 tell u when u get friend requests\n🌱 remind you to touch some grass\n\ntrust, u don't wanna miss this 😤",
+                            buttonText = "bet 🤝",
+                            gifUrl = "https://media1.tenor.com/m/DxZ2AOxOIHEAAAAd/wacky-man.gif", // Replace with your GIF URL
+                            imageLoader = imageLoader,
+                            onConfirm = {
+                                requestNotificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                            }
+                        )
+                    }
                 }
             }
         }
@@ -119,7 +170,7 @@ class MainActivity : ComponentActivity() {
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            requestLocationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+            showLocationDialog = true
         } else {
             // Location permission already granted, check notification permission
             checkNotificationPermission()
@@ -133,7 +184,7 @@ class MainActivity : ComponentActivity() {
                 Manifest.permission.POST_NOTIFICATIONS
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            requestNotificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            showNotificationDialog = true
         }
     }
 
@@ -151,6 +202,78 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@Composable
+fun PermissionDialog(
+    title: String,
+    message: String,
+    buttonText: String,
+    gifUrl: String,
+    imageLoader: ImageLoader,
+    onConfirm: () -> Unit
+) {
+    Dialog(onDismissRequest = { /* Non-dismissible */ }) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface
+            )
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                // Title
+                Text(
+                    text = title,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center
+                )
 
+                // GIF Image
+                val painter = rememberAsyncImagePainter(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(gifUrl)
+                        .build(),
+                    imageLoader = imageLoader
+                )
 
+                Image(
+                    painter = painter,
+                    contentDescription = "Permission GIF",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp),
+                    contentScale = ContentScale.Fit
+                )
 
+                // Message
+                Text(
+                    text = message,
+                    fontSize = 14.sp,
+                    textAlign = TextAlign.Start,
+                    lineHeight = 20.sp
+                )
+
+                // Button
+                Button(
+                    onClick = onConfirm,
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Text(
+                        text = buttonText,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+        }
+    }
+}
