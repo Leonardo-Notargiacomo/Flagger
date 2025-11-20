@@ -64,7 +64,6 @@ const messages = [
 export const sendDailyExplorationReminder = onSchedule({
   schedule: "0 9-17 * * *", // Every hour 9 AM - 5 PM (Europe/Amsterdam)
   timeZone: "Europe/Amsterdam",
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
 }, async (_event) => {
   // PRODUCTION MODE: 22% chance each hour = ~2 notifications per day
   // Math: 9 hours (9 AM - 5 PM) × 22% = ~1.98 notifications/day
