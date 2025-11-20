@@ -137,22 +137,42 @@ object UserRepository {
             val errorBody = response.errorBody()?.string()
             Log.e(TAG, "Registration error: ${response.code()} - ${response.message()} - Body: $errorBody")
 
-            // Check if it's a duplicate user error based on response
-            val errorMessage = when {
+            // Try to parse error message from backend
+            val errorMessage = try {
+                if (!errorBody.isNullOrBlank()) {
+                    val json = JSONObject(errorBody)
+                    // Try to extract the error message from various possible fields
+                    when {
+                        json.has("message") -> json.getString("message")
+                        json.has("error") -> json.getString("error")
+                        json.has("detail") -> json.getString("detail")
+                        else -> null
+                    }
+                } else {
+                    null
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to parse error body: ${e.message}")
+                null
+            }
+
+            // Use backend error message if available, otherwise use generic messages based on status code
+            val finalErrorMessage = errorMessage ?: when {
                 response.code() == 500 -> {
-                    // Backend returns 500 for duplicate email constraints
-                    "This email is already registered. Please use a different email or try logging in."
+                    "Registration failed. The email or username may already be in use."
                 }
                 response.code() == 409 -> {
-                    "This email is already registered. Please use a different email."
+                    "This email or username is already registered."
                 }
                 response.code() == 400 -> {
                     "Invalid registration data. Please check your information."
                 }
-
-                else -> {}
+                else -> {
+                    "Registration failed. Please try again."
+                }
             }
-            throw Exception(errorMessage as String?)
+
+            throw Exception(finalErrorMessage)
         }
     }
 
