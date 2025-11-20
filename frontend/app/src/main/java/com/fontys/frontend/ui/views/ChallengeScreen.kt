@@ -264,7 +264,11 @@ fun UserChallengeCard(
     userChallenge: UserChallenge,
     onProgressUpdate: (Int) -> Unit
 ) {
-    val progress = userChallenge.currentProgress.toFloat() / userChallenge.challenge.targetValue
+    val progress = if (userChallenge.challenge.targetValue > 0) {
+        (userChallenge.currentProgress.toFloat() / userChallenge.challenge.targetValue).coerceIn(0f, 1f)
+    } else {
+        0f
+    }
 
     Card(
         modifier = Modifier.fillMaxWidth(),
