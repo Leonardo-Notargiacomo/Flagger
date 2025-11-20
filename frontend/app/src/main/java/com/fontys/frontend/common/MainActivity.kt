@@ -55,16 +55,40 @@ class MainActivity : ComponentActivity() {
     private var showNotificationSettingsDialog by mutableStateOf(false)
     private var notificationDenialCount = 0
 
+    // Location denial dialogs
+    private var showLocationDeniedDialog by mutableStateOf(false)
+    private var showLocationSettingsDialog by mutableStateOf(false)
+    private var locationDenialCount = 0
+
     // Launcher for location permission - keeps requesting until granted
     private val requestLocationPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
-            if (isGranted) {
+            if (!isGranted) {
+                // Check if permission is permanently denied (user can't be asked again)
+                val isPermanentlyDenied = !ActivityCompat.shouldShowRequestPermissionRationale(
+                    this,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                )
+
                 showLocationDialog = false
+
+                if (isPermanentlyDenied) {
+                    // Permission permanently denied - show settings dialog
+                    showLocationSettingsDialog = true
+                    showLocationDeniedDialog = false
+                } else {
+                    // Permission denied but can ask again - show "come on" dialog
+                    showLocationDeniedDialog = true
+                    showLocationSettingsDialog = false
+                }
+            } else {
+                // Permission granted - hide all location dialogs
+                showLocationDialog = false
+                showLocationDeniedDialog = false
+                showLocationSettingsDialog = false
+                locationDenialCount = 0
                 // Location permission granted, now check notification permission
                 checkNotificationPermission()
-            } else {
-                // Location permission denied, show dialog and ask again
-                showLocationDialog = true
             }
         }
 
@@ -203,9 +227,40 @@ class MainActivity : ComponentActivity() {
                         )
                     }
 
-                    // Show settings dialog when permission is permanently denied
+                    // Show settings dialog when notification permission is permanently denied
                     if (showNotificationSettingsDialog) {
                         NotificationSettingsDialog(
+                            imageLoader = imageLoader,
+                            onOpenSettings = {
+                                // Open app settings
+                                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                                    data = Uri.fromParts("package", packageName, null)
+                                }
+                                startActivity(intent)
+                            },
+                            onExitApp = {
+                                finishAffinity() // Closes the app completely
+                            }
+                        )
+                    }
+
+                    // Show "come on" dialog when location permission is denied
+                    if (showLocationDeniedDialog) {
+                        LocationDeniedDialog(
+                            imageLoader = imageLoader,
+                            onTryAgain = {
+                                showLocationDeniedDialog = false
+                                requestLocationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+                            },
+                            onExitApp = {
+                                finishAffinity() // Closes the app completely
+                            }
+                        )
+                    }
+
+                    // Show settings dialog when location permission is permanently denied
+                    if (showLocationSettingsDialog) {
+                        LocationSettingsDialog(
                             imageLoader = imageLoader,
                             onOpenSettings = {
                                 // Open app settings
@@ -226,6 +281,21 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
+        // Re-check location permission when returning from Settings
+        if (showLocationSettingsDialog) {
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
+                // Permission was granted in Settings!
+                showLocationSettingsDialog = false
+                Log.d("MainActivity", "Location permission granted in Settings!")
+                // Now check notification permission
+                checkNotificationPermission()
+            }
+        }
+
         // Re-check notification permission when returning from Settings
         if (showNotificationSettingsDialog) {
             if (ContextCompat.checkSelfPermission(
@@ -527,6 +597,223 @@ fun NotificationSettingsDialog(
                 // Message - explain they need to go to Settings
                 Text(
                     text = "you denied it twice so now android won't let us ask again 💔\n\nbut fr we NEED notifications to work properly:\n\n⚙️ you gotta go to Settings manually\n🔔 turn on notifications there\n📱 then come back here\n\nit's the only way this works bestie 🙏",
+                    fontSize = 14.sp,
+                    textAlign = TextAlign.Start,
+                    lineHeight = 20.sp
+                )
+
+                // Two buttons: Go to Settings (primary) and Exit App (destructive)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    // Exit App button (destructive/secondary)
+                    OutlinedButton(
+                        onClick = onExitApp,
+                        modifier = Modifier.weight(1f),
+                        shape = RoundedCornerShape(8.dp),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            contentColor = MaterialTheme.colorScheme.error
+                        )
+                    ) {
+                        Text(
+                            text = "nah i'm out 👋",
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+
+                    // Open Settings button (primary)
+                    Button(
+                        onClick = onOpenSettings,
+                        modifier = Modifier.weight(1f),
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Text(
+                            text = "open settings ⚙️",
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun LocationDeniedDialog(
+    imageLoader: ImageLoader,
+    onTryAgain: () -> Unit,
+    onExitApp: () -> Unit
+) {
+    Dialog(onDismissRequest = { /* Non-dismissible */ }) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface
+            )
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                // Title with random humorous message
+                val titles = listOf(
+                    "📍 wait what?",
+                    "🗺️ nah you can't be serious",
+                    "😭 but we need this fr",
+                    "🤨 location denied? really?",
+                    "😢 that hurt ngl",
+                    "💔 we thought we had something",
+                    "🫠 this is not it chief"
+                )
+                val randomTitle = titles.random()
+
+                Text(
+                    text = randomTitle,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center
+                )
+
+                // GIF Image - disappointed/confused GIF
+                val painter = rememberAsyncImagePainter(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data("https://media.tenor.com/bXJu8q1leksAAAAi/sad-cat-sad.gif")
+                        .build(),
+                    imageLoader = imageLoader
+                )
+
+                Image(
+                    painter = painter,
+                    contentDescription = "Disappointed GIF",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp),
+                    contentScale = ContentScale.Fit
+                )
+
+                // Message
+                val messages = listOf(
+                    "okay so like... we kinda NEED this 🥺\n\nwithout ur location:\n\n❌ can't find cool spots near u\n❌ can't track ur adventure streak\n❌ can't help u explore new places\n\nit's literally the whole point bestie 😭",
+                    "fr tho we can't work without this 💔\n\nlook what ur missing:\n\n🗺️ no personalized spot recommendations\n🏆 no location-based achievements\n📍 no way to track where u've been\n\nwe need this to vibe together 🙏",
+                    "this ain't it chief... 😢\n\nwithout location access:\n\n🚫 we're basically useless\n🚫 can't help u explore\n🚫 can't track ur progress\n\nwe really hope that was an accident 🤞"
+                )
+                val randomMessage = messages.random()
+
+                Text(
+                    text = randomMessage,
+                    fontSize = 14.sp,
+                    textAlign = TextAlign.Start,
+                    lineHeight = 20.sp
+                )
+
+                // Two buttons: Try Again (primary) and Exit App (destructive)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    // Exit App button (destructive/secondary)
+                    OutlinedButton(
+                        onClick = onExitApp,
+                        modifier = Modifier.weight(1f),
+                        shape = RoundedCornerShape(8.dp),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            contentColor = MaterialTheme.colorScheme.error
+                        )
+                    ) {
+                        Text(
+                            text = "exit app 😔",
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+
+                    // Try Again button (primary)
+                    Button(
+                        onClick = onTryAgain,
+                        modifier = Modifier.weight(1f),
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Text(
+                            text = "try again 🙏",
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun LocationSettingsDialog(
+    imageLoader: ImageLoader,
+    onOpenSettings: () -> Unit,
+    onExitApp: () -> Unit
+) {
+    Dialog(onDismissRequest = { /* Non-dismissible */ }) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface
+            )
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                // Title
+                val titles = listOf(
+                    "😩 you really don't want us huh",
+                    "🫤 blocked twice? damn",
+                    "💀 android said we can't ask anymore",
+                    "😮‍💨 this is getting awkward...",
+                    "🤷 location is kinda our thing tho"
+                )
+                val randomTitle = titles.random()
+
+                Text(
+                    text = randomTitle,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center
+                )
+
+                // GIF Image - very sad/desperate GIF
+                val painter = rememberAsyncImagePainter(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data("https://media.tenor.com/W_QJ5jDbY6AAAAAi/cat-sad-cat.gif")
+                        .build(),
+                    imageLoader = imageLoader
+                )
+
+                Image(
+                    painter = painter,
+                    contentDescription = "Very Sad GIF",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp),
+                    contentScale = ContentScale.Fit
+                )
+
+                // Message - explain they need to go to Settings
+                Text(
+                    text = "okay so... you denied it twice 💔\n\nandroid blocked us from asking again but we REALLY need location to work:\n\n⚙️ go to Settings manually\n📍 enable location permission\n📱 come back here\n\nwithout location we're literally useless bestie 😭",
                     fontSize = 14.sp,
                     textAlign = TextAlign.Start,
                     lineHeight = 20.sp
