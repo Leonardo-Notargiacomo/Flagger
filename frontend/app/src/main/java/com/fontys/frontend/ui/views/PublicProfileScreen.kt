@@ -304,104 +304,139 @@ private fun PublicProfileHeader(
 
 /**
  * Profile picture and username section
- * Circular profile image creates visual anchor point
+ * Circular profile image creates visual anchor point with hero entrance animation
  */
 @Composable
 private fun ProfileHeaderSection(user: User) {
-    // Entrance animation
-    var visible by remember { mutableStateOf(false) }
+    // Separate animation states for avatar and content
+    var avatarVisible by remember { mutableStateOf(false) }
+    var contentVisible by remember { mutableStateOf(false) }
+
     LaunchedEffect(Unit) {
-        visible = true
+        avatarVisible = true
+        kotlinx.coroutines.delay(100) // Content appears slightly after avatar
+        contentVisible = true
     }
 
-    AnimatedVisibility(
-        visible = visible,
-        enter = fadeIn(animationSpec = tween(400)) +
-                slideInVertically(
-                    initialOffsetY = { -20 },
-                    animationSpec = tween(400, easing = FastOutSlowInEasing)
-                )
+    // Avatar entrance animations
+    val avatarScale by animateFloatAsState(
+        targetValue = if (avatarVisible) 1f else 0.8f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessMedium
+        ),
+        label = "avatarScale"
+    )
+
+    val avatarRotation by animateFloatAsState(
+        targetValue = if (avatarVisible) 0f else -15f,
+        animationSpec = spring(
+            dampingRatio = 0.7f,
+            stiffness = Spring.StiffnessMedium
+        ),
+        label = "avatarRotation"
+    )
+
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+        // Profile picture with decorative frame and hero animation
+        Box(
+            modifier = Modifier
+                .padding(vertical = 8.dp)
+                .graphicsLayer {
+                    scaleX = avatarScale
+                    scaleY = avatarScale
+                    rotationZ = avatarRotation
+                },
+            contentAlignment = Alignment.Center
         ) {
-            // Profile picture with decorative frame
+            // Outer frame (dark brown)
             Box(
-                modifier = Modifier.padding(vertical = 8.dp),
-                contentAlignment = Alignment.Center
+                modifier = Modifier
+                    .size(110.dp)
+                    .clip(CircleShape)
+                    .background(ProfileColors.Primary)
+                    .padding(6.dp)
             ) {
-                // Outer frame (dark brown)
+                // Inner frame (orange accent)
                 Box(
                     modifier = Modifier
-                        .size(110.dp)
+                        .fillMaxSize()
                         .clip(CircleShape)
-                        .background(ProfileColors.Primary)
-                        .padding(6.dp)
+                        .background(ProfileColors.Accent)
+                        .padding(4.dp)
                 ) {
-                    // Inner frame (orange accent)
+                    // Profile image or initials
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
                             .clip(CircleShape)
-                            .background(ProfileColors.Accent)
-                            .padding(4.dp)
+                            .background(ProfileColors.Container),
+                        contentAlignment = Alignment.Center
                     ) {
-                        // Profile image or initials
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .clip(CircleShape)
-                                .background(ProfileColors.Container),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            // Display user initials
-                            Text(
-                                text = ProfileUtils.getUserInitials(user.userName ?: "?"),
-                                color = ProfileColors.Primary,
-                                fontSize = 32.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
+                        // Display user initials
+                        Text(
+                            text = ProfileUtils.getUserInitials(user.userName ?: "?"),
+                            color = ProfileColors.Primary,
+                            fontSize = 32.sp,
+                            fontWeight = FontWeight.Bold
+                        )
                     }
                 }
             }
+        }
 
-            // Username with decorative styling
-            Text(
-                text = user.userName?.uppercase() ?: "EXPLORER",
-                color = ProfileColors.Primary,
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 1.sp,
-                textAlign = TextAlign.Center
-            )
-
-            // Decorative divider
-            Row(
-                modifier = Modifier.fillMaxWidth(0.6f),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+        // Username and divider with delayed entrance animation
+        AnimatedVisibility(
+            visible = contentVisible,
+            enter = fadeIn(animationSpec = tween(400)) +
+                    slideInVertically(
+                        initialOffsetY = { -20 },
+                        animationSpec = tween(400, easing = FastOutSlowInEasing)
+                    )
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(2.dp)
-                        .background(ProfileColors.Accent)
+                // Username with decorative styling
+                Text(
+                    text = user.userName?.uppercase() ?: "EXPLORER",
+                    color = ProfileColors.Primary,
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = 1.sp,
+                    textAlign = TextAlign.Center
                 )
-                Box(
-                    modifier = Modifier
-                        .size(6.dp)
-                        .clip(CircleShape)
-                        .background(ProfileColors.Primary)
-                )
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(2.dp)
-                        .background(ProfileColors.Accent)
-                )
+
+                // Decorative divider
+                Row(
+                    modifier = Modifier.fillMaxWidth(0.6f),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(2.dp)
+                            .background(ProfileColors.Accent)
+                    )
+                    Box(
+                        modifier = Modifier
+                            .size(6.dp)
+                            .clip(CircleShape)
+                            .background(ProfileColors.Primary)
+                    )
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(2.dp)
+                            .background(ProfileColors.Accent)
+                    )
+                }
             }
         }
     }
