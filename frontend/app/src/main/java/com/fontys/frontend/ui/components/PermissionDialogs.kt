@@ -145,7 +145,7 @@ fun NotificationDeniedDialog(
                 // GIF Image - sad/disappointed GIF
                 val painter = rememberAsyncImagePainter(
                     model = ImageRequest.Builder(LocalContext.current)
-                        .data("https://media.tenor.com/-2rbVbnfW24AAAAi/crying-cat-sad-kitty.gifbut ")
+                        .data("https://media.tenor.com/-2rbVbnfW24AAAAi/crying-cat-sad-kitty.gif")
                         .build(),
                     imageLoader = imageLoader
                 )
