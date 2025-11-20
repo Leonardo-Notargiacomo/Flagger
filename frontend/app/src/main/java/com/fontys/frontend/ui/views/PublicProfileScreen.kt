@@ -712,6 +712,7 @@ private fun EmptyFlagsSection(
 /**
  * Friend request button with status-aware design
  * Provides clear affordance and appropriate visual feedback
+ * Pending state shows success confirmation with delayed cancel option
  */
 @Composable
 private fun FriendRequestButton(
@@ -719,6 +720,20 @@ private fun FriendRequestButton(
     onSendRequest: () -> Unit,
     onCancelRequest: (Int) -> Unit
 ) {
+    // Track if cancel option should be shown (5-second delay)
+    var showCancelOption by remember { mutableStateOf(false) }
+
+    // Reset cancel option visibility when status changes
+    LaunchedEffect(status) {
+        if (status is FriendRequestStatus.Pending) {
+            showCancelOption = false
+            kotlinx.coroutines.delay(5000) // 5-second delay
+            showCancelOption = true
+        } else {
+            showCancelOption = false
+        }
+    }
+
     // Button configuration based on status
     val config = when (status) {
         is FriendRequestStatus.NotSent -> {
@@ -741,11 +756,11 @@ private fun FriendRequestButton(
         }
         is FriendRequestStatus.Pending -> {
             ButtonConfig(
-                text = "CANCEL REQUEST",
-                containerColor = ProfileColors.Container,
+                text = "REQUEST SENT ✓",
+                containerColor = Color(0xFF4CAF50).copy(alpha = 0.2f), // Success green tint
                 contentColor = ProfileColors.Primary,
-                icon = Icons.Default.Close,
-                enabled = true
+                icon = Icons.Default.CheckCircle,
+                enabled = false
             )
         }
         is FriendRequestStatus.Cancelling -> {
@@ -779,44 +794,65 @@ private fun FriendRequestButton(
         label = "buttonScale"
     )
 
-    Button(
-        onClick = {
-            isPressed = true
-            when (status) {
-                is FriendRequestStatus.NotSent -> onSendRequest()
-                is FriendRequestStatus.Pending -> onCancelRequest(status.requestId)
-                else -> {}
-            }
-        },
-        enabled = config.enabled,
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(56.dp)
-            .graphicsLayer {
-                scaleX = buttonScale
-                scaleY = buttonScale
-            },
-        shape = RoundedCornerShape(12.dp),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = config.containerColor,
-            contentColor = config.contentColor,
-            disabledContainerColor = config.containerColor,
-            disabledContentColor = config.contentColor
-        ),
-        contentPadding = PaddingValues(horizontal = 24.dp)
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Icon(
-            imageVector = config.icon,
-            contentDescription = null,
-            modifier = Modifier.size(20.dp)
-        )
-        Spacer(modifier = Modifier.width(12.dp))
-        Text(
-            text = config.text,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Bold,
-            letterSpacing = 1.sp
-        )
+        // Main friend request button
+        Button(
+            onClick = {
+                isPressed = true
+                when (status) {
+                    is FriendRequestStatus.NotSent -> onSendRequest()
+                    else -> {} // Pending state button is disabled
+                }
+            },
+            enabled = config.enabled,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp)
+                .graphicsLayer {
+                    scaleX = buttonScale
+                    scaleY = buttonScale
+                },
+            shape = RoundedCornerShape(12.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = config.containerColor,
+                contentColor = config.contentColor,
+                disabledContainerColor = config.containerColor,
+                disabledContentColor = config.contentColor
+            ),
+            contentPadding = PaddingValues(horizontal = 24.dp)
+        ) {
+            Icon(
+                imageVector = config.icon,
+                contentDescription = null,
+                modifier = Modifier.size(20.dp)
+            )
+            Spacer(modifier = Modifier.width(12.dp))
+            Text(
+                text = config.text,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = 1.sp
+            )
+        }
+
+        // Cancel option (appears after 5 seconds in Pending state)
+        if (status is FriendRequestStatus.Pending && showCancelOption) {
+            TextButton(
+                onClick = { onCancelRequest(status.requestId) },
+                modifier = Modifier.alpha(0.7f)
+            ) {
+                Text(
+                    text = "Cancel request",
+                    color = ProfileColors.Primary.copy(alpha = 0.6f),
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Normal
+                )
+            }
+        }
     }
 
     LaunchedEffect(isPressed) {
