@@ -157,12 +157,17 @@ object UserRepository {
             }
 
             // Use backend error message if available, otherwise use generic messages based on status code
-            val finalErrorMessage = errorMessage ?: when {
-                response.code() == 500 -> {
-                    "Registration failed. The email or username may already be in use."
+            val finalErrorMessage = when {
+                // Prioritize backend error message if it's specific and not generic
+                !errorMessage.isNullOrBlank() && errorMessage != "Internal Server Error" -> {
+                    errorMessage
                 }
+                // Fallback to status code-based messages
                 response.code() == 409 -> {
-                    "This email or username is already registered."
+                    "This username or email is already registered."
+                }
+                response.code() == 500 -> {
+                    "This username or email is already taken. Please try a different one."
                 }
                 response.code() == 400 -> {
                     "Invalid registration data. Please check your information."
