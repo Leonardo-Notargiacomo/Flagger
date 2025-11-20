@@ -13,7 +13,6 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
@@ -26,8 +25,6 @@ import com.fontys.frontend.common.ProfileView
 @Composable
 fun NavBar() {
     val navController = rememberNavController()
-    val scope = rememberCoroutineScope()
-
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),

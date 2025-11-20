@@ -38,10 +38,12 @@ class ChallengeViewModel : ViewModel() {
         viewModelScope.launch {
             _uiState.value = ChallengeUiState.Loading
 
-            repository.getUserChallenges(userId)
-                .onSuccess { response ->
-                    _activeChallenges.value = response.activeChallenges
-                    _completedChallenges.value = response.completedChallenges
+            // Use getChallengeHistory to get all user challenges
+            repository.getChallengeHistory()
+                .onSuccess { challenges ->
+                    // Split into active and completed challenges
+                    _activeChallenges.value = challenges.filter { !it.isCompleted }
+                    _completedChallenges.value = challenges.filter { it.isCompleted }
                     _uiState.value = ChallengeUiState.Success
                 }
                 .onFailure { error ->
@@ -53,7 +55,8 @@ class ChallengeViewModel : ViewModel() {
 
     fun loadAvailableChallenges() {
         viewModelScope.launch {
-            repository.getActiveChallenges()
+            // Use getAvailableChallenges to get available challenges
+            repository.getAvailableChallenges()
                 .onSuccess { challenges ->
                     _availableChallenges.value = challenges
                 }
@@ -65,7 +68,8 @@ class ChallengeViewModel : ViewModel() {
 
     fun startChallenge(userId: Int, challengeId: Int) {
         viewModelScope.launch {
-            repository.startChallenge(userId, challengeId)
+            // Use selectChallenge to start/select a challenge
+            repository.selectChallenge(challengeId)
                 .onSuccess { userChallenge ->
                     // Refresh the challenges list
                     loadUserChallenges(userId)
@@ -79,7 +83,8 @@ class ChallengeViewModel : ViewModel() {
 
     fun updateChallengeProgress(userId: Int, challengeId: Int, progress: Int) {
         viewModelScope.launch {
-            repository.updateChallengeProgress(userId, challengeId, progress)
+            // Use checkChallengeCompletion to check/update progress
+            repository.checkChallengeCompletion(mapOf("challengeId" to challengeId, "progress" to progress))
                 .onSuccess { response ->
                     if (response.success && response.challenge.isCompleted) {
                         _completionData.value = response
