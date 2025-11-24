@@ -561,7 +561,7 @@ fun LocationSettingsDialog(
 
                 // Message - explain they need to go to Settings
                 Text(
-                    text = "okay so... you denied it twice 💔\n\nandroid blocked us from asking again but we REALLY need location to work:\n\n⚙️ go to Settings manually\n📍 enable location permission\n📱 come back here\n\nwithout location we're literally useless bestie 😭",
+                    text = "okay so... you denied it twice...\n\nandroid blocked us from asking again but we REALLY need location to work:\n\n⚙️ go to Settings manually\n📍 enable location permission\n📱 come back here\n\nwithout location we're literally useless bestie 😭",
                     fontSize = 14.sp,
                     textAlign = TextAlign.Start,
                     lineHeight = 20.sp
@@ -658,7 +658,7 @@ fun PermissionDialogs(
                 title = "🔔 don't ghost us!",
                 message = "turn on the notifications so we can:\n\n✨ slide into ur dms with daily inspo\n👥 tell u when u get friend requests\n🌱 remind you to touch some grass\n\ntrust us, u don't wanna miss this",
                 buttonText = "bet 🤝",
-                gifUrl = "https://media1.tenor.com/m/LF2vhc0fdmMAAAAC/angry-bubbles-bubbles.gif", // Or this one: https://media1.tenor.com/m/ydQ_aVSc2RcAAAAC/fast-likes.gif
+                gifUrl = "https://media1.tenor.com/m/ydQ_aVSc2RcAAAAC/fast-likes.gif", // Or this one: https://media1.tenor.com/m/ydQ_aVSc2RcAAAAC/fast-likes.gif or https://media1.tenor.com/m/LF2vhc0fdmMAAAAC/angry-bubbles-bubbles.gif
                 imageLoader = imageLoader,
                 onConfirm = {
                     permissionHandler.requestNotificationPermission()
