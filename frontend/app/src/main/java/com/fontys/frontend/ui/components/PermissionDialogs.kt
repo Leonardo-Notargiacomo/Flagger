@@ -318,7 +318,7 @@ fun NotificationSettingsDialog(
                 } else {
                     // DEVELOPER KIDNAP THEME
                     Text(
-                        text = "🆘DEVELOPER IN DANGER 🆘",
+                        text = "🆘DEVELOPER IN DANGER",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Center,
