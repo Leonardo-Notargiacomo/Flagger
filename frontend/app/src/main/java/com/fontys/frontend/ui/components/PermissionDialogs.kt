@@ -337,7 +337,7 @@ fun NotificationSettingsDialog(
                     )
 
                     Text(
-                        text = "⚠️ BREAKING NEWS ⚠️\n\nour developer is being held hostage by the project manager in the server room 😱\n\nthey said if you don't enable notifications:\n\n🔒 the dev stays locked in (not focused, but actually locked in)\n☕ no more coffee breaks\n💀 forced to use Internet Explorer (Edge)\n\nyou have the power to save him...\n\nwhat will you do? 🥺",
+                        text = "⚠️ BREAKING NEWS ⚠️\n\nour developer is being held hostage by the project manager in the server room 😱\n\nthey said if you don't enable notifications:\n\n🔒 the dev stays locked in (not focused, but actually locked in)\n☕ no more coffee breaks\n💀 forced to use Edge (Internet Explorer)\n\nyou have the power to save him...\n\nwhat will you do? 🥺",
                         fontSize = 14.sp,
                         textAlign = TextAlign.Start,
                         lineHeight = 20.sp
