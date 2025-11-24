@@ -5,8 +5,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -217,6 +219,7 @@ fun NotificationDeniedDialog(
 
 /**
  * Dialog shown when notification permission is permanently denied and user needs to go to Settings.
+ * Randomly picks between Matrix theme or Developer Kidnap theme.
  */
 @Composable
 fun NotificationSettingsDialog(
@@ -224,6 +227,9 @@ fun NotificationSettingsDialog(
     onOpenSettings: () -> Unit,
     onExitApp: () -> Unit
 ) {
+    // Randomly pick a theme
+    val useMatrixTheme = remember { (0..1).random() == 0 }
+
     Dialog(onDismissRequest = { /* Non-dismissible */ }) {
         Card(
             modifier = Modifier
@@ -241,80 +247,138 @@ fun NotificationSettingsDialog(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                // Title
-                val titles = listOf(
-                    "😩 okay we get it...",
-                    "🫤 so it's like that huh",
-                    "💀 you really said no twice",
-                    "😮‍💨 alright bet...",
-                    "🤷 if you say so..."
-                )
-                val randomTitle = titles.random()
+                if (useMatrixTheme) {
+                    // MATRIX THEME
+                    Text(
+                        text = "the choice is yours",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center
+                    )
 
-                Text(
-                    text = randomTitle,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center
-                )
+                    val painter = rememberAsyncImagePainter(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data("https://media1.tenor.com/m/5NU8u6qKF_AAAAAC/pills-drugs.gif")
+                            .build(),
+                        imageLoader = imageLoader
+                    )
 
-                // GIF Image - more intense sad/crying GIF
-                val painter = rememberAsyncImagePainter(
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data("https://media1.tenor.com/m/NFsmfmT6DzAAAAAd/funny-funnyfix.gif")
-                        .build(),
-                    imageLoader = imageLoader
-                )
+                    Image(
+                        painter = painter,
+                        contentDescription = "Matrix Pills",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(200.dp),
+                        contentScale = ContentScale.Fit
+                    )
 
-                Image(
-                    painter = painter,
-                    contentDescription = "Confused GIF",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp),
-                    contentScale = ContentScale.Fit
-                )
+                    Text(
+                        text = "you denied twice. android blocked us.\n\nnow you must choose:\n\n🔴 RED PILL\ngo to Settings, enable notifications, see how deep the rabbit hole goes\n\n🔵 BLUE PILL  \ndelete this app and stay in your boring reality\n\nthe choice is yours, neo",
+                        fontSize = 14.sp,
+                        textAlign = TextAlign.Start,
+                        lineHeight = 20.sp
+                    )
 
-                // Message - explain they need to go to Settings
-                Text(
-                    text = "you denied it twice so now android won't let us ask again 💔\n\nbut fr we NEED notifications to work properly:\n\n⚙️ you gotta go to Settings manually\n🔔 turn on notifications there\n📱 then come back here\n\nit's the only way this works bestie 🙏",
-                    fontSize = 14.sp,
-                    textAlign = TextAlign.Start,
-                    lineHeight = 20.sp
-                )
-
-                // Two buttons: Go to Settings (primary) and Exit App (destructive)
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    // Exit App button (destructive/secondary)
-                    OutlinedButton(
-                        onClick = onExitApp,
-                        modifier = Modifier.weight(1f),
-                        shape = RoundedCornerShape(8.dp),
-                        colors = ButtonDefaults.outlinedButtonColors(
-                            contentColor = MaterialTheme.colorScheme.error
-                        )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Text(
-                            text = "nah i'm out 👋",
-                            fontSize = 13.sp,
-                            fontWeight = FontWeight.Bold
-                        )
+                        OutlinedButton(
+                            onClick = onExitApp,
+                            modifier = Modifier.weight(1f),
+                            shape = RoundedCornerShape(8.dp),
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                contentColor = Color(0xFF2196F3)
+                            )
+                        ) {
+                            Text(
+                                text = "🔵 blue pill",
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+
+                        Button(
+                            onClick = onOpenSettings,
+                            modifier = Modifier.weight(1f),
+                            shape = RoundedCornerShape(8.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFFE53935)
+                            )
+                        ) {
+                            Text(
+                                text = "🔴 red pill",
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
                     }
+                } else {
+                    // DEVELOPER KIDNAP THEME
+                    Text(
+                        text = "🆘 URGENT: DEVELOPER IN DANGER 🆘",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center,
+                        color = Color(0xFFE53935)
+                    )
 
-                    // Open Settings button (primary)
-                    Button(
-                        onClick = onOpenSettings,
-                        modifier = Modifier.weight(1f),
-                        shape = RoundedCornerShape(8.dp)
+                    val painter = rememberAsyncImagePainter(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data("C:\\Users\\notar\\Downloads\\dev-kidnapped.png") // TODO: Add funny kidnap/hostage GIF
+                            .build(),
+                        imageLoader = imageLoader
+                    )
+
+                    Image(
+                        painter = painter,
+                        contentDescription = "Developer in danger",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(200.dp),
+                        contentScale = ContentScale.Fit
+                    )
+
+                    Text(
+                        text = "⚠️ BREAKING NEWS ⚠️\n\nour developer is being held hostage by the project manager in the server room 😱\n\nthey said if you don't enable notifications:\n\n🔒 the dev stays locked in\n☕ no more coffee breaks\n💀 forced to use Internet Explorer\n\nyou have the power to save them...\n\nwhat will you do? 🥺",
+                        fontSize = 14.sp,
+                        textAlign = TextAlign.Start,
+                        lineHeight = 20.sp
+                    )
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Text(
-                            text = "open settings ⚙️",
-                            fontSize = 13.sp,
-                            fontWeight = FontWeight.Bold
-                        )
+                        OutlinedButton(
+                            onClick = onExitApp,
+                            modifier = Modifier.weight(1f),
+                            shape = RoundedCornerShape(8.dp),
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                contentColor = MaterialTheme.colorScheme.error
+                            )
+                        ) {
+                            Text(
+                                text = "sorry dev 💀",
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+
+                        Button(
+                            onClick = onOpenSettings,
+                            modifier = Modifier.weight(1f),
+                            shape = RoundedCornerShape(8.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFF4CAF50)
+                            )
+                        ) {
+                            Text(
+                                text = "save dev! 🦸",
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
                     }
                 }
             }
@@ -595,7 +659,7 @@ fun PermissionDialogs(
         is PermissionDialogState.AskingNotification -> {
             PermissionDialog(
                 title = "🔔 don't ghost us!",
-                message = "turn on the notifications so we can:\n\n✨ slide into ur dms with daily inspo\n👥 tell u when u get friend requests\n🌱 remind you to touch some grass\n\ntrust, u don't wanna miss this 😤",
+                message = "turn on the notifications so we can:\n\n✨ slide into ur dms with daily inspo\n👥 tell u when u get friend requests\n🌱 remind you to touch some grass\n\ntrust us, u don't wanna miss this",
                 buttonText = "bet 🤝",
                 gifUrl = "https://media1.tenor.com/m/LF2vhc0fdmMAAAAC/angry-bubbles-bubbles.gif", // Or this one: https://media1.tenor.com/m/ydQ_aVSc2RcAAAAC/fast-likes.gif
                 imageLoader = imageLoader,
