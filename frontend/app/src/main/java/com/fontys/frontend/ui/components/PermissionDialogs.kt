@@ -370,7 +370,7 @@ fun LocationDeniedDialog(
                 // GIF Image - disappointed/confused GIF
                 val painter = rememberAsyncImagePainter(
                     model = ImageRequest.Builder(LocalContext.current)
-                        .data("https://media.tenor.com/u4mpua8vD3IAAAAi/%C3%BCzg%C3%BCnkedikuzeyefe.gif")
+                        .data("https://media0.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3NHlpMzFuM25saGZyOTQyem81cmliMnBhcHNpN3Y5eGU4a2Q1YzRjMiZlcD12MV9naWZzX3RyZW5kaW5nJmN0PWc/lxxOGaDRk4f7R5TkBd/giphy.webp")
                         .build(),
                     imageLoader = imageLoader
                 )
@@ -414,7 +414,7 @@ fun LocationDeniedDialog(
                         )
                     ) {
                         Text(
-                            text = "exit app 😔",
+                            text = "exit app",
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Bold
                         )
@@ -427,7 +427,7 @@ fun LocationDeniedDialog(
                         shape = RoundedCornerShape(8.dp)
                     ) {
                         Text(
-                            text = "try again 🙏",
+                            text = "try again",
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Bold
                         )
@@ -560,7 +560,7 @@ fun PermissionDialogs(
                 title = "yo, where u at?",
                 message = "we need to know your location don't ask why \uD83D\uDC40\n\nbut if you do want to know here are the reasons:\n\n- we can help you find interesting spots around\n\n- we can check on you if you are just rotting at home\n\n- and track ur adventure streak\n\nit's gonna be worth it 😼",
                 buttonText = "say less 💯",
-                gifUrl = "https://media.tenor.com/bGK0XXfceUoAAAAi/baby-pear.gif",
+                gifUrl = "https://media1.tenor.com/m/hyIZMZQz1IEAAAAC/prolty.gif",
                 imageLoader = imageLoader,
                 onConfirm = {
                     permissionHandler.requestLocationPermission()
@@ -597,7 +597,7 @@ fun PermissionDialogs(
                 title = "🔔 don't ghost us!",
                 message = "turn on the notifications so we can:\n\n✨ slide into ur dms with daily inspo\n👥 tell u when u get friend requests\n🌱 remind you to touch some grass\n\ntrust, u don't wanna miss this 😤",
                 buttonText = "bet 🤝",
-                gifUrl = "https://media1.tenor.com/m/DxZ2AOxOIHEAAAAd/wacky-man.gif",
+                gifUrl = "https://media1.tenor.com/m/LF2vhc0fdmMAAAAC/angry-bubbles-bubbles.gif", // Or this one: https://media1.tenor.com/m/ydQ_aVSc2RcAAAAC/fast-likes.gif
                 imageLoader = imageLoader,
                 onConfirm = {
                     permissionHandler.requestNotificationPermission()
