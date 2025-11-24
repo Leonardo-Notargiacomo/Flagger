@@ -94,8 +94,14 @@ class ChallengeViewModel : ViewModel() {
                     _completedChallenges.value = challenges.filter { it.isCompleted }
 
                     // Check if user can select a new challenge (24-hour cooldown)
-                    if (active.isNotEmpty()) {
-                        val mostRecentChallenge = active.maxByOrNull { it.startedAt ?: "" }
+                    // Look at ALL challenges (active + recent completed) to maintain cooldown
+                    val allRecentChallenges = challenges.filter {
+                        // Get challenges started within last 24 hours
+                        it.startedAt != null
+                    }
+
+                    if (allRecentChallenges.isNotEmpty()) {
+                        val mostRecentChallenge = allRecentChallenges.maxByOrNull { it.startedAt ?: "" }
                         if (mostRecentChallenge != null) {
                             val cachedChallengeId = ChallengePreferences.getChallengeId()
 
@@ -111,11 +117,10 @@ class ChallengeViewModel : ViewModel() {
                                 ChallengePreferences.saveChallengeStartData(startTime, mostRecentChallenge.id)
                             }
                         }
-                    } else {
+                    } else if (!ChallengePreferences.hasSavedChallenge()) {
+                        // Only clear if there are no recent challenges AND no saved cooldown
                         _sharedCanSelectChallenge.value = true
                         _sharedTimeUntilNextSelection.value = 0L
-                        // Clear persistent storage when no active challenges
-                        ChallengePreferences.clearChallengeData()
                     }
                     
                     _uiState.value = ChallengeUiState.Success

@@ -389,13 +389,8 @@ fun UserChallengeCard(
         (expiresAtMillis - currentTime).coerceAtLeast(0)
     }
 
-    DisposableEffect(userChallenge.isCompleted) {
-        onDispose {
-            if (userChallenge.isCompleted) {
-                ChallengeTimerCache.removeTimer(userChallenge.id)
-            }
-        }
-    }
+    // Don't remove timer on completion - cooldown persists for full 24 hours from start time
+    // This prevents speedrunning by requiring users to wait the full cooldown period
 
     val progressFraction = when (challengeType) {
         ChallengeType.TIME_BASED -> {
