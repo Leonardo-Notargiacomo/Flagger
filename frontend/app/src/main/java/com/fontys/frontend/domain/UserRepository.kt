@@ -17,7 +17,7 @@ import com.fontys.frontend.domain.UserAPIService
 
 object UserRepository {
 
-    val BASE_URL = "https://group-repository-2025-android-1.onrender.com/"
+    val BASE_URL = "https://group-repository-2025-android-1-ntbb.onrender.com"
     var token =""
     var userId=0
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
