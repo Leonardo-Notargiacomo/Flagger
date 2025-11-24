@@ -15,6 +15,7 @@ import com.fontys.frontend.R
 import com.fontys.frontend.common.CameraView
 import com.fontys.frontend.data.PlaceService
 import com.fontys.frontend.domain.UserRepository
+import com.fontys.frontend.domain.fromBase64
 import com.fontys.frontend.ui.viewmodels.CameraPreviewViewModel
 import com.fontys.frontend.ui.viewmodels.MapsViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -31,6 +32,7 @@ import okhttp3.internal.wait
 @Composable
 fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewModel()) {
     val userLocation by viewModel.userLocation.collectAsState()
+    val fullFlags by viewModel.userFullFlags.collectAsState()
     val places by viewModel.places.collectAsState()
     val cameraPositionState = rememberCameraPositionState()
     var showDialog by remember{ mutableStateOf(false) }
@@ -68,12 +70,13 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
         ) {
 
             userFlags.forEach { spot ->
+                val pictureStr = fullFlags.find { marked -> marked.locationId.equals(spot.lcoationId)}
+
                 Marker(
                     state = MarkerState(position = LatLng(spot.location.latitude, spot.location.longitude)),
                     title = spot.displayName,
                     snippet = "Flagged by you",
-                    alpha = 0.7f,
-                    //icon = BitmapPainter()
+                    icon = fromBase64(pictureStr?.photoCode?:"")
                 )
         }
 

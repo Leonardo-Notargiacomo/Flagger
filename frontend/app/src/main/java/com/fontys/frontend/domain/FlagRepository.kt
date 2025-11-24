@@ -99,5 +99,32 @@ class FlagRepository{
         }
         return listOf()
     }
+    suspend fun getFullFlags(userId: Int) : List<FlagResponse>{
+        try {
+            val headers = HashMap<String, String>().apply {
+                put("Accept", "application/json")
+                put("Content-Type", "application/json")
+                token?.let { token ->
+                    put("Authorization", "Bearer $token") // Add JWT token if available
+                } ?: run {
+                    // Optional: Log a warning or throw an error if token is missing for authenticated endpoint
+                    // throw IllegalStateException("JWT token is missing for authenticated request")
+                }
+            }
+            val response = flagApiService.getCords(headers, userId)
+
+            if (response.isSuccessful) {
+                val list = mutableListOf<String>()
+                val flags = response.body() ?: listOf<FlagResponse>()
+                println(flags.toString())
+                return flags
+            } else{
+
+            }
+        } catch (e: Exception) {
+            Log.e("FlagRepository", "Error parsing response", e)
+        }
+        return listOf()
+    }
 
 }

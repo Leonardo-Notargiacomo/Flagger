@@ -9,6 +9,7 @@ import androidx.core.app.ActivityCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.fontys.frontend.data.FlagDisplay
+import com.fontys.frontend.data.FlagResponse
 import com.fontys.frontend.data.PlaceService
 import com.fontys.frontend.domain.FlagRepository
 import com.fontys.frontend.domain.MapRepository
@@ -35,6 +36,9 @@ class MapsViewModel(application: Application) : AndroidViewModel(application) {
     private val _userFlags = MutableStateFlow<List<FlagDisplay>>(emptyList())
 
     val userFlags: StateFlow<List<FlagDisplay>> = _userFlags
+    private val _userFullFlags = MutableStateFlow<List<FlagResponse>>(emptyList())
+
+    val userFullFlags: StateFlow<List<FlagResponse>> = _userFullFlags
 
     private val _userLocation = MutableStateFlow(LatLng(0.0, 0.0))
     val userLocation: StateFlow<LatLng> = _userLocation
@@ -83,7 +87,7 @@ class MapsViewModel(application: Application) : AndroidViewModel(application) {
             _error.value = null
             try {
                 val result = flagRepository.getFlags(userId);
-
+                _userFullFlags.value = flagRepository.getFullFlags(userId)
                 val spots = mapRepository.getLatlngs(result)
                 spots.onSuccess { details ->  _userFlags.value = details }
             } catch (e: Exception) {
