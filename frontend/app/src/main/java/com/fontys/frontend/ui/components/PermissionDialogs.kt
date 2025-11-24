@@ -1,5 +1,6 @@
 package com.fontys.frontend.ui.components
 
+import com.fontys.frontend.R
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -11,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -316,19 +318,14 @@ fun NotificationSettingsDialog(
                 } else {
                     // DEVELOPER KIDNAP THEME
                     Text(
-                        text = "🆘 URGENT: DEVELOPER IN DANGER 🆘",
+                        text = "🆘DEVELOPER IN DANGER 🆘",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Center,
                         color = Color(0xFFE53935)
                     )
 
-                    val painter = rememberAsyncImagePainter(
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data("C:\\Users\\notar\\Downloads\\dev-kidnapped.png") // TODO: Add funny kidnap/hostage GIF
-                            .build(),
-                        imageLoader = imageLoader
-                    )
+                    val painter = painterResource(id = R.drawable.dev_kidnapped)
 
                     Image(
                         painter = painter,
@@ -340,7 +337,7 @@ fun NotificationSettingsDialog(
                     )
 
                     Text(
-                        text = "⚠️ BREAKING NEWS ⚠️\n\nour developer is being held hostage by the project manager in the server room 😱\n\nthey said if you don't enable notifications:\n\n🔒 the dev stays locked in\n☕ no more coffee breaks\n💀 forced to use Internet Explorer\n\nyou have the power to save them...\n\nwhat will you do? 🥺",
+                        text = "⚠️ BREAKING NEWS ⚠️\n\nour developer is being held hostage by the project manager in the server room 😱\n\nthey said if you don't enable notifications:\n\n🔒 the dev stays locked in (not focused, but actually locked in)\n☕ no more coffee breaks\n💀 forced to use Internet Explorer\n\nyou have the power to save them...\n\nwhat will you do? 🥺",
                         fontSize = 14.sp,
                         textAlign = TextAlign.Start,
                         lineHeight = 20.sp
