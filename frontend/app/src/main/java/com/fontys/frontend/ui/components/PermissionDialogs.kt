@@ -17,6 +17,8 @@ import androidx.compose.ui.window.Dialog
 import coil.ImageLoader
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
+import com.fontys.frontend.utils.PermissionHandler
+import com.fontys.frontend.utils.PermissionHandler.PermissionDialogState
 
 /**
  * Generic permission dialog with GIF support for initial permission requests.
@@ -539,6 +541,96 @@ fun LocationSettingsDialog(
                     }
                 }
             }
+        }
+    }
+}
+
+/**
+ * Main composable that renders the appropriate permission dialog based on the permission handler state.
+ * This centralizes all permission dialog logic in one place.
+ */
+@Composable
+fun PermissionDialogs(
+    permissionHandler: PermissionHandler,
+    imageLoader: ImageLoader
+) {
+    when (permissionHandler.dialogState) {
+        is PermissionDialogState.AskingLocation -> {
+            PermissionDialog(
+                title = "🗺️ yo, where u at?",
+                message = "we need to know your location don't ask why 🤷\n\nbut if you do want to know here are the reasons:\n\n📍 we can help you find interesting spots around u\n\n🏠 we can check on you if you are just rotting at home\n\n🔥 and track ur adventure streak\n\nno cap, it's gonna be fire 🚀",
+                buttonText = "say less 💯",
+                gifUrl = "https://media.tenor.com/bGK0XXfceUoAAAAi/baby-pear.gif",
+                imageLoader = imageLoader,
+                onConfirm = {
+                    permissionHandler.requestLocationPermission()
+                }
+            )
+        }
+
+        is PermissionDialogState.LocationDenied -> {
+            LocationDeniedDialog(
+                imageLoader = imageLoader,
+                onTryAgain = {
+                    permissionHandler.requestLocationPermission()
+                },
+                onExitApp = {
+                    permissionHandler.exitApp()
+                }
+            )
+        }
+
+        is PermissionDialogState.LocationPermanentlyDenied -> {
+            LocationSettingsDialog(
+                imageLoader = imageLoader,
+                onOpenSettings = {
+                    permissionHandler.openAppSettings()
+                },
+                onExitApp = {
+                    permissionHandler.exitApp()
+                }
+            )
+        }
+
+        is PermissionDialogState.AskingNotification -> {
+            PermissionDialog(
+                title = "🔔 don't ghost us!",
+                message = "turn on the notifications so we can:\n\n✨ slide into ur dms with daily inspo\n👥 tell u when u get friend requests\n🌱 remind you to touch some grass\n\ntrust, u don't wanna miss this 😤",
+                buttonText = "bet 🤝",
+                gifUrl = "https://media1.tenor.com/m/DxZ2AOxOIHEAAAAd/wacky-man.gif",
+                imageLoader = imageLoader,
+                onConfirm = {
+                    permissionHandler.requestNotificationPermission()
+                }
+            )
+        }
+
+        is PermissionDialogState.NotificationDenied -> {
+            NotificationDeniedDialog(
+                imageLoader = imageLoader,
+                onTryAgain = {
+                    permissionHandler.requestNotificationPermission()
+                },
+                onExitApp = {
+                    permissionHandler.exitApp()
+                }
+            )
+        }
+
+        is PermissionDialogState.NotificationPermanentlyDenied -> {
+            NotificationSettingsDialog(
+                imageLoader = imageLoader,
+                onOpenSettings = {
+                    permissionHandler.openAppSettings()
+                },
+                onExitApp = {
+                    permissionHandler.exitApp()
+                }
+            )
+        }
+
+        is PermissionDialogState.None -> {
+            // No dialog to show
         }
     }
 }
