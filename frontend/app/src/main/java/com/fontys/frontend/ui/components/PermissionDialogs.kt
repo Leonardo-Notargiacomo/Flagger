@@ -557,8 +557,8 @@ fun PermissionDialogs(
     when (permissionHandler.dialogState) {
         is PermissionDialogState.AskingLocation -> {
             PermissionDialog(
-                title = "🗺️ yo, where u at?",
-                message = "we need to know your location don't ask why 🤷\n\nbut if you do want to know here are the reasons:\n\n📍 we can help you find interesting spots around u\n\n🏠 we can check on you if you are just rotting at home\n\n🔥 and track ur adventure streak\n\nno cap, it's gonna be fire 🚀",
+                title = "yo, where u at?",
+                message = "we need to know your location don't ask why \uD83D\uDC40\n\nbut if you do want to know here are the reasons:\n\n- we can help you find interesting spots around\n\n- we can check on you if you are just rotting at home\n\n- and track ur adventure streak\n\nit's gonna be worth it 😼",
                 buttonText = "say less 💯",
                 gifUrl = "https://media.tenor.com/bGK0XXfceUoAAAAi/baby-pear.gif",
                 imageLoader = imageLoader,
