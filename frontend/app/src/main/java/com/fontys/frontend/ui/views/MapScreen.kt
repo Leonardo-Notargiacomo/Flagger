@@ -23,7 +23,10 @@ import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.maps.android.compose.*
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import okhttp3.internal.wait
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewModel()) {
@@ -37,6 +40,7 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
     LaunchedEffect(Unit) { viewModel.loadUserLocation() }
     val userFlags by viewModel.userFlags.collectAsState()
     val currentUserId = UserRepository.userId
+
     LaunchedEffect(currentUserId) {
         if (currentUserId != null || currentUserId !=0) {
             viewModel.getFlags(currentUserId)
@@ -88,8 +92,9 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
             Button(onClick = {
                 viewModel.fetchNearbyPlaces(LatLng(userLocation.latitude,userLocation.longitude))
                 if(places.size==1){
+                    picturedata.currentUserId = currentUserId
+                    picturedata.place_id = places.get(0).id
                     navController.navigate(CameraView)
-                    viewModel.markTheSpot(currentUserId,places.get(0).id,photoCode())
                 } else {
                     showDialog = true
                     selectedPlace = null
@@ -136,8 +141,9 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
                                             16f
                                         )
                                         )
+                                    picturedata.currentUserId = currentUserId
+                                    picturedata.place_id = place.id
                                     navController.navigate(CameraView)
-                                    viewModel.markTheSpot(currentUserId,place.id,photoCode())
 
                                 }
 

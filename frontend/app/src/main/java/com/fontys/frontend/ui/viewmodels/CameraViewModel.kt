@@ -1,5 +1,6 @@
 package com.fontys.frontend.ui.viewmodels
 
+import android.app.Application
 import android.content.Context
 import android.net.Uri
 import androidx.camera.core.CameraSelector
@@ -12,9 +13,14 @@ import androidx.camera.lifecycle.awaitInstance
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.fontys.frontend.domain.FlagRepository
 import com.fontys.frontend.domain.toBase64
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import java.io.File
 
 class CameraPreviewViewModel : ViewModel() {
@@ -24,8 +30,10 @@ class CameraPreviewViewModel : ViewModel() {
 
     private var cameraProvider: ProcessCameraProvider? = null
 
-    private val _base64 = MutableStateFlow<String?>("")
-    val base64: StateFlow<String?> = _base64
+    private val _base64 = MutableStateFlow<String>("")
+    val base64: StateFlow<String> = _base64
+
+    val flagRepository = FlagRepository()
     private fun buildImageCaptureUseCase(): ImageCapture {
         return ImageCapture.Builder()
             .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
@@ -52,7 +60,7 @@ class CameraPreviewViewModel : ViewModel() {
     fun releaseCamera() {
         cameraProvider?.unbindAll()
     }
-    fun takePhoto(context: Context, onPhotoSaved: (Uri?) -> Unit) {
+   suspend fun takePhoto(context: Context,userid : Int, placeId: String ,onPhotoSaved: (Uri?) -> Unit) {
         val imageCapture = imageCapture ?: return
 
         val outputFileOptions = ImageCapture.OutputFileOptions.Builder(
@@ -67,7 +75,12 @@ class CameraPreviewViewModel : ViewModel() {
             ContextCompat.getMainExecutor(context),
             object : ImageCapture.OnImageSavedCallback {
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
-                    _base64.value = toBase64(context,output.savedUri)
+                    val b64 = toBase64(context, output.savedUri)
+                    _base64.value = b64
+
+                    viewModelScope.launch {
+                        flagRepository.addFlag(userid, placeId, b64)
+                    }
                     onPhotoSaved(output.savedUri)
                 }
 
@@ -77,5 +90,5 @@ class CameraPreviewViewModel : ViewModel() {
                 }
             }
         )
-    }
+   }
 }
