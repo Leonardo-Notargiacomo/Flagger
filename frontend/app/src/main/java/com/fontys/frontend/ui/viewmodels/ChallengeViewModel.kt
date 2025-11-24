@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fontys.frontend.data.models.*
 import com.fontys.frontend.data.repositories.ChallengeRepository
+import com.fontys.frontend.utils.ChallengePreferences
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,9 +17,6 @@ class ChallengeViewModel : ViewModel() {
         private val _sharedCanSelectChallenge = MutableStateFlow(true)
         private val _sharedTimeUntilNextSelection = MutableStateFlow<Long>(0L)
 
-        // Cache the challenge start time AND the challenge ID to persist across ViewModel recreations
-        private var cachedChallengeStartTime: Long = 0L
-        private var cachedChallengeId: Int = -1
         private var sharedTimerJob: kotlinx.coroutines.Job? = null
 
         // Start the global timer once
@@ -30,6 +28,9 @@ class ChallengeViewModel : ViewModel() {
             if (sharedTimerJob == null || sharedTimerJob?.isActive != true) {
                 sharedTimerJob = kotlinx.coroutines.GlobalScope.launch {
                     while (true) {
+                        // Load from persistent storage
+                        val cachedChallengeStartTime = ChallengePreferences.getChallengeStartTime()
+
                         if (cachedChallengeStartTime > 0L) {
                             val currentTimeMillis = System.currentTimeMillis()
                             val elapsedMillis = currentTimeMillis - cachedChallengeStartTime
@@ -40,8 +41,13 @@ class ChallengeViewModel : ViewModel() {
                             _sharedCanSelectChallenge.value = remainingMillis <= 0L
 
                             if (remainingMillis <= 0L) {
-                                cachedChallengeStartTime = 0L
+                                // Clear the persistent storage when cooldown is over
+                                ChallengePreferences.clearChallengeData()
                             }
+                        } else {
+                            // No active challenge
+                            _sharedCanSelectChallenge.value = true
+                            _sharedTimeUntilNextSelection.value = 0L
                         }
                         kotlinx.coroutines.delay(1000)
                     }
@@ -91,22 +97,25 @@ class ChallengeViewModel : ViewModel() {
                     if (active.isNotEmpty()) {
                         val mostRecentChallenge = active.maxByOrNull { it.startedAt ?: "" }
                         if (mostRecentChallenge != null) {
+                            val cachedChallengeId = ChallengePreferences.getChallengeId()
+
                             // Only update cached time if this is a NEW challenge or first load
                             // This prevents the timer from resetting on every load
                             if (cachedChallengeId != mostRecentChallenge.id) {
-                                cachedChallengeId = mostRecentChallenge.id
-                                cachedChallengeStartTime = if (mostRecentChallenge.startedAt != null) {
+                                val startTime = if (mostRecentChallenge.startedAt != null) {
                                     parseDateTime(mostRecentChallenge.startedAt)
                                 } else {
                                     System.currentTimeMillis()
                                 }
+                                // Save to persistent storage
+                                ChallengePreferences.saveChallengeStartData(startTime, mostRecentChallenge.id)
                             }
                         }
                     } else {
                         _sharedCanSelectChallenge.value = true
                         _sharedTimeUntilNextSelection.value = 0L
-                        cachedChallengeStartTime = 0L
-                        cachedChallengeId = -1
+                        // Clear persistent storage when no active challenges
+                        ChallengePreferences.clearChallengeData()
                     }
                     
                     _uiState.value = ChallengeUiState.Success

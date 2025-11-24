@@ -312,7 +312,6 @@ fun CompletedChallengesTab(challenges: List<UserChallenge>) {
     }
 }
 
-// Companion object to store challenge timers globally
 private object ChallengeTimerCache {
     private val timers = mutableMapOf<Int, MutableStateFlow<Long>>()
     private val startTimes = mutableMapOf<Int, Long>()
@@ -320,30 +319,29 @@ private object ChallengeTimerCache {
 
     @Synchronized
     fun getOrCreateTimer(challengeId: Int, startedAt: String?): StateFlow<Long> {
-        // Check if timer already exists - if so, return existing flow
         if (timers.containsKey(challengeId)) {
-            // Timer already exists, just return the existing flow
             return timers[challengeId]!!.asStateFlow()
         }
 
-        // Timer doesn't exist, create new one
-        // If startedAt is null, use current time as fallback
-        val startTime = if (startedAt != null) {
-            parseDateTime(startedAt)
+
+        val startTime = if (com.fontys.frontend.utils.ChallengePreferences.getChallengeId() == challengeId) {
+            val savedStartTime = com.fontys.frontend.utils.ChallengePreferences.getChallengeStartTime()
+            if (savedStartTime > 0L) savedStartTime else {
+                if (startedAt != null) parseDateTime(startedAt) else System.currentTimeMillis()
+            }
         } else {
-            System.currentTimeMillis()
+
+            if (startedAt != null) parseDateTime(startedAt) else System.currentTimeMillis()
         }
 
         startTimes[challengeId] = startTime
         timers[challengeId] = MutableStateFlow(System.currentTimeMillis())
 
-        // Start a global timer for this challenge
         timerJobs[challengeId] = GlobalScope.launch {
             while (true) {
                 timers[challengeId]?.value = System.currentTimeMillis()
                 delay(1000)
 
-                // Check if expired
                 val cachedStartTime = startTimes[challengeId]
                 if (cachedStartTime != null) {
                     val expiresAt = cachedStartTime + (24 * 60 * 60 * 1000L)
@@ -378,10 +376,8 @@ fun UserChallengeCard(
 ) {
     val challengeType = userChallenge.challenge.getType()
 
-    // Total duration used for time-based challenges (24 hours)
     val totalMillis = 24 * 60 * 60 * 1000L
 
-    // Get the global timer for this challenge - NO REMEMBER, cache handles everything
     val currentTimeFlow = ChallengeTimerCache.getOrCreateTimer(userChallenge.id, userChallenge.startedAt)
     val currentTime by currentTimeFlow.collectAsState()
 
@@ -393,7 +389,6 @@ fun UserChallengeCard(
         (expiresAtMillis - currentTime).coerceAtLeast(0)
     }
 
-    // Clean up timer when challenge is completed
     DisposableEffect(userChallenge.isCompleted) {
         onDispose {
             if (userChallenge.isCompleted) {
@@ -402,7 +397,6 @@ fun UserChallengeCard(
         }
     }
 
-    // Compute progress fraction correctly
     val progressFraction = when (challengeType) {
         ChallengeType.TIME_BASED -> {
             val elapsed = (totalMillis - timeRemaining).coerceAtLeast(0L)
