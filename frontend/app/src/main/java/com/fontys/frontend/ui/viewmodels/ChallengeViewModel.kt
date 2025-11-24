@@ -28,7 +28,6 @@ class ChallengeViewModel : ViewModel() {
             if (sharedTimerJob == null || sharedTimerJob?.isActive != true) {
                 sharedTimerJob = kotlinx.coroutines.GlobalScope.launch {
                     while (true) {
-                        // Load from persistent storage
                         val cachedChallengeStartTime = ChallengePreferences.getChallengeStartTime()
 
                         if (cachedChallengeStartTime > 0L) {
@@ -41,11 +40,9 @@ class ChallengeViewModel : ViewModel() {
                             _sharedCanSelectChallenge.value = remainingMillis <= 0L
 
                             if (remainingMillis <= 0L) {
-                                // Clear the persistent storage when cooldown is over
                                 ChallengePreferences.clearChallengeData()
                             }
                         } else {
-                            // No active challenge
                             _sharedCanSelectChallenge.value = true
                             _sharedTimeUntilNextSelection.value = 0L
                         }
@@ -79,22 +76,18 @@ class ChallengeViewModel : ViewModel() {
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
 
-    // Expose shared flows as instance properties
     val canSelectChallenge: StateFlow<Boolean> = _sharedCanSelectChallenge.asStateFlow()
     val timeUntilNextSelection: StateFlow<Long> = _sharedTimeUntilNextSelection.asStateFlow()
 
     fun loadUserChallenges(userId: Int) {
         viewModelScope.launch {
-            // Use getChallengeHistory to get all user challenges
             repository.getChallengeHistory()
                 .onSuccess { challenges ->
-                    // Split into active and completed challenges
                     val active = challenges.filter { !it.isCompleted }
                     _activeChallenges.value = active
                     _completedChallenges.value = challenges.filter { it.isCompleted }
 
-                    // Check if user can select a new challenge (24-hour cooldown)
-                    // Look at ALL challenges (active + recent completed) to maintain cooldown
+
                     val allRecentChallenges = challenges.filter {
                         // Get challenges started within last 24 hours
                         it.startedAt != null
@@ -118,7 +111,6 @@ class ChallengeViewModel : ViewModel() {
                             }
                         }
                     } else if (!ChallengePreferences.hasSavedChallenge()) {
-                        // Only clear if there are no recent challenges AND no saved cooldown
                         _sharedCanSelectChallenge.value = true
                         _sharedTimeUntilNextSelection.value = 0L
                     }
@@ -136,11 +128,9 @@ class ChallengeViewModel : ViewModel() {
 
     private fun parseDateTime(dateString: String): Long {
         return try {
-            // Try to parse ISO 8601 format (e.g., "2025-11-20T10:30:00Z")
             java.time.Instant.parse(dateString).toEpochMilli()
         } catch (_: Exception) {
             try {
-                // Fallback to another format if needed
                 java.time.LocalDateTime.parse(dateString).atZone(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli()
             } catch (_: Exception) {
                 System.currentTimeMillis()
@@ -150,7 +140,6 @@ class ChallengeViewModel : ViewModel() {
 
     fun loadAvailableChallenges() {
         viewModelScope.launch {
-            // Use getAvailableChallenges to get available challenges
             repository.getAvailableChallenges()
                 .onSuccess { challenges ->
                     _availableChallenges.value = challenges
@@ -163,7 +152,6 @@ class ChallengeViewModel : ViewModel() {
 
     fun startChallenge(userId: Int, challengeId: Int) {
         viewModelScope.launch {
-            // Use selectChallenge to start/select a challenge
             repository.selectChallenge(challengeId)
                 .onSuccess { userChallenge ->
                     // Refresh the challenges list
@@ -178,7 +166,6 @@ class ChallengeViewModel : ViewModel() {
 
     fun updateChallengeProgress(userId: Int, challengeId: Int, progress: Int) {
         viewModelScope.launch {
-            // Use checkChallengeCompletion to check/update progress
             repository.checkChallengeCompletion(mapOf("challengeId" to challengeId, "progress" to progress))
                 .onSuccess { response ->
                     if (response.success && response.challenge.isCompleted) {

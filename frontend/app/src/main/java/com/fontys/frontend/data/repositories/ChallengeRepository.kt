@@ -9,7 +9,6 @@ class ChallengeRepository {
 
     private val api = ApiClient.challengeApi
 
-    // GET /challenges - Get all challenges
     suspend fun getAllChallenges(): Result<List<Challenge>> = withContext(Dispatchers.IO) {
         try {
             val response = api.getAllChallenges()
@@ -23,7 +22,6 @@ class ChallengeRepository {
         }
     }
 
-    // GET /challenges/active - Get active challenges
     suspend fun getActiveChallenges(): Result<List<Challenge>> = withContext(Dispatchers.IO) {
         try {
             val response = api.getActiveChallenges()
@@ -37,7 +35,6 @@ class ChallengeRepository {
         }
     }
 
-    // GET /challenges/available - Get available challenges
     suspend fun getAvailableChallenges(): Result<List<Challenge>> = withContext(Dispatchers.IO) {
         try {
             val response = api.getAvailableChallenges()
@@ -51,7 +48,6 @@ class ChallengeRepository {
         }
     }
 
-    // GET /challenges/by-difficulty/{difficulty} - Get challenges by difficulty
     suspend fun getChallengesByDifficulty(difficulty: String): Result<List<Challenge>> = withContext(Dispatchers.IO) {
         try {
             val response = api.getChallengesByDifficulty(difficulty)
@@ -65,7 +61,6 @@ class ChallengeRepository {
         }
     }
 
-    // GET /challenges/count - Get challenge count
     suspend fun getChallengeCount(): Result<Int> = withContext(Dispatchers.IO) {
         try {
             val response = api.getChallengeCount()
@@ -79,7 +74,6 @@ class ChallengeRepository {
         }
     }
 
-    // GET /challenges/history - Get challenge history
     suspend fun getChallengeHistory(): Result<List<UserChallenge>> = withContext(Dispatchers.IO) {
         try {
             val response = api.getChallengeHistory()
@@ -93,7 +87,6 @@ class ChallengeRepository {
         }
     }
 
-    // GET /challenges/status - Get challenge status
     suspend fun getChallengeStatus(): Result<Any> = withContext(Dispatchers.IO) {
         try {
             val response = api.getChallengeStatus()
@@ -107,7 +100,6 @@ class ChallengeRepository {
         }
     }
 
-    // GET /challenges/{id} - Get specific challenge
     suspend fun getChallengeById(challengeId: Int): Result<Challenge> = withContext(Dispatchers.IO) {
         try {
             val response = api.getChallengeById(challengeId)
@@ -121,7 +113,6 @@ class ChallengeRepository {
         }
     }
 
-    // POST /challenges - Create new challenge
     suspend fun createChallenge(challenge: Challenge): Result<Challenge> = withContext(Dispatchers.IO) {
         try {
             val response = api.createChallenge(challenge)
@@ -135,7 +126,6 @@ class ChallengeRepository {
         }
     }
 
-    // POST /challenges/{id}/select - Select a challenge
     suspend fun selectChallenge(challengeId: Int): Result<UserChallenge> = withContext(Dispatchers.IO) {
         try {
             val response = api.selectChallenge(challengeId)
@@ -149,7 +139,6 @@ class ChallengeRepository {
         }
     }
 
-    // POST /challenges/check-completion - Check challenge completion
     suspend fun checkChallengeCompletion(completionRequest: Any): Result<ChallengeCompletionResponse> = withContext(Dispatchers.IO) {
         try {
             val response = api.checkChallengeCompletion(completionRequest)
@@ -163,7 +152,6 @@ class ChallengeRepository {
         }
     }
 
-    // PATCH /challenges - Update challenges (batch)
     suspend fun updateChallenges(challenges: List<Challenge>): Result<List<Challenge>> = withContext(Dispatchers.IO) {
         try {
             val response = api.updateChallenges(challenges)
@@ -177,7 +165,6 @@ class ChallengeRepository {
         }
     }
 
-    // PATCH /challenges/{id} - Update specific challenge
     suspend fun updateChallenge(challengeId: Int, challenge: Challenge): Result<Challenge> = withContext(Dispatchers.IO) {
         try {
             val response = api.updateChallenge(challengeId, challenge)
@@ -191,7 +178,6 @@ class ChallengeRepository {
         }
     }
 
-    // DELETE /challenges/{id} - Delete challenge
     suspend fun deleteChallenge(challengeId: Int): Result<Void?> = withContext(Dispatchers.IO) {
         try {
             val response = api.deleteChallenge(challengeId)
