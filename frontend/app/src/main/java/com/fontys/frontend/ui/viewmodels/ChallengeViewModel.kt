@@ -19,7 +19,10 @@ class ChallengeViewModel : ViewModel() {
 
         private var sharedTimerJob: kotlinx.coroutines.Job? = null
 
-        // Start the global timer once
+        // Keep a weak reference to the active ViewModel instance for callbacks
+        private var activeInstance: ChallengeViewModel? = null
+        private var hasTriggeredRefreshOnExpiry = false
+
         init {
             startGlobalCooldownTimer()
         }
@@ -41,14 +44,30 @@ class ChallengeViewModel : ViewModel() {
 
                             if (remainingMillis <= 0L) {
                                 ChallengePreferences.clearChallengeData()
+
+                                if (!hasTriggeredRefreshOnExpiry) {
+                                    hasTriggeredRefreshOnExpiry = true
+                                    activeInstance?.refreshAvailableChallengesOnCooldownExpiry()
+                                }
                             }
                         } else {
                             _sharedCanSelectChallenge.value = true
                             _sharedTimeUntilNextSelection.value = 0L
+                            hasTriggeredRefreshOnExpiry = false // Reset flag when no active cooldown
                         }
                         kotlinx.coroutines.delay(1000)
                     }
                 }
+            }
+        }
+
+        fun registerInstance(instance: ChallengeViewModel) {
+            activeInstance = instance
+        }
+
+        fun unregisterInstance(instance: ChallengeViewModel) {
+            if (activeInstance == instance) {
+                activeInstance = null
             }
         }
     }
@@ -78,6 +97,28 @@ class ChallengeViewModel : ViewModel() {
 
     val canSelectChallenge: StateFlow<Boolean> = _sharedCanSelectChallenge.asStateFlow()
     val timeUntilNextSelection: StateFlow<Long> = _sharedTimeUntilNextSelection.asStateFlow()
+
+    init {
+        registerInstance(this)
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        // Unregister when ViewModel is destroyed
+        unregisterInstance(this)
+    }
+
+
+    private fun refreshAvailableChallengesOnCooldownExpiry() {
+        viewModelScope.launch {
+            repository.getAvailableChallenges()
+                .onSuccess { challenges ->
+                    _availableChallenges.value = challenges
+                }
+                .onFailure { error ->
+                }
+        }
+    }
 
     fun loadUserChallenges(userId: Int) {
         viewModelScope.launch {
