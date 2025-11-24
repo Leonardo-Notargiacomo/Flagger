@@ -1,0 +1,1383 @@
+Speaker 1 | 00:02
+Recording okay? Then, [Laughter] so what do we do now?
+Speaker 2 | 00:11
+So you showed us the what was the name and you showed us the code we did ant so please come on, git on the dashb on the pon board roll Roger ball.
+Speaker 1 | 00:24
+Okay.
+Speaker 3 | 00:25
+Not too, Lou.
+Speaker 2 | 00:28
+Okay, so far we have done as usual. I want to take photos of a marking location. I want to see where my friends have been. Who wants.
+Speaker 1 | 00:38
+To do that? But Daniel's already is doing it.
+Speaker 2 | 00:41
+But let's talk about the one below.
+Speaker 1 | 00:44
+Maybe me. No, but I'm doing... I mean.
+Speaker 3 | 00:50
+Yeah, so that's more like a feature.
+Speaker 4 | 00:52
+Isn't that like a history of.
+Speaker 1 | 00:55
+This is more of a part of a profile.
+Speaker 3 | 00:57
+I there's more. Yeah, if you want to integrate a map in the profile page, that would be as good. Okay. And please, can we let's delete this task create retrofit. It doesn't make sense, and I don't want to see any of these.
+Speaker 1 | 01:14
+But you can just go to them.
+Speaker 3 | 01:16
+We can just delete this because it doesn't make sense.
+Speaker 1 | 01:18
+Don. No, it does make sense because it was part of the as the user want to register an account and okay, it's and it was part of the picture.
+Speaker 3 | 01:26
+Yeah, but c if it is a bit big.
+Speaker 2 | 01:28
+Yeah, no, yeah.
+Speaker 3 | 01:29
+I mean, okay, let's keep this anyway.
+Speaker 1 | 01:34
+Okay, so why can't we just delete the second one because the third one can have everything described in it.
+Speaker 2 | 01:45
+Okay, then let's get it over with. Remark, but make it a task.
+Speaker 3 | 01:48
+Don't forget it. Yeah, that now this should be like a task, so not the feature.
+Speaker 2 | 01:55
+Don't just get rid of it, it doesn't matter.
+Speaker 1 | 01:58
+Okay, you can to make the test later.
+Speaker 3 | 02:00
+Yeah, okay.
+Speaker 1 | 02:03
+As a user, I want to view my friend's profile. Yeah, I can take that.
+Speaker 3 | 02:08
+So well, if I'm not mistaken, we agreed that... But what's the difference between creating a profile and viewing a profile? Because it feels like you just... I mean, I'm a bit confused with that.
+Speaker 2 | 02:26
+Profile is like, if you go on the search and you search for friends, you can click maybe on the account or whatever, and then, like the public profile, I what? I work.
+Speaker 4 | 02:34
+Or what about the task create login page? Is that still assigned to me? Who is it assigned to? Yes, change it to Daniel and yeah.
+Speaker 2 | 02:49
+Can you make a register page for them.
+Speaker 1 | 02:56
+I think yeah, that was the feature of Williams like the yeah listing.
+Speaker 2 | 03:04
+Okay, let's go back to the features important.
+Speaker 1 | 03:08
+So but do we need to estimate all of them now?
+Speaker 2 | 03:12
+Only the ones we choose?
+Speaker 3 | 03:13
+Okay. Guy. And remember? Remember one of the retrospectives when they talked about the communication between like the relation between use cases and user stories? So it would make sense to have them in combination like profile, patient setting patients.
+So remember that this should be related wisely. So we agreed the special challenges goes to Rale waiver where the like the last two.
+Speaker 5 | 03:50
+Yeah, but like the priority is for the only. So.
+Speaker 4 | 03:56
+Doesn't that just like mark favorites.
+Speaker 5 | 03:59
+Basically it won't be done really fast. So the second one, I will spend more. Maybe we should swap the priority because the special challenges are I think more.
+Speaker 4 | 04:11
+Yeah, it's more interesting anyway.
+Speaker 5 | 04:14
+Yeah. So just one P2 and then another one P1.
+Speaker 2 | 04:32
+Could you put the register page back into a backlog because I'm not finished with it? Because I still have to overwork email and password. So we check for the characters.
+Speaker 3 | 04:48
+In Java we used to do this.
+Speaker 2 | 04:51
+Yeah, Reg. So that they're like, because you checked for size, it's really cool. I didn't follow that. But like for characters in the then pass for email because then I can act like I did the check as.
+Speaker 3 | 05:05
+I remember there is. I mean, there are certain Rejix features in.
+Speaker 2 | 05:14
+You. Thank you.
+Speaker 3 | 05:15
+In look back for sure, because I remember when I tried to create like to create an email without an ad.
+Speaker 2 | 05:26
+Yeah, but we need to do it in the front end.
+Speaker 3 | 05:31
+But this is but that might this might be like one or two.
+Speaker 2 | 05:35
+Of course. Yeah, no, that's why to take two.
+Speaker 3 | 05:39
+Okay, features.
+Speaker 1 | 05:42
+Okay, can we just write it that if it's smaller? As a user, I want to make sure I enter my email correctly.
+Speaker 3 | 05:49
+My email. I mean, it's more like a feature. It's not. No, that's more like as.
+Speaker 2 | 05:53
+Like a... a.
+Speaker 3 | 05:55
+It's like. As for a feat.
+Speaker 2 | 05:58
+I want to check the email for valid.
+Speaker 3 | 06:02
+Formula like Re-verification, what's called.
+Speaker 2 | 06:06
+Yeah, but it's like checking a valid email with.
+Speaker 1 | 06:11
+Wa and password. Yeah.
+Speaker 3 | 06:12
+And password, but maybe just campaigns.
+Speaker 2 | 06:17
+Yeah, that's what I want to do.
+Speaker 3 | 06:18
+Yeah. Okay.
+Speaker 1 | 06:19
+What was being validated on the.
+Speaker 2 | 06:21
+One like that? You have a number, a big letter, and a character. Okay, that's nice.
+Yeah, I'll fill it out later.
+Speaker 1 | 06:44
+It's a task, give it to ask.
+Speaker 2 | 06:53
+I can't give it the.
+Speaker 3 | 06:59
+Mot assan me send me the one of the task.
+Speaker 1 | 07:03
+So that makes it better to be dumb.
+Speaker 2 | 07:08
+I can give it away, right? I give it away.
+Speaker 1 | 07:14
+Not here. But we have to.
+Speaker 5 | 07:16
+She. She should do she should redo this project. Re project.
+Speaker 2 | 07:24
+Estimate right, one and put it in progress. What I put in to do, put it to do.
+Speaker 3 | 07:38
+By the way, should we put some of the artifacts from View to DA, for example? Login is down 100%.
+Speaker 4 | 07:50
+Has this been reviewed?
+Speaker 3 | 07:53
+I mean, that's been reviewed. Black right now, the demo... Like I saw from the demo that looks pretty fine and.
+Speaker 2 | 08:00
+Put it in a finished features come and finished.
+Speaker 1 | 08:07
+But it is.
+Speaker 5 | 08:09
+We still.
+Speaker 3 | 08:12
+Because we I mean what's the difference.
+Speaker 2 | 08:17
+One for tasks and one for features.
+Speaker 3 | 08:21
+So our tasks are finished.
+Speaker 2 | 08:23
+Or done.
+Speaker 5 | 08:24
+Yeah, I actually... The other way around. So features are finished and tasks are done. That makes sense for me like a more.
+Speaker 2 | 08:34
+Yeah, I mean, I would just.
+Speaker 3 | 08:37
+Okay, that's a bit complicated for fin.
+Speaker 2 | 08:40
+Then just put features and finish these.
+Speaker 4 | 08:41
+Okay, yeah, we can just delete "finished". I'm just saying.
+Speaker 1 | 08:45
+And just filter here everything if we need to show something like task and feature.
+Speaker 2 | 08:52
+What a smart man.
+Speaker 5 | 08:53
+Yeah.
+Speaker 1 | 08:56
+Or do we keep "finished" or not? We can just filter it here if we need to show. That's what we did on the demo. Okay.
+Speaker 2 | 09:03
+Then put it back and delete financial.
+Speaker 3 | 09:07
+Yeah, let's keep it in down.
+Speaker 1 | 09:10
+Keep down what?
+Speaker 3 | 09:11
+I like the features And.
+Speaker 1 | 09:12
+Down. and finished.
+Speaker 3 | 09:14
+And finished. I would. I would happily delete this exc yeah.
+Speaker 4 | 09:23
+I'm pretty sure the rule doesn't.
+Speaker 1 | 09:34
+The council. Well, we do so works on own badges works.
+Speaker 5 | 09:44
+But right now we really put everything in done. So like the task because I don't know, maybe we should keep something between "done" and "task" just for task because you know what we can show. I know we can filter, but comfortably we can just show the entire compound.
+Then like we because basically the features are only what they care about, right? They really care about task.
+Speaker 3 | 10:13
+Yeah, but right now how it works that if the task... If all the tasks for a certain C are in the "done" section, this means that the feature transfers itself to the "not done". Yeah, so I would... Okay, let's keep it for now. This way.
+And maybe we can filter everything out in the end.
+Speaker 1 | 10:37
+Like this. Or do we keep it the previous way?
+Speaker 3 | 10:40
+I will keep it the previous way. I don't think that we need a lot of dance. Like these are just sub tasks that are that they like that's what I can see.
+Speaker 1 | 10:51
+Just for us.
+Speaker 3 | 10:52
+They are sorted by feature. And then, yeah, so all the tasks are at the bottom, so. So like, I mean.
+Speaker 2 | 11:03
+Okay, guys, let's continue. Yeah, we still need to make another feature for villains because we just have a profile. Or do we.
+Speaker 1 | 11:22
+I want to be able to customize the Slack.
+Speaker 3 | 11:24
+But those are those will be done next spring.
+Speaker 4 | 11:27
+I would say a customized flag sounds rather uninteresting for now.
+Speaker 3 | 11:33
+I don't know. I think it's the most interesting part. I like it's the least relevant. But it's the most interesting to make skins.
+Speaker 1 | 11:41
+And distinguish between, like what can be fleged and what is already flag. No.
+Speaker 2 | 11:45
+No, it's.
+Speaker 3 | 11:46
+Custom customization about like the view of the flag just like this st.
+Speaker 2 | 11:51
+Just like the sweat.
+Speaker 4 | 11:54
+It's like saying my flags are not just flags anymore. But now there are some fancy, customized to eat.
+Speaker 2 | 12:02
+Then we call it an icon, but then we could have in-game icons. But that's.
+Speaker 3 | 12:07
+I mean, that legal concern.
+Speaker 4 | 12:17
+It's essentially microtransactions, what we're thinking about right now. So let's forget about it.
+Speaker 2 | 12:25
+To my bank account. Let's make sure that we pass the project.
+Speaker 3 | 12:30
+Then we can make the money out of it. Let's do it this way.
+Speaker 4 | 12:35
+What was the one that just.
+Speaker 1 | 12:37
+Thele just want to see the flag to my friend's profile because essentially, yeah.
+Speaker 4 | 12:42
+We already have that. Yeah.
+Speaker 5 | 12:45
+Like, have three more feature ideas. So one is like, during, like, when you were presenting just now, if you closed the app, then you would have to log in again. I think that's just like having a session, right?
+Speaker 2 | 13:00
+No, we don't.
+Speaker 3 | 13:00
+Use the sessions.
+Speaker 1 | 13:01
+Which that's like it's like additional persistence, but yeah.
+Speaker 5 | 13:05
+I remember that, yeah.
+Speaker 3 | 13:10
+Yeah, but the point is the sessions that you are... So when you leave the application, when you lift the web application, you are locked out automatically and then you need to log in every time.
+So this is a bit different compared to two sessions. Yeah, we just need to find out so we can.
+Speaker 2 | 13:36
+So guys, we're still missing this whole settings feature we had in mind on Monday.
+Speaker 4 | 13:41
+Yeah, that's the thing for partially.
+Speaker 2 | 13:45
+That's like the whole point.
+Speaker 4 | 13:46
+Why is it partially?
+Speaker 2 | 13:48
+So wait, do is there still like.
+Speaker 3 | 13:52
+So let's try. Okay, so I guess I discovered something. So this session... Set back this lock-in and I think so... The application is running all the time. I would say if the... Right now starts an application and logs in as a user and he leaves the application... Then he should... He leaves the application when it's running, so he doesn't stop the application and then he should... Visit the application one time.
+Speaker 4 | 14:25
+And you just need to store the token then, right? The token is.
+Speaker 3 | 14:29
+Stored as s can and.
+Speaker 4 | 14:32
+No, you just need to store the token then. And.
+Speaker 1 | 14:36
+It in.
+Speaker 4 | 14:36
+Memory essentially so in the realm of the phone.
+Speaker 3 | 14:41
+Is running 24 hours like 24 hours a day. So I that's what I think I'm over thinking about this
+Speaker 1 | 14:57
+Really. I noticed that we can create multiple users with the same email and nothing will go wrong.
+Speaker 3 | 15:05
+That's in the backend. We should define unique.
+Speaker 2 | 15:09
+But I will do that as well. Put it there, make a task and assign it to me. Okay, so my idea was that this is how much the profile should be like the profile page, which is basically up here. It's like the settings. I'm sorry that it is so small.
+Speaker 3 | 15:26
+Yeah, take the normal.
+Speaker 4 | 15:28
+By the way.
+Speaker 5 | 15:29
+And I would make it.
+Speaker 4 | 15:30
+My God, for now. Maybe do not assign Rene to this. Even though he did most of the backend, we need to do back. And so it might be a good exercise for one of us.
+Speaker 1 | 15:45
+Where you specifically won't be helpful. [Laughter].
+Speaker 3 | 15:52
+No offensive language because we are at the report.
+Speaker 1 | 15:59
+Already so trying to keep. But what if I said this pony but in my language is something.
+Speaker 3 | 16:05
+I mean they'll check anyway and they'll be interested in that.
+Speaker 4 | 16:10
+I don't do not think they will read the transcript.
+Speaker 5 | 16:14
+Transcript? Do you remember when we were in Gaul, we checked a transcript of like the first perspective and that was a very cool thing that the... I thought we said so, [Laughter] but the Leonica showed it up.
+Speaker 2 | 16:28
+BE so this is I mentioned the profile page 2B and then from here, like a settings page pops up. You know, like a pop-up and then we go to a comp page account password. I think you can do it as a feature or in the account that's based on...
+And you can log out. Yeah, for the session, yeah, I would prefer this. yeah.
+Speaker 4 | 16:54
+The lockout should be in the account setting. I agree with you.
+Speaker 2 | 16:59
+Yeah. Now it's the question: do we really want to have accounts and passwords separated from each other?
+Speaker 4 | 17:06
+What, you mean.
+Speaker 2 | 17:08
+Like, you could this, like for password reset, you know?
+Speaker 4 | 17:13
+Yeah. Designing a new password.
+Speaker 2 | 17:16
+Yeah. So should it be like a separate page? Because then this would be in a specific feature, you know what I mean?
+Speaker 3 | 17:24
+I mean.
+Speaker 4 | 17:27
+I mean, it doesn't really matter, to be honest.
+Speaker 2 | 17:31
+No, but it means that you have to create a lot of navigation, which is good for your eye. And you have to work with the back-end in the end.
+Speaker 3 | 17:41
+So what I would do is have, for example.
+Speaker 4 | 17:44
+I just changing the password. I don't know that feels like a half feature. I can gladly do it. Like, I will take it. That w wouldn't be my issue, but, I mean, this is more a Williams thing anyway.
+Speaker 5 | 18:06
+I haven't, but no one will use it because we're basically telling... Where I can view my own profile just to view it, and we have a setting space where I can change it. Now we are making it... I thought we already decided this.
+Speaker 2 | 18:20
+Yeah, we have account.
+Speaker 4 | 18:25
+Let him explain what he understood.
+Speaker 5 | 18:29
+Okay, so please just use either profile or account. Do not call it profile and con, just call it profile and profile settings because that is just it's like the sameing as a sign in a sign up. That was lovely.
+Speaker 3 | 18:43
+But.
+Speaker 2 | 18:44
+No, but this is two pages.
+Speaker 5 | 18:47
+Right?
+Speaker 2 | 18:47
+It is two different ideas. So the profile is how do you profile yourself to the outside world? And content is how is the system perceived by you? If you catch my my.
+Speaker 4 | 19:05
+Pretty much the same of what he's thinking of, you have this, right? Yeah, and you added the profile and then you have the added public stuff, right? Yeah. So if you go then to the account settings though you yeah.
+Speaker 5 | 19:20
+That's well I like prescribing it. yeah.
+Speaker 2 | 19:26
+I was.
+Speaker 4 | 19:28
+I understand.
+Speaker 5 | 19:39
+Okay, but this is good one.
+Speaker 4 | 19:43
+I can make sure that I got them right? So, Rene, what do you envision? Is this and this for you, right? Yeah.
+Speaker 3 | 19:53
+And.
+Speaker 4 | 19:55
+Yeah, this for.
+Speaker 3 | 19:57
+Yes.
+Speaker 5 | 20:00
+I'm don't know, I want to have an entirely new page just like the logo, three lines that... Yeah.
+Speaker 2 | 20:16
+I mean, we can go with Danielle's approach of just having it all in one. Have a password, email, username, and then logo, and then you can change it over there.
+Speaker 3 | 20:25
+Yeah, if.
+Speaker 4 | 20:27
+I wouldn't mind it if it is immediately in. If you go to that button and then you immediately get the changing formulass.
+Speaker 3 | 20:36
+Page so page and it mean just we display like the text fields. Yeah, the passwords. So text, you know, and the same would be for e mail user name.
+Speaker 4 | 20:48
+Blah. I don't mind either way.
+Speaker 5 | 20:52
+It's for me as long as I have just my account how the world uses it and that's like settings, but then the top that and then it goes to the settings. That's all that matters for me. It can be however you want it to be.
+Speaker 2 | 21:06
+Okay?
+Speaker 5 | 21:07
+But that has to be like a return button.
+Speaker 3 | 21:10
+Okay, so let's continue on this.
+Speaker 4 | 21:12
+So? So.
+Speaker 3 | 21:14
+Who needs the task? Who is the task at this point? So we are.
+Speaker 5 | 21:20
+I think it's Israel the Chief.
+Speaker 3 | 21:23
+I mean, we're doing settings and.
+Speaker 4 | 21:25
+The one who's gonna do probably this was doing like Rene is gonna do the profile, was the first thing that I showed you, the public stuff, the presentation stuff, essentially, of yourself.
+Speaker 3 | 21:41
+Okay? And Ben to task or AP, what do I think.
+Speaker 1 | 21:45
+In the process of doing that, what do you think we can focus on and get some assistance? Because I'm trying mean.
+Speaker 3 | 21:55
+I've been having an idea for like two weeks at this point with the admin panel because this might be pretty useful for security-wise. So we avoid any deep biggs or rented big names.
+Speaker 4 | 22:16
+So I have to ask, how do you make an account an admin? How do you make an account on that?
+Speaker 3 | 22:24
+I mean, we can specify in the database. Yeah, in the database, we can specify.
+Speaker 4 | 22:30
+So that would mean I would have to create the admin tag essentially from the endpoints and not from within the app.
+Speaker 1 | 22:41
+What complexity or high complexity for your feature?
+Speaker 2 | 22:44
+Yeah.
+Speaker 3 | 22:44
+But let's consider that. Make it high complex, let's consider that because.
+Speaker 4 | 22:49
+I want to actually learn something, man. [Laughter]. But I don't want to be put off with just changing your password for the account. Like, what is this? [Laughter].
+Speaker 2 | 23:02
+I don't later. No. I'm just looking at the code you rode.
+Speaker 3 | 23:20
+From racism and all the methods.
+Speaker 4 | 23:30
+The Edmond panel would look like. What does it change? The entire application? I would have so many questions about it. Yeah.
+Speaker 3 | 23:44
+It doesn't make a change because it's pretty much... It's a later part because you are so... Let's consider the login page. When you log in, you go to the user's application, let's say, or you can go to the admin application.
+They are separate parts. The thing that's different is you can check the photos, you can check the usernames, so you get all the data over there, et cetera. And you can do operations on the users' part.
+Speaker 1 | 24:27
+Or you can just do the admin tab and check in the back. If you admin it, it'll display.
+Speaker 3 | 24:32
+Yeah. But we need... So we need to add a new property. We need to add it to the model, the user side, which by default will be like users to appear, so that would involve...
+But that would involve changing the backend for log.
+Speaker 1 | 24:58
+Game because we are.
+Speaker 3 | 25:00
+Adding a new property, the user type. Now we might and we will manually check the user type. So there are some tasks additionally. Yeah, but that's in the case if we want to stick to the user type.
+But we can... Let's say we can agree on certain ideas. For example, certain user is that will be homin. So for example, ID you know, ID I give us hundred if.
+Speaker 4 | 25:33
+Honestly, I think the first approach is.
+Speaker 3 | 25:38
+More secure and it doesn't involve hard coding.
+Speaker 5 | 25:42
+But if we want to add, like the admin things, we have the admin type or something like that. But other views are like existing because, you know, we have this new road in the database. They don't have any value for that. I don't know if that will bring and
+Speaker 4 | 25:59
+You can make it anotherable value. I guess that wouldn't be a default usertellectual.
+Speaker 5 | 26:07
+Yeah, user so a little bit easier just like to make it a default this falls. Yeah, and then like honey. Yeah, and that implementation is true.
+Speaker 3 | 26:19
+Yes, but we need to make sure that we don't display, like the admin accounts on the use of a friend's list. You can imagine.
+Speaker 2 | 26:29
+Yeah, but we can filter for that. I can make a backend call for that as well. Yeah, because admin is just to oversee. It's not a public user account like the admin isn't supposed to go on maps and flagging stuff, for example.
+Speaker 5 | 26:50
+Because if we do like a Leonardo said that they are basically just a regular account, but they get an extra button with the admin panel. Why go through the process of adding restrictions to it and we can just make it?
+Yeah, a bit of them is using the app, but he is an admin, so he can message his fans. But he can, I don't know. I mean, I guess that is actually useful because, say, Williams is using the app. He is searching through the friends for some friends and then Suddenly you see some very non-important things and then you can just like go to the admin or search for an email or by because that we don't need to like guess we do need to have a search in the admin for user.
+Speaker 3 | 27:39
+Okay, let's consider some other features because we right now are thinking about this as we are about to put this application.
+Speaker 5 | 27:49
+On application on the the market.
+Speaker 3 | 27:51
+I consider that from other use cases just as a project.
+Speaker 4 | 27:56
+You want to sale
+Speaker 1 | 27:57
+Some not sales roll just at the volume.
+Speaker 3 | 28:02
+Yeah, okay, so yeah, but let's consider some other and the other.
+Speaker 4 | 28:06
+Did you ask AI for other ideas or what is this?
+Speaker 1 | 28:10
+These are the ideas, alright.
+Speaker 4 | 28:13
+Can you make it bigger like the font.
+Speaker 1 | 28:15
+Text like.
+Speaker 4 | 28:16
+The font actually.
+Speaker 1 | 28:17
+Bigger. I forgot how to do that, it was control plus but.
+Speaker 4 | 28:22
+Yeah I have that too sometimes. One... Wasn't it there? Nobody supposes terminal... Tooths block view for yes [Laughter] Alright, this... Yeah, I think that works perfectly.
+Speaker 1 | 28:53
+That's why I wonder.
+Speaker 4 | 28:56
+Love of a feature assistance. The lib TED is quite ambitious for.
+Speaker 5 | 29:04
+I just like real quickly I want to try to add a new batch side that's like based on time. So, like, after 12:00 pm at 3 am I don't know. Something like that. Is just fine if I just do that. We do really need to create a feature for that.
+Speaker 3 | 29:21
+Like and the car device. I think that the bugs are just like.
+Speaker 2 | 29:30
+I would prefer if you made a feature task out of it so you can link it in your profile. For example, for every sprint, I mentioned what the feature I worked on on.
+Speaker 5 | 29:41
+But I don't know, I don't want... Best of all, I'm to be confused to see that Vers assigned to one thing. Okay, now you have to... Why the fuck doesn't it have three things assigned to it? And one sprint, but because the other two are small and maybe adding a new type like some extra things that can.
+Speaker 2 | 30:03
+If I make a task out of it, it's easy. Okay, and so.
+Speaker 1 | 30:12
+Simplify that. Yeah, because the idea was the leader for... Because it required new models, new repos, new endpoints.
+Speaker 2 | 30:20
+You could make Delibo.
+Speaker 4 | 30:23
+Wow, what endpoints and stuff? I want the... I'm just asking for the lead.
+Speaker 3 | 30:31
+What? I don't like the models. I don't think that we need to do something out of this because we have users and we can take all the data from the users. So from that perspective, that's a pretty poor job by this artificial intelligence.
+Speaker 1 | 30:48
+You'll go first when the AI takes over. [Laughter].
+Speaker 5 | 30:55
+I mean, I guess why they would add a model for the need separation.
+Speaker 2 | 31:00
+I mean, but you can just.
+Speaker 5 | 31:04
+Yeah, but there's probably something we will be missing, like something that will be only specified with the data that the user would not have.
+Speaker 1 | 31:16
+Because the user has no steps. It's like a different model.
+Speaker 3 | 31:19
+Yeah, but all these are taken from the flags from the badges and there's a connection in field. So why do we need to have these?
+Speaker 1 | 31:30
+But I take time each time you take it from the same endpoint, but then you can cache it if you make a request. So essentially, you don't have to wait long for the.
+Speaker 3 | 31:42
+I mean, for the applications, that would be better because we don't store any ad hoc information. Could the user... I mean, it might take additional two seconds, Marximum.
+Speaker 5 | 32:00
+So but why are we discussing this? I'm not saying this to be mean, but why don't we let Chief figure this out on Zone, because that's how we discover most of So.
+Speaker 4 | 32:12
+Yeah.
+Speaker 3 | 32:12
+What exactly?
+Speaker 5 | 32:13
+Like like you, I'm basically saying now just figure it out properly, it's like a proper way to add availability to that instead of... Okay, we should do a cache. No, we should do a front.
+Speaker 4 | 32:24
+I would at least like to know what type of leaderboard we envision.
+Speaker 5 | 32:30
+You that is fair, but here we already see, no, we shouldn't add on to us like this. Yeah.
+Speaker 4 | 32:36
+No, that's not what I'm interested in, but I need to know, essentially, what should it be? A global leaderboard or not? What do you want to see on this leaderboard? Do you want to see how other people's badges sound? Does that give you the score to rise in ranks?
+Speaker 5 | 33:00
+You know it should probably bes right because badges that only sounds okay.
+Speaker 3 | 33:05
+Guys, I've got an idea for the book. But that might make me change the feature of this brand. So what if a specific location brings you certain points? For example, if you mark university, you get 100 points, and if you mark McDonald, you get 5 points.
+Then, based on that, we can form a little divorce or the thing.
+Speaker 4 | 33:36
+Like places get different values to.
+Speaker 3 | 33:38
+The Because I mean, that would involve some competition and based on that, we can create a little more.
+Speaker 5 | 33:48
+But say, for example, right, I look at it and you know that there are no factories there or something. There are only like four stores. And then, if they are over five points each,
+I would have 20. Seeing my friends, he lives near this industrial zone and it's like factories are about $50.
+Speaker 4 | 34:11
+Means get fucked.
+Speaker 3 | 34:20
+Yeah, but like, remember Pokémon Go guys, you couldn't just get a crazy Pokemont.
+Speaker 2 | 34:33
+Going to send an emaily.
+Speaker 3 | 34:44
+Okay, yeah, but I can remember pomon, though, is you're gonna just get a rare and least poking on in like in a village or whatever.
+Speaker 4 | 34:55
+You could, but it was very rare.
+Speaker 3 | 34:57
+It was very rare. Like, all the golden eggs will. And like, in the downtown. So, like, that's why. I mean, that might change the direction. And to be fair, I would. If I had to do this, I would do this the next sprint because I really want to work on camera to make the photos.
+And the photos might actually give the points as well. Like, if you make a photo, you get additional and 20 points, let's say, or 1.
+Speaker 5 | 35:34
+Yeah, but then people would feel obliged to take a picture, otherwise you would follow. Yeah.
+Speaker 3 | 35:39
+But you're not supposed to take the picture of yourself. You can't just take the picture of a view.
+Speaker 4 | 35:44
+You can just take the picture of the street. [Laughter].
+Speaker 2 | 35:47
+Yeah, that's okay. And that.
+Speaker 3 | 35:48
+And that's the reason why I would. I would make the. I would ask users to make this photo as a monitor because you are not supposed to make a photo of yourself.
+Speaker 5 | 36:05
+But I do agree with you doing this. Like, I don't know, next plan or maybe the one even after. Because otherwise, if you want to do it now, you would have to wait for your.
+Speaker 3 | 36:14
+I mean. And like. I mean, I shouldn't have done this. Like the devious print. So I had the points system already implemented. And even if I start right now or starting next in the screen, we simply don't have points. We simply have no material to Miro for although.
+So like ideally we should like ideally I should start. So I do this point system one sprint and the next sprint Chief can implement a skill thing.
+Speaker 1 | 36:50
+Or two or three.
+Speaker 3 | 36:52
+Maybe something else.
+Speaker 5 | 36:54
+Maybe another way to do it is instead of, like, you flag a place and then based on the place, you get like, more points. But it could be even better because you could get like a C1s. Say that I create, like, special badges with, like, an amount for, like, to visit three hospitals.
+And then you could get, like, either, like, some type of p or like, the points, you say. Then that might be better because you can have, like, proof, you know, you have like, a badge that you went there. You can say like.
+Speaker 3 | 37:30
+I'm not really interested in doing this week because we still need to implement camera and that's what we want to do with this screen to make sure that we have camera and it or basically support in the database.
+So it's little board s it will be I mean it's not even the command here on the government board.
+Speaker 5 | 37:48
+So I mean, to this now in next.
+Speaker 3 | 37:51
+Yeah. Or like, let's discuss this. And the next thing is... But yeah, we need to make it as well. And I mean that if you don't have any ideas for the admin panel, that might be the.
+Speaker 4 | 38:09
+Look at point 3. What do you think of this? I like the free as well and place.
+Speaker 5 | 38:20
+And like, the friends could see it like which ratings other people are.
+Speaker 2 | 38:25
+That's good. You display in the friends view.
+Speaker 5 | 38:30
+You would. Wouldn't it be easier to just be able to flag, then you would get a pop-up over four of the five stars and it would just be like your compiled fans. Like average maybe.
+Speaker 2 | 38:43
+But if you click on a friend that you see on Slack... But if you want to review or something like that, just some sort of a Twitter.
+Speaker 4 | 38:56
+Rating or comment they system maybe.
+Speaker 3 | 39:02
+Yeah. I mean, I would do it. So the way I would do this is to make a list of marked places. Just you deploy the list of marketplaces and you manually give the rating and the feedback. So I wouldn't do this as you mark the place because you need to make that order as well.
+Speaker 4 | 39:29
+Yeah, if it's essentially the same pop-up as doing the photo. So whenever you make a flag, that would be a version to do it. So whenever you want to set a Slack, you get the pop-up of the photo that you can take after you select the place because you get the selection, right? What is.
+Speaker 1 | 39:58
+Close to you?
+Speaker 3 | 39:59
+I mean, you select the place.
+Speaker 4 | 40:01
+Yeah. So you select one of the places that you just offered to you, and then you get another pop-up where you can set the picture. So you press the button to take a picture and then below it you can have a rating with and.
+Speaker 1 | 40:18
+The common thing.
+Speaker 3 | 40:19
+I mean, I'm not down with the camera right now, so this might be the risk to send things of the time. And that's why I want to propose to make this as a list because. And additionally from the user experience having to do a lot of extra disco point.
+Yeah. So.
+Speaker 4 | 40:40
+I was the camera thing is not done.
+Speaker 3 | 40:42
+Then I would rather make this as a list right now. So you just go to the solar Slack history, let's say. And as they can, like, give a certain feedback, you can write down the public feedback and the private feedback, like, for example, McDonald's. I don't visit this McDonald's food. Taste the shit and public you write all this. The best, I guess, you get Slack keys plus Slack
+suggestion.
+Speaker 1 | 41:17
+Yeah, and still, like the reviews themselves will still require the models.
+Speaker 2 | 41:23
+I mean.
+Speaker 3 | 41:26
+Require one more element on the top bar, like Slack history.
+Speaker 2 | 41:32
+Let's say. No, we can make a link on the profile thanks to... Okay, just so you can make the page and link on the link on my profile page to history where you can write comments.
+Speaker 3 | 41:58
+Yeah.
+Speaker 1 | 41:59
+You can make good ratings over other places already or.
+Speaker 2 | 42:05
+Okay, I'll do it. Do we think this is a good feature? Hands up, who says yes.
+Speaker 4 | 42:14
+He wants to be done with this. I get it, but man, this is far from done for me. You mentioned something last time on Monday. Maybe something like a feed page, something like.
+Speaker 1 | 42:32
+A social media.
+Speaker 3 | 42:33
+Yeah.
+Speaker 4 | 42:35
+Like, where you see the flags of your friends, it is kind of like the flag history. But instead of having it on your profile, you see it from everyone that you are friends with on this one page, and it's just a collective, a chronological collective essentially.
+Speaker 3 | 42:56
+Why?
+Speaker 2 | 42:58
+You don't do anything in the backend except Quernia. You are so hell bound on getting your own models, your own repliit. Yeah, like eventually like the previous one was like perfect on own models, on repository, on controller, maybe services. This one is really cool, it's like a cool.
+Speaker 4 | 43:17
+ID so comments with the history is in your opinion a better.
+Speaker 2 | 43:25
+Whole package? Yeah, because you have to. It's not a better whole package, but it fits more what you want. You wanted to be able to work on the backend? Yeah, exactly. And you can do this only from these two with the first one, not with the letter.
+Speaker 1 | 43:45
+Alright.
+Speaker 2 | 43:51
+Back to the camp member board, a new feature as a user I want to write comments on the flag. Okay, but yeah, rating comments I think. Comment or writing a good question actually. Comment or writing? What do you want to do? Stars and it's not a we review place.
+Yeah, then only review Yes.
+Speaker 3 | 44:35
+If you don't smile on what?
+Speaker 2 | 44:43
+My friend? It takes a long time till we get there. We still have to make planning tasks and then we have to make planning tasks for the task. It does make sense. It's literally mandatory that we sit here, you go through the task with everyone, say what task you're going to do and how you write them.
+Speaker 3 | 45:04
+I mean, let's agree. For example, on the Fisher planning, then basically the developer's device splits this call this estimation of points equally to the... I mean, not equally, just rationally with all the tasks that.
+Speaker 4 | 45:37
+Was it your own fla.
+Speaker 2 | 45:42
+Only your own fla.
+Speaker 1 | 45:46
+If you haven't been there.
+Speaker 4 | 45:49
+So I don't do that then when the Slack is set, but then later on the profile page or where do I do this?
+Speaker 1 | 46:02
+For example, in the profile page, like with the flags that you have, you can give them some comment or rate them.
+Speaker 4 | 46:12
+I'm just trying to make sure that I understand what you guys expect now from this. Just so I don't do something and then you guys are confused.
+Speaker 2 | 46:24
+I want you to build to extend the backend to include review, which has stars and a text. Yeah.
+Speaker 4 | 46:35
+That much I got.
+Speaker 2 | 46:36
+But then over the profile, you can go to previous items that are visualized as the.
+Speaker 1 | 46:43
+The fla, yeah.
+Speaker 2 | 46:45
+The flags. You can click on them and write a review. That's what I expect from you. And then later, I expect from Leonardo that he incorporates this in the next sprint or whatever in the friends profile page. This is what I expect.
+And again, coming back to the sprint planning, where we make the features, we agree on the story points, we split them into tasks, not individually as a group, and then we spread on.
+Speaker 5 | 47:19
+Why do we do the task? All of a sudden together when.
+Speaker 2 | 47:25
+Because we now follow the ED principle, my friend, Yes.
+Speaker 3 | 47:30
+Individual and like I don't think that for example.
+Speaker 2 | 47:39
+The whole point is that tasks and story points are a shared commitment if you catch it. But then why do we do sprint planning anyways?
+Speaker 5 | 47:51
+The features are most important because I want to know what everyone else is doing and how long it's going to take. But one of my adapts, for example, was okay, create API endpoints. Why would Leonardo care? The whole long...
+That's one-third of my features.
+Speaker 2 | 48:08
+Okay, you have a feature. God, that's a good man. You have a feature, I call it F-feature. It has story points, and you break the story points apart in tasks. That's the whole reason you say features are made public. Yes, but if...
+But tasks are the feature.
+Speaker 3 | 48:37
+Yeah.
+Speaker 2 | 48:38
+Then we should share it. It's literally Agile manifesto stuff. Either we say we do Agile the complete way or we don't do it.
+Speaker 3 | 48:54
+Okay, let's not. Yeah.
+Speaker 2 | 49:01
+Planning poker, right? Okay, now make tasks out of this. You have 13 points.
+Speaker 5 | 49:11
+So.
+Speaker 3 | 49:12
+Okay, let's make tasks. The first be like camera implementation and making photos. Let's say camera capture the camera and to basically make a photo. That's gonna be like a single task. Microphones. Just got to be a single to...
+W by 64mi...
+Converto the b.
+Speaker 1 | 50:07
+Yeah.
+Speaker 3 | 50:26
+And, I mean, on display. I mean, I don't for now, I don't have any ideas on where we can display the photo. Like, maybe.
+Speaker 5 | 50:37
+Maybe.
+Speaker 3 | 50:38
+That's the Slack icon.
+Speaker 5 | 50:41
+Okay, I will come up with something.
+Speaker 3 | 50:43
+So let's just have it there.
+Speaker 2 | 50:46
+Okay? Now we have to, you know, you have to send the ST ones to it.
+Speaker 1 | 50:51
+Yes, so it's a total of thirteen, so this should add up to thirteen.
+Speaker 3 | 50:54
+Yes.
+Speaker 5 | 50:57
+Is it from BY? Okay, can you just do like three five.
+Speaker 2 | 51:01
+So you can make it to what you want. FLA is only for the total.
+Speaker 3 | 51:05
+Display will be two. Display will be two.
+Speaker 1 | 51:10
+We display the phone, display the photing bit.
+Speaker 4 | 51:15
+So.
+Speaker 3 | 51:18
+Then camera will be four and the rest will be zero. You're writing a best score.
+Speaker 1 | 51:46
+Okay, so we have four, eight, to CAO seven. Okay.
+Speaker 3 | 52:05
+The next task.
+Speaker 1 | 52:08
+Is that the feature for I want to? So do we need this like pocket thing?
+Speaker 2 | 52:17
+I mean the same link last time. I hope that this still works.
+Speaker 1 | 52:26
+But to make a comment, it seems like, yeah, now we all get depressed all of a sudden. Yeah, but that's unfortunately, that's the part of the teamwork. It's just the coding itself is the easiest part, but organizing how we all work.
+Speaker 3 | 52:41
+And I mean, if you can profit to rigs like five five days, I can. We could find we could spend two days for this, but we have four sessions. So that's why I'm.
+Speaker 5 | 53:01
+The other links, because now we have two links channel. Yeah.
+Speaker 2 | 53:06
+You poked on the latter one. Okay, which feature.
+Speaker 1 | 53:15
+Reference profile.
+Speaker 3 | 53:24
+Is it about France? Is it maybe it should be good particular.
+Speaker 2 | 53:31
+A good point. I mean, you could make it for both, but then one is... It's already added and one where it's not added, you know.
+Speaker 1 | 53:54
+So we can combine them both. I want to see other people talk about.
+Speaker 2 | 53:58
+Yeah, I want to see other people's profile.
+Speaker 5 | 54:06
+Because that doesn't just make the use case. I want to view my friends' flags more difficult because now we can view... Because then if it was only France, we could view it easily. You can easily link it.
+But now we because we can view others, we have to filter that to only show the friends reviews. I mean, we can check if the.
+Speaker 3 | 54:30
+Users are friends and if they are being display.
+Speaker 1 | 54:43
+Then the question is other user profile or just personal profile?
+Speaker 3 | 54:48
+I mean, I do user profile, yeah.
+Speaker 1 | 54:57
+To see other users' profiles because it was just your brass profile but now changed to other users. I'll do a.
+Speaker 4 | 55:07
+On what page? On the front page.
+Speaker 1 | 55:15
+For example, you view other users now. But you cannot click on them. Yeah, but now you could click on them and see the profile for and then you could add them as friends on the...
+Yeah.
+Speaker 2 | 55:30
+Have to join the this code.
+It's a previous link we used last time.
+Speaker 3 | 56:01
+Agree on.
+Speaker 2 | 56:05
+You have to vote.
+For you.
+Speaker 5 | 56:26
+Maybe I just overestimated the topic a mo.
+Speaker 4 | 56:28
+Bit because if I know you need like.
+Speaker 5 | 56:30
+The entire branch page you need.
+Speaker 3 | 56:32
+To create a new page.
+Speaker 5 | 56:33
+Need to link it. Probably like update something with the database because some have to link those two together and I don't think there's a current connection for those.
+Speaker 3 | 56:46
+Yeah, I would say that you just need only one. So I would say that if you have all the data and we take at least two endpoints, like for the user endpoint, like to take the user ID and then use the username or whatever, and then we'll just display it.
+Yeah, I mean.
+Speaker 4 | 57:13
+It's pressing being able to press on a user in the search, right?
+Speaker 1 | 57:23
+Yeah, so if we search for a user, we can click on him, and then we go to this profile. I'm like this.
+Speaker 4 | 57:29
+Yeah, that's how I understand it.
+Speaker 2 | 57:32
+I chose 8 because I think it's inherently not complex.
+Speaker 5 | 57:38
+But is profile? Yeah, I thought it was like with the reviews, let's do this second.
+Speaker 2 | 58:06
+Okay, then, 8. And I think it's hard to because you have like the follow and then, that you when you click on it that it updates that it displays the right thing. The mechanics behind this.
+I think there's the big part.
+Speaker 5 | 58:25
+No class. If we just do the planning poker first and then do the TAS.
+Speaker 2 | 58:37
+Yeah, now we're gonna do the tasks now, but we added it right now, so we'll weed it right now. Okay, what are the tasks? You mind? But we can do planning poker. Do you want to finish planning poker and then do the task of playing each.
+Speaker 5 | 58:56
+Features it so feature planning tas.
+Speaker 1 | 59:02
+Then I need to yeah I would need the profile but I'm not concerned the profile right how it's like public reviews. So when I go to other profile pages, does that imply that I need to be able to make the profile? How will it apply or just to go to it?
+Because I'm thinking like the Tusk way.
+Speaker 2 | 59:30
+We have two different views. It's like, I when I'm on my Instagram homepage, this is like my profile, where I can edit the user, and your profile is when I go on your account, for example.
+Speaker 1 | 59:43
+Yeah, so but the question is, do I make how it looks like publicly or not? Or is it someone else's test? Like your test. So I click on the user here. I go to his profile. What I will see, I will do, or someone else.
+Speaker 4 | 59:56
+Yeah, I think essentially you should just reuse what Rene is going to do anyway, because this is he's going to do the public view of the profile, right? Yes, and that is, in the end, the thing that you should be able to view. Then if you press on someone else.
+Speaker 2 | 01:00:18
+But it's gonna modify it. But it's like a same base, like we both have a profile picture, a username in bio and the map. But I have like this, you know, with the settings.
+Speaker 1 | 01:00:37
+Yeah, but this is not my question. But the question is. So this thing what we will see, who will do it, me or someone else? That's the question. Okay, so that I don't have it as a test like build how the profile will be seen.
+Yeah, that was the question.
+Speaker 4 | 01:00:53
+Yeah, I think you still didn't get it.
+Speaker 2 | 01:00:56
+No.
+Speaker 1 | 01:00:56
+Because I get the difference between a profile, which is like this thing who will do the look, Rene programming. We'll see the profiles in general. So then I can redirect.
+Speaker 4 | 01:01:06
+Here a person, right? And I just say profile. Then I get this zero, right? Yeah. You're supposed to build this. You're supposed to build the profile because you're creating the profile, the display of how you want to present yourself to the world.
+Yeah, to the world. Yeah, and but I... Yeah, but that's more like a lock-in thing because the system should recognize that this is your account, right? Yeah, and you can edit these things, but when someone else from outside looks at this profile, then I just... That person should only see the presentation and not be able to edit it.
+Yeah, I cannot edit this. This is set up by that person.
+Speaker 1 | 01:01:59
+Yeah, this thing. So who does that? If I do that, I need to put it as a test. If I don't do that, I must read the red. Okay.
+Speaker 2 | 01:02:13
+But we have to do it together then anyway.
+Speaker 3 | 01:02:15
+Kind of.
+Speaker 2 | 01:02:16
+Yeah, because I have to program it if it's me. You have to program if it's someone else's problem.
+Speaker 1 | 01:02:24
+You mean like checking for the ping or.
+Speaker 2 | 01:02:27
+Yeah, like a basically who am I? Like, who?
+Speaker 1 | 01:02:31
+Yeah, but I like you.
+Speaker 2 | 01:02:34
+Yeah.
+Speaker 1 | 01:02:35
+But then... Yeah. My question is like when you find the prints and you click on this public view of a profile.
+Speaker 2 | 01:02:43
+It is almost the same as this. We can program it together and it's just like a really complex page where we say, "This happens when someone else is looking at it, and this happens when I look at it." Or you can just make it your own view, but it's almost the same.
+Speaker 1 | 01:03:01
+Yeah, because then I would just... It sounds like there is only one task. We just like redirect based on the user's ID into his profile.
+Speaker 2 | 01:03:11
+No. That's the whole point. So do we both agree that we're going to use one page but make a system in it that says if it's me who accesses my page, we have the profile view? Or is it the outside or is it the insider? Do we use two pages? Like you make your own page which all looks the same.
+It's like UI-wise almost the same.
+Speaker 4 | 01:03:41
+But just cannot.
+Speaker 2 | 01:03:45
+Yeah, and you will have a follow-up button here or something like that for us.
+Speaker 1 | 01:03:53
+For us. You see, he is.
+Speaker 3 | 01:03:54
+Yeah, he rolled the.
+Speaker 1 | 01:03:56
+He roll.
+Speaker 3 | 01:03:57
+Yeah.
+Speaker 2 | 01:04:04
+I was ignoring the emails because of all the ago.
+Speaker 4 | 01:04:10
+No, yeah, where are you?
+Speaker 2 | 01:04:18
+So are you. So do you want to work with me on one page? Or do you want to work with me or do you want to work distinct from me on like, a distinct page?
+Speaker 1 | 01:04:29
+Maybe it will be just easier to switch.
+Speaker 2 | 01:04:32
+Okay. Then you have to do the UI. Sorry.
+Speaker 1 | 01:04:36
+You're saying, okay, so then, to make the public view of a profile, how it will look like publicly, not without editing. Yeah, okay.
+Speaker 2 | 01:04:52
+And the maker follow functionality is really important.
+Speaker 1 | 01:04:55
+Yes.
+Speaker 3 | 01:04:56
+But or.
+Speaker 1 | 01:04:57
+At or follow specifically because we don't have that follow... maybe it's easier just to send a request as a pre-mode because that's what... yeah, that answered... which one are we.
+Speaker 3 | 01:05:26
+Gyms, are you?
+Speaker 1 | 01:05:28
+You can...
+We are in.
+Speaker 4 | 01:05:36
+1931 .93.
+Speaker 2 | 01:05:46
+So you make a basic public UI and then you have to make a follow functionality or make a difference between... Do you follow already or do you not follow already?
+Speaker 1 | 01:05:59
+This is electro.
+Speaker 4 | 01:06:00
+Yeah I guess so. I have a lecture room.
+Speaker 1 | 01:06:11
+So I like to send a friend request. Is that final? We need?
+Speaker 2 | 01:06:16
+Yeah, but this is a friend request. It is our own feature.
+Speaker 1 | 01:06:20
+Yeah, different like different task.
+Speaker 2 | 01:06:23
+The different task has so.
+Speaker 4 | 01:06:24
+So sorry. Yes.
+Speaker 2 | 01:06:29
+Okay, then I will pause.
+Speaker 1 | 01:06:35
+Okay, so make the public single program.
+Speaker 2 | 01:06:42
+I read the event cross.
+Speaker 1 | 01:06:55
+Go is not too informative. Okay, so make the public profile. Okay, that's your... He uses the... Okay, so that's when viewing profile being able to add a friend. I know a friend... Yeah, request friendship. Do you want to be my friend? Was that...? That's and then what I think you're just accessing like the profile from now.
+Speaker 2 | 01:07:52
+Yeah, Navigation.
+Speaker 1 | 01:08:04
+I just... [Laughter].
+Speaker 4 | 01:08:10
+Is he coming?
+Speaker 2 | 01:08:14
+Yes, it is.
+Speaker 3 | 01:08:16
+So you can navigate.
+Speaker 2 | 01:26:19
+Endin of the meeting. Okay, please go back to the "yes, no, maybe.
+Speaker 3 | 01:26:31
+Okay.
+Speaker 1 | 01:26:36
+Great. So three tasks.
+Speaker 2 | 01:26:38
+Yeah, and you wanted to.
+Speaker 1 | 01:26:40
+Yeah, I think that's it. It's three deals.
+Speaker 2 | 01:26:42
+You divided the Fs. No.
+Speaker 1 | 01:26:45
+I think this 156116.
+As the user want to edit my profile public.
+Speaker 2 | 01:27:27
+So as my profile page is the feature profile page, sir.
+Speaker 1 | 01:27:38
+Well with than just that. No.
+Speaker 2 | 01:27:44
+I want to see my profile black as a user.
+Speaker 4 | 01:27:56
+Want to.
+Speaker 5 | 01:27:57
+And change.
+Speaker 3 | 01:27:57
+Public information.
+Speaker 2 | 01:28:20
+Okay. I was mainly.
+Speaker 4 | 01:28:21
+Thinking because the essential a whole new things too. So, I mean, there's somewhat, like the old stuff, like showing n and stuff and the picture. But I was thinking he needs to create the page essentially again from scratch, and he needs to make it so he can edit it when he's locked in.
+So I don't know, that was my main problem.
+Speaker 3 | 01:28:59
+So if it I mean if [Laughter] it doesn't I mean if you display the flag, that's gonna be az 5 or even 3. So number is based on.
+Speaker 4 | 01:29:14
+The would honestly say put rather a list of the facts instead of the maps. Yeah.
+Speaker 2 | 01:29:20
+Do it okay.
+Speaker 4 | 01:29:23
+Like you have the.
+Speaker 2 | 01:29:24
+But still a lot okay, so difficult. Yeah, but the question. Before I continue, the question is.
+Speaker 3 | 01:29:46
+Okay. Okay, tasks.
+Speaker 2 | 01:30:00
+The first TA is, create all the first TA is create the u the number. No, I'm not sure I know that cra do I?
+Speaker 5 | 01:30:16
+I will do planning to.
+Speaker 3 | 01:30:24
+You know, you would select, like 40 points. And then.
+Speaker 2 | 01:30:28
+With this list of flags like.
+Speaker 3 | 01:30:30
+You know the task like.
+A checkbox.
+Speaker 2 | 01:30:42
+Read update sorry.
+Speaker 3 | 01:30:44
+Read update this 14 one screen did you not do 14 three screen size.
+Speaker 2 | 01:31:02
+I have eight points. 4 for UI.
+One for list of flags to and free for rid of that and have a checking in existing if you go back checking for the existing email in the backend, make it zero.
+Speaker 1 | 01:31:39
+From new one.
+Speaker 3 | 01:31:42
+Zero.
+Speaker 2 | 01:31:44
+I mean, it depends on how I go about it and I make it unique in the background. Or if I do an extra check in the register or something like this spe.
+Speaker 3 | 01:32:00
+Okay.
+Speaker 4 | 01:32:09
+Yeah, enough, please close.
+Speaker 2 | 01:32:21
+I was in Eethoven yesterday, right? Though it was really nice. I think I'm gonna go first. Because I had a questioner marker. Because I don't really have an idea of how we imagine a spe, is it the only thing in the back and is like I don't really have something in mind about
+know.
+Speaker 5 | 01:32:50
+It's a daily thing. You got, like, either the SPO or, like, in the back screen. You could go to this page and you got, like, these three. I want to make it, like, randomize the challenges. And then you could, like, do these and you could, like, shave them, like in your bash.
+Speaker 2 | 01:33:07
+So, there's like a in the back, and there are, like, eighty questions. No, just stupid. Now, 80 challenges. And then you query for them, and then every day randomly select new ones.
+Speaker 5 | 01:33:22
+You have three choices, and then you can select one, and every 24 hours and recess, you can do a new one. So this is like either I go to these places like this among the flags, or you get a flag after like PM or something.
+Speaker 2 | 01:33:38
+Okay, start new.
+Speaker 3 | 01:33:50
+Is someone's taking the.
+Speaker 2 | 01:33:53
+Inspir.
+Is twenty because, I don't know how many, you want to have in the backend already existing and I know that's going to take some time. Then, retrieving them and randomizing it and then checking that you don't take the similar one that you check that you all that the user, one that the user didn't already, you know, checkmarked. Or we can actually do this with a checkmark or something.
+But the checking this out is like a filter on filter. So I'll choose a high number, but I think 13 would be enough if you want to change more.
+Speaker 1 | 01:34:48
+Because they need to personalize them. Because it says like, visit the factory, but you don't have a factory nearby.
+Speaker 5 | 01:34:53
+How will you do now? But that like I kind of agree with the you know like that this is how al go do go to a factory or building. Choose it yourself. I guess we do the same thing with Pomongo. Like then said sometimes we had like only the best popmon, like the air populated begs or something.
+Because I if I needed to add, like, personalization.
+Speaker 1 | 01:35:17
+Yeah, that's like the personalization qualifications, but mainly like, if you don't make any flags, you'll get not.
+Speaker 2 | 01:35:31
+Yeah, but we like if we have this, it's like a hundred, you know, because someone has to update them. We have to have an algorithm that creates flags. And that's sort of... [Laughter].
+Speaker 5 | 01:35:43
+Probably like come up with the challenges like actually like, which ones you could get.
+Speaker 3 | 01:35:49
+Like that's like zero.
+Speaker 5 | 01:35:50
+One. Yeah, like it's a small one. It's basically.
+Speaker 3 | 01:35:53
+Just like, say, zero and.
+Speaker 1 | 01:35:55
+Didn't do all. Do this creative work and didn't do one. We can put them later. One okay task, probably like count. Does the user want to expect, accept special challenge.
+Speaker 2 | 01:36:26
+You like the querying and checking that it's not already. Don't forget. And don't forget when you start a task, you have to write the description for the task, right? Normally we would do it now, but we'll start with that next sprint because I feel like normally we'd know, explain... We would know what the description for the task could save to say, "Okay, these other steps I have in my mind like for the code review in the end you know that you can check."
+Okay, that's what I had intended, and this is the outcome.
+Speaker 5 | 01:37:08
+Like.
+Speaker 3 | 01:37:09
+Yeah, it's really yeah.
+Speaker 2 | 01:37:11
+Like, check out. For now, we do it individually, but next time we do it all in a group.
+Yeah.
+Speaker 4 | 01:37:24
+Because the description is so... You explain.
+Speaker 2 | 01:37:27
+So yeah, what's going on?
+Speaker 3 | 01:37:29
+Okay, I would say that we can... In order to have less tasks, less created items, we can create tasks like front-end and domain plus data players. Then the description we describe what must be done in front-end and what must.
+Speaker 1 | 01:37:50
+Okay.
+Speaker 2 | 01:37:51
+We have you have 13 points.
+Speaker 5 | 01:38:04
+Are we allowed to say, like, "I have this thing I mean to do, but it isn't a task?" Are we allowed to add a task, and then here hang the point?
+Speaker 2 | 01:38:13
+Yeah, okay.
+Speaker 5 | 01:38:14
+But as long as it just stays now.
+Speaker 2 | 01:38:16
+You can extend it.
+Speaker 5 | 01:38:18
+So if you forget, like, "Shit, I need to do that.
+Speaker 4 | 01:38:23
+We increase the estimation points. Yeah.
+Speaker 2 | 01:38:28
+And the best case, you would figure that out. We would do this in the next print, planning that she says, "Okay, I didn't do it, so I have to extend." Basically, she finished all these, but she didn't finish the feature because she has to extend it.
+Okay.
+Speaker 1 | 01:38:45
+The trial now at once. So someone used to createz.
+Speaker 2 | 01:38:55
+Wait. I will send the link. Discord.
+It was.
+Speaker 5 | 01:39:23
+For me, but this is like it would either be as like three story.
+Speaker 2 | 01:39:30
+Total's fine because it's like their own feature. Okay, as a user, I want to pin and or it's like.
+Speaker 5 | 01:39:39
+Botht priority on the match. It gets binned above like at the.
+Speaker 2 | 01:39:47
+Okay, so it's end then, we've pin.
+My God, can you imagine how great this sprint panning will be for our portfolio? We are okay.
+Speaker 1 | 01:40:18
+So that's the question, but.
+Speaker 5 | 01:40:26
+I don't know, I close that.
+Speaker 3 | 01:40:30
+Okay.
+Speaker 2 | 01:40:48
+Then, please override it.
+Speaker 3 | 01:40:54
+I would say we don't even need to specify the task for this one because it's so small. We just write the strip channels. So that's it?
+Speaker 5 | 01:41:00
+Yeah. The only task I could come up with was like a live lifetime dating of the screen.
+Speaker 2 | 01:41:09
+Now, there are several tasks. You have to click on the badge. So you have to your IV for the badge where you can set priority. I don't know if there are different levels to priority because if there are different levels, then you have to have a filter that sorts them on top.
+That's why I chose 5. Like if it is just it has power to it doesn't, then it's free. But if it has different levels of priority, it's like you have to have a filter, which, of course, is not that hard.
+But it takes... But it's not easy either. It's like you have to.
+Speaker 5 | 01:41:48
+Yeah.
+Speaker 2 | 01:41:53
+That's the whole point. Do we... This on you... Do you want to have a different... Super important now and then, maybe a check for later?
+Speaker 5 | 01:42:06
+It would be like a little more difficult.
+Speaker 2 | 01:42:08
+But I chose my friend.
+Speaker 3 | 01:42:17
+Okay, so.
+Speaker 4 | 01:42:21
+I am.
+Speaker 5 | 01:42:21
+Typs filtering [Laughter].
+Speaker 2 | 01:42:31
+Or adding... gatwork.
+Speaker 5 | 01:42:32
+Adds moo shit. I do shifs like add like.
+Speaker 2 | 01:42:40
+Levels could be you, but you said you want to filter them on top. That's what my first study was like. So you have a list, but you can make later and then the rest.
+Speaker 5 | 01:42:50
+I think the is like.
+Speaker 2 | 01:42:53
+It's on you. But both for me, it's five points like both of you have to.
+Speaker 5 | 01:42:57
+Buildk would this be like a range of badges or challenges in proper order.
+Speaker 2 | 01:43:07
+No, let's go for it step by step. I have the badges page open. What is the first task I need to do in order to pin them? Click on the badge and make a UID or somewhere where I can set this. You just.
+Speaker 3 | 01:43:22
+Yeah.
+Speaker 5 | 01:43:25
+Over if I if we do it like this, like o separately, like you front end, which should we do? Like, just like do front end and then, like, the surf task will be like at the button, blah.
+Speaker 2 | 01:43:39
+Yeah, but then don't forget to write it down in the description what you need to do step by step. Okay. And then.
+Speaker 1 | 01:43:49
+Okay.
+Speaker 2 | 01:43:51
+I'll just make it front then. Then you can overlook it. Fund end.
+Speaker 3 | 01:44:04
+One.
+Speaker 2 | 01:44:05
+And then arranging the algorithm.
+Speaker 3 | 01:44:08
+Arrangement.
+Speaker 5 | 01:44:11
+Arrangement of batches. Man, I already knew we I wanted to.
+Speaker 2 | 01:44:17
+Hey, I'm sorry that I'm not like the webe killer for person. I know, but if that's open. The four tests are for this therefore for goo.
+Speaker 1 | 01:44:38
+Work for.
+Speaker 5 | 01:44:44
+Yeah because all that will probably be more work than any other like algorithms.
+Speaker 2 | 01:44:57
+So with a great Glaser.
+Speaker 5 | 01:45:03
+We didn't add a priority to chiefs use case or feature.
+Speaker 3 | 01:45:07
+Okay, let's discuss this.
+Speaker 1 | 01:45:12
+Yeah.
+Speaker 5 | 01:45:12
+We could you maybe do like the special challenges? Could we make a priority zero because otherwise I would just be constituent we wanted. I don't want me to miss but how you kill me [Laughter].
+Speaker 2 | 01:45:30
+Okay, now we come to.
+Speaker 3 | 01:45:38
+Yeah.
+Speaker 2 | 01:45:39
+Who says this?
+Settings account settings like. No, but we just have to put it online. Yeah, like yeah.
+Speaker 3 | 01:46:02
+Okay, let's okay, we'll wait we'll and then we'll discuss this stuff. CA.
+Speaker 2 | 01:46:07
+This week I know.
+Speaker 1 | 01:46:10
+Three but they said just give me use this too.
+Speaker 5 | 01:46:14
+And this show stupid. No just give my implement the added feature where you can add badges, add users at friends. Just everything in one. Make it like 100. Do it like this.
+Speaker 1 | 01:46:27
+I mean, you're joking. [Laughter].
+Speaker 5 | 01:46:32
+Like say someone doesn't have enough user points. This is like my last hurrah. You can just add the users as admins, and admins can do everything like.
+Speaker 2 | 01:46:44
+I want to edit my.
+Speaker 4 | 01:46:46
+ADM thing I can do in the future in.
+Speaker 2 | 01:46:50
+SE account setting.
+Speaker 1 | 01:46:52
+I so how do I does the user wants to edit my profile.
+Speaker 4 | 01:46:56
+Private information?
+Speaker 2 | 01:46:57
+How do you know? Save account settings.
+Speaker 5 | 01:47:02
+But how do we do the story lines of that?
+Speaker 2 | 01:47:05
+Because Metham.
+Speaker 5 | 01:47:06
+Isn't here.
+Speaker 3 | 01:47:07
+Yeah.
+Speaker 5 | 01:47:14
+We just do the talk without.
+Speaker 2 | 01:47:17
+ID.
+Speaker 3 | 01:47:23
+Okay let's get down to this poker.
+Speaker 2 | 01:47:24
+And now you're.
+Speaker 1 | 01:47:31
+As a user want to redw my flexs.
+Speaker 2 | 01:47:33
+Yes my God I'm not hungry as well. What is this is it cheese?
+Okay, guys. As a user, I want to review flags. My flags, my Slack. Williams, as no we on the right of session now you're not anymore gave, but the very next day you gave it away. Then you can put question mark.
+Don' but we need a review as an extension.
+Yeah, I was a little bit torn between thirty and twenty, but it's like a one backend model that is, connected to all the existing ones. So you have to check for this.
+Speaker 4 | 01:48:56
+Honestly, the way I envisioned this was more like.
+Speaker 1 | 01:49:01
+Like in complexity at least.
+Speaker 4 | 01:49:04
+Like would be like the bio part of the profile page, but just for comments. And then we added some.
+Speaker 2 | 01:49:11
+No, but this would... We have to check that. How's it called? Normal forms? Like, because it's not only a bio, but it's a star rating. And you can separate these two from the other one if we follow normal forms.
+We all know normal folks, right?
+Speaker 4 | 01:49:38
+No I do. In databases. Yeah, all right. Alright, we know those.
+Speaker 2 | 01:49:49
+And if we follow these, we have to separate. V view from flags.
+Speaker 1 | 01:49:56
+Will will be overloding.
+Speaker 2 | 01:50:02
+So my head because we have to do this and then you have to just display it in a big simple query operation. But you have to create our own view for this. And that's like the only thing where.
+Speaker 4 | 01:50:14
+And on view, I mean, isn't it just part of a composable?
+Speaker 2 | 01:50:19
+Yeah, but it's a.
+Speaker 1 | 01:50:20
+You'll take into account that maybe for some part it would be more efficient to use the existing ones and overlook. Yeah, for the fla.
+Speaker 3 | 01:50:28
+But in terms of normalization, this one.
+Speaker 1 | 01:50:31
+Yeah, well the thing is not to make it more effective, but to get to achieve some backend interaction.
+Speaker 3 | 01:50:37
+Yeah, that's okay, but just don't destroy my.
+Speaker 1 | 01:50:41
+Exactly we won't destroy because they'll be creating separate models for it because otherwise it would be more risky. With you, if it would overload the flex there would be a chance that they could stop working.
+Speaker 3 | 01:51:02
+Yes, I won't be that overloading one because of a strict review and it doesn't really.
+Speaker 2 | 01:51:10
+Our database will survive. We have a okay re doing.
+Speaker 4 | 01:51:18
+Itused now on how exactly I should realize this.
+Speaker 1 | 01:51:26
+But do it the way that gives it the most interaction with the backend.
+Speaker 4 | 01:51:45
+Just [Laughter] I'm just confused at this point, but we can take 20.
+Honestly, I tend towards the Nels impression just because I'm essentially creating a text field that is being stored on the backend. I have to create its own entity for that, right.
+Speaker 3 | 01:52:18
+But I mean, geocoding is not difficult. That's the first.
+Speaker 4 | 01:52:24
+I don't do anything with geocoding, though. Yeah, so that simplifies it even more essentially. So that's why I'm so confused on why it should be so difficult. You know, I do not have the impression that it's worth at 20, maybe a 13 of anything.
+Speaker 2 | 01:52:44
+I make it 13 past backend and JW2. You don't need to store because flags are.
+Speaker 4 | 01:53:02
+I have envisioning problems right now, okay? We're not clear on how we should do this, and I need a clear.
+Speaker 2 | 01:53:11
+We don't need to be clear, you need to be clear.
+Speaker 1 | 01:53:13
+Yeah. Whatever. You see?
+Speaker 2 | 01:53:16
+Like we can just find ideas. It's in the end what you do, but if you don't do it, I will do it for you.
+Speaker 5 | 01:53:21
+No, because you need to pay.
+Speaker 2 | 01:53:22
+The banks from them.
+Speaker 4 | 01:53:27
+You should not do it.
+Speaker 2 | 01:53:29
+I know that's why I told you to do it. Yeah, that's what you.
+Speaker 1 | 01:53:33
+So take the initiative how you want to see it because from what it seems like you want to have backend the proto.
+Speaker 4 | 01:53:41
+Yes, but I'm on to. I mean, if he needs it, I should do a commentary. I do my review of the place that was flagged but should then be people be able to comment on this review or not like.
+Speaker 1 | 01:54:03
+For now make it no.
+Speaker 3 | 01:54:07
+Take the time, and as you are ready, we will discuss this. Yeah.
+Speaker 2 | 01:54:15
+Okay, do we make a short pause? Do we make a short pause or do we don't?
+Speaker 4 | 01:54:18
+Yeah. You want to make?
+Speaker 2 | 01:54:23
+Okay, then let's.
+Speaker 3 | 01:55:52
+Yes.
+Speaker 1 | 01:55:52
+So it...
+If we are to be... Like, don't agree with that, it's necessary to me how you do it that we'll take over it and it'll be done. That and that. Okay.
+Speaker 4 | 02:14:16
+You that and that you're not going to be happy with how I did it.
+Speaker 1 | 02:14:20
+Okay, so let's clarify something. So first of all, this said with what was the first question taking over? Yeah. So whatever you do now will work for us because there are many ways how you can do this feature.
+But as long as the idea works, and the feature of course, the work itself, it's fine if you do it with stars comments if you put it on profile, it doesn't matter. Diana, yeah. So to get like the group confirmation it's... [Laughter] I'm sorry that I didn't have to...
+So do we all care if, like, Ugur... Will we all be against the Ugur feature in some way that he does it or he has the freedom to do the features just to give like the.
+Speaker 2 | 02:15:09
+I'm going to be really honest. For me, we have a definition of done. And the definition of done is that the code is functioning. So meaning when I go there, I don't have star points, whatever.
+And I want to be able to write a review. So I want to grade it and I want to explain my grading. If you catch my drift as long as you do this, do whatever you like.
+Speaker 1 | 02:15:35
+The entire group says that. Yeah, yes. Williams will say yes, I guarantee you that. So you have the freedom of how you want to do it. And since you're interested in doing the backend...
+So that's what you can do, focus on making the models, making the repositories, making the services, and connecting them to the front end. With the idea that you So if you have Dan.
+Speaker 2 | 02:15:59
+Please.
+Speaker 1 | 02:16:02
+Yeah. So if you have like any doubts or questions and stuff like that, then let us know. And now whatever you say goes.
+Speaker 2 | 02:16:12
+This is your feature.
+Speaker 4 | 02:16:13
+And where I put that thing doesn't matter.
+Speaker 1 | 02:16:17
+We'll just put it wherever it fits. That's alright.
+Speaker 4 | 02:16:23
+Sure then I don't have any that confuses me anymore.
+Speaker 1 | 02:16:26
+You sure?
+Speaker 4 | 02:16:28
+I think so. Okay, maybe one thing should I put a comment possibility in that review thing.
+Speaker 2 | 02:16:40
+Like that someone else can commented not yet. That could be in the future but this is purely. I'll comment on my flag this, but this could be a later feature. Yes, yeah, then later feature, and the later feature could be like public private, like, you know, and, with comments and stuff.
+Okay, 13 on cost.
+Speaker 1 | 02:17:15
+Okay. So, do you have an idea of tasks? Or is it hard for you to give tests.
+Speaker 4 | 02:17:24
+I guess. Make the common view essentially the composable for that.
+Speaker 1 | 02:17:30
+So how do I.
+Speaker 4 | 02:17:33
+Creates a review Composable.
+Speaker 3 | 02:17:42
+Yeah.
+Speaker 1 | 02:17:44
+Imposible, sorry. Great.
+Speaker 3 | 02:18:25
+Okay.
+Speaker 1 | 02:18:30
+Probably we can connect them somehow. Front end and back him.
+Speaker 4 | 02:18:37
+Yeah, I guess so, but they call it as comment logic to the front end or review logic.
+Speaker 1 | 02:18:52
+Or review logic. Yeah.
+Okay, anything else on your mind?
+Speaker 4 | 02:19:16
+Then you do free and then FIF 355.
+Speaker 1 | 02:19:19
+Okay, yeah, let me ask you a question. So if right now you would sit behind your laptop and stop coding, for example, do you know what to do?
+This feature wants to integrate with any of our features. It's like an independent thing. So there is no chance that such... I mean.
+Speaker 4 | 02:19:44
+It's independent in the sense that it can work by itself, but you have to integrate it somewhere.
+Speaker 1 | 02:19:50
+Yeah. Not like our features depend on it. Or it's like we have to share the use case. Therefore the probability of someone taking over is zero. Okay, 355.
+Speaker 2 | 02:20:06
+Okay that's start nice. So no so with that the sprint planning is finished. Everyone don't forget if you choose the task da. Yeah, if you choose a task, why are the description before you do it? Yeah, that's it. [Laughter].
+Speaker 1 | 02:20:35
+So do we have done for Earth like a sprint? Yeah, we expect iteration for... Yeah, that's a good sprint house.
+Speaker 2 | 02:20:55
+Okay, I'll finish the meeting. Okay, I was. Put it on Git and I will make notes out of it. Okay. Should I... Yeah, I.
