@@ -356,7 +356,7 @@ fun NotificationSettingsDialog(
                             )
                         ) {
                             Text(
-                                text = "sorry dev 💀",
+                                text = "sorry dev",
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Bold
                             )
@@ -371,7 +371,7 @@ fun NotificationSettingsDialog(
                             )
                         ) {
                             Text(
-                                text = "save dev! 🦸",
+                                text = "save dev!",
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Bold
                             )
