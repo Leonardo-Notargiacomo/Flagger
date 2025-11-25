@@ -41,7 +41,7 @@ fun PermissionDialog(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            shape = RoundedCornerShape(16.dp),
+            shape = RoundedCornerShape(20.dp),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surface
             )
@@ -75,7 +75,7 @@ fun PermissionDialog(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(200.dp),
-                    contentScale = ContentScale.Fit
+                    contentScale = ContentScale.Crop
                 )
 
                 // Message
@@ -90,7 +90,11 @@ fun PermissionDialog(
                 Button(
                     onClick = onConfirm,
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(8.dp)
+                    shape = RoundedCornerShape(999.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.secondary,
+                        contentColor = MaterialTheme.colorScheme.onSecondary
+                    )
                 ) {
                     Text(
                         text = buttonText,
@@ -117,7 +121,7 @@ fun NotificationDeniedDialog(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            shape = RoundedCornerShape(16.dp),
+            shape = RoundedCornerShape(20.dp),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surface
             )
@@ -162,7 +166,7 @@ fun NotificationDeniedDialog(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(200.dp),
-                    contentScale = ContentScale.Fit
+                    contentScale = ContentScale.Crop
                 )
 
                 // Message
@@ -183,21 +187,21 @@ fun NotificationDeniedDialog(
                 // Two buttons: Try Again (primary) and Exit App (destructive)
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     // Exit App button (destructive/secondary)
                     OutlinedButton(
                         onClick = onExitApp,
                         modifier = Modifier.weight(1f),
-                        shape = RoundedCornerShape(8.dp),
+                        shape = RoundedCornerShape(999.dp),
                         colors = ButtonDefaults.outlinedButtonColors(
-                            contentColor = MaterialTheme.colorScheme.error
+                            contentColor = MaterialTheme.colorScheme.onSurface
                         )
                     ) {
                         Text(
-                            text = "exit app 😔",
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Bold
+                            text = "exit app",
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.SemiBold
                         )
                     }
 
@@ -205,11 +209,15 @@ fun NotificationDeniedDialog(
                     Button(
                         onClick = onTryAgain,
                         modifier = Modifier.weight(1f),
-                        shape = RoundedCornerShape(8.dp)
+                        shape = RoundedCornerShape(999.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.secondary,
+                            contentColor = MaterialTheme.colorScheme.onSecondary
+                        )
                     ) {
                         Text(
-                            text = "try again 🙏",
-                            fontSize = 14.sp,
+                            text = "try again",
+                            fontSize = 13.sp,
                             fontWeight = FontWeight.Bold
                         )
                     }
@@ -237,7 +245,7 @@ fun NotificationSettingsDialog(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            shape = RoundedCornerShape(16.dp),
+            shape = RoundedCornerShape(20.dp),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surface
             )
@@ -271,7 +279,7 @@ fun NotificationSettingsDialog(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(200.dp),
-                        contentScale = ContentScale.Fit
+                        contentScale = ContentScale.Crop
                     )
 
                     Text(
@@ -283,29 +291,30 @@ fun NotificationSettingsDialog(
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         OutlinedButton(
                             onClick = onExitApp,
                             modifier = Modifier.weight(1f),
-                            shape = RoundedCornerShape(8.dp),
+                            shape = RoundedCornerShape(999.dp),
                             colors = ButtonDefaults.outlinedButtonColors(
-                                contentColor = Color(0xFF2196F3)
+                                contentColor = MaterialTheme.colorScheme.onSurface
                             )
                         ) {
                             Text(
                                 text = "🔵 blue pill",
                                 fontSize = 13.sp,
-                                fontWeight = FontWeight.Bold
+                                fontWeight = FontWeight.SemiBold
                             )
                         }
 
                         Button(
                             onClick = onOpenSettings,
                             modifier = Modifier.weight(1f),
-                            shape = RoundedCornerShape(8.dp),
+                            shape = RoundedCornerShape(999.dp),
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = Color(0xFFE53935)
+                                containerColor = MaterialTheme.colorScheme.secondary,
+                                contentColor = MaterialTheme.colorScheme.onSecondary
                             )
                         ) {
                             Text(
@@ -318,7 +327,7 @@ fun NotificationSettingsDialog(
                 } else {
                     // DEVELOPER KIDNAP THEME
                     Text(
-                        text = "🆘DEVELOPER IN DANGER",
+                        text = "⚠️ BREAKING NEWS ⚠️",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Center,
@@ -332,12 +341,12 @@ fun NotificationSettingsDialog(
                         contentDescription = "Developer in danger",
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(200.dp),
+                            .height(280.dp),
                         contentScale = ContentScale.Fit
                     )
 
                     Text(
-                        text = "⚠️ BREAKING NEWS ⚠️\n\nour developer is being held hostage by the project manager in the server room 😱\n\nthey said if you don't enable notifications:\n\n🔒 the dev stays locked in (not focused, but actually locked in)\n☕ no more coffee breaks\n💀 forced to use Edge (Internet Explorer)\n\nyou have the power to save him...\n\nwhat will you do? 🥺",
+                        text = "our developer is being held hostage by the project manager 😱\n\nif you don't enable notifications:\n\n🔒 the dev stays locked in (not focused, but actually locked in)\n☕ no more coffee breaks\n💀 forced to use Edge (Internet Explorer)\n\nyou have the power to save him...\n\nwhat will you do? 🥺",
                         fontSize = 14.sp,
                         textAlign = TextAlign.Start,
                         lineHeight = 20.sp
@@ -345,29 +354,30 @@ fun NotificationSettingsDialog(
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         OutlinedButton(
                             onClick = onExitApp,
                             modifier = Modifier.weight(1f),
-                            shape = RoundedCornerShape(8.dp),
+                            shape = RoundedCornerShape(999.dp),
                             colors = ButtonDefaults.outlinedButtonColors(
-                                contentColor = MaterialTheme.colorScheme.error
+                                contentColor = MaterialTheme.colorScheme.onSurface
                             )
                         ) {
                             Text(
                                 text = "sorry dev",
                                 fontSize = 12.sp,
-                                fontWeight = FontWeight.Bold
+                                fontWeight = FontWeight.SemiBold
                             )
                         }
 
                         Button(
                             onClick = onOpenSettings,
                             modifier = Modifier.weight(1f),
-                            shape = RoundedCornerShape(8.dp),
+                            shape = RoundedCornerShape(999.dp),
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = Color(0xFF4CAF50)
+                                containerColor = MaterialTheme.colorScheme.secondary,
+                                contentColor = MaterialTheme.colorScheme.onSecondary
                             )
                         ) {
                             Text(
@@ -397,7 +407,7 @@ fun LocationDeniedDialog(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            shape = RoundedCornerShape(16.dp),
+            shape = RoundedCornerShape(20.dp),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surface
             )
@@ -442,7 +452,7 @@ fun LocationDeniedDialog(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(200.dp),
-                    contentScale = ContentScale.Fit
+                    contentScale = ContentScale.Crop
                 )
 
                 // Message
@@ -463,21 +473,21 @@ fun LocationDeniedDialog(
                 // Two buttons: Try Again (primary) and Exit App (destructive)
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     // Exit App button (destructive/secondary)
                     OutlinedButton(
                         onClick = onExitApp,
                         modifier = Modifier.weight(1f),
-                        shape = RoundedCornerShape(8.dp),
+                        shape = RoundedCornerShape(999.dp),
                         colors = ButtonDefaults.outlinedButtonColors(
-                            contentColor = MaterialTheme.colorScheme.error
+                            contentColor = MaterialTheme.colorScheme.onSurface
                         )
                     ) {
                         Text(
                             text = "exit app",
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Bold
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.SemiBold
                         )
                     }
 
@@ -485,11 +495,15 @@ fun LocationDeniedDialog(
                     Button(
                         onClick = onTryAgain,
                         modifier = Modifier.weight(1f),
-                        shape = RoundedCornerShape(8.dp)
+                        shape = RoundedCornerShape(999.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.secondary,
+                            contentColor = MaterialTheme.colorScheme.onSecondary
+                        )
                     ) {
                         Text(
                             text = "try again",
-                            fontSize = 14.sp,
+                            fontSize = 13.sp,
                             fontWeight = FontWeight.Bold
                         )
                     }
@@ -513,7 +527,7 @@ fun LocationSettingsDialog(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            shape = RoundedCornerShape(16.dp),
+            shape = RoundedCornerShape(20.dp),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surface
             )
@@ -556,7 +570,7 @@ fun LocationSettingsDialog(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(200.dp),
-                    contentScale = ContentScale.Fit
+                    contentScale = ContentScale.Crop
                 )
 
                 // Message - explain they need to go to Settings
@@ -570,21 +584,21 @@ fun LocationSettingsDialog(
                 // Two buttons: Go to Settings (primary) and Exit App (destructive)
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     // Exit App button (destructive/secondary)
                     OutlinedButton(
                         onClick = onExitApp,
                         modifier = Modifier.weight(1f),
-                        shape = RoundedCornerShape(8.dp),
+                        shape = RoundedCornerShape(999.dp),
                         colors = ButtonDefaults.outlinedButtonColors(
-                            contentColor = MaterialTheme.colorScheme.error
+                            contentColor = MaterialTheme.colorScheme.onSurface
                         )
                     ) {
                         Text(
                             text = "nah i'm out 👋",
                             fontSize = 13.sp,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.SemiBold
                         )
                     }
 
@@ -592,10 +606,10 @@ fun LocationSettingsDialog(
                     Button(
                         onClick = onOpenSettings,
                         modifier = Modifier.weight(1f),
-                        shape = RoundedCornerShape(8.dp)
+                        shape = RoundedCornerShape(999.dp)
                     ) {
                         Text(
-                            text = "open settings ⚙️",
+                            text = "open settings",
                             fontSize = 13.sp,
                             fontWeight = FontWeight.Bold
                         )
