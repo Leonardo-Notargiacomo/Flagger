@@ -46,9 +46,6 @@ fun BadgeScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        // Custom Header
-        BadgeHeader()
-
         when (val state = uiState) {
             is BadgeUiState.Loading -> {
                 Box(
@@ -70,7 +67,7 @@ fun BadgeScreen(
                         .fillMaxWidth()
                         .weight(1f)
                         .padding(horizontal = 24.dp),
-                    contentPadding = PaddingValues(top = 24.dp, bottom = 100.dp)
+                    contentPadding = PaddingValues(top = 32.dp, bottom = 100.dp)
                 ) {
                     item(span = { androidx.compose.foundation.lazy.grid.GridItemSpan(3) }) {
                         BadgeProfileSection(

@@ -63,8 +63,6 @@ fun ProfileScreen(userViewModel: ProfileViewModel = viewModel()) {
                     .background(ProfileColors.Container)
                     .border(3.dp, ProfileColors.Border, RoundedCornerShape(24.dp))
             ) {
-                ProfileHeader()
-
                 when {
                     isLoading -> {
                         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -90,7 +88,7 @@ fun ProfileScreen(userViewModel: ProfileViewModel = viewModel()) {
                             modifier = Modifier
                                 .weight(1f)
                                 .verticalScroll(rememberScrollState())
-                                .padding(16.dp)
+                                .padding(top = 24.dp, start = 16.dp, end = 16.dp, bottom = 16.dp)
                         ) {
                             ProfilePictureSection(
                                 username = if (isEditing) editUsername else userData.userName,
