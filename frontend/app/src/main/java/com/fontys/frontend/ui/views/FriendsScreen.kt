@@ -200,7 +200,7 @@ fun FriendsListTab(
     } else {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(16.dp),
+            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 80.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(friends) { friend ->
@@ -226,7 +226,10 @@ fun FriendItem(
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onViewProfile() },
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.secondaryContainer
+        )
     ) {
         Row(
             modifier = Modifier
@@ -239,19 +242,21 @@ fun FriendItem(
                 Text(
                     text = friend.friendDetails?.userName ?: "User #${friend.friendId}",
                     style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSecondaryContainer
                 )
                 friend.friendDetails?.email?.let { email ->
                     Text(
                         text = email,
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.7f)
                     )
                 }
                 friend.friendDetails?.bio?.let { bio ->
                     Text(
                         text = bio,
                         style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.6f),
                         modifier = Modifier.padding(top = 4.dp)
                     )
                 }
@@ -310,7 +315,7 @@ fun FriendRequestsTab(
     } else {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(16.dp),
+            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 80.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
         // Received Requests Section
@@ -378,7 +383,10 @@ fun ReceivedRequestItem(
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.secondaryContainer
+        )
     ) {
         Column(
             modifier = Modifier
@@ -388,13 +396,14 @@ fun ReceivedRequestItem(
             Text(
                 text = request.fromUser?.userName ?: "User #${request.fromUserId}",
                 style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSecondaryContainer
             )
             request.fromUser?.email?.let { email ->
                 Text(
                     text = email,
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.7f)
                 )
             }
 
@@ -438,7 +447,10 @@ fun SentRequestItem(
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.secondaryContainer
+        )
     ) {
         Row(
             modifier = Modifier
@@ -451,19 +463,20 @@ fun SentRequestItem(
                 Text(
                     text = request.toUser?.userName ?: "User #${request.toUserId}",
                     style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSecondaryContainer
                 )
                 request.toUser?.email?.let { email ->
                     Text(
                         text = email,
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.7f)
                     )
                 }
                 Text(
                     text = "Status: ${request.status}",
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.7f),
                     modifier = Modifier.padding(top = if (request.toUser?.email != null) 4.dp else 0.dp)
                 )
             }
@@ -515,6 +528,21 @@ fun SearchTab(
                     }
                 }
             },
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+                unfocusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+                focusedTextColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                unfocusedTextColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                focusedBorderColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                unfocusedBorderColor = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.6f),
+                cursorColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                focusedPlaceholderColor = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.6f),
+                unfocusedPlaceholderColor = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.6f),
+                focusedLeadingIconColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                unfocusedLeadingIconColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                focusedTrailingIconColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                unfocusedTrailingIconColor = MaterialTheme.colorScheme.onSecondaryContainer
+            ),
             singleLine = true
         )
 
@@ -561,6 +589,7 @@ fun SearchTab(
             }
         } else {
             LazyColumn(
+                contentPadding = PaddingValues(bottom = 80.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(searchResults) { user ->
@@ -588,7 +617,10 @@ fun SearchUserItem(
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onViewProfile() },
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.secondaryContainer
+        )
     ) {
         Row(
             modifier = Modifier
@@ -601,19 +633,21 @@ fun SearchUserItem(
                 Text(
                     text = user.userName ?: "Unknown User",
                     style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSecondaryContainer
                 )
                 user.email?.let { email ->
                     Text(
                         text = email,
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.7f)
                     )
                 }
                 user.bio?.let { bio ->
                     Text(
                         text = bio,
                         style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.6f),
                         modifier = Modifier.padding(top = 4.dp)
                     )
                 }
