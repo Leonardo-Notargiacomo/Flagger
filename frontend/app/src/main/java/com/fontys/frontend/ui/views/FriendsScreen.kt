@@ -1,9 +1,11 @@
 package com.fontys.frontend.ui.views
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -12,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
@@ -36,37 +39,51 @@ fun FriendsScreen(
     }
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Friends") },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                )
-            )
-        }
+        containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            // Tabs
-            TabRow(selectedTabIndex = selectedTab) {
+            // Clean minimal tabs
+            TabRow(
+                selectedTabIndex = selectedTab,
+                containerColor = MaterialTheme.colorScheme.background,
+                contentColor = MaterialTheme.colorScheme.onBackground
+            ) {
                 Tab(
                     selected = selectedTab == 0,
                     onClick = { selectedTab = 0 },
-                    text = { Text("My Friends") }
+                    text = {
+                        Text(
+                            "Friends",
+                            fontWeight = if (selectedTab == 0) FontWeight.SemiBold else FontWeight.Normal,
+                            fontSize = 14.sp
+                        )
+                    }
                 )
                 Tab(
                     selected = selectedTab == 1,
                     onClick = { selectedTab = 1 },
-                    text = { Text("Requests") }
+                    text = {
+                        Text(
+                            "Requests",
+                            fontWeight = if (selectedTab == 1) FontWeight.SemiBold else FontWeight.Normal,
+                            fontSize = 14.sp
+                        )
+                    }
                 )
                 Tab(
                     selected = selectedTab == 2,
                     onClick = { selectedTab = 2 },
-                    text = { Text("Search") }
+                    text = {
+                        Text(
+                            "Search",
+                            fontWeight = if (selectedTab == 2) FontWeight.SemiBold else FontWeight.Normal,
+                            fontSize = 14.sp
+                        )
+                    }
                 )
             }
 
@@ -389,19 +406,25 @@ fun ReceivedRequestItem(
             ) {
                 Button(
                     onClick = onAccept,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.secondary
+                    ),
+                    shape = RoundedCornerShape(12.dp)
                 ) {
                     Icon(Icons.Default.Check, contentDescription = null)
                     Spacer(Modifier.width(4.dp))
-                    Text("Accept")
+                    Text("Accept", fontWeight = FontWeight.Bold)
                 }
                 OutlinedButton(
                     onClick = onReject,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
+                    border = androidx.compose.foundation.BorderStroke(2.dp, MaterialTheme.colorScheme.outline),
+                    shape = RoundedCornerShape(12.dp)
                 ) {
                     Icon(Icons.Default.Close, contentDescription = null)
                     Spacer(Modifier.width(4.dp))
-                    Text("Reject")
+                    Text("Reject", fontWeight = FontWeight.Bold)
                 }
             }
         }
@@ -603,35 +626,49 @@ fun SearchUserItem(
                         onClick = { /* Navigate to friend profile or manage */ },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.secondary
-                        )
+                        ),
+                        shape = RoundedCornerShape(12.dp)
                     ) {
                         Icon(Icons.Default.Check, contentDescription = null)
                         Spacer(Modifier.width(4.dp))
-                        Text("Friends")
+                        Text("Friends", fontWeight = FontWeight.Bold)
                     }
                 }
                 com.fontys.frontend.ui.viewmodels.RelationshipStatus.PENDING_SENT -> {
                     OutlinedButton(
                         onClick = { /* Maybe cancel request? */ },
-                        enabled = false
+                        enabled = false,
+                        shape = RoundedCornerShape(12.dp)
                     ) {
                         Icon(Icons.Default.Schedule, contentDescription = null)
                         Spacer(Modifier.width(4.dp))
-                        Text("Pending")
+                        Text("Pending", fontWeight = FontWeight.Bold)
                     }
                 }
                 com.fontys.frontend.ui.viewmodels.RelationshipStatus.PENDING_RECEIVED -> {
-                    Button(onClick = onSendRequest) {
+                    Button(
+                        onClick = onSendRequest,
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.secondary
+                        ),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
                         Icon(Icons.Default.Check, contentDescription = null)
                         Spacer(Modifier.width(4.dp))
-                        Text("Accept")
+                        Text("Accept", fontWeight = FontWeight.Bold)
                     }
                 }
                 com.fontys.frontend.ui.viewmodels.RelationshipStatus.NONE -> {
-                    Button(onClick = onSendRequest) {
+                    Button(
+                        onClick = onSendRequest,
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.secondary
+                        ),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
                         Icon(Icons.Default.PersonAdd, contentDescription = null)
                         Spacer(Modifier.width(4.dp))
-                        Text("Add")
+                        Text("Add", fontWeight = FontWeight.Bold)
                     }
                 }
             }

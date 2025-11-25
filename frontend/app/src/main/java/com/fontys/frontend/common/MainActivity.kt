@@ -21,6 +21,7 @@ import coil.ImageLoader
 import coil.decode.ImageDecoderDecoder
 import com.fontys.frontend.domain.UserRepository
 import com.fontys.frontend.ui.components.PermissionDialogs
+import com.fontys.frontend.ui.theme.AppTheme
 import com.fontys.frontend.ui.views.LoginView
 import com.fontys.frontend.ui.views.NavBar
 import com.fontys.frontend.ui.views.RegistrationView as RegistrationViewComposable
@@ -72,7 +73,7 @@ class MainActivity : ComponentActivity() {
 
             val navController = rememberNavController()
 
-            MaterialTheme {
+            AppTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background

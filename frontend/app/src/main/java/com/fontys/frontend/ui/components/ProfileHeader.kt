@@ -17,8 +17,7 @@ import androidx.compose.ui.unit.sp
 import com.fontys.frontend.ui.theme.ProfileColors
 
 /**
- * Header component for the profile screen
- * Features: Settings icon, "ACCOUNT" title, decorative compass dots
+ * Header component for the profile screen - clean minimal design
  */
 @Composable
 fun ProfileHeader() {
@@ -28,59 +27,15 @@ fun ProfileHeader() {
             .background(ProfileColors.Primary)
             .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.Center
     ) {
-        // Left side: Settings icon and title
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            // Settings icon with circular background
-            Box(
-                modifier = Modifier
-                    .size(32.dp)
-                    .clip(CircleShape)
-                    .background(ProfileColors.Accent),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Settings,
-                    contentDescription = "Settings",
-                    tint = ProfileColors.Primary,
-                    modifier = Modifier.size(18.dp)
-                )
-            }
-
-            // "ACCOUNT" title
-            Text(
-                text = "ACCOUNT",
-                color = ProfileColors.TextSecondary,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Normal,
-                letterSpacing = 2.sp
-            )
-        }
-
-        // Right side: Decorative compass dots
-        Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-            Box(
-                modifier = Modifier
-                    .size(6.dp)
-                    .clip(CircleShape)
-                    .background(ProfileColors.Accent)
-            )
-            Box(
-                modifier = Modifier
-                    .size(6.dp)
-                    .clip(CircleShape)
-                    .background(ProfileColors.TextSecondary)
-            )
-            Box(
-                modifier = Modifier
-                    .size(6.dp)
-                    .clip(CircleShape)
-                    .background(ProfileColors.Accent)
-            )
-        }
+        // Centered "ACCOUNT" title
+        Text(
+            text = "ACCOUNT",
+            color = ProfileColors.TextSecondary,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Medium,
+            letterSpacing = 1.sp
+        )
     }
 }

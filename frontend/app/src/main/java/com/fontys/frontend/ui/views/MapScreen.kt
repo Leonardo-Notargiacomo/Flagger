@@ -10,6 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -96,21 +97,35 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
             }
         }
 
-        // Zoom + Recenter Controls
+        // Flag button with explorer theme
         Column(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(6.dp),
-            horizontalAlignment = Alignment.End
-        )
-
-        {
-
-            Button(onClick = {
-                viewModel.fetchNearbyPlaces(LatLng(userLocation.latitude,userLocation.longitude))
-                showDialog = true
-                selectedPlace = null
-            }) { Text("\uD83D\uDEA9") }
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Button(
+                onClick = {
+                    viewModel.fetchNearbyPlaces(LatLng(userLocation.latitude,userLocation.longitude))
+                    showDialog = true
+                    selectedPlace = null
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.secondary,
+                    contentColor = androidx.compose.ui.graphics.Color.White
+                ),
+                shape = androidx.compose.foundation.shape.CircleShape,
+                modifier = Modifier.size(72.dp),
+                elevation = ButtonDefaults.buttonElevation(
+                    defaultElevation = 8.dp,
+                    pressedElevation = 4.dp
+                )
+            ) {
+                Text(
+                    text = "\uD83D\uDEA9",
+                    fontSize = 32.sp
+                )
+            }
         }
     }
 
@@ -120,19 +135,38 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
         if (places.isEmpty()) {
             AlertDialog(
                 onDismissRequest = { showDialog = false },
-                title = { Text("No places found") },
+                title = {
+                    Text(
+                        "No Places Found",
+                        fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+                        letterSpacing = 1.sp
+                    )
+                },
                 text = { Text("Try again or move to another location.") },
-
                 confirmButton = {
-                    TextButton(onClick = { showDialog = false }) {
-                        Text("OK")
+                    Button(
+                        onClick = { showDialog = false },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.secondary
+                        ),
+                        shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp)
+                    ) {
+                        Text("OK", fontWeight = androidx.compose.ui.text.font.FontWeight.Bold)
                     }
-                }
+                },
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                shape = androidx.compose.foundation.shape.RoundedCornerShape(24.dp)
             )
         } else {
             AlertDialog(
                 onDismissRequest = { showDialog = false },
-                title = { Text("Select a place to mark") },
+                title = {
+                    Text(
+                        "Select a Place to Mark",
+                        fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+                        letterSpacing = 1.sp
+                    )
+                },
                 text = {
                     Column {
                         val unflaggedPlaces = places.filter { nearbyPlace ->
@@ -170,10 +204,16 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
                 },
                 confirmButton = {},
                 dismissButton = {
-                    TextButton(onClick = { showDialog = false }) {
-                        Text("Cancel")
+                    OutlinedButton(
+                        onClick = { showDialog = false },
+                        border = androidx.compose.foundation.BorderStroke(2.dp, MaterialTheme.colorScheme.outline),
+                        shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp)
+                    ) {
+                        Text("Cancel", fontWeight = androidx.compose.ui.text.font.FontWeight.Bold)
                     }
-                }
+                },
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                shape = androidx.compose.foundation.shape.RoundedCornerShape(24.dp)
             )
         }
     }

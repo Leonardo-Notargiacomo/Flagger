@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.fontys.frontend.data.UserUpdate
 import com.fontys.frontend.domain.UserRepository
@@ -145,51 +146,43 @@ fun ProfileScreen(userViewModel: ProfileViewModel = viewModel()) {
                                         },
                                         modifier = Modifier
                                             .fillMaxWidth()
-                                            .height(50.dp)
-                                            .clip(RoundedCornerShape(12.dp))
-                                            .border(2.dp, ProfileColors.Border, RoundedCornerShape(12.dp)),
+                                            .height(50.dp),
                                         colors = ButtonDefaults.buttonColors(
                                             containerColor = ProfileColors.Accent,
                                             contentColor = ProfileColors.Primary
+                                        ),
+                                        shape = RoundedCornerShape(8.dp),
+                                        elevation = ButtonDefaults.buttonElevation(
+                                            defaultElevation = 0.dp,
+                                            pressedElevation = 0.dp
                                         )
                                     ) {
-                                        Icon(Icons.Default.Check, contentDescription = "Save")
-                                        Spacer(modifier = Modifier.width(8.dp))
-                                        Text("SAVE CHANGES")
+                                        Text("Save Changes", fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold, fontSize = 14.sp)
                                     }
 
-                                    Button(
+                                    TextButton(
                                         onClick = { isEditing = false },
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .height(50.dp)
-                                            .clip(RoundedCornerShape(12.dp))
-                                            .border(2.dp, ProfileColors.Border, RoundedCornerShape(12.dp)),
-                                        colors = ButtonDefaults.buttonColors(
-                                            containerColor = ProfileColors.Container,
-                                            contentColor = ProfileColors.Primary
-                                        )
+                                        modifier = Modifier.fillMaxWidth()
                                     ) {
-                                        Icon(Icons.Default.Close, contentDescription = "Cancel")
-                                        Spacer(modifier = Modifier.width(8.dp))
-                                        Text("CANCEL")
+                                        Text("Cancel", fontWeight = androidx.compose.ui.text.font.FontWeight.Medium, fontSize = 14.sp)
                                     }
                                 } else {
                                     Button(
                                         onClick = { isEditing = true },
                                         modifier = Modifier
                                             .fillMaxWidth()
-                                            .height(50.dp)
-                                            .clip(RoundedCornerShape(12.dp))
-                                            .border(2.dp, ProfileColors.Border, RoundedCornerShape(12.dp)),
+                                            .height(50.dp),
                                         colors = ButtonDefaults.buttonColors(
                                             containerColor = ProfileColors.Accent,
                                             contentColor = ProfileColors.Primary
+                                        ),
+                                        shape = RoundedCornerShape(8.dp),
+                                        elevation = ButtonDefaults.buttonElevation(
+                                            defaultElevation = 0.dp,
+                                            pressedElevation = 0.dp
                                         )
                                     ) {
-                                        Icon(Icons.Default.Settings, contentDescription = "Edit")
-                                        Spacer(modifier = Modifier.width(8.dp))
-                                        Text("EDIT PROFILE")
+                                        Text("Edit Profile", fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold, fontSize = 14.sp)
                                     }
                                 }
                             }
