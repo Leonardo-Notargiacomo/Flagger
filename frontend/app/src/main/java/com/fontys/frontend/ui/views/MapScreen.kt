@@ -139,10 +139,16 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
                     Text(
                         "No Places Found",
                         fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
-                        letterSpacing = 1.sp
+                        letterSpacing = 1.sp,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                 },
-                text = { Text("Try again or move to another location.") },
+                text = {
+                    Text(
+                        "Try again or move to another location.",
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                },
                 confirmButton = {
                     Button(
                         onClick = { showDialog = false },
@@ -164,7 +170,8 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
                     Text(
                         "Select a Place to Mark",
                         fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
-                        letterSpacing = 1.sp
+                        letterSpacing = 1.sp,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                 },
                 text = {
@@ -173,30 +180,38 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
                             !userFlags.any { flaggedSpot -> flaggedSpot.locationId == nearbyPlace.id }
                         }
                         if (unflaggedPlaces.isEmpty()) {
-                        Text("All nearby places are already flagged!")
+                        Text(
+                            "All nearby places are already flagged!",
+                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
                         } else {
                         unflaggedPlaces.forEach { place ->
-                            TextButton(onClick = {
-
-                                showDialog = false
-                                viewModel.markTheSpot(
-                                    userId = currentUserId,
-                                    placeId = place.id,
-                                    locationName = place.displayName,
-                                    latLng = LatLng(place.latitude, place.longitude)
+                            TextButton(
+                                onClick = {
+                                    showDialog = false
+                                    viewModel.markTheSpot(
+                                        userId = currentUserId,
+                                        placeId = place.id,
+                                        locationName = place.displayName,
+                                        latLng = LatLng(place.latitude, place.longitude)
+                                    )
+                                    coroutineScope.launch {
+                                        cameraPositionState.animate(
+                                            CameraUpdateFactory.newLatLngZoom(
+                                                LatLng(place.latitude, place.longitude),
+                                                16f
+                                            )
+                                        )
+                                    }
+                                },
+                                colors = ButtonDefaults.textButtonColors(
+                                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
                                 )
-                                coroutineScope.launch {
-                                    cameraPositionState.animate(
-                                        CameraUpdateFactory.newLatLngZoom(
-                                            LatLng(place.latitude, place.longitude),
-                                            16f
-                                        )
-                                        )
-
-                                }
-
-                            }) {
-                                Text(place.displayName)
+                            ) {
+                                Text(
+                                    text = place.displayName,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
                             }
                         }
                     }
