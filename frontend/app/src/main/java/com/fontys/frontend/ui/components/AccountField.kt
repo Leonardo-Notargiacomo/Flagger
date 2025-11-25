@@ -44,24 +44,6 @@ fun AccountField(
                     end = 16.dp
                 )
         ) {
-            // Corner accent dots
-            Box(
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(8.dp)
-                    .size(6.dp)
-                    .clip(CircleShape)
-                    .background(ProfileColors.Accent)
-            )
-            Box(
-                modifier = Modifier
-                    .align(Alignment.BottomStart)
-                    .padding(8.dp)
-                    .size(6.dp)
-                    .clip(CircleShape)
-                    .background(ProfileColors.Accent)
-            )
-
             // Field value
             Text(
                 text = value.ifEmpty { "—" },
