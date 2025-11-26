@@ -1,5 +1,6 @@
 package com.fontys.frontend.domain
 
+import android.util.Log
 import com.fontys.frontend.config.ApiConfig
 import com.fontys.frontend.data.UserLogin
 import com.fontys.frontend.data.UserRegister
@@ -18,6 +19,7 @@ import com.fontys.frontend.domain.UserAPIService
 
 
 object UserRepository {
+    private const val TAG = "UserRepository"
     var token = ""
     var userId = 0
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
@@ -62,14 +64,14 @@ object UserRepository {
                 return UserReturn(id, userName, email, userImage, bio)
             } else {
                 // Handle error response
-                println("Error: ${response.code()} - ${response.message()}")
+                Log.e(TAG, "Error getting user: ${response.code()} - ${response.message()}")
                 return null
             }
         } catch (
             e: Exception
         ) {
             // Handle exceptions such as network errors
-            println("Exception: ${e.message}")
+            Log.e(TAG, "Exception getting user: ${e.message}", e)
             return null
         }
     }
@@ -83,14 +85,14 @@ object UserRepository {
             if(response.isSuccessful){
                 val loginResponse = response.body()
                 token = loginResponse?.token ?: ""
-                println("Login successful, token set: ${token.take(20)}...")
+                Log.d(TAG, "Login successful, token set: ${token.take(20)}...")
             } else {
-                println("Login failed: ${response.code()} - ${response.message()}")
+                Log.e(TAG, "Login failed: ${response.code()} - ${response.message()}")
             }
         } catch (
             e: Exception
         ) {
-            println("Exception: ${e.message}")
+            Log.e(TAG, "Exception during login: ${e.message}", e)
         }
     }
     suspend fun whoAmIm()  {
@@ -107,7 +109,7 @@ object UserRepository {
                     }
             }
             val response = userApiService.getId(headers)
-            println(response)
+            Log.d(TAG, "whoAmIm response: $response")
             if(response.isSuccessful){
                 val json = response.body()?:0
                 userId =json
@@ -115,33 +117,87 @@ object UserRepository {
         } catch (
             e: Exception
         ) {
-            println("Exception: ${e.message}")
+            Log.e(TAG, "Exception in whoAmIm: ${e.message}", e)
         }
     }
 
     suspend fun register(userName: String, email: String, password: String, bio: String): Boolean {
-        try {
-            val headers = HashMap<String, String>().apply {
-                put("Accept", "application/json")
-                put("Content-Type", "application/json")
-            }
-            val response =
-                userApiService.signup(headers, UserRegister(userName, email, bio, password))
-            if (response.isSuccessful) {
-                // Signup successful, now login to get token
-                login(email, password)
-                whoAmIm()
-                return true
-            } else {
-                println("Error: ${response.code()} - ${response.message()}")
-                return false
-            }
-        } catch (
-            e: Exception
-        ) {
-            println("Exception: ${e.message}")
+        val headers = HashMap<String, String>().apply {
+            put("Accept", "application/json")
+            put("Content-Type", "application/json")
         }
-        return false
+        val response =
+            userApiService.signup(headers, UserRegister(userName, email, bio, password))
+        if (response.isSuccessful) {
+            // Signup successful, now login to get token
+            login(email, password)
+            whoAmIm()
+            return true
+        } else {
+            val errorBody = response.errorBody()?.string()
+            Log.e(TAG, "Registration error: ${response.code()} - ${response.message()} - Body: $errorBody")
+
+            // Try to parse error message from backend
+            val errorMessage = try {
+                if (!errorBody.isNullOrBlank()) {
+                    // First, try to clean up the JSON if it has single quotes instead of double quotes
+                    val cleanedBody = errorBody.replace("'", "\"")
+                    val json = JSONObject(cleanedBody)
+
+                    // Try to extract the error message from various possible fields
+                    val msg = when {
+                        json.has("error") && json.getJSONObject("error").has("message") -> {
+                            json.getJSONObject("error").getString("message")
+                        }
+                        json.has("message") -> json.getString("message")
+                        json.has("error") -> json.getString("error")
+                        json.has("detail") -> json.getString("detail")
+                        else -> null
+                    }
+
+                    // Log the extracted message for debugging
+                    Log.d(TAG, "Extracted error message: $msg")
+                    msg
+                } else {
+                    null
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to parse error body: ${e.message}. Raw body: $errorBody")
+                // Try regex as fallback to extract message from malformed JSON
+                try {
+                    val messagePattern = """['"']message['"']\s*:\s*['"']([^'"']+)['"']""".toRegex()
+                    val match = messagePattern.find(errorBody ?: "")
+                    match?.groupValues?.getOrNull(1)
+                } catch (regexError: Exception) {
+                    Log.e(TAG, "Regex extraction also failed: ${regexError.message}")
+                    null
+                }
+            }
+
+            // Use backend error message if available, otherwise use generic messages based on status code
+            val finalErrorMessage = when {
+                // Prioritize backend error message if it's specific and not generic
+                !errorMessage.isNullOrBlank() && errorMessage != "Internal Server Error" -> {
+                    errorMessage
+                }
+                // Fallback to status code-based messages
+                response.code() == 409 -> {
+                    "This username or email is already registered."
+                }
+                response.code() == 500 -> {
+                    "This username or email is already taken. Please try a different one."
+                }
+                response.code() == 400 -> {
+                    "Invalid registration data. Please check your information."
+                }
+                else -> {
+                    "Registration failed. Please try again."
+                }
+            }
+
+            Log.d(TAG, "Final error message to display: $finalErrorMessage")
+            throw Exception(finalErrorMessage)
+        }
     }
 
     suspend fun updateUser(userId: String, userUpdate: UserUpdate): String? {
