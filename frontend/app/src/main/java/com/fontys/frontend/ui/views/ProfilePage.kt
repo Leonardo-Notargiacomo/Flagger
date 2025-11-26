@@ -26,19 +26,24 @@ import androidx.compose.material.icons.rounded.Menu
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.tooling.preview.Preview
 
 
 @Composable
 fun Profile(viewModel: ProfileViewModel){
+    //Local variables for the profile
     var pfp by remember { mutableStateOf("") }
     var name: String? by remember { mutableStateOf("") }
     var bio: String? by remember { mutableStateOf("") }
 
+    // to accumulated work
     var followers: Int? by remember { mutableStateOf(0) }
     var following: Int? by remember { mutableStateOf(0) }
-
     var postsNr: Int? by remember { mutableStateOf(0) }
 
+    val posts by viewModel.posts.collectAsState()
+
+    //ViewModel variables
     val user by viewModel.user.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val error by viewModel.error.collectAsState()

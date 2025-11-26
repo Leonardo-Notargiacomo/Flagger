@@ -5,11 +5,12 @@ import com.fontys.frontend.data.UserLogin
 import com.fontys.frontend.data.UserRegister
 import com.fontys.frontend.data.UserReturn
 import com.fontys.frontend.data.UserUpdate
+import com.fontys.frontend.data.models.Flag
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.HeaderMap
-import retrofit2.http.Headers
 import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
@@ -26,4 +27,10 @@ interface UserAPIService {
     suspend fun getId(@HeaderMap headers: Map<String,String>): Response<Int>
     @POST(value = "signup")
     suspend fun signup(@HeaderMap headers: Map<String,String>,@Body user: UserRegister ): Response<UserReturn>
+
+    @GET("api/flags/users/{userID}")
+    suspend fun getUserFlags(
+        @Header("Authorization") token: HashMap<String, String>,
+        @Path("userID") userID: String
+    ): Response<List<Flag>>
 }

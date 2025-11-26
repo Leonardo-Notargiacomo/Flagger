@@ -58,6 +58,7 @@ interface FriendsApi {
     // Friendships endpoints
     @GET("friends")
     suspend fun getFriends(
+        headers: HashMap<String, String>,
         @Header("Authorization") token: String
     ): Response<List<FriendListItem>>
 
@@ -72,4 +73,6 @@ interface FriendsApi {
         @Header("Authorization") token: String,
         @Path("friendId") friendId: Int
     ): Response<List<Flag>>
+
+
 }

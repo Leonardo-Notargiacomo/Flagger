@@ -10,6 +10,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.fontys.frontend.data.UserReturn
 import com.fontys.frontend.data.UserUpdate
+import com.fontys.frontend.data.models.Flag
 import com.fontys.frontend.domain.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -27,6 +28,9 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
 
     private val _error = MutableStateFlow<String?>(null)
     val error: StateFlow<String?> = _error
+
+    private val flags = MutableStateFlow<Flag?>(null)
+    val flag: StateFlow<Flag?> = flags
 
 
     fun getUser(userId: String) {
@@ -87,5 +91,18 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
         } else{
             return null
         }
+    }
+
+    fun getFlags(userId: String) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            _error.value = null
+        }
+        try {
+            userRepository.
+        }catch (e: Exception) {
+            Log.e("UserViewModel", "Error fetching user", e)
+            _error.value = e.localizedMessage ?: "Unknown error fetching Flags"
+            _isLoading.value = false
     }
 }

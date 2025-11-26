@@ -158,7 +158,7 @@ class FriendsRepository {
     suspend fun getFriends(token: String): Result<List<FriendListItem>> {
         Log.d(TAG, "getFriends() called")
         return try {
-            val response = api.getFriends("Bearer $token")
+            val response = api.getFriends(headers, "Bearer $token")
             Log.d(TAG, "getFriends() response code: ${response.code()}")
             Log.d(TAG, "getFriends() response body size: ${response.body()?.size}")
             response.body()?.forEachIndexed { index, friend ->
