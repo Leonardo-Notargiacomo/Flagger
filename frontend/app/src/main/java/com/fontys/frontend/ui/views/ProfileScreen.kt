@@ -25,6 +25,9 @@ import com.fontys.frontend.ui.theme.ProfileColors
 import com.fontys.frontend.ui.viewmodels.ProfileViewModel
 import kotlinx.coroutines.launch
 
+
+
+
 @Composable
 fun ProfileScreen(userViewModel: ProfileViewModel = viewModel()) {
     val user by userViewModel.user.collectAsState()

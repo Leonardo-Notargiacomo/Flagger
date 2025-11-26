@@ -1,7 +1,11 @@
 package com.fontys.frontend.ui.viewmodels
 
 import android.app.Application
+import android.graphics.BitmapFactory
+import android.util.Base64
 import android.util.Log
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.fontys.frontend.data.UserReturn
@@ -65,5 +69,23 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
 
     fun clearError() {
         _error.value = null
+    }
+
+    fun base64ToImageBitmap(base64: String): ImageBitmap? {
+        if (base64 == "no Image") {
+            return try {
+                // If the string has a header like "data:image/png;base64,...", strip it
+                val cleanBase64 = base64.substringAfter(",")
+
+                val decodedBytes = Base64.decode(cleanBase64, Base64.DEFAULT)
+                val bitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
+                bitmap?.asImageBitmap()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                null
+            }
+        } else{
+            return null
+        }
     }
 }
