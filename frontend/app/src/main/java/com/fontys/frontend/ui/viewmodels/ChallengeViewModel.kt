@@ -128,14 +128,10 @@ class ChallengeViewModel : ViewModel() {
                     _activeChallenges.value = active
                     _completedChallenges.value = challenges.filter { it.isCompleted }
 
-
-                    val allRecentChallenges = challenges.filter {
-                        // Get challenges started within last 24 hours
-                        it.startedAt != null
-                    }
-
-                    if (allRecentChallenges.isNotEmpty()) {
-                        val mostRecentChallenge = allRecentChallenges.maxByOrNull { it.startedAt ?: "" }
+                    // Check if there are any active challenges
+                    if (active.isNotEmpty()) {
+                        // User has an active challenge, find the most recent one
+                        val mostRecentChallenge = active.maxByOrNull { it.startedAt ?: "" }
                         if (mostRecentChallenge != null) {
                             val cachedChallengeId = ChallengePreferences.getChallengeId()
 
@@ -152,10 +148,11 @@ class ChallengeViewModel : ViewModel() {
                             }
                         }
                     } else if (!ChallengePreferences.hasSavedChallenge()) {
+                        // No active challenges and no saved challenge data, allow selection
                         _sharedCanSelectChallenge.value = true
                         _sharedTimeUntilNextSelection.value = 0L
                     }
-                    
+
                     _uiState.value = ChallengeUiState.Success
                 }
                 .onFailure { error ->
@@ -195,6 +192,12 @@ class ChallengeViewModel : ViewModel() {
         viewModelScope.launch {
             repository.selectChallenge(challengeId)
                 .onSuccess { userChallenge ->
+                    // Immediately update the shared state to reflect locked status
+                    val startTime = System.currentTimeMillis()
+                    val cooldownDuration = 24 * 60 * 60 * 1000L
+                    _sharedCanSelectChallenge.value = false
+                    _sharedTimeUntilNextSelection.value = cooldownDuration
+
                     // Refresh the challenges list
                     loadUserChallenges(userId)
                     loadAvailableChallenges()
