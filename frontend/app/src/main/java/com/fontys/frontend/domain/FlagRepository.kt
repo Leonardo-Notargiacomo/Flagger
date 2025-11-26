@@ -27,8 +27,7 @@ class FlagRepository{
     }
 
     private val okHttpClient =  OkHttpClient.Builder()
-        // No custom auth interceptor needed here if using @HeaderMap directly
-        .addInterceptor(loggingInterceptor) // Keep logging for debugging
+        .addInterceptor(loggingInterceptor)
         .build()
 
     private val gson = GsonBuilder()
@@ -36,7 +35,7 @@ class FlagRepository{
         .create()
     private val retrofit = Retrofit.Builder()
         .baseUrl(BASE_URL)
-        .client(okHttpClient) // Use the OkHttpClient
+        .client(okHttpClient)
         .addConverterFactory(GsonConverterFactory.create(gson))
         .addConverterFactory(ScalarsConverterFactory.create())
         .build()

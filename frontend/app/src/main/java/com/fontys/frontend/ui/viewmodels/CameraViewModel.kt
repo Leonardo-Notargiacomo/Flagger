@@ -3,6 +3,7 @@ package com.fontys.frontend.ui.viewmodels
 import android.app.Application
 import android.content.Context
 import android.net.Uri
+import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
@@ -29,14 +30,20 @@ class CameraPreviewViewModel : ViewModel() {
     private var  imageCapture: ImageCapture? = null;
 
     private var cameraProvider: ProcessCameraProvider? = null
+    private var camera: Camera? = null
+
 
     private val _base64 = MutableStateFlow<String>("")
     val base64: StateFlow<String> = _base64
 
+    var front = true
+    var flash = true
     val flagRepository = FlagRepository()
     private fun buildImageCaptureUseCase(): ImageCapture {
         return ImageCapture.Builder()
             .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
+            .setFlashMode(if(flash) ImageCapture.FLASH_MODE_ON
+                            else ImageCapture.FLASH_MODE_OFF)
             .build().also {
                 imageCapture = it
             }
@@ -49,17 +56,44 @@ class CameraPreviewViewModel : ViewModel() {
 
     suspend fun bindToCamera(appContext: Context, lifecycleOwner: LifecycleOwner) {
         cameraProvider = ProcessCameraProvider.awaitInstance(appContext)
-        cameraProvider?.bindToLifecycle(
+        camera = cameraProvider?.bindToLifecycle(
             lifecycleOwner,
-            CameraSelector.DEFAULT_BACK_CAMERA, // safer for emulator
+            CameraSelector.DEFAULT_BACK_CAMERA,
             cameraPreviewUseCase,
             buildImageCaptureUseCase()
         )
+
     }
 
     fun releaseCamera() {
         cameraProvider?.unbindAll()
     }
+    suspend fun cameraMode(appContext: Context, lifecycleOwner: LifecycleOwner){
+        val provider = cameraProvider ?: ProcessCameraProvider.awaitInstance(appContext)
+        cameraProvider = provider
+        front = !front
+        provider.unbindAll()
+        val selector = if (front)
+            CameraSelector.DEFAULT_FRONT_CAMERA
+        else
+            CameraSelector.DEFAULT_BACK_CAMERA
+        val newImageCapture = buildImageCaptureUseCase()
+        provider.bindToLifecycle(
+            lifecycleOwner,
+            selector,
+            cameraPreviewUseCase,
+            newImageCapture
+        )
+    }
+    suspend fun flash(){
+
+        camera?.cameraControl?.enableTorch(flash)
+
+        flash = !flash
+            imageCapture?.flashMode =
+                if (flash) ImageCapture.FLASH_MODE_ON
+                else ImageCapture.FLASH_MODE_OFF
+        }
    suspend fun takePhoto(context: Context,userid : Int, placeId: String ,onPhotoSaved: (Uri?) -> Unit) {
         val imageCapture = imageCapture ?: return
 
