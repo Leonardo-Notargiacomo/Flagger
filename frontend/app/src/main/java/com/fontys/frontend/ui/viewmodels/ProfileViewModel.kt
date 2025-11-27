@@ -11,6 +11,8 @@ import androidx.lifecycle.viewModelScope
 import com.fontys.frontend.data.UserReturn
 import com.fontys.frontend.data.UserUpdate
 import com.fontys.frontend.data.models.Flag
+import com.fontys.frontend.data.models.FlagShowData
+import com.fontys.frontend.domain.MapRepository
 import com.fontys.frontend.domain.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,6 +21,8 @@ import kotlinx.coroutines.launch
 class ProfileViewModel(application: Application) : AndroidViewModel(application) {
 
     private val userRepository = UserRepository
+    private val mapRepo = MapRepository()
+
 
     private val _user = MutableStateFlow<UserReturn?>(null)
     val user: StateFlow<UserReturn?> = _user
@@ -29,9 +33,24 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
     private val _error = MutableStateFlow<String?>(null)
     val error: StateFlow<String?> = _error
 
-    private val flags = MutableStateFlow<Flag?>(null)
-    val flag: StateFlow<Flag?> = flags
+    private val flags = MutableStateFlow<List<Flag>?>(null)
+    val flag: StateFlow<List<Flag>?> = flags
 
+    private val flagNames = MutableStateFlow<List<FlagShowData>?>(null)
+    val flagName: StateFlow<List<FlagShowData>?> = flagNames
+
+    private val flagNr = MutableStateFlow<Int?>(flags.value?.size ?: 0)
+    val flagNrs: StateFlow<Int?> = flagNr
+
+    private val FriendsNr = MutableStateFlow<Int?>(0)
+    val friendsNr: StateFlow<Int?> = FriendsNr
+
+
+    init {
+        this.getFriends()
+        this.getFlags(user.value?.id ?: "something went wrong")
+        this.getFlagNames()
+    }
 
     fun getUser(userId: String) {
         viewModelScope.launch {
@@ -75,7 +94,7 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
         _error.value = null
     }
 
-    fun base64ToImageBitmap(base64: String): ImageBitmap? {
+    fun base64ToImageBitmap(base64: String?): ImageBitmap? {
         if (base64 == "no Image") {
             return try {
                 // If the string has a header like "data:image/png;base64,...", strip it
@@ -88,7 +107,7 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
                 e.printStackTrace()
                 null
             }
-        } else{
+        } else {
             return null
         }
     }
@@ -97,12 +116,55 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
         viewModelScope.launch {
             _isLoading.value = true
             _error.value = null
+
+            try {
+                flags.value = userRepository.getFlag(userId)
+            } catch (e: Exception) {
+                Log.e("UserViewModel", "Error fetching user", e)
+                _error.value = e.localizedMessage ?: "Unknown error fetching Flags"
+                _isLoading.value = false
+            }
         }
-        try {
-            userRepository.
-        }catch (e: Exception) {
-            Log.e("UserViewModel", "Error fetching user", e)
-            _error.value = e.localizedMessage ?: "Unknown error fetching Flags"
-            _isLoading.value = false
     }
+
+    fun getFriends() {
+        viewModelScope.launch {
+            _isLoading.value = true
+            _error.value = null
+
+            try {
+                val result = userRepository.getFriendsNr()
+                if (result != null) {
+                    FriendsNr.value = result
+                } else {
+                    _error.value = "Failed to fetch user data."
+                }
+            } catch (e: Exception) {
+                Log.e("UserViewModel", "Error fetching user", e)
+                _error.value = e.localizedMessage ?: "Unknown error fetching Flags"
+                _isLoading.value = false
+            }
+        }
+    }
+
+    fun getFlagNames() {
+        viewModelScope.launch {
+            _isLoading.value = true
+            _error.value = null
+
+            try {
+                val result = mapRepo.getNames(flag.value)
+                if (result.isSuccess) {
+                    flagNames.value = result.getOrNull()
+                } else {
+                    _error.value = "Failed to fetch user data."
+                }
+            } catch (e: Exception) {
+                Log.e("UserViewModel", "Error fetching user", e)
+                _error.value = e.localizedMessage ?: "Unknown error fetching Flags"
+                _isLoading.value = false
+            }
+        }
+    }
+
 }

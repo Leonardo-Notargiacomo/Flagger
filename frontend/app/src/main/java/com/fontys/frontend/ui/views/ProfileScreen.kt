@@ -138,7 +138,6 @@ fun ProfileScreen(userViewModel: ProfileViewModel = viewModel()) {
                                                 val userUpdate = UserUpdate(
                                                     id = 1,
                                                     userName = editUsername,
-                                                    email = editEmail,
                                                     bio = editBio,
                                                     userImage = 0
                                                 )

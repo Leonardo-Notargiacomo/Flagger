@@ -258,7 +258,7 @@ object UserRepository {
         }
     }
 
-    suspend fun getFriendsNr(): Int? {
+     suspend fun getFriendsNr(): Int? {
         return try {
             val headers = HashMap<String, String>().apply {
                 put("Accept", "application/json")
@@ -270,7 +270,7 @@ object UserRepository {
                     // throw IllegalStateException("JWT token is missing for authenticated request")
                 }
             }
-            val response = friendsApiService.getFriends(headers, userId)
+            val response = friendsApiService.getFriends(headers = headers, token = userId)
             if (response.isSuccessful) {
                 return response.body()?.size ?: 0
             } else {
