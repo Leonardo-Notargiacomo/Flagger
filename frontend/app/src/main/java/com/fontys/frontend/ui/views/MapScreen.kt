@@ -4,6 +4,8 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.nfc.Tag
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Flag
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -121,9 +123,10 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
                     pressedElevation = 4.dp
                 )
             ) {
-                Text(
-                    text = "\uD83D\uDEA9",
-                    fontSize = 32.sp
+                Icon(
+                    imageVector = Icons.Default.Flag,
+                    contentDescription = "Flag Location",
+                    modifier = Modifier.size(32.dp)
                 )
             }
         }
