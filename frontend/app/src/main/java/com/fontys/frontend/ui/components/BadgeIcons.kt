@@ -1,6 +1,8 @@
 package com.fontys.frontend.ui.components
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.DirectionsBike
+import androidx.compose.material.icons.automirrored.filled.DirectionsRun
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.material.icons.sharp.*
@@ -29,7 +31,7 @@ object BadgeIcons {
         Icons.Default.MusicNote, Icons.Default.Headphones, Icons.Default.Book,
         Icons.Default.School, Icons.Default.Science, Icons.Default.Biotech,
         Icons.Default.Computer, Icons.Default.Smartphone, Icons.Default.Watch,
-        Icons.Default.DirectionsCar, Icons.Default.DirectionsBike, Icons.Default.DirectionsBoat,
+        Icons.Default.DirectionsCar, Icons.AutoMirrored.Filled.DirectionsBike, Icons.Default.DirectionsBoat,
         Icons.Default.Flight, Icons.Default.Train, Icons.Default.LocalShipping,
         Icons.Default.Anchor, Icons.Default.Flag, Icons.Default.Map,
         Icons.Default.Explore, Icons.Default.CompassCalibration, Icons.Default.NearMe,
@@ -63,9 +65,9 @@ object BadgeIcons {
             name.contains("Beginner", ignoreCase = true) -> Icons.Default.Start
             
             // Activity Types
-            name.contains("Run", ignoreCase = true) -> Icons.Default.DirectionsRun
+            name.contains("Run", ignoreCase = true) -> Icons.AutoMirrored.Filled.DirectionsRun
             name.contains("Walk", ignoreCase = true) -> Icons.Default.DirectionsWalk
-            name.contains("Cycle", ignoreCase = true) || name.contains("Bike", ignoreCase = true) -> Icons.Default.DirectionsBike
+            name.contains("Cycle", ignoreCase = true) || name.contains("Bike", ignoreCase = true) -> Icons.AutoMirrored.Filled.DirectionsBike
             name.contains("Hike", ignoreCase = true) -> Icons.Default.Hiking
             
             // Specific Milestones (Using numbers in name)

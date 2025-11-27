@@ -375,7 +375,7 @@ fun BadgeItem(badge: Badge, onClick: () -> Unit) {
                 ) {
                     Spacer(modifier = Modifier.height(4.dp))
                     Icon(
-                        imageVector = BadgeIcons.getIcon(badge.name),
+                        imageVector = BadgeIcons.getIcon(badge.name, badge.id),
                         contentDescription = badge.name,
                         tint = if (badge.isUnlocked) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f),
                         modifier = Modifier.size(32.dp)
@@ -521,7 +521,7 @@ fun BadgeDetailDialog(
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
-                            imageVector = BadgeIcons.getIcon(badge.name),
+                            imageVector = BadgeIcons.getIcon(badge.name, badge.id),
                             contentDescription = null,
                             tint = if (badge.isUnlocked) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f),
                             modifier = Modifier.size(64.dp)

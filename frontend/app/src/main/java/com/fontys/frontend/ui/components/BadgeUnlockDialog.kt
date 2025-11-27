@@ -6,21 +6,16 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import coil.compose.AsyncImage
 import com.fontys.frontend.data.models.Badge
 
 /**
@@ -127,7 +122,7 @@ private fun BadgeItem(badge: Badge, isLarge: Boolean) {
         ) {
             // Display vector icon
             Icon(
-                imageVector = BadgeIcons.getIcon(badge.name),
+                imageVector = BadgeIcons.getIcon(badge.name, badge.id),
                 contentDescription = badge.name,
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(if (isLarge) 64.dp else 48.dp)
