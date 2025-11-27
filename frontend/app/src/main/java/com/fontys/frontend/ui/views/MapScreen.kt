@@ -66,17 +66,25 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
             )
         }
     }
-    val googleMapOptions = remember {
-        GoogleMapOptions().mapId("349a2b06249ce52186cf3c94")
+
+    // Load custom map style
+    val mapStyle = remember {
+        try {
+            MapStyleOptions.loadRawResourceStyle(context, R.raw.map_style)
+        } catch (e: Exception) {
+            null
+        }
     }
+
     Box(Modifier.fillMaxSize()) {
         GoogleMap(
             modifier = Modifier.fillMaxSize(),
             cameraPositionState = cameraPositionState,
             properties = MapProperties(
                 isMyLocationEnabled = hasLocationPermission,
+                mapStyleOptions = mapStyle
             ),
-            googleMapOptionsFactory = { googleMapOptions }
+            uiSettings = MapUiSettings(zoomControlsEnabled = false)
         ) {
 
             userFlags.forEach { spot ->
