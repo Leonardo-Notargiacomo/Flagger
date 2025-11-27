@@ -165,3 +165,33 @@ This document outlines the use cases for the project. Each use case describes a 
   3. User can remove a friend by clicking trash icon
   4. System deletes friendship for both users
   5. Return to step 2
+
+---
+
+### Use Case: View Other Users' Profiles
+**Actor:** User
+
+**Description:** The user wants to view other users' profiles to see their exploration flags and earned badges.
+
+**Precondition:**
+- The user is logged into their account
+- The user has network connectivity
+
+**Scenario:**
+1. User searches for or selects another user from their friends list
+2. System retrieves the target user's profile information
+3. User taps on the profile to view details
+4. System displays the user's profile page with basic information
+5. System displays the user's placed flags on a map view
+6. System displays the user's earned badges collection
+7. User browses through the flags and badges
+8. User can tap on individual flags to see location details and photos
+
+**Result:** The user successfully views another user's profile, including their exploration flags on the map and their earned badges.
+
+**Exception:**
+- 2a. Network error: System displays "Failed to load profile" error with retry option
+- 5a. No flags available: System displays "No flags placed yet" message
+
+**Extensions:**
+- N/A
