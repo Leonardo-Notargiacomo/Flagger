@@ -125,10 +125,12 @@ private fun BadgeItem(badge: Badge, isLarge: Boolean) {
                 .background(MaterialTheme.colorScheme.background),
             contentAlignment = Alignment.Center
         ) {
-            // Display emoji or icon
-            Text(
-                text = badge.iconUrl ?: "🏆",
-                fontSize = if (isLarge) 64.sp else 48.sp
+            // Display vector icon
+            Icon(
+                imageVector = BadgeIcons.getIcon(badge.name),
+                contentDescription = badge.name,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(if (isLarge) 64.dp else 48.dp)
             )
         }
 

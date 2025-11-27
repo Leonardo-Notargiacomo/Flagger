@@ -8,6 +8,9 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.EmojiEvents
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -21,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.fontys.frontend.data.models.Badge
+import com.fontys.frontend.ui.components.BadgeIcons
 import com.fontys.frontend.ui.viewmodels.BadgeViewModel
 import com.fontys.frontend.ui.viewmodels.BadgeUiState
 import java.time.ZoneId
@@ -183,9 +187,11 @@ fun BadgeProfileSection(earnedBadges: Int, totalBadges: Int) {
                 .background(MaterialTheme.colorScheme.primaryContainer),
             contentAlignment = Alignment.Center
         ) {
-            Text(
-                text = "🏆",
-                fontSize = 64.sp
+            Icon(
+                imageVector = Icons.Default.EmojiEvents,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.surface,
+                modifier = Modifier.size(64.dp)
             )
         }
 
@@ -368,10 +374,11 @@ fun BadgeItem(badge: Badge, onClick: () -> Unit) {
                     verticalArrangement = Arrangement.Top
                 ) {
                     Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = badge.iconUrl ?: "🏆",
-                        fontSize = 24.sp,
-                        modifier = Modifier.alpha(if (badge.isUnlocked) 1f else 0.3f)
+                    Icon(
+                        imageVector = BadgeIcons.getIcon(badge.name),
+                        contentDescription = badge.name,
+                        tint = if (badge.isUnlocked) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f),
+                        modifier = Modifier.size(32.dp)
                     )
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
@@ -446,9 +453,11 @@ fun BadgeItem(badge: Badge, onClick: () -> Unit) {
                         .padding(6.dp),
                     contentAlignment = Alignment.TopEnd
                 ) {
-                    Text(
-                        text = "🔒",
-                        fontSize = 14.sp
+                    Icon(
+                        imageVector = Icons.Default.Lock,
+                        contentDescription = "Locked",
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                        modifier = Modifier.size(14.dp)
                     )
                 }
             }
@@ -511,10 +520,11 @@ fun BadgeDetailDialog(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(
-                            text = badge.iconUrl ?: "🏆",
-                            fontSize = 56.sp,
-                            modifier = Modifier.alpha(if (badge.isUnlocked) 1f else 0.3f)
+                        Icon(
+                            imageVector = BadgeIcons.getIcon(badge.name),
+                            contentDescription = null,
+                            tint = if (badge.isUnlocked) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f),
+                            modifier = Modifier.size(64.dp)
                         )
 
                         if (!badge.isUnlocked) {
@@ -524,10 +534,11 @@ fun BadgeDetailDialog(
                                     .padding(8.dp),
                                 contentAlignment = Alignment.TopEnd
                             ) {
-                                Text(
-                                    text = "🔒",
-                                    fontSize = 20.sp,
-                                    modifier = Modifier.alpha(0.6f)
+                                Icon(
+                                    imageVector = Icons.Default.Lock,
+                                    contentDescription = "Locked",
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                                    modifier = Modifier.size(24.dp)
                                 )
                             }
                         }
@@ -747,4 +758,3 @@ fun BadgeDetailDialog(
         }
     )
 }
-
