@@ -360,15 +360,15 @@ fun BadgeItem(badge: Badge, onClick: () -> Unit) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(8.dp),
+                    .padding(6.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+                verticalArrangement = Arrangement.SpaceBetween
             ) {
                 // Top section with icon and name
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .wrapContentHeight(),
+                        .weight(1f, fill = false),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
@@ -394,8 +394,6 @@ fun BadgeItem(badge: Badge, onClick: () -> Unit) {
                     )
                 }
 
-                Spacer(modifier = Modifier.height(3.dp))
-
                 // Progress indicator at bottom
                 Column(
                     modifier = Modifier.fillMaxWidth(),
@@ -412,31 +410,26 @@ fun BadgeItem(badge: Badge, onClick: () -> Unit) {
                             Color(0xFF666666)
                     )
 
-                    Spacer(modifier = Modifier.height(3.dp))
+                    Spacer(modifier = Modifier.height(2.dp))
 
                     // Mini progress bar
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(5.dp)
-                            .clip(RoundedCornerShape(2.5.dp))
-                            .background(
-                                if (badge.isUnlocked)
-                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
-                                else
-                                    MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f)
-                            )
+                            .height(6.dp)
+                            .clip(RoundedCornerShape(3.dp))
+                            .background(Color(0xFFFFFFFF).copy(alpha = 0.5f))
                     ) {
                         Box(
                             modifier = Modifier
                                 .fillMaxHeight()
                                 .fillMaxWidth(badgeProgress.coerceIn(0f, 1f))
-                                .clip(RoundedCornerShape(2.5.dp))
+                                .clip(RoundedCornerShape(3.dp))
                                 .background(
                                     if (badge.isUnlocked)
                                         MaterialTheme.colorScheme.primary
                                     else
-                                        MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                                        Color(0xFF8B4513)
                                 )
                         )
                     }
