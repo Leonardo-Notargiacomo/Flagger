@@ -22,7 +22,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import coil.compose.AsyncImage
 import com.fontys.frontend.data.models.Badge
-import com.fontys.frontend.ui.theme.ProfileColors
 
 /**
  * Dialog to celebrate newly unlocked badges
@@ -40,7 +39,7 @@ fun BadgeUnlockDialog(
                 .padding(16.dp),
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(
-                containerColor = ProfileColors.Container
+                containerColor = MaterialTheme.colorScheme.primaryContainer
             )
         ) {
             Column(
@@ -54,7 +53,7 @@ fun BadgeUnlockDialog(
                     text = if (badges.size == 1) "🎊 NEW BADGE! 🎊" else "🎊 NEW BADGES! 🎊",
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
-                    color = ProfileColors.Primary,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
                     textAlign = TextAlign.Center
                 )
 
@@ -64,7 +63,7 @@ fun BadgeUnlockDialog(
                     text = "Congratulations!",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = ProfileColors.Accent,
+                    color = MaterialTheme.colorScheme.primary,
                     textAlign = TextAlign.Center
                 )
 
@@ -93,8 +92,8 @@ fun BadgeUnlockDialog(
                     onClick = onDismiss,
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = ProfileColors.Accent,
-                        contentColor = Color.White
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
                     ),
                     shape = RoundedCornerShape(8.dp)
                 ) {
@@ -123,7 +122,7 @@ private fun BadgeItem(badge: Badge, isLarge: Boolean) {
             modifier = Modifier
                 .size(if (isLarge) 120.dp else 80.dp)
                 .clip(CircleShape)
-                .background(ProfileColors.Background),
+                .background(MaterialTheme.colorScheme.background),
             contentAlignment = Alignment.Center
         ) {
             // Display emoji or icon
@@ -140,7 +139,7 @@ private fun BadgeItem(badge: Badge, isLarge: Boolean) {
             text = badge.name,
             fontSize = if (isLarge) 20.sp else 18.sp,
             fontWeight = FontWeight.Bold,
-            color = ProfileColors.Primary,
+            color = MaterialTheme.colorScheme.onPrimaryContainer,
             textAlign = TextAlign.Center
         )
 
@@ -150,7 +149,7 @@ private fun BadgeItem(badge: Badge, isLarge: Boolean) {
         Text(
             text = badge.description,
             fontSize = if (isLarge) 16.sp else 14.sp,
-            color = ProfileColors.TextPrimary.copy(alpha = 0.8f),
+            color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f),
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(horizontal = 8.dp)
         )
