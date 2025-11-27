@@ -53,7 +53,7 @@ As a user, I want to add friends so that I can share and compare my exploration 
 
 View Friends’ Progress
 
-As a user, I want to see where my friends have been and how many flags they’ve collected so that I can feel inspired and accountable.
+As a User, I want to view other users' profile so that I can see their flags and/or badges
 
 ## Notifications & Reminders
 

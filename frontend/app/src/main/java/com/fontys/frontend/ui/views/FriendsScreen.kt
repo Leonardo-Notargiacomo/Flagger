@@ -1,5 +1,6 @@
 package com.fontys.frontend.ui.views
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -12,6 +13,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.fontys.frontend.common.PublicProfileView
 import com.fontys.frontend.data.models.FriendListItem
 import com.fontys.frontend.data.models.FriendRequest
 import com.fontys.frontend.ui.viewmodels.FriendsViewModel
@@ -19,6 +23,7 @@ import com.fontys.frontend.ui.viewmodels.FriendsViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FriendsScreen(
+    navController: NavController = rememberNavController(),
     viewModel: FriendsViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -124,7 +129,8 @@ fun FriendsScreen(
                 0 -> FriendsListTab(
                     friends = uiState.friends,
                     isLoading = uiState.isLoadingFriends,
-                    onRemoveFriend = { viewModel.removeFriend(it) }
+                    onRemoveFriend = { viewModel.removeFriend(it) },
+                    onViewProfile = { userId -> navController.navigate(PublicProfileView(userId)) }
                 )
                 1 -> FriendRequestsTab(
                     receivedRequests = uiState.receivedRequests,
@@ -138,7 +144,8 @@ fun FriendsScreen(
                     searchResults = uiState.searchResults,
                     isSearching = uiState.isSearching,
                     onSearch = { viewModel.searchUsers(it) },
-                    onSendFriendRequest = { viewModel.sendFriendRequest(it) }
+                    onSendFriendRequest = { viewModel.sendFriendRequest(it) },
+                    onViewProfile = { userId -> navController.navigate(PublicProfileView(userId)) }
                 )
             }
         }
@@ -149,7 +156,8 @@ fun FriendsScreen(
 fun FriendsListTab(
     friends: List<FriendListItem>,
     isLoading: Boolean,
-    onRemoveFriend: (Int) -> Unit
+    onRemoveFriend: (Int) -> Unit,
+    onViewProfile: (Int) -> Unit
 ) {
     if (isLoading) {
         Box(
@@ -179,7 +187,11 @@ fun FriendsListTab(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(friends) { friend ->
-                FriendItem(friend = friend, onRemove = { onRemoveFriend(friend.friendId) })
+                FriendItem(
+                    friend = friend,
+                    onRemove = { onRemoveFriend(friend.friendId) },
+                    onViewProfile = { onViewProfile(friend.friendId) }
+                )
             }
         }
     }
@@ -188,12 +200,15 @@ fun FriendsListTab(
 @Composable
 fun FriendItem(
     friend: FriendListItem,
-    onRemove: () -> Unit
+    onRemove: () -> Unit,
+    onViewProfile: () -> Unit
 ) {
     var showRemoveDialog by remember { mutableStateOf(false) }
 
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onViewProfile() },
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Row(
@@ -445,6 +460,7 @@ fun SearchTab(
     isSearching: Boolean,
     onSearch: (String) -> Unit,
     onSendFriendRequest: (Int) -> Unit,
+    onViewProfile: (Int) -> Unit,
     viewModel: FriendsViewModel = viewModel()
 ) {
     var searchQuery by remember { mutableStateOf("") }
@@ -529,7 +545,8 @@ fun SearchTab(
                     SearchUserItem(
                         user = user,
                         relationshipStatus = relationshipStatus,
-                        onSendRequest = { user.id?.let { onSendFriendRequest(it) } }
+                        onSendRequest = { user.id?.let { onSendFriendRequest(it) } },
+                        onViewProfile = { user.id?.let { onViewProfile(it) } }
                     )
                 }
             }
@@ -541,10 +558,13 @@ fun SearchTab(
 fun SearchUserItem(
     user: com.fontys.frontend.data.models.User,
     relationshipStatus: com.fontys.frontend.ui.viewmodels.RelationshipStatus,
-    onSendRequest: () -> Unit
+    onSendRequest: () -> Unit,
+    onViewProfile: () -> Unit
 ) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onViewProfile() },
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Row(
