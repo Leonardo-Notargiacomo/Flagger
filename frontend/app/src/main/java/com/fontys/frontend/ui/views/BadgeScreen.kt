@@ -360,27 +360,25 @@ fun BadgeItem(badge: Badge, onClick: () -> Unit) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(start = 6.dp, end = 6.dp, top = 6.dp, bottom = 12.dp),
+                    .padding(8.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.SpaceBetween
+                verticalArrangement = Arrangement.Center
             ) {
                 // Top section with icon and name
                 Column(
                     modifier = Modifier
-                        .weight(1f, fill = false)
                         .fillMaxWidth()
                         .wrapContentHeight(),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Top
+                    verticalArrangement = Arrangement.Center
                 ) {
-                    Spacer(modifier = Modifier.height(4.dp))
                     Icon(
                         imageVector = BadgeIcons.getIcon(badge.name, badge.id),
                         contentDescription = badge.name,
                         tint = if (badge.isUnlocked) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f),
-                        modifier = Modifier.size(32.dp)
+                        modifier = Modifier.size(28.dp)
                     )
-                    Spacer(modifier = Modifier.height(2.dp))
+                    Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = badge.name,
                         fontSize = 9.sp,
@@ -392,11 +390,11 @@ fun BadgeItem(badge: Badge, onClick: () -> Unit) {
                             MaterialTheme.colorScheme.onPrimaryContainer
                         else
                             Color(0xFF000000),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 4.dp)
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 2.dp)
                     )
                 }
+
+                Spacer(modifier = Modifier.height(3.dp))
 
                 // Progress indicator at bottom
                 Column(
@@ -414,31 +412,31 @@ fun BadgeItem(badge: Badge, onClick: () -> Unit) {
                             Color(0xFF666666)
                     )
 
-                    Spacer(modifier = Modifier.height(2.dp))
+                    Spacer(modifier = Modifier.height(3.dp))
 
                     // Mini progress bar
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(4.dp)
-                            .clip(RoundedCornerShape(2.dp))
+                            .height(5.dp)
+                            .clip(RoundedCornerShape(2.5.dp))
                             .background(
                                 if (badge.isUnlocked)
-                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
+                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
                                 else
-                                    MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f)
+                                    MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f)
                             )
                     ) {
                         Box(
                             modifier = Modifier
                                 .fillMaxHeight()
                                 .fillMaxWidth(badgeProgress.coerceIn(0f, 1f))
-                                .clip(RoundedCornerShape(2.dp))
+                                .clip(RoundedCornerShape(2.5.dp))
                                 .background(
                                     if (badge.isUnlocked)
                                         MaterialTheme.colorScheme.primary
                                     else
-                                        MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                                        MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
                                 )
                         )
                     }
@@ -457,7 +455,7 @@ fun BadgeItem(badge: Badge, onClick: () -> Unit) {
                         imageVector = Icons.Default.Lock,
                         contentDescription = "Locked",
                         tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
-                        modifier = Modifier.size(14.dp)
+                        modifier = Modifier.size(12.dp)
                     )
                 }
             }
