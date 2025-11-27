@@ -15,7 +15,9 @@ import {
   put,
   del,
   requestBody,
-  response, SchemaObject,
+  response,
+  SchemaObject,
+  HttpErrors,
 } from '@loopback/rest';
 import {GoUser} from '../models';
 import {GoUserRepository} from '../repositories';
@@ -283,14 +285,33 @@ export class GoUserController {
     })
     newUserRequest: NewUserRequest,
   ): Promise<GoUser> {
-    const password = await hash(newUserRequest.password, await genSalt());
-    const savedUser = await this.userRepository.create(
-      _.omit(newUserRequest, 'password'),
-    );
+    try {
+      const password = await hash(newUserRequest.password, await genSalt());
+      const savedUser = await this.userRepository.create(
+        _.omit(newUserRequest, 'password'),
+      );
 
-    await this.userRepository.goUserCredentials(savedUser.id).create({password});
+      await this.userRepository.goUserCredentials(savedUser.id).create({password});
 
-    return savedUser;
+      return savedUser;
+    } catch (error: any) {
+      // Check if it's a PostgreSQL unique constraint violation
+      if (error.code === '23505') {
+        // PostgreSQL error code for unique constraint violation
+        const constraintName = error.constraint || '';
+
+        if (constraintName.includes('username')) {
+          throw new HttpErrors.Conflict('This username is already taken. Please choose a different username.');
+        } else if (constraintName.includes('email')) {
+          throw new HttpErrors.Conflict('This email is already registered. Please use a different email or try logging in.');
+        } else {
+          throw new HttpErrors.Conflict('A user with this username or email already exists.');
+        }
+      }
+
+      // If it's not a duplicate error, rethrow the original error
+      throw error;
+    }
   }
 }
 

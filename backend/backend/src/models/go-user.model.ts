@@ -13,12 +13,18 @@ export class GoUser extends Entity {
   @property({
     type: 'string',
     default: 'User',
+    index: {
+      unique: true,
+    },
   })
   userName?: string;
 
   @property({
     type: 'string',
     required: true,
+    index: {
+      unique: true,
+    },
   })
   email: string;
 
