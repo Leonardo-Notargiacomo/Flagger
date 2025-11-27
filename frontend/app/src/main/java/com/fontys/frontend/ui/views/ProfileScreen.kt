@@ -22,7 +22,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.fontys.frontend.data.UserUpdate
 import com.fontys.frontend.domain.UserRepository
 import com.fontys.frontend.ui.components.*
-import com.fontys.frontend.ui.theme.ProfileColors
 import com.fontys.frontend.ui.viewmodels.ProfileViewModel
 import kotlinx.coroutines.launch
 
@@ -47,7 +46,7 @@ fun ProfileScreen(userViewModel: ProfileViewModel = viewModel()) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(ProfileColors.Background),
+            .background(MaterialTheme.colorScheme.background),
         contentAlignment = Alignment.Center
     ) {
         Box(
@@ -60,18 +59,18 @@ fun ProfileScreen(userViewModel: ProfileViewModel = viewModel()) {
                     .fillMaxSize()
                     .shadow(8.dp, RoundedCornerShape(24.dp))
                     .clip(RoundedCornerShape(24.dp))
-                    .background(ProfileColors.Container)
-                    .border(3.dp, ProfileColors.Border, RoundedCornerShape(24.dp))
+                    .background(MaterialTheme.colorScheme.primaryContainer)
+                    .border(3.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(24.dp))
             ) {
                 when {
                     isLoading -> {
                         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                            CircularProgressIndicator(color = ProfileColors.Primary)
+                            CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
                         }
                     }
                     error != null -> {
                         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                            Text(text = error ?: "Unknown error", color = ProfileColors.Primary)
+                            Text(text = error ?: "Unknown error", color = MaterialTheme.colorScheme.primary)
                         }
                     }
                     user != null -> {
@@ -146,8 +145,8 @@ fun ProfileScreen(userViewModel: ProfileViewModel = viewModel()) {
                                             .fillMaxWidth()
                                             .height(50.dp),
                                         colors = ButtonDefaults.buttonColors(
-                                            containerColor = ProfileColors.Accent,
-                                            contentColor = ProfileColors.Primary
+                                            containerColor = MaterialTheme.colorScheme.secondary,
+                                            contentColor = MaterialTheme.colorScheme.onSecondary
                                         ),
                                         shape = RoundedCornerShape(8.dp),
                                         elevation = ButtonDefaults.buttonElevation(
@@ -171,8 +170,8 @@ fun ProfileScreen(userViewModel: ProfileViewModel = viewModel()) {
                                             .fillMaxWidth()
                                             .height(50.dp),
                                         colors = ButtonDefaults.buttonColors(
-                                            containerColor = ProfileColors.Accent,
-                                            contentColor = ProfileColors.Primary
+                                            containerColor = MaterialTheme.colorScheme.secondary,
+                                            contentColor = MaterialTheme.colorScheme.onSecondary
                                         ),
                                         shape = RoundedCornerShape(8.dp),
                                         elevation = ButtonDefaults.buttonElevation(

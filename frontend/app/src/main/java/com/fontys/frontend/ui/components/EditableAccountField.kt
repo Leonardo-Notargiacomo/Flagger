@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -15,7 +16,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.fontys.frontend.ui.theme.ProfileColors
 
 /**
  * Editable account field component for edit mode
@@ -38,8 +38,8 @@ fun EditableAccountField(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(12.dp))
-                .background(ProfileColors.Container)
-                .border(2.dp, ProfileColors.Border, RoundedCornerShape(12.dp))
+                .background(MaterialTheme.colorScheme.primaryContainer)
+                .border(2.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(12.dp))
                 .padding(
                     top = 24.dp,
                     bottom = 16.dp,
@@ -52,11 +52,11 @@ fun EditableAccountField(
                 value = value,
                 onValueChange = onValueChange,
                 textStyle = TextStyle(
-                    color = ProfileColors.TextPrimary,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Normal
                 ),
-                cursorBrush = SolidColor(ProfileColors.Primary),
+                cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
                 modifier = Modifier
                     .fillMaxWidth()
                     .then(
@@ -74,12 +74,12 @@ fun EditableAccountField(
                 .align(Alignment.TopStart)
                 .offset(x = 12.dp, y = (-10).dp)
                 .clip(RoundedCornerShape(16.dp))
-                .background(ProfileColors.Primary)
+                .background(MaterialTheme.colorScheme.surface)
                 .padding(horizontal = 12.dp, vertical = 4.dp)
         ) {
             Text(
                 text = label.uppercase(),
-                color = ProfileColors.TextSecondary,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Normal,
                 letterSpacing = 1.sp
