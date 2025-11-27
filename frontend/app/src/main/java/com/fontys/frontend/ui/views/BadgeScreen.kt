@@ -418,7 +418,7 @@ fun BadgeItem(badge: Badge, onClick: () -> Unit) {
                             .fillMaxWidth()
                             .height(6.dp)
                             .clip(RoundedCornerShape(3.dp))
-                            .background(Color(0xFFFFFFFF).copy(alpha = 0.5f))
+                            .background(MaterialTheme.colorScheme.background)
                     ) {
                         Box(
                             modifier = Modifier
