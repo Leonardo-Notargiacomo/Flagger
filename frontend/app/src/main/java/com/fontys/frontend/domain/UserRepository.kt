@@ -101,35 +101,6 @@ object UserRepository {
             throw e
         }
     }
-    suspend fun whoAmIm()  {
-        try {
-            val headers = HashMap<String, String>().apply {
-                put("Accept", "application/json")
-                put("Content-Type", "application/json")
-                if (token.isNotEmpty()) {
-                    put("Authorization", "Bearer $token")
-                } else {
-                    throw IllegalStateException("Cannot fetch user ID: No authentication token available")
-                }
-            }
-            val response = userApiService.getId(headers)
-            Log.d(TAG, "whoAmIm response: $response")
-            if(response.isSuccessful){
-                val json = response.body() ?: throw Exception("Failed to get user ID: Response body is null")
-                userId = json
-            } else {
-                val errorMessage = when(response.code()) {
-                    401 -> "Session expired, please login again"
-                    500 -> "Server error, please try again later"
-                    else -> "Failed to get user ID: ${response.message()}"
-                }
-                throw Exception(errorMessage)
-            }
-        } catch (e: Exception) {
-            Log.e(TAG, "Exception in whoAmIm: ${e.message}", e)
-            throw e
-        }
-    }
 
     suspend fun register(userName: String, email: String, password: String, bio: String): Boolean {
         val headers = HashMap<String, String>().apply {

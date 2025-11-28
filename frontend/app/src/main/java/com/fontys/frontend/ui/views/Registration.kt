@@ -210,10 +210,10 @@ fun RegistrationView(
                         errorMessage = "Password must be at least 8 characters"
                     }
                     !password.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^\\da-zA-Z]).{8,}$".toRegex()) -> {
-                        errorMessage = "Password must include lowercase, uppercase, number, and special character"
+                        errorMessage = "Password must include at least one lowercase letter, one uppercase letter, one number, and one special character."
                     }
                     !email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$".toRegex()) -> {
-                        errorMessage = "Please enter a valid email address"
+                        errorMessage = "The email must follow a valid email format."
                     }
                     else -> {
                         isLoading = true
