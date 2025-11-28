@@ -516,7 +516,7 @@ fun SearchTab(
                 onSearch(it)
             },
             modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text("Search users by name or email...") },
+            placeholder = { Text("Search users by username (min 3 characters)...") },
             leadingIcon = {
                 Icon(Icons.Default.Search, contentDescription = "Search")
             },
@@ -547,6 +547,16 @@ fun SearchTab(
             ),
             singleLine = true
         )
+
+        // Helper text for minimum search length
+        if (searchQuery.isNotEmpty() && searchQuery.length < 3) {
+            Text(
+                text = "Enter at least 3 characters to search",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(start = 16.dp, top = 4.dp)
+            )
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -638,13 +648,7 @@ fun SearchUserItem(
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSecondaryContainer
                 )
-                user.email?.let { email ->
-                    Text(
-                        text = email,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.7f)
-                    )
-                }
+                // Email removed for privacy - only show to actual friends
                 user.bio?.let { bio ->
                     Text(
                         text = bio,
