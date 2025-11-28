@@ -1,5 +1,6 @@
 package com.fontys.frontend.common
 
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -54,12 +55,10 @@ class MainActivity : ComponentActivity() {
         // Configure window to draw behind system bars
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
-        // Hide the navigation bar
+        // Style navigation bar to match app theme
+        window.navigationBarColor = Color.parseColor("#E8DCC4") // Explorer cream color
         val windowInsetsController = WindowCompat.getInsetsController(window, window.decorView)
-        windowInsetsController.apply {
-            hide(WindowInsetsCompat.Type.navigationBars())
-            systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-        }
+        windowInsetsController.isAppearanceLightNavigationBars = true // Dark icons for light background
 
         // Check permissions
         permissionHandler.checkPermissions()
