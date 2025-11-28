@@ -6,6 +6,7 @@ import android.nfc.Tag
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Flag
+import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -28,9 +29,11 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.maps.android.compose.*
 import kotlinx.coroutines.launch
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewModel()) {
+    val scope = rememberCoroutineScope()
     val userLocation by viewModel.userLocation.collectAsState()
     val places by viewModel.places.collectAsState()
     val cameraPositionState = rememberCameraPositionState()
@@ -84,7 +87,10 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
                 isMyLocationEnabled = hasLocationPermission,
                 mapStyleOptions = mapStyle
             ),
-            uiSettings = MapUiSettings(zoomControlsEnabled = false)
+            uiSettings = MapUiSettings(
+                zoomControlsEnabled = false,
+                myLocationButtonEnabled = false
+            )
         ) {
 
             userFlags.forEach { spot ->
@@ -138,9 +144,40 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
                 )
             }
         }
-    }
 
-    val coroutineScope = rememberCoroutineScope()
+        // My Location button - styled for explorer theme
+        Box(
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(top = 56.dp, end = 16.dp)
+        ) {
+            FloatingActionButton(
+                onClick = {
+                    userLocation?.let {
+                        scope.launch {
+                            cameraPositionState.animate(
+                                CameraUpdateFactory.newLatLngZoom(it, 15f)
+                            )
+                        }
+                    }
+                },
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                elevation = FloatingActionButtonDefaults.elevation(
+                    defaultElevation = 6.dp,
+                    pressedElevation = 8.dp
+                ),
+                modifier = Modifier.size(48.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.MyLocation,
+                    contentDescription = "My Location",
+                    modifier = Modifier.size(24.dp),
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
+        }
+    }
 
     if (showDialog) {
         if (places.isEmpty()) {
@@ -206,7 +243,7 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
                                         locationName = place.displayName,
                                         latLng = LatLng(place.latitude, place.longitude)
                                     )
-                                    coroutineScope.launch {
+                                    scope.launch {
                                         cameraPositionState.animate(
                                             CameraUpdateFactory.newLatLngZoom(
                                                 LatLng(place.latitude, place.longitude),
@@ -252,4 +289,3 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
         )
     }
 }
-
