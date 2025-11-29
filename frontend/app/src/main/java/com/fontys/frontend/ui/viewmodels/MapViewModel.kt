@@ -11,6 +11,10 @@ import androidx.lifecycle.viewModelScope
 import com.fontys.frontend.data.FlagDisplay
 import com.fontys.frontend.data.FlagResponse
 import com.fontys.frontend.data.PlaceService
+import com.fontys.frontend.data.models.Badge
+import com.fontys.frontend.data.models.ExplorationEvent
+import com.fontys.frontend.data.models.StreakInfo
+import com.fontys.frontend.data.repositories.BadgeRepository
 import com.fontys.frontend.domain.FlagRepository
 import com.fontys.frontend.domain.MapRepository
 import com.google.android.gms.location.LocationServices
@@ -30,6 +34,7 @@ class MapsViewModel(application: Application) : AndroidViewModel(application) {
     private val context = getApplication<Application>().applicationContext
     private val mapRepository = MapRepository()
     private val flagRepository = FlagRepository()
+    private val badgeRepository = BadgeRepository()
     private val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
     private val client = OkHttpClient()
 
@@ -51,6 +56,12 @@ class MapsViewModel(application: Application) : AndroidViewModel(application) {
 
     private val _error = MutableStateFlow<String?>(null)
     val error: StateFlow<String?> = _error
+
+    private val _newlyUnlockedBadges = MutableStateFlow<List<Badge>>(emptyList())
+    val newlyUnlockedBadges: StateFlow<List<Badge>> = _newlyUnlockedBadges
+
+    private val _showBadgeDialog = MutableStateFlow(false)
+    val showBadgeDialog: StateFlow<Boolean> = _showBadgeDialog
 
 
     fun loadUserLocation() {
@@ -114,6 +125,11 @@ class MapsViewModel(application: Application) : AndroidViewModel(application) {
                 _isLoading.value = false
             }
         }
+    }
+
+    fun dismissBadgeDialog() {
+        _showBadgeDialog.value = false
+        _newlyUnlockedBadges.value = emptyList()
     }
 }
 

@@ -1,8 +1,11 @@
 package com.fontys.frontend.domain
 
+import com.fontys.frontend.config.ApiConfig
 import android.util.Log
 import com.fontys.frontend.data.UserLogin
+import com.fontys.frontend.data.UserRegister
 import com.fontys.frontend.data.UserReturn
+import com.fontys.frontend.data.UserUpdate
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
 import org.json.JSONObject
@@ -24,7 +27,7 @@ object UserRepository {
         level = HttpLoggingInterceptor.Level.BODY
     }
 
-    private val okHttpClient =  OkHttpClient.Builder()
+    private val okHttpClient = OkHttpClient.Builder()
         // No custom auth interceptor needed here if using @HeaderMap directly
         .addInterceptor(loggingInterceptor) // Keep logging for debugging
         .build()
@@ -53,7 +56,7 @@ object UserRepository {
             }
             val response = userApiService.getUser(headers, userId)
             if (response.isSuccessful) {
-                val userData = response.body()?: return null
+                val userData = response.body() ?: return null
                 val id = userData.id
                 val userName = userData.userName
                 val email = userData.email
@@ -79,18 +82,14 @@ object UserRepository {
             val headers = HashMap<String, String>().apply {
                 put("Accept", "application/json")
                 put("Content-Type", "application/json")
-                 ?: run {
-                    // Optional: Log a warning or throw an error if token is missing for authenticated endpoint
-                    // throw IllegalStateException("JWT token is missing for authenticated request")
-                }
             }
             val response = userApiService.login(headers, UserLogin(email,password))
-            if (response.isSuccessful) {
-                val res = response.body()
-                if (res != null) {
-                    token = res.token
-                    Log.d("TOKEN", "Logged in with token: $token")
-                }
+            if(response.isSuccessful){
+                val loginResponse = response.body()
+                token = loginResponse?.token ?: ""
+                println("Login successful, token set: ${token.take(20)}...")
+            } else {
+                println("Login failed: ${response.code()} - ${response.message()}")
             }
         } catch (
             e: Exception
@@ -118,6 +117,51 @@ object UserRepository {
         }
     }
 
+    suspend fun register(userName: String, email: String, password: String, bio: String): Boolean {
+        try {
+            val headers = HashMap<String, String>().apply {
+                put("Accept", "application/json")
+                put("Content-Type", "application/json")
+            }
+            val response =
+                userApiService.signup(headers, UserRegister(userName, email, bio, password))
+            if (response.isSuccessful) {
+                // Signup successful, now login to get token
+                login(email, password)
+                whoAmIm()
+                return true
+            } else {
+                println("Error: ${response.code()} - ${response.message()}")
+                return false
+            }
+        } catch (
+            e: Exception
+        ) {
+            println("Exception: ${e.message}")
+        }
+        return false
+    }
 
-
+    suspend fun updateUser(userId: String, userUpdate: UserUpdate): String? {
+        return try {
+            val headers = HashMap<String, String>().apply {
+                put("Accept", "application/json")
+                put("Content-Type", "application/json")
+                token?.let { token ->
+                    put("Authorization", "Bearer $token") // Add JWT token if available
+                } ?: run {
+                    // Optional: Log a warning or throw an error if token is missing for authenticated endpoint
+                    // throw IllegalStateException("JWT token is missing for authenticated request")
+                }
+            }
+            val response = userApiService.updateUser(headers , userId, userUpdate)
+            if (response.isSuccessful) {
+                response.body()
+            } else {
+                "Error: ${response.code()} - ${response.message()}"
+            }
+        } catch (e: Exception) {
+            "Exception: ${e.message}"
+        }
+    }
 }

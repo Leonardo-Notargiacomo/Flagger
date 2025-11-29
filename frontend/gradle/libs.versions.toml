@@ -1,6 +1,6 @@
 [versions]
 activityCompose = "1.9.0"
-agp = "8.13.0"
+agp = "8.13.1"
 kotlin = "2.2.21"
 coreKtx = "1.17.0"
 junit = "4.13.2"
@@ -33,6 +33,8 @@ materialIconsExtended = "1.7.8"
 camerax = "1.5.0-alpha06"
 accompanist = "0.37.2"
 identityJvm = "202411.1"
+roomKtx = "2.8.3"
+navigationRuntimeKtx = "2.9.6"
 
 [libraries]
 androidx-compose-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }

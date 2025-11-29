@@ -27,7 +27,8 @@ class FlagRepository{
     }
 
     private val okHttpClient =  OkHttpClient.Builder()
-        .addInterceptor(loggingInterceptor)
+        // No custom auth interceptor needed here if using @HeaderMap directly
+        .addInterceptor(loggingInterceptor) // Keep logging for debugging
         .build()
 
     private val gson = GsonBuilder()
