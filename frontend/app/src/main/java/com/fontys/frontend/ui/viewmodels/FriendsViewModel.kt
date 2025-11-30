@@ -90,7 +90,7 @@ class FriendsViewModel : ViewModel() {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoadingFriends = true, error = null)
 
-            repository.getFriends(authToken).fold(
+            repository.getFriends(authToken, currentUserId).fold(
                 onSuccess = { friends ->
                     Log.d(TAG, "loadFriends() loaded ${friends.size} friends")
 

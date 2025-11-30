@@ -184,14 +184,14 @@ class MapRepository { // No need for companion object if we want an instance for
      *         or an Exception on failure.
      */
     suspend fun getNames(flags: List<Flag>?): Result<List<FlagShowData>> = withContext(Dispatchers.IO) {
-        if (flags.isEmpty()) {
+        if (flags?.isEmpty() == true) {
             return@withContext Result.success(emptyList())
         }
 
         // 1. Group the original flags by their locationId. This is important for
         //    merging the data back together after the API calls.
         //    We filter out any flags that don't have a locationId.
-        val flagsById = flags.filter { it.locationId != null }.associateBy { it.locationId!! }
+        val flagsById = flags!!.filter { it.locationId != null }.associateBy { it.locationId!! }
         val locationIds = flagsById.keys.toList()
 
         if (locationIds.isEmpty()) {
