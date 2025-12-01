@@ -28,7 +28,7 @@ interface UserAPIService {
     @POST(value = "signup")
     suspend fun signup(@HeaderMap headers: Map<String,String>,@Body user: UserRegister ): Response<UserReturn>
 
-    @GET("api/flags/users/{userID}")
+    @GET("/flags/user/{userID}")
     suspend fun getUserFlags(
         @Header("Authorization") token: HashMap<String, String>,
         @Path("userID") userID: String
