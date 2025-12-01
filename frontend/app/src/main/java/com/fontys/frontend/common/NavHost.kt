@@ -23,6 +23,7 @@ import com.fontys.frontend.ui.views.PictureCaptureScreen
 import com.fontys.frontend.ui.views.ProfileScreen
 import kotlinx.serialization.Serializable
 import com.fontys.frontend.ui.views.NavBar
+import com.fontys.frontend.ui.views.PublicProfileScreen
 
 
 @Serializable
@@ -47,6 +48,9 @@ object NavigationView
 object RegistrationView
 
 @Serializable
+data class PublicProfileView(val userId: Int)
+
+@Serializable
 object CameraView
 
 @Composable
@@ -66,22 +70,26 @@ fun NavHost(
             composable<MapView> {
                 MapsScreen(navController)
             }
+
             composable<FriendView> {
                 // TODO: Pass actual auth token to FriendsViewModel when auth system is integrated
                 // Example: val viewModel: FriendsViewModel = viewModel()
                 //          viewModel.setAuthToken(authToken)
-                FriendsScreen()
+                FriendsScreen(navController = navController)
             }
+
             composable<ProfileView> {
                 ProfileScreen()
             }
+
             composable<BadgeView> {
-                // TODO: Get actual userId from auth system
-                BadgeScreen(UserRepository.userId)
+                BadgeScreen(userId = UserRepository.userId)
             }
+
             composable<LoginView> {
                 LoginView(navController)
             }
+
             composable<RegistrationView> {
                 RegistrationView(navController)
             }
@@ -94,6 +102,21 @@ fun NavHost(
                 val cameraViewModel: CameraPreviewViewModel = viewModel()
                 PictureCaptureScreen(navController, cameraViewModel)
             }
+            composable<NavigationView> {
+                NavBar()
+            }
+
+            composable<PublicProfileView> { backStackEntry ->
+            // Type-safe navigation with Kotlin serialization
+            // The route parameters are automatically parsed from the path
+            val args = backStackEntry.arguments
+            val userId = args?.getInt("userId") ?: 0
+
+            PublicProfileScreen(
+                userId = userId,
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
         }
     }
 }
