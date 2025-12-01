@@ -48,8 +48,6 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
 
     init {
         this.getFriends()
-        this.getFlags(user.value?.id ?: "something went wrong")
-        this.getFlagNames()
     }
 
     fun getUser(userId: String) {
@@ -61,6 +59,8 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
                 val result = userRepository.getUser(userId)
                 if (result != null) {
                     _user.value = result
+                    // Fetch flags after user data is loaded (getFlagNames will be called automatically after flags load)
+                    getFlags(userId)
                 } else {
                     _error.value = "Failed to fetch user data."
                 }
@@ -119,6 +119,8 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
 
             try {
                 flags.value = userRepository.getFlag(userId)
+                // Only call getFlagNames after flags are loaded
+                getFlagNames()
             } catch (e: Exception) {
                 Log.e("UserViewModel", "Error fetching user", e)
                 _error.value = e.localizedMessage ?: "Unknown error fetching Flags"
@@ -153,6 +155,13 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
             _error.value = null
 
             try {
+                // Only fetch flag names if flags list is not null/empty
+                if (flag.value.isNullOrEmpty()) {
+                    flagNames.value = emptyList()
+                    _isLoading.value = false
+                    return@launch
+                }
+
                 val result = mapRepo.getNames(flag.value)
                 if (result.isSuccess) {
                     flagNames.value = result.getOrNull()
