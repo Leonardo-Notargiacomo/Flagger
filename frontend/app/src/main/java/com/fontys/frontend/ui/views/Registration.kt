@@ -1,13 +1,22 @@
 package com.fontys.frontend.ui.views
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -18,53 +27,156 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.fontys.frontend.common.RegistrationView
-import com.fontys.frontend.ui.viewmodels.RegistrationVIewModel
+import com.fontys.frontend.ui.viewmodels.RegistrationViewModel
+
+
 
 @Composable
 fun RegistrationView(
     navController: NavHostController,
-    viewModel: RegistrationVIewModel = viewModel()
+    viewModel: RegistrationViewModel = viewModel()
 ) {
     var email by remember { mutableStateOf("") }
+    var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
+    var bio by remember { mutableStateOf("") }
+
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+    var registrationSuccess by remember { mutableStateOf(false) }
+    var isLoading by remember { mutableStateOf(false) }
+
+    // Navigate to login when registration succeeds
+    LaunchedEffect(registrationSuccess) {
+        if (registrationSuccess) {
+            navController.navigate("login?registrationSuccess=true") {
+                popUpTo("registration") { inclusive = true }
+            }
+        }
+    }
+
 
     Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp)
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(32.dp)
+            .verticalScroll(rememberScrollState()),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
-        TextField(
+        OutlinedTextField(
             value = email,
             onValueChange = { email = it },
-            modifier = Modifier.align(Alignment.CenterHorizontally).fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             label = { Text("Email") }
         )
 
-        TextField(
+        Spacer(modifier = Modifier.height(16.dp))
+
+        OutlinedTextField(
+            value = username,
+            onValueChange = { username = it },
+            modifier = Modifier.fillMaxWidth(),
+            label = { Text("Username") }
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        OutlinedTextField(
             value = password,
             onValueChange = { password = it },
-            modifier = Modifier.align(Alignment.CenterHorizontally).fillMaxWidth().padding(top = 8.dp),
+            modifier = Modifier.fillMaxWidth(),
             label = { Text("Password") },
             visualTransformation = PasswordVisualTransformation()
         )
 
-        TextField(
+        Spacer(modifier = Modifier.height(16.dp))
+
+        OutlinedTextField(
             value = confirmPassword,
             onValueChange = { confirmPassword = it },
-            modifier = Modifier.align(Alignment.CenterHorizontally).fillMaxWidth().padding(top = 8.dp),
+            modifier = Modifier.fillMaxWidth(),
             label = { Text("Confirm Password") },
             visualTransformation = PasswordVisualTransformation()
         )
 
-        Button(onClick = {}) {
-            Text("Sign in")
-        }
+        Spacer(modifier = Modifier.height(16.dp))
 
+        OutlinedTextField(
+            value = bio,
+            onValueChange = { bio = it },
+            modifier = Modifier.fillMaxWidth(),
+            label = { Text("Bio") }
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
 
         Button(
-            onClick = { navController.navigate(RegistrationView) }
+            modifier = Modifier.fillMaxWidth(),
+            enabled = !isLoading,
+            onClick = {
+                errorMessage = null
+                when {
+                    email.isBlank() || username.isBlank() || password.isBlank() -> {
+                        errorMessage = "Please fill in all fields"
+                    }
+                    password != confirmPassword -> {
+                        errorMessage = "Passwords do not match"
+                    }
+                    password.length < 8 -> {
+                        errorMessage = "Password must be at least 8 characters"
+                    }
+                    !password.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^\\da-zA-Z]).{8,}$".toRegex()) -> {
+                        errorMessage = "Password must include at least one lowercase letter, one uppercase letter, one number, and one special character."
+                    }
+                    !email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$".toRegex()) -> {
+                        errorMessage = "The email must follow a valid email format."
+                    }
+                    else -> {
+                        isLoading = true
+                        viewModel.onSignUp(
+                            email = email,
+                            userName = username,
+                            password = password,
+                            bio = bio,
+                            onSuccess = {
+                                isLoading = false
+                                registrationSuccess = true
+                            },
+                            onError = { error ->
+                                isLoading = false
+                                errorMessage = error
+                            }
+                        )
+                    }
+                }
+            }
         ) {
-            Text("Sign up")
+            if (isLoading) {
+                CircularProgressIndicator()
+            } else {
+                Text("Sign Up")
+            }
+        }
+
+        errorMessage?.let {
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = it,
+                color = MaterialTheme.colorScheme.error
+            )
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text("Already have an account?")
+
+        Spacer(modifier = Modifier.height(4.dp))
+
+        TextButton(
+            onClick = { navController.navigate("login") }
+        ) {
+            Text("Sign in")
         }
     }
 }

@@ -1,6 +1,6 @@
 import {get, param, response} from '@loopback/rest';
 import {repository} from '@loopback/repository';
-import {BadgeRepository, UserBadgeRepository} from '../repositories';
+import {BadgeRepository, UserBadgeRepository, ExplorationEventRepository, UserStreakRepository} from '../repositories';
 import {Badge} from '../models';
 
 export class BadgeController {
@@ -9,12 +9,12 @@ export class BadgeController {
     public badgeRepository: BadgeRepository,
     @repository(UserBadgeRepository)
     public userBadgeRepository: UserBadgeRepository,
+    @repository(ExplorationEventRepository)
+    public explorationEventRepository: ExplorationEventRepository,
+    @repository(UserStreakRepository)
+    public userStreakRepository: UserStreakRepository,
   ) {}
 
-  /**
-   * GET /api/badges
-   * Get all available badges in the system
-   */
   @get('/api/badges')
   @response(200, {
     description: 'List of all badges',
@@ -53,7 +53,6 @@ export class BadgeController {
     @param.path.number('userId') userId: number,
   ) {
     console.log(`[BadgeController] getUserBadges() called for userId: ${userId}`);
-
     try {
       // Get user's unlocked badges with badge details
       console.log(`[BadgeController] Fetching user badges for userId ${userId}`);
@@ -71,26 +70,47 @@ export class BadgeController {
       });
       console.log(`[BadgeController] Found ${allBadges.length} total badges`);
 
+      // Get user's current stats for progress calculation
+      const explorationCount = await this.explorationEventRepository.count({userId});
+      const userStreak = await this.userStreakRepository.findOne({where: {userId}});
+      const currentStreak = userStreak?.currentStreak ?? 0;
+
+      console.log(`[BadgeController] User stats - Explorations: ${explorationCount.count}, Streak: ${currentStreak}`);
+
       // Map badges to include unlock status
       const unlockedIds = new Set(userBadges.map(ub => ub.badgeId));
       console.log(`[BadgeController] Unlocked badge IDs: ${Array.from(unlockedIds).join(', ')}`);
 
-      const badgesWithStatus = allBadges.map((badge: Badge) => ({
-        ...badge,
-        isUnlocked: unlockedIds.has(badge.id!),
-        unlockedAt: userBadges.find(ub => ub.badgeId === badge.id)?.unlockedAt,
-      }));
+      const badgesWithStatus = allBadges.map((badge: Badge) => {
+        // Calculate progress based on badge criteria
+        let currentProgress = 0;
+        let maxProgress = badge.unlockCriteria.threshold;
+
+        if (badge.unlockCriteria.type === 'exploration_count') {
+          currentProgress = Math.min(explorationCount.count, maxProgress);
+        } else if (badge.unlockCriteria.type === 'streak') {
+          currentProgress = Math.min(currentStreak, maxProgress);
+        }
+
+        return {
+          ...badge,
+          isUnlocked: unlockedIds.has(badge.id!),
+          unlockedAt: userBadges.find(ub => ub.badgeId === badge.id)?.unlockedAt,
+          currentProgress,
+          maxProgress,
+        };
+      });
 
       const result = {
         badges: badgesWithStatus,
-        totalBadges: allBadges.length,
         earnedBadges: userBadges.length,
+        totalBadges: allBadges.length,
       };
 
       console.log(`[BadgeController] Returning: ${result.earnedBadges}/${result.totalBadges} badges earned`);
       return result;
     } catch (error) {
-      console.error(`[BadgeController] Error in getUserBadges for userId ${userId}:`, error);
+      console.error('[BadgeController] Error in getUserBadges:', error);
       throw error;
     }
   }
