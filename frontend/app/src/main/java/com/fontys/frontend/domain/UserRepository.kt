@@ -20,7 +20,6 @@ import com.fontys.frontend.domain.UserAPIService
 
 object UserRepository {
 
-    val BASE_URL = "https://group-repository-2025-android-1-ntbb.onrender.com"
     var token =""
     var userId=0
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
@@ -36,7 +35,7 @@ object UserRepository {
         .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
         .create()
     private val retrofit = Retrofit.Builder()
-        .baseUrl(BASE_URL)
+        .baseUrl(ApiConfig.BASE_URL)
         .client(okHttpClient) // Use the OkHttpClient
         .addConverterFactory(GsonConverterFactory.create(gson))
         .addConverterFactory(ScalarsConverterFactory.create())
