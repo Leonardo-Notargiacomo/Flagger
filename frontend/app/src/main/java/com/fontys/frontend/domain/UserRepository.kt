@@ -181,6 +181,29 @@ object UserRepository {
         }
     }
 
+    suspend fun whoAmIm() {
+        try {
+            val headers = HashMap<String, String>().apply {
+                put("Accept", "application/json")
+                put("Content-Type", "application/json")
+                token?.let { token ->
+                    put("Authorization", "Bearer $token")
+                } ?: run {
+                    // Optional: Log a warning or throw an error if token is missing for authenticated endpoint
+                    // throw IllegalStateException("JWT token is missing for authenticated request")
+                }
+            }
+            val response = userApiService.getId(headers)
+            Log.d(TAG, "whoAmIm response: $response")
+            if (response.isSuccessful) {
+                val json = response.body() ?: 0
+                userId = json
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Exception in whoAmIm: ${e.message}", e)
+        }
+    }
+
     suspend fun updateUser(userId: String, userUpdate: UserUpdate): String? {
         return try {
             val headers = HashMap<String, String>().apply {
