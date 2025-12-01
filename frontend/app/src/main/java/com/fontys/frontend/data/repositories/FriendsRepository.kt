@@ -156,7 +156,7 @@ class FriendsRepository {
     }
 
     // Friendships
-    suspend fun getFriends(token: String, userId: Int): Result<List<FriendListItem>> {
+    suspend fun getFriends(token: String): Result<List<FriendListItem>> {
         Log.d(TAG, "getFriends() called")
         val headers = HashMap<String, String>().apply {
             put("Accept", "application/json")
@@ -174,7 +174,7 @@ class FriendsRepository {
             }
         }
         return try {
-            val response = api.getFriends(headers, userId = userId )
+            val response = api.getFriends(headers)
             Log.d(TAG, "getFriends() response code: ${response.code()}")
             Log.d(TAG, "getFriends() response body size: ${response.body()?.size}")
             response.body()?.forEachIndexed { index, friend ->

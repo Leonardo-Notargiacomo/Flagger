@@ -58,8 +58,7 @@ interface FriendsApi {
     // Friendships endpoints
     @GET("friends")
     suspend fun getFriends(
-        @Header("Authorization") token: HashMap<String, String>,
-        @Path("userId") userId: Int
+        @HeaderMap() token: HashMap<String, String>
     ): Response<List<FriendListItem>>
 
     @DELETE("friends/{friendId}")

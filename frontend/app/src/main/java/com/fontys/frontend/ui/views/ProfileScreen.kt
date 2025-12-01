@@ -139,7 +139,7 @@ fun ProfileScreen(userViewModel: ProfileViewModel = viewModel()) {
                                                     id = 1,
                                                     userName = editUsername,
                                                     bio = editBio,
-                                                    userImage = 0
+                                                    userImage = "Empty"
                                                 )
                                                 userViewModel.updateUser(userData.id, userUpdate)
                                                 isEditing = false

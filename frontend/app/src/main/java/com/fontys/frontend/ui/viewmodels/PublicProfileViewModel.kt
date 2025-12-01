@@ -196,7 +196,7 @@ class PublicProfileViewModel(application: Application) : AndroidViewModel(applic
             }
 
             // Check if already friends
-            val friendsResult = friendsRepository.getFriends(token, userId)
+            val friendsResult = friendsRepository.getFriends(token)
             if (friendsResult.isSuccess) {
                 val friends = friendsResult.getOrNull() ?: emptyList()
                 val isFriend = friends.any { it.friendId == userId }

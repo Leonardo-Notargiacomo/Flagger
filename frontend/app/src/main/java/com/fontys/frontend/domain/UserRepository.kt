@@ -268,7 +268,7 @@ object UserRepository {
                     // throw IllegalStateException("JWT token is missing for authenticated request")
                 }
             }
-            val response = friendsApiService.getFriends( headers,  userId)
+            val response = friendsApiService.getFriends( headers)
             if (response.isSuccessful) {
                 return response.body()?.size ?: 0
             } else {
