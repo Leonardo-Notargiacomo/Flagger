@@ -15,10 +15,12 @@ import com.fontys.frontend.ui.views.FriendsScreen
 import com.fontys.frontend.ui.views.LoginView
 import com.fontys.frontend.ui.views.RegistrationView
 import com.fontys.frontend.ui.views.MapsScreen
-import com.fontys.frontend.ui.views.ProfileScreen
+import com.fontys.frontend.ui.views.Profile
+import com.fontys.frontend.ui.viewmodels.ProfileViewModel
 import kotlinx.serialization.Serializable
 import com.fontys.frontend.ui.views.NavBar
 import com.fontys.frontend.ui.views.PublicProfileScreen
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 
 @Serializable
@@ -71,7 +73,8 @@ fun NavHost(
             }
 
             composable<ProfileView> {
-                ProfileScreen()
+                val profileViewModel: ProfileViewModel = viewModel()
+                Profile(viewModel = profileViewModel)
             }
 
             composable<BadgeView> {
