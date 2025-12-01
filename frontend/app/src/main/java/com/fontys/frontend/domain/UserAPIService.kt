@@ -30,7 +30,7 @@ interface UserAPIService {
 
     @GET("/flags/user/{userID}")
     suspend fun getUserFlags(
-        @Header("Authorization") token: HashMap<String, String>,
+        @HeaderMap headers: Map<String, String>,
         @Path("userID") userID: String
     ): Response<List<Flag>>
 }

@@ -143,7 +143,6 @@ fun Profile(viewModel: ProfileViewModel) {
                             Column(
                                 modifier = Modifier
                                     .weight(1f)
-                                    .verticalScroll(rememberScrollState())
                                     .padding(16.dp)
                             ) {
                                 TopAppBar(
@@ -208,7 +207,11 @@ fun Profile(viewModel: ProfileViewModel) {
                                     }
                                 )
                                 postNames?.let { list ->
-                                    LazyColumn {
+                                    LazyColumn(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .height(300.dp)
+                                    ) {
                                         items(items=list) { flag ->
                                             FlagItem(flag, viewModel)
                                         }
