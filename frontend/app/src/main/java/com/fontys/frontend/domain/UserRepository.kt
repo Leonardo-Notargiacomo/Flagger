@@ -106,8 +106,14 @@ object UserRepository {
             val response = userApiService.getId(headers)
             println(response)
             if(response.isSuccessful){
-                val json = response.body()?:0
-                userId =json
+                val json = response.body() ?: throw Exception("Failed to get user ID: Response body is null")
+                userId = json
+            } else {
+                val errorMessage = when (response.code()) {
+                    401 -> "Session expired, please login again"
+                    500 -> "Server error, please try again later"
+                    else -> "Failed to get user ID: ${response.message()}"
+                }
             }
         } catch (
             e: Exception
