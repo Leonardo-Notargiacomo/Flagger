@@ -34,7 +34,7 @@ fun toBase64(context: Context, photoUri: Uri?): String {
     }
 }
 fun fromBase64(string: String) : BitmapDescriptor? {
-    if (string==null || string.isEmpty()) return BitmapDescriptorFactory.defaultMarker()
+    if (string.isNullOrEmpty()) return BitmapDescriptorFactory.defaultMarker()
 
     val bytes  = Base64.decode(string,Base64.NO_WRAP)
     val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
