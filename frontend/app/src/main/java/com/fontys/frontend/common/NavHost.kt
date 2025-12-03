@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -19,7 +18,6 @@ import com.fontys.frontend.ui.views.FriendsScreen
 import com.fontys.frontend.ui.views.LoginView
 import com.fontys.frontend.ui.views.RegistrationView
 import com.fontys.frontend.ui.views.MapsScreen
-import com.fontys.frontend.ui.views.PictureCaptureScreen
 import com.fontys.frontend.ui.views.ProfileScreen
 import kotlinx.serialization.Serializable
 import com.fontys.frontend.ui.views.NavBar
@@ -102,9 +100,7 @@ fun NavHost(
                 val cameraViewModel: CameraPreviewViewModel = viewModel()
                 PictureCaptureScreen(navController, cameraViewModel)
             }
-            composable<NavigationView> {
-                NavBar()
-            }
+
 
             composable<PublicProfileView> { backStackEntry ->
             // Type-safe navigation with Kotlin serialization

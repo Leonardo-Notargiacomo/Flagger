@@ -113,7 +113,9 @@ object UserRepository {
                     401 -> "Session expired, please login again"
                     500 -> "Server error, please try again later"
                     else -> "Failed to get user ID: ${response.message()}"
+
                 }
+                throw Exception(errorMessage)
             }
         } catch (
             e: Exception
