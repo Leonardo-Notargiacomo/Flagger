@@ -7,3 +7,4 @@ package com.fontys.frontend.config
 object ApiConfig {
     const val BASE_URL = "https://group-repository-2025-android-1-6of2.onrender.com/"
 }
+

@@ -76,51 +76,29 @@ object UserRepository {
         }
     }
     suspend fun login(email : String, password: String) {
-        val headers = HashMap<String, String>().apply {
-            put("Accept", "application/json")
-            put("Content-Type", "application/json")
-        }
-        val response = userApiService.login(headers, UserLogin(email,password))
-        if(response.isSuccessful){
-            val loginResponse = response.body()
-            token = loginResponse?.token ?: ""
-            println("Login successful, token set: ${token.take(20)}...")
-        } else {
-            val errorMessage = when(response.code()) {
-                401 -> "Invalid email or password"
-                404 -> "User not found"
-                500 -> "Server error, please try again later"
-                else -> "Login failed: ${response.message()}"
-            }
-            println("Login failed: ${response.code()} - ${response.message()}")
-            throw Exception(errorMessage)
-        }
-    }
-    suspend fun whoAmIm()  {
         try {
-            val headers = mapOf(
-                "Accept" to "application/json",
-                "Content-Type" to "application/json",
-                "Authorization" to "Bearer $token"
-            )
-            val response = userApiService.getId(headers)
-            println(response)
+            val headers = HashMap<String, String>().apply {
+                put("Accept", "application/json")
+                put("Content-Type", "application/json")
+            }
+            val response = userApiService.login(headers, UserLogin(email,password))
             if(response.isSuccessful){
-                val json = response.body() ?: throw Exception("Failed to get user ID: Response body is null")
-                userId = json
+                val loginResponse = response.body()
+                token = loginResponse?.token ?: ""
+                Log.d(TAG, "Login successful, token set: ${token.take(20)}...")
             } else {
-                val errorMessage = when (response.code()) {
-                    401 -> "Session expired, please login again"
+                val errorMessage = when(response.code()) {
+                    401 -> "Invalid email or password"
+                    404 -> "User not found"
                     500 -> "Server error, please try again later"
-                    else -> "Failed to get user ID: ${response.message()}"
-
+                    else -> "Login failed: ${response.message()}"
                 }
+                Log.e(TAG, "Login failed: ${response.code()} - ${response.message()}")
                 throw Exception(errorMessage)
             }
-        } catch (
-            e: Exception
-        ) {
-            println("Exception: ${e.message}")
+        } catch (e: Exception) {
+            Log.e(TAG, "Exception during login: ${e.message}", e)
+            throw e
         }
     }
 
@@ -200,6 +178,29 @@ object UserRepository {
 
             Log.d(TAG, "Final error message to display: $finalErrorMessage")
             throw Exception(finalErrorMessage)
+        }
+    }
+
+    suspend fun whoAmIm() {
+        try {
+            val headers = HashMap<String, String>().apply {
+                put("Accept", "application/json")
+                put("Content-Type", "application/json")
+                token?.let { token ->
+                    put("Authorization", "Bearer $token")
+                } ?: run {
+                    // Optional: Log a warning or throw an error if token is missing for authenticated endpoint
+                    // throw IllegalStateException("JWT token is missing for authenticated request")
+                }
+            }
+            val response = userApiService.getId(headers)
+            Log.d(TAG, "whoAmIm response: $response")
+            if (response.isSuccessful) {
+                val json = response.body() ?: 0
+                userId = json
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Exception in whoAmIm: ${e.message}", e)
         }
     }
 
