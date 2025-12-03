@@ -7,6 +7,31 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
+// Unified Retro-Clean Theme - Warm vintage map aesthetic, clean execution
+private val ExplorerLightColorScheme = lightColorScheme(
+    primary = Color(0xFFE98D58),           // Warm orange - map accent
+    onPrimary = Color.White,
+    primaryContainer = Color(0xFFEBE3CD),  // Light cream - parchment
+    onPrimaryContainer = Color(0xFF523735), // Dark brown text
+    secondary = Color(0xFFE98D58),         // Warm orange accent
+    onSecondary = Color.White,
+    secondaryContainer = Color(0xFFD4C5B0), // Darker cream
+    onSecondaryContainer = Color(0xFF523735),
+    tertiary = Color(0xFF8B6F47),          // Muted brown
+    onTertiary = Color.White,
+    background = Color(0xFFE8DCC4),        // Warm cream - aged parchment
+    onBackground = Color(0xFF523735),      // Dark brown text
+    surface = Color(0xFF4A362A),           // Dark brown - headers
+    onSurface = Color(0xFFEBE3CD),         // Light cream on dark
+    surfaceVariant = Color(0xFFD4C5B0),    // Darker cream variant
+    onSurfaceVariant = Color(0xFF523735),  // Dark brown text
+    outline = Color(0xFFC4B5A0),           // Subtle brown border
+    error = Color(0xFFB3261E),
+    onError = Color.White,
+    errorContainer = Color(0xFFF9DEDC),
+    onErrorContainer = Color(0xFF410E0B),
+)
+
 private val LightColorScheme = lightColorScheme(
     primary = Color(0xFF6200EE),
     onPrimary = Color.White,
@@ -53,7 +78,8 @@ fun AppTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
-    val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
+    // Use the unified explorer theme instead of generic Material3
+    val colorScheme = ExplorerLightColorScheme
 
     MaterialTheme(
         colorScheme = colorScheme,
@@ -67,6 +93,16 @@ fun BadgeTheme(
 ) {
     MaterialTheme(
         colorScheme = BadgeLightColorScheme,
+        content = content
+    )
+}
+
+@Composable
+fun ExplorerTheme(
+    content: @Composable () -> Unit
+) {
+    MaterialTheme(
+        colorScheme = ExplorerLightColorScheme,
         content = content
     )
 }

@@ -8,6 +8,9 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.EmojiEvents
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -21,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.fontys.frontend.data.models.Badge
+import com.fontys.frontend.ui.components.BadgeIcons
 import com.fontys.frontend.ui.viewmodels.BadgeViewModel
 import com.fontys.frontend.ui.viewmodels.BadgeUiState
 import java.time.ZoneId
@@ -46,9 +50,6 @@ fun BadgeScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        // Custom Header
-        BadgeHeader()
-
         when (val state = uiState) {
             is BadgeUiState.Loading -> {
                 Box(
@@ -70,7 +71,7 @@ fun BadgeScreen(
                         .fillMaxWidth()
                         .weight(1f)
                         .padding(horizontal = 24.dp),
-                    contentPadding = PaddingValues(top = 24.dp, bottom = 100.dp)
+                    contentPadding = PaddingValues(top = 32.dp, bottom = 100.dp)
                 ) {
                     item(span = { androidx.compose.foundation.lazy.grid.GridItemSpan(3) }) {
                         BadgeProfileSection(
@@ -131,10 +132,14 @@ fun BadgeScreen(
                         Button(
                             onClick = { viewModel.refreshBadges(userId) },
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.primary
+                                containerColor = MaterialTheme.colorScheme.secondary
+                            ),
+                            shape = RoundedCornerShape(12.dp),
+                            elevation = ButtonDefaults.buttonElevation(
+                                defaultElevation = 4.dp
                             )
                         ) {
-                            Text("Retry")
+                            Text("Retry", fontWeight = FontWeight.Bold, letterSpacing = 1.sp)
                         }
                     }
                 }
@@ -145,65 +150,21 @@ fun BadgeScreen(
 
 @Composable
 fun BadgeHeader() {
-    Box(
+    Row(
         modifier = Modifier
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.surface)
-            .padding(horizontal = 24.dp, vertical = 16.dp)
+            .padding(horizontal = 24.dp, vertical = 16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
     ) {
-        // Decorative dots on the left
-        Row(
-            modifier = Modifier.align(Alignment.CenterStart),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(12.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.primary)
-            )
-            Box(
-                modifier = Modifier
-                    .size(12.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.onSurface)
-            )
-        }
-
-        // Title - centered
         Text(
             text = "BADGES",
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Medium,
             color = MaterialTheme.colorScheme.onSurface,
-            letterSpacing = 2.sp,
-            modifier = Modifier.align(Alignment.Center)
+            letterSpacing = 1.sp
         )
-
-        // Decorative dots on the right
-        Row(
-            modifier = Modifier.align(Alignment.CenterEnd),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(12.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.primary)
-            )
-            Box(
-                modifier = Modifier
-                    .size(12.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.onSurface)
-            )
-            Box(
-                modifier = Modifier
-                    .size(12.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.primary)
-            )
-        }
     }
 }
 
@@ -226,29 +187,23 @@ fun BadgeProfileSection(earnedBadges: Int, totalBadges: Int) {
                 .background(MaterialTheme.colorScheme.primaryContainer),
             contentAlignment = Alignment.Center
         ) {
-            Text(
-                text = "🏆",
-                fontSize = 64.sp
+            Icon(
+                imageVector = Icons.Default.EmojiEvents,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.surface,
+                modifier = Modifier.size(64.dp)
             )
         }
 
         Spacer(modifier = Modifier.height(20.dp))
 
         // Badge count display
-        Surface(
-            shape = RoundedCornerShape(24.dp),
-            color = MaterialTheme.colorScheme.surface,
-            modifier = Modifier.padding(horizontal = 32.dp)
-        ) {
-            Text(
-                text = "BADGE COLLECTION",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface,
-                letterSpacing = 1.sp,
-                modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp)
-            )
-        }
+        Text(
+            text = "Badge Collection",
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Medium,
+            color = MaterialTheme.colorScheme.onBackground
+        )
     }
 }
 
@@ -405,26 +360,25 @@ fun BadgeItem(badge: Badge, onClick: () -> Unit) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(start = 6.dp, end = 6.dp, top = 6.dp, bottom = 12.dp),
+                    .padding(6.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
                 // Top section with icon and name
                 Column(
                     modifier = Modifier
-                        .weight(1f, fill = false)
                         .fillMaxWidth()
-                        .wrapContentHeight(),
+                        .weight(1f, fill = false),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Top
+                    verticalArrangement = Arrangement.Center
                 ) {
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = badge.iconUrl ?: "🏆",
-                        fontSize = 24.sp,
-                        modifier = Modifier.alpha(if (badge.isUnlocked) 1f else 0.3f)
+                    Icon(
+                        imageVector = BadgeIcons.getIcon(badge.name, badge.id),
+                        contentDescription = badge.name,
+                        tint = if (badge.isUnlocked) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f),
+                        modifier = Modifier.size(28.dp)
                     )
-                    Spacer(modifier = Modifier.height(2.dp))
+                    Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = badge.name,
                         fontSize = 9.sp,
@@ -436,9 +390,7 @@ fun BadgeItem(badge: Badge, onClick: () -> Unit) {
                             MaterialTheme.colorScheme.onPrimaryContainer
                         else
                             Color(0xFF000000),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 4.dp)
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 2.dp)
                     )
                 }
 
@@ -464,25 +416,20 @@ fun BadgeItem(badge: Badge, onClick: () -> Unit) {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(4.dp)
-                            .clip(RoundedCornerShape(2.dp))
-                            .background(
-                                if (badge.isUnlocked)
-                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
-                                else
-                                    MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.2f)
-                            )
+                            .height(6.dp)
+                            .clip(RoundedCornerShape(3.dp))
+                            .background(MaterialTheme.colorScheme.background)
                     ) {
                         Box(
                             modifier = Modifier
                                 .fillMaxHeight()
                                 .fillMaxWidth(badgeProgress.coerceIn(0f, 1f))
-                                .clip(RoundedCornerShape(2.dp))
+                                .clip(RoundedCornerShape(3.dp))
                                 .background(
                                     if (badge.isUnlocked)
                                         MaterialTheme.colorScheme.primary
                                     else
-                                        MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                                        Color(0xFF8B4513)
                                 )
                         )
                     }
@@ -497,9 +444,11 @@ fun BadgeItem(badge: Badge, onClick: () -> Unit) {
                         .padding(6.dp),
                     contentAlignment = Alignment.TopEnd
                 ) {
-                    Text(
-                        text = "🔒",
-                        fontSize = 14.sp
+                    Icon(
+                        imageVector = Icons.Default.Lock,
+                        contentDescription = "Locked",
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                        modifier = Modifier.size(12.dp)
                     )
                 }
             }
@@ -562,10 +511,11 @@ fun BadgeDetailDialog(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(
-                            text = badge.iconUrl ?: "🏆",
-                            fontSize = 56.sp,
-                            modifier = Modifier.alpha(if (badge.isUnlocked) 1f else 0.3f)
+                        Icon(
+                            imageVector = BadgeIcons.getIcon(badge.name, badge.id),
+                            contentDescription = null,
+                            tint = if (badge.isUnlocked) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f),
+                            modifier = Modifier.size(64.dp)
                         )
 
                         if (!badge.isUnlocked) {
@@ -575,10 +525,11 @@ fun BadgeDetailDialog(
                                     .padding(8.dp),
                                 contentAlignment = Alignment.TopEnd
                             ) {
-                                Text(
-                                    text = "🔒",
-                                    fontSize = 20.sp,
-                                    modifier = Modifier.alpha(0.6f)
+                                Icon(
+                                    imageVector = Icons.Default.Lock,
+                                    contentDescription = "Locked",
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                                    modifier = Modifier.size(24.dp)
                                 )
                             }
                         }
@@ -777,10 +728,13 @@ fun BadgeDetailDialog(
             Button(
                 onClick = onDismiss,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
+                    containerColor = MaterialTheme.colorScheme.secondary,
                     contentColor = Color.White
                 ),
                 shape = RoundedCornerShape(12.dp),
+                elevation = ButtonDefaults.buttonElevation(
+                    defaultElevation = 4.dp
+                ),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
@@ -795,4 +749,3 @@ fun BadgeDetailDialog(
         }
     )
 }
-

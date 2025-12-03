@@ -40,6 +40,7 @@ class FriendsViewModel : ViewModel() {
 
     companion object {
         private const val TAG = "FriendsViewModel"
+        private const val MIN_SEARCH_LENGTH = 3
     }
 
     // Get auth token from UserRepository (populated after login)
@@ -55,6 +56,16 @@ class FriendsViewModel : ViewModel() {
         if (query.isBlank()) {
             Log.d(TAG, "searchUsers() query is blank, clearing results")
             _uiState.value = _uiState.value.copy(searchResults = emptyList())
+            return
+        }
+
+        // Minimum length check for privacy/security
+        if (query.length < MIN_SEARCH_LENGTH) {
+            Log.d(TAG, "searchUsers() query too short (${query.length} < $MIN_SEARCH_LENGTH)")
+            _uiState.value = _uiState.value.copy(
+                searchResults = emptyList(),
+                isSearching = false
+            )
             return
         }
 

@@ -10,6 +10,7 @@ import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -18,7 +19,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.fontys.frontend.ui.theme.ProfileColors
 
 /**
  * Profile picture section with decorative frame and optional edit button
@@ -55,13 +55,13 @@ fun ProfilePictureSection(
                         modifier = Modifier
                             .size(8.dp)
                             .clip(CircleShape)
-                            .background(ProfileColors.Accent)
+                            .background(MaterialTheme.colorScheme.secondary)
                     )
                     Box(
                         modifier = Modifier
                             .size(8.dp)
                             .clip(CircleShape)
-                            .background(ProfileColors.Primary)
+                            .background(MaterialTheme.colorScheme.surface)
                     )
                 }
 
@@ -74,13 +74,13 @@ fun ProfilePictureSection(
                         modifier = Modifier
                             .size(8.dp)
                             .clip(CircleShape)
-                            .background(ProfileColors.Primary)
+                            .background(MaterialTheme.colorScheme.surface)
                     )
                     Box(
                         modifier = Modifier
                             .size(8.dp)
                             .clip(CircleShape)
-                            .background(ProfileColors.Accent)
+                            .background(MaterialTheme.colorScheme.secondary)
                     )
                 }
             }
@@ -92,7 +92,7 @@ fun ProfilePictureSection(
                     modifier = Modifier
                         .size(120.dp)
                         .clip(RoundedCornerShape(16.dp))
-                        .background(ProfileColors.Primary)
+                        .background(MaterialTheme.colorScheme.surface)
                         .padding(8.dp)
                 ) {
                     // Inner frame (orange)
@@ -100,7 +100,7 @@ fun ProfilePictureSection(
                         modifier = Modifier
                             .fillMaxSize()
                             .clip(RoundedCornerShape(12.dp))
-                            .background(ProfileColors.Accent)
+                            .background(MaterialTheme.colorScheme.secondary)
                             .padding(4.dp)
                     ) {
                         // Profile image placeholder
@@ -108,14 +108,14 @@ fun ProfilePictureSection(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .clip(RoundedCornerShape(8.dp))
-                                .background(ProfileColors.Container),
+                                .background(MaterialTheme.colorScheme.primaryContainer),
                             contentAlignment = Alignment.Center
                         ) {
                             // Account icon placeholder
                             Icon(
                                 imageVector = Icons.Default.AccountCircle,
                                 contentDescription = "Profile Picture",
-                                tint = ProfileColors.Primary.copy(alpha = 0.3f),
+                                tint = MaterialTheme.colorScheme.surface.copy(alpha = 0.3f),
                                 modifier = Modifier.size(40.dp)
                             )
                         }
@@ -130,13 +130,13 @@ fun ProfilePictureSection(
                             .offset(x = 8.dp, y = 8.dp)
                             .size(36.dp)
                             .clip(CircleShape)
-                            .background(ProfileColors.Accent)
-                            .border(2.dp, ProfileColors.Primary, CircleShape)
+                            .background(MaterialTheme.colorScheme.secondary)
+                            .border(2.dp, MaterialTheme.colorScheme.surface, CircleShape)
                     ) {
                         Icon(
                             imageVector = Icons.Default.Edit,
                             contentDescription = "Edit Picture",
-                            tint = ProfileColors.Primary,
+                            tint = MaterialTheme.colorScheme.surface,
                             modifier = Modifier.size(18.dp)
                         )
                     }
@@ -147,12 +147,12 @@ fun ProfilePictureSection(
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(24.dp))
-                    .background(ProfileColors.Primary)
+                    .background(MaterialTheme.colorScheme.surface)
                     .padding(horizontal = 24.dp, vertical = 8.dp)
             ) {
                 Text(
                     text = username.uppercase().ifEmpty { "EXPLORER" },
-                    color = ProfileColors.TextSecondary,
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Normal,
                     letterSpacing = 2.sp
@@ -171,20 +171,20 @@ fun ProfilePictureSection(
                         .weight(1f)
                         .height(2.dp)
                         .clip(RoundedCornerShape(1.dp))
-                        .background(ProfileColors.Accent)
+                        .background(MaterialTheme.colorScheme.secondary)
                 )
                 Box(
                     modifier = Modifier
                         .size(8.dp)
                         .clip(CircleShape)
-                        .background(ProfileColors.Primary)
+                        .background(MaterialTheme.colorScheme.surface)
                 )
                 Box(
                     modifier = Modifier
                         .weight(1f)
                         .height(2.dp)
                         .clip(RoundedCornerShape(1.dp))
-                        .background(ProfileColors.Accent)
+                        .background(MaterialTheme.colorScheme.secondary)
                 )
             }
         }

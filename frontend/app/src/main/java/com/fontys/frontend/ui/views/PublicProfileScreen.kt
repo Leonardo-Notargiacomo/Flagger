@@ -36,7 +36,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.fontys.frontend.data.models.Flag
 import com.fontys.frontend.data.models.User
-import com.fontys.frontend.ui.theme.ProfileColors
 import com.fontys.frontend.ui.viewmodels.FriendRequestStatus
 import com.fontys.frontend.ui.viewmodels.PublicProfileViewModel
 import java.text.SimpleDateFormat
@@ -145,7 +144,7 @@ fun PublicProfileScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(ProfileColors.Background)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         Column(
             modifier = Modifier.fillMaxSize()
@@ -247,8 +246,8 @@ fun PublicProfileScreen(
                             refreshing = isRefreshing,
                             state = pullRefreshState,
                             modifier = Modifier.align(Alignment.TopCenter),
-                            backgroundColor = ProfileColors.Container,
-                            contentColor = ProfileColors.Accent
+                            backgroundColor = MaterialTheme.colorScheme.primaryContainer,
+                            contentColor = MaterialTheme.colorScheme.secondary
                         )
                     }
                 }
@@ -272,7 +271,7 @@ private fun PublicProfileHeader(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .background(ProfileColors.Primary)
+            .background(MaterialTheme.colorScheme.surface)
             .padding(horizontal = 8.dp, vertical = 12.dp)
     ) {
         // Back button with touch target optimization
@@ -285,7 +284,7 @@ private fun PublicProfileHeader(
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                 contentDescription = "Go back",
-                tint = ProfileColors.TextSecondary,
+                tint = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.size(24.dp)
             )
         }
@@ -293,7 +292,7 @@ private fun PublicProfileHeader(
         // Title - centered
         Text(
             text = "PROFILE",
-            color = ProfileColors.TextSecondary,
+            color = MaterialTheme.colorScheme.onSurface,
             fontSize = 16.sp,
             fontWeight = FontWeight.Normal,
             letterSpacing = 2.sp,
@@ -358,7 +357,7 @@ private fun ProfileHeaderSection(user: User) {
                 modifier = Modifier
                     .size(110.dp)
                     .clip(CircleShape)
-                    .background(ProfileColors.Primary)
+                    .background(MaterialTheme.colorScheme.surface)
                     .padding(6.dp)
             ) {
                 // Inner frame (orange accent)
@@ -366,7 +365,7 @@ private fun ProfileHeaderSection(user: User) {
                     modifier = Modifier
                         .fillMaxSize()
                         .clip(CircleShape)
-                        .background(ProfileColors.Accent)
+                        .background(MaterialTheme.colorScheme.secondary)
                         .padding(4.dp)
                 ) {
                     // Profile image or initials
@@ -374,13 +373,13 @@ private fun ProfileHeaderSection(user: User) {
                         modifier = Modifier
                             .fillMaxSize()
                             .clip(CircleShape)
-                            .background(ProfileColors.Container),
+                            .background(MaterialTheme.colorScheme.primaryContainer),
                         contentAlignment = Alignment.Center
                     ) {
                         // Display user initials
                         Text(
                             text = ProfileUtils.getUserInitials(user.userName ?: "?"),
-                            color = ProfileColors.Primary,
+                            color = MaterialTheme.colorScheme.surface,
                             fontSize = 32.sp,
                             fontWeight = FontWeight.Bold
                         )
@@ -405,7 +404,7 @@ private fun ProfileHeaderSection(user: User) {
                 // Username with decorative styling
                 Text(
                     text = user.userName?.uppercase() ?: "EXPLORER",
-                    color = ProfileColors.Primary,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 1.sp,
@@ -422,19 +421,19 @@ private fun ProfileHeaderSection(user: User) {
                         modifier = Modifier
                             .weight(1f)
                             .height(2.dp)
-                            .background(ProfileColors.Accent)
+                            .background(MaterialTheme.colorScheme.secondary)
                     )
                     Box(
                         modifier = Modifier
                             .size(6.dp)
                             .clip(CircleShape)
-                            .background(ProfileColors.Primary)
+                            .background(MaterialTheme.colorScheme.surface)
                     )
                     Box(
                         modifier = Modifier
                             .weight(1f)
                             .height(2.dp)
-                            .background(ProfileColors.Accent)
+                            .background(MaterialTheme.colorScheme.secondary)
                     )
                 }
             }
@@ -477,7 +476,7 @@ private fun EnhancedStatsCard(
                 scaleY = scale
             }
             .clip(RoundedCornerShape(16.dp))
-            .background(ProfileColors.Container)
+            .background(MaterialTheme.colorScheme.primaryContainer)
             .padding(16.dp)
     ) {
         Column(
@@ -566,7 +565,7 @@ private fun StatItem(
                 scaleY = scale
             }
             .clip(RoundedCornerShape(12.dp))
-            .background(ProfileColors.Background)
+            .background(MaterialTheme.colorScheme.background)
             .padding(12.dp),
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.spacedBy(6.dp)
@@ -575,14 +574,14 @@ private fun StatItem(
         Icon(
             imageVector = icon,
             contentDescription = null,
-            tint = ProfileColors.Accent,
+            tint = MaterialTheme.colorScheme.secondary,
             modifier = Modifier.size(24.dp)
         )
 
         // Value
         Text(
             text = value.toString(),
-            color = ProfileColors.Primary,
+            color = MaterialTheme.colorScheme.onPrimaryContainer,
             fontSize = 28.sp,
             fontWeight = FontWeight.Bold,
             letterSpacing = (-0.5).sp
@@ -591,7 +590,7 @@ private fun StatItem(
         // Label
         Text(
             text = label,
-            color = ProfileColors.Primary.copy(alpha = 0.6f),
+            color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.6f),
             fontSize = 10.sp,
             fontWeight = FontWeight.Medium,
             letterSpacing = 1.sp
@@ -609,8 +608,8 @@ private fun BioSection(bio: String) {
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(12.dp))
-            .background(ProfileColors.Container)
-            .border(1.dp, ProfileColors.Border.copy(alpha = 0.3f), RoundedCornerShape(12.dp))
+            .background(MaterialTheme.colorScheme.primaryContainer)
+            .border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.3f), RoundedCornerShape(12.dp))
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
@@ -621,12 +620,12 @@ private fun BioSection(bio: String) {
             Icon(
                 imageVector = Icons.Default.Info,
                 contentDescription = null,
-                tint = ProfileColors.Accent,
+                tint = MaterialTheme.colorScheme.secondary,
                 modifier = Modifier.size(18.dp)
             )
             Text(
                 text = "ABOUT",
-                color = ProfileColors.Primary,
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 1.sp
@@ -635,7 +634,7 @@ private fun BioSection(bio: String) {
 
         Text(
             text = bio,
-            color = ProfileColors.Primary.copy(alpha = 0.8f),
+            color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f),
             fontSize = 14.sp,
             lineHeight = 20.sp,
             fontWeight = FontWeight.Normal
@@ -653,14 +652,14 @@ private fun EmptyBioSection(username: String) {
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(12.dp))
-            .background(ProfileColors.Container)
-            .border(1.dp, ProfileColors.Border.copy(alpha = 0.3f), RoundedCornerShape(12.dp))
+            .background(MaterialTheme.colorScheme.primaryContainer)
+            .border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.3f), RoundedCornerShape(12.dp))
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Text(
             text = "$username hasn't added a bio yet :( \n\nSeems like you will have to talk irl to get to know each other (°□°˶)! \n\nOr you can go make some flags together ;)",
-            color = ProfileColors.Primary.copy(alpha = 0.6f),
+            color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.6f),
             fontSize = 14.sp,
             lineHeight = 20.sp,
             fontWeight = FontWeight.Normal,
@@ -703,8 +702,8 @@ private fun EmptyFlagsSection(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(12.dp))
-            .background(ProfileColors.Container)
-            .border(1.dp, ProfileColors.Border.copy(alpha = 0.3f), RoundedCornerShape(12.dp))
+            .background(MaterialTheme.colorScheme.primaryContainer)
+            .border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.3f), RoundedCornerShape(12.dp))
             .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -714,7 +713,7 @@ private fun EmptyFlagsSection(
             Icon(
                 imageVector = Icons.Default.Lock,
                 contentDescription = null,
-                tint = ProfileColors.Accent,
+                tint = MaterialTheme.colorScheme.secondary,
                 modifier = Modifier.size(48.dp)
             )
         }
@@ -722,7 +721,7 @@ private fun EmptyFlagsSection(
         // Main message
         Text(
             text = mainMessage,
-            color = ProfileColors.Primary,
+            color = MaterialTheme.colorScheme.onPrimaryContainer,
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
@@ -732,7 +731,7 @@ private fun EmptyFlagsSection(
         // Sub message
         Text(
             text = subMessage,
-            color = ProfileColors.Primary.copy(alpha = 0.8f),
+            color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f),
             fontSize = 14.sp,
             fontWeight = FontWeight.Normal,
             textAlign = TextAlign.Center,
@@ -771,8 +770,8 @@ private fun FriendRequestButton(
         is FriendRequestStatus.NotSent -> {
             ButtonConfig(
                 text = "SEND FRIEND REQUEST",
-                containerColor = ProfileColors.Accent,
-                contentColor = ProfileColors.Primary,
+                containerColor = MaterialTheme.colorScheme.secondary,
+                contentColor = MaterialTheme.colorScheme.onSecondary,
                 icon = Icons.Default.PersonAdd,
                 enabled = true
             )
@@ -780,8 +779,8 @@ private fun FriendRequestButton(
         is FriendRequestStatus.Sending -> {
             ButtonConfig(
                 text = "SENDING...",
-                containerColor = ProfileColors.Accent.copy(alpha = 0.6f),
-                contentColor = ProfileColors.Primary,
+                containerColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.6f),
+                contentColor = MaterialTheme.colorScheme.onSecondary,
                 icon = Icons.Default.PersonAdd,
                 enabled = false
             )
@@ -790,7 +789,7 @@ private fun FriendRequestButton(
             ButtonConfig(
                 text = "REQUEST SENT ✓",
                 containerColor = Color(0xFF4CAF50).copy(alpha = 0.2f), // Success green tint
-                contentColor = ProfileColors.Primary,
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 icon = Icons.Default.CheckCircle,
                 enabled = false
             )
@@ -798,8 +797,8 @@ private fun FriendRequestButton(
         is FriendRequestStatus.Cancelling -> {
             ButtonConfig(
                 text = "CANCELLING...",
-                containerColor = ProfileColors.Container.copy(alpha = 0.6f),
-                contentColor = ProfileColors.Primary,
+                containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.6f),
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 icon = Icons.Default.Close,
                 enabled = false
             )
@@ -807,8 +806,8 @@ private fun FriendRequestButton(
         is FriendRequestStatus.Accepted -> {
             ButtonConfig(
                 text = "FRIENDS",
-                containerColor = ProfileColors.Primary,
-                contentColor = ProfileColors.TextSecondary,
+                containerColor = MaterialTheme.colorScheme.surface,
+                contentColor = MaterialTheme.colorScheme.onSurface,
                 icon = Icons.Default.Check,
                 enabled = false
             )
@@ -879,7 +878,7 @@ private fun FriendRequestButton(
             ) {
                 Text(
                     text = "Cancel request",
-                    color = ProfileColors.Primary.copy(alpha = 0.6f),
+                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.6f),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Normal
                 )
@@ -919,12 +918,12 @@ private fun RecentExplorationsSection(
             Icon(
                 imageVector = Icons.Default.Place,
                 contentDescription = null,
-                tint = ProfileColors.Accent,
+                tint = MaterialTheme.colorScheme.secondary,
                 modifier = Modifier.size(20.dp)
             )
             Text(
                 text = "RECENT EXPLORATIONS",
-                color = ProfileColors.Primary,
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 1.sp
@@ -972,8 +971,8 @@ private fun FlagItem(
             .fillMaxWidth()
             .clip(RoundedCornerShape(10.dp))
             .clickable { onClick() }
-            .background(ProfileColors.Container)
-            .border(1.dp, ProfileColors.Border.copy(alpha = 0.2f), RoundedCornerShape(10.dp))
+            .background(MaterialTheme.colorScheme.primaryContainer)
+            .border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.2f), RoundedCornerShape(10.dp))
             .padding(12.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
@@ -988,13 +987,13 @@ private fun FlagItem(
                 modifier = Modifier
                     .size(36.dp)
                     .clip(CircleShape)
-                    .background(ProfileColors.Accent.copy(alpha = 0.15f)),
+                    .background(MaterialTheme.colorScheme.secondary.copy(alpha = 0.15f)),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = Icons.Default.Place,
                     contentDescription = null,
-                    tint = ProfileColors.Accent,
+                    tint = MaterialTheme.colorScheme.secondary,
                     modifier = Modifier.size(20.dp)
                 )
             }
@@ -1005,7 +1004,7 @@ private fun FlagItem(
             ) {
                 Text(
                     text = displayName ?: "Unknown Location",
-                    color = ProfileColors.Primary,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Medium,
                     maxLines = 1,
@@ -1013,7 +1012,7 @@ private fun FlagItem(
                 )
                 Text(
                     text = ProfileUtils.formatDate(flag.dateTaken),
-                    color = ProfileColors.Primary.copy(alpha = 0.6f),
+                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.6f),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Normal
                 )
@@ -1024,7 +1023,7 @@ private fun FlagItem(
         Icon(
             imageVector = Icons.Default.ChevronRight,
             contentDescription = null,
-            tint = ProfileColors.Primary.copy(alpha = 0.3f),
+            tint = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.3f),
             modifier = Modifier.size(20.dp)
         )
     }
@@ -1060,7 +1059,7 @@ private fun LoadingState() {
             Icon(
                 imageVector = Icons.Default.Explore,
                 contentDescription = "Loading",
-                tint = ProfileColors.Accent,
+                tint = MaterialTheme.colorScheme.secondary,
                 modifier = Modifier
                     .size(64.dp)
                     .graphicsLayer {
@@ -1069,7 +1068,7 @@ private fun LoadingState() {
             )
             Text(
                 text = "Loading profile...",
-                color = ProfileColors.Primary.copy(alpha = 0.6f),
+                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.6f),
                 fontSize = 14.sp
             )
         }
@@ -1096,24 +1095,24 @@ private fun ErrorState(
             Icon(
                 imageVector = Icons.Default.ErrorOutline,
                 contentDescription = null,
-                tint = ProfileColors.Primary.copy(alpha = 0.5f),
+                tint = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.5f),
                 modifier = Modifier.size(64.dp)
             )
             Text(
                 text = error,
-                color = ProfileColors.Primary,
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
                 fontSize = 14.sp,
                 textAlign = TextAlign.Center
             )
             Button(
                 onClick = onRetry,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = ProfileColors.Accent,
-                    contentColor = ProfileColors.Primary
+                    containerColor = MaterialTheme.colorScheme.secondary,
+                    contentColor = MaterialTheme.colorScheme.onSecondary
                 ),
                 modifier = Modifier
                     .clip(RoundedCornerShape(8.dp))
-                    .border(2.dp, ProfileColors.Border, RoundedCornerShape(8.dp))
+                    .border(2.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(8.dp))
             ) {
                 Icon(
                     imageVector = Icons.Default.Refresh,
@@ -1174,7 +1173,7 @@ private fun FriendRequestSuccessAnimation(status: FriendRequestStatus) {
                     modifier = Modifier
                         .padding(32.dp)
                         .clip(RoundedCornerShape(16.dp))
-                        .background(ProfileColors.Container)
+                        .background(MaterialTheme.colorScheme.primaryContainer)
                         .border(2.dp, Color(0xFF4CAF50), RoundedCornerShape(16.dp))
                         .padding(32.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -1199,7 +1198,7 @@ private fun FriendRequestSuccessAnimation(status: FriendRequestStatus) {
                     // Success message
                     Text(
                         text = "Friend request sent!",
-                        color = ProfileColors.Primary,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Center
@@ -1207,7 +1206,7 @@ private fun FriendRequestSuccessAnimation(status: FriendRequestStatus) {
 
                     Text(
                         text = "You'll be notified when they accept",
-                        color = ProfileColors.Primary.copy(alpha = 0.7f),
+                        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f),
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Normal,
                         textAlign = TextAlign.Center
