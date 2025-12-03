@@ -109,11 +109,8 @@ class CameraPreviewViewModel : ViewModel() {
             ContextCompat.getMainExecutor(context),
             object : ImageCapture.OnImageSavedCallback {
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
-                    val b64 = toBase64(context, output.savedUri)
-                    _base64.value = b64
-
                     viewModelScope.launch {
-                        flagRepository.addFlag(userid, placeId, b64)
+                        flagRepository.addFlag(userid, placeId, toBase64(context, output.savedUri))
                     }
                     onPhotoSaved(output.savedUri)
                 }

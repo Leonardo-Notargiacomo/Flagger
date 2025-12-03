@@ -16,6 +16,7 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import java.util.Date
 import com.fontys.frontend.data.FlagResponse // Import your new FlagResponse data class
+import com.fontys.frontend.ui.views.picturedata
 import kotlinx.serialization.builtins.UIntArraySerializer
 
 
@@ -61,7 +62,8 @@ class FlagRepository{
             val response = flagApiService.addCords(headers,requestBody)
 
             if (response.isSuccessful) {
-
+                picturedata.photoCode =""
+                picturedata.place_id=""
                 return Result.success(response.body() ?: "Flag added successfully")
             } else {
                 val errorBody = response.errorBody()?.string() ?: "Unknown error"
