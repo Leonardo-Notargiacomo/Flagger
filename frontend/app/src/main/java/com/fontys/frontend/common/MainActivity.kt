@@ -1,12 +1,16 @@
 package com.fontys.frontend.common
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.core.content.ContextCompat
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
@@ -31,6 +35,15 @@ import com.fontys.frontend.utils.FCMTokenManager
 import com.fontys.frontend.utils.PermissionHandler
 
 class MainActivity : ComponentActivity() {
+
+    // Camera permission launcher
+    val requestCameraPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+        } else {
+        }
+    }
 
     private lateinit var permissionHandler: PermissionHandler
 
@@ -62,6 +75,7 @@ class MainActivity : ComponentActivity() {
 
         // Check permissions
         permissionHandler.checkPermissions()
+        checkCameraPermission()
 
         // Subscribe to FCM topic for daily notifications
         subscribeToNotifications()
@@ -119,6 +133,16 @@ class MainActivity : ComponentActivity() {
         super.onResume()
         // Re-check permissions when returning from Settings
         permissionHandler.checkPermissionsOnResume()
+    }
+
+    private fun checkCameraPermission() {
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.CAMERA
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            requestCameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+        }
     }
 
     private fun subscribeToNotifications() {

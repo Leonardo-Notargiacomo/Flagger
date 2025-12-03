@@ -35,7 +35,7 @@ class LoginViewModel : ViewModel() {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
             try {
-                userRepository.login(email, password)
+                userRepository.login(email,password)
                 userRepository.whoAmIm()
 
                 _uiState.value = _uiState.value.copy(isLoading = false)

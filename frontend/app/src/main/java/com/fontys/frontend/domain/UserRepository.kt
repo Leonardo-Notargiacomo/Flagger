@@ -1,7 +1,7 @@
 package com.fontys.frontend.domain
 
-import android.util.Log
 import com.fontys.frontend.config.ApiConfig
+import android.util.Log
 import com.fontys.frontend.data.UserLogin
 import com.fontys.frontend.data.UserRegister
 import com.fontys.frontend.data.UserReturn
@@ -41,8 +41,8 @@ object UserRepository {
         .addConverterFactory(ScalarsConverterFactory.create())
         .build()
     private val userApiService = retrofit.create(UserAPIService::class.java)
-    suspend fun getUser(userId: String): UserReturn? {
-        try {
+    suspend fun getUser(userId: String) : UserReturn? {
+         try {
             val headers = HashMap<String, String>().apply {
                 put("Accept", "application/json")
                 put("Content-Type", "application/json")
@@ -71,7 +71,7 @@ object UserRepository {
             e: Exception
         ) {
             // Handle exceptions such as network errors
-            Log.e(TAG, "Exception getting user: ${e.message}", e)
+            println("Exception: ${e.message}")
             return null
         }
     }

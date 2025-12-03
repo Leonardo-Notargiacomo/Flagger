@@ -6,11 +6,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.fontys.frontend.domain.UserRepository
+import com.fontys.frontend.ui.viewmodels.CameraPreviewViewModel
 import com.fontys.frontend.ui.views.BadgeScreen
+import com.fontys.frontend.ui.views.PictureCaptureScreen
 import com.fontys.frontend.ui.views.FriendsScreen
 import com.fontys.frontend.ui.views.LoginView
 import com.fontys.frontend.ui.views.RegistrationView
@@ -44,6 +47,9 @@ object RegistrationView
 
 @Serializable
 data class PublicProfileView(val userId: Int)
+
+@Serializable
+object CameraView
 
 @Composable
 fun NavHost(
@@ -89,6 +95,12 @@ fun NavHost(
             composable<NavigationView> {
                 NavBar()
             }
+
+            composable<CameraView> {
+                val cameraViewModel: CameraPreviewViewModel = viewModel()
+                PictureCaptureScreen(navController, cameraViewModel)
+            }
+
 
             composable<PublicProfileView> { backStackEntry ->
             // Type-safe navigation with Kotlin serialization

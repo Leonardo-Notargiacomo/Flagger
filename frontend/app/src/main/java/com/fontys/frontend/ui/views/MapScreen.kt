@@ -11,16 +11,21 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.fontys.frontend.R
+import com.fontys.frontend.common.CameraView
 import com.fontys.frontend.data.PlaceService
 import com.fontys.frontend.ui.components.BadgeUnlockDialog
 import com.fontys.frontend.domain.UserRepository
+import com.fontys.frontend.domain.fromBase64
+import com.fontys.frontend.ui.viewmodels.CameraPreviewViewModel
 import com.fontys.frontend.ui.viewmodels.MapsViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMapOptions
@@ -28,13 +33,16 @@ import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.maps.android.compose.*
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import okhttp3.internal.wait
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewModel()) {
     val scope = rememberCoroutineScope()
     val userLocation by viewModel.userLocation.collectAsState()
+    val fullFlags by viewModel.userFullFlags.collectAsState()
     val places by viewModel.places.collectAsState()
     val cameraPositionState = rememberCameraPositionState()
     var showDialog by remember{ mutableStateOf(false) }
@@ -70,22 +78,18 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
         }
     }
 
-    // Load custom map style
-    val mapStyle = remember {
-        try {
-            MapStyleOptions.loadRawResourceStyle(context, R.raw.map_style)
-        } catch (e: Exception) {
-            null
-        }
+    // Use Google Map ID for custom styling
+    val googleMapOptions = remember {
+        GoogleMapOptions().mapId("349a2b06249ce5213e12a47b")
     }
 
     Box(Modifier.fillMaxSize()) {
         GoogleMap(
             modifier = Modifier.fillMaxSize(),
             cameraPositionState = cameraPositionState,
+            googleMapOptionsFactory = { googleMapOptions },
             properties = MapProperties(
-                isMyLocationEnabled = hasLocationPermission,
-                mapStyleOptions = mapStyle
+                isMyLocationEnabled = true
             ),
             uiSettings = MapUiSettings(
                 zoomControlsEnabled = false,
@@ -101,16 +105,7 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
                     alpha = 0.7f
                 )
         }
-            places.forEach { place ->
-                val isAlreadyFlagged = userFlags.any { flaggedSpot -> flaggedSpot.locationId ==place.id }
-                if (!isAlreadyFlagged) {
-                    Marker(
-                        state = MarkerState(position = LatLng(place.latitude, place.longitude)),
-                        title = place.displayName,
-                        snippet = "Nearby"
-                    )
-                }
-            }
+
         }
 
         // Flag button with explorer theme
@@ -228,38 +223,35 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
                             !userFlags.any { flaggedSpot -> flaggedSpot.locationId == nearbyPlace.id }
                         }
                         if (unflaggedPlaces.isEmpty()) {
-                        Text(
-                            "All nearby places are already flagged!",
-                            color = MaterialTheme.colorScheme.onPrimaryContainer
-                        )
+                            Text(
+                                "All nearby places are already flagged!",
+                                color = MaterialTheme.colorScheme.onPrimaryContainer
+                            )
                         } else {
-                        unflaggedPlaces.forEach { place ->
-                            TextButton(
-                                onClick = {
-                                    showDialog = false
-                                    viewModel.markTheSpot(
-                                        userId = currentUserId,
-                                        placeId = place.id,
-                                        locationName = place.displayName,
-                                        latLng = LatLng(place.latitude, place.longitude)
-                                    )
-                                    scope.launch {
-                                        cameraPositionState.animate(
-                                            CameraUpdateFactory.newLatLngZoom(
-                                                LatLng(place.latitude, place.longitude),
-                                                16f
+                            unflaggedPlaces.forEach { place ->
+                                TextButton(
+                                    onClick = {
+                                        showDialog = false
+                                        scope.launch {
+                                            cameraPositionState.animate(
+                                                CameraUpdateFactory.newLatLngZoom(
+                                                    LatLng(place.latitude, place.longitude),
+                                                    16f
+                                                )
                                             )
-                                        )
-                                    }
-                                },
-                                colors = ButtonDefaults.textButtonColors(
-                                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                                )
-                            ) {
-                                Text(
-                                    text = place.displayName,
-                                    color = MaterialTheme.colorScheme.onPrimaryContainer
-                                )
+                                        }
+                                        picturedata.currentUserId = currentUserId
+                                        picturedata.place_id = place.id
+                                        navController.navigate(CameraView)
+                                    },
+                                    colors = ButtonDefaults.textButtonColors(
+                                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                                    )
+                                ) {
+                                    Text(
+                                        text = place.displayName,
+                                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                                    )
                             }
                         }
                     }
