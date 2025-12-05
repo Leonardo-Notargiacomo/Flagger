@@ -26,6 +26,16 @@ interface NotificationRules {
   maxPerMonth: number;
 }
 
+interface UserExplorationCount {
+  userId: number;
+  count: number;
+}
+
+interface UserDismissalCount {
+  userId: number;
+  dismissCount: number;
+}
+
 const NOTIFICATION_FREQUENCY_RULES: Record<string, NotificationRules> = {
   'doing_well': {
     minDaysBetween: 7, // Max once per week for high streak
@@ -91,7 +101,7 @@ export class NotificationTriggerService {
        GROUP BY "userId"
        HAVING COUNT(*) >= 2`,
       [startOfDay],
-    );
+    ) as unknown as UserExplorationCount[];
 
     for (const user of activeUsersResult) {
       // Use different frequency for multiple explorations (every 3 days)
@@ -201,7 +211,7 @@ export class NotificationTriggerService {
        GROUP BY "userId"
        HAVING COUNT(*) >= 3`,
       [sevenDaysAgo],
-    );
+    ) as unknown as UserDismissalCount[];
 
     for (const user of frequentDismissers) {
       // Send gentle "we miss you" message (allow every 5 days)
