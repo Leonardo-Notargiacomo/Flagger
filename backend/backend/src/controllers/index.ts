@@ -8,3 +8,4 @@ export * from './go-user-go-user-credentials.controller';
 export * from './friend-request.controller';
 export * from './friendship.controller';
 export * from './fcm-token.controller';
+export * from './notification.controller';
