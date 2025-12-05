@@ -39,6 +39,12 @@ export class GoUser extends Entity {
   })
   bio?: string;
 
+  @property({
+    type: 'boolean',
+    default: false,
+  })
+  isAdmin: boolean;
+
   @hasOne(() => GoUserCredentials, {keyTo: 'goUserId'})
   goUserCredentials: GoUserCredentials;
 

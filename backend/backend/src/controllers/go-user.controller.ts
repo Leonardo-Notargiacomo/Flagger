@@ -313,5 +313,29 @@ export class GoUserController {
       throw error;
     }
   }
+
+  @get('/go-users/{id}/is-admin', {
+    responses: {
+      '200': {
+        description: 'Returns whether the user is an admin',
+        content: {
+          'application/json': {
+            schema: {
+              type: 'boolean',
+            },
+          },
+        },
+      },
+    },
+  })
+  async isAdmin(
+      @param.path.number('id') id: number,
+  ): Promise<boolean> {
+      const user = await this.goUserRepository.findById(id);
+      if (!user) {
+      throw new HttpErrors.NotFound(`User with id ${id} not found`);
+    }
+    return user.isAdmin;
+  }
 }
 
