@@ -1,5 +1,7 @@
 package com.fontys.frontend.services
 
+import android.app.PendingIntent
+import android.content.Intent
 import android.util.Log
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
@@ -7,9 +9,11 @@ import com.fontys.frontend.utils.ExploreNotificationManager
 import com.fontys.frontend.data.remote.ApiClient
 import com.fontys.frontend.data.remote.FcmTokenRequest
 import com.fontys.frontend.domain.UserRepository
+import com.fontys.frontend.receivers.NotificationDismissedReceiver
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 /**
  * Firebase Messaging Service to handle push notifications from FCM
@@ -48,11 +52,12 @@ class ExploreFirebaseMessagingService : FirebaseMessagingService() {
         message.notification?.let { notification ->
             val title = notification.title ?: "Time to Explore!"
             val body = notification.body ?: "Discover something new today!"
+            val notificationId = message.data["notificationId"] ?: UUID.randomUUID().toString()
 
-            Log.d(TAG, "Notification - Title: $title, Body: $body")
+            Log.d(TAG, "Notification - Title: $title, Body: $body, ID: $notificationId")
 
-            // Show the notification using our notification manager
-            showNotification(title, body)
+            // Show the notification with dismissal tracking
+            showNotification(title, body, notificationId)
         }
 
         // Check if message contains data payload (custom data from backend)
@@ -63,13 +68,27 @@ class ExploreFirebaseMessagingService : FirebaseMessagingService() {
     }
 
     /**
-     * Display notification to user
+     * Display notification to user with dismissal tracking
      * High-priority FCM handles screen wake automatically
      */
-    private fun showNotification(title: String, message: String) {
+    private fun showNotification(title: String, message: String, notificationId: String) {
+        // Create delete intent to track when user dismisses the notification
+        val deleteIntent = Intent(this, NotificationDismissedReceiver::class.java).apply {
+            putExtra(NotificationDismissedReceiver.EXTRA_NOTIFICATION_ID, notificationId)
+            putExtra(NotificationDismissedReceiver.EXTRA_USER_ID, UserRepository.userId)
+        }
+
+        val deletePendingIntent = PendingIntent.getBroadcast(
+            this,
+            notificationId.hashCode(),
+            deleteIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        // Show notification with delete tracking
         val notificationManager = ExploreNotificationManager(this)
         notificationManager.createNotificationChannel()
-        notificationManager.showCustomExplorationReminder(title, message)
+        notificationManager.showCustomExplorationReminderWithTracking(title, message, deletePendingIntent)
     }
 
     /**
