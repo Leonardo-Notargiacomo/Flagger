@@ -64,7 +64,7 @@ const messages = [
 export const sendDailyExplorationReminder = onSchedule({
   schedule: "0 9-17 * * *", // Every hour 9 AM - 5 PM (Europe/Amsterdam)
   timeZone: "Europe/Amsterdam",
-}, async (_event) => {
+}, async () => {
   // PRODUCTION MODE: 22% chance each hour = ~2 notifications per day
   // Math: 9 hours (9 AM - 5 PM) × 22% = ~1.98 notifications/day
   // TESTING: Set sendProbability to 1.0 to guarantee notification every time
@@ -118,23 +118,27 @@ export const sendDailyExplorationReminder = onSchedule({
 // Personalized notifications based on user behavior
 // Calls LoopBack API to get targets and sends personalized messages
 export const sendPersonalizedNotifications = onSchedule({
-  schedule: "0 9-17 * * *", // Every hour 9 AM - 5 PM (Europe/Amsterdam)
+  schedule: "0 9-17 * * *",
   timeZone: "Europe/Amsterdam",
-}, async (_event) => {
+}, async () => {
   // 22% chance each hour = ~2 notifications per day
   const sendProbability = 0.22;
   const shouldSend = Math.random() < sendProbability;
 
   if (!shouldSend) {
-    console.log("[Personalized] Skipping notification this time (random chance)");
+    console.log(
+      "[Personalized] Skipping notification this time (random chance)"
+    );
     return;
   }
 
   // Randomly choose notification type
-  const notificationType = Math.random() > 0.5 ? "doing-well" : "skipping";
+  const notificationType =
+    Math.random() > 0.5 ? "doing-well" : "skipping";
   console.log(`[Personalized] Fetching ${notificationType} targets...`);
 
-  const backendUrl = "https://group-repository-2025-android-1-6of2.onrender.com";
+  const backendUrl =
+    "https://group-repository-2025-android-1-6of2.onrender.com";
 
   try {
     // Fetch notification targets from LoopBack API
@@ -143,12 +147,18 @@ export const sendPersonalizedNotifications = onSchedule({
     );
 
     if (!targetsResponse.ok) {
-      console.error(`[Personalized] Failed to fetch targets: ${targetsResponse.status}`);
+      console.error(
+        "[Personalized] Failed to fetch targets: " +
+        `${targetsResponse.status}`
+      );
       return;
     }
 
     const targets = await targetsResponse.json();
-    console.log(`[Personalized] Found ${targets.length} users for ${notificationType} notifications`);
+    console.log(
+      `[Personalized] Found ${targets.length} users for ` +
+      `${notificationType} notifications`
+    );
 
     if (targets.length === 0) {
       console.log("[Personalized] No eligible users found");
@@ -176,14 +186,18 @@ export const sendPersonalizedNotifications = onSchedule({
         );
 
         if (!messageResponse.ok) {
-          console.error(`[Personalized] Failed to get message for user ${target.userId}`);
+          console.error(
+            "[Personalized] Failed to get message for " +
+            `user ${target.userId}`
+          );
           continue;
         }
 
         const message = await messageResponse.json();
 
         // Generate unique notification ID
-        const notificationId = `notif_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        const randomPart = Math.random().toString(36).substr(2, 9);
+        const notificationId = `notif_${Date.now()}_${randomPart}`;
 
         // Send to all user's devices
         for (const token of target.fcmTokens) {
@@ -216,10 +230,17 @@ export const sendPersonalizedNotifications = onSchedule({
 
           try {
             const fcmResponse = await admin.messaging().send(payload);
-            console.log(`[Personalized] Sent to user ${target.userId}: ${fcmResponse}`);
+            console.log(
+              `[Personalized] Sent to user ${target.userId}: ` +
+              `${fcmResponse}`
+            );
             successCount++;
-          } catch (fcmError: any) {
-            console.error(`[Personalized] FCM error for token ${token}:`, fcmError.message);
+          } catch (fcmError: unknown) {
+            const error = fcmError as Error;
+            console.error(
+              `[Personalized] FCM error for token ${token}:`,
+              error.message
+            );
             errorCount++;
             // TODO: Mark token as inactive if error is "invalid token"
           }
@@ -239,15 +260,24 @@ export const sendPersonalizedNotifications = onSchedule({
             }),
           }
         );
-      } catch (userError: any) {
-        console.error(`[Personalized] Error processing user ${target.userId}:`, userError.message);
+      } catch (userError: unknown) {
+        const error = userError as Error;
+        console.error(
+          "[Personalized] Error processing user " +
+          `${target.userId}:`,
+          error.message
+        );
         errorCount++;
       }
     }
 
-    console.log(`[Personalized] Summary: ${successCount} sent, ${errorCount} errors`);
-  } catch (error: any) {
-    console.error("[Personalized] Fatal error:", error.message);
+    console.log(
+      `[Personalized] Summary: ${successCount} sent, ` +
+      `${errorCount} errors`
+    );
+  } catch (error: unknown) {
+    const err = error as Error;
+    console.error("[Personalized] Fatal error:", err.message);
     throw error;
   }
 });
