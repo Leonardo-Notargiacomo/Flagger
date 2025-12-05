@@ -115,4 +115,141 @@ export const sendDailyExplorationReminder = onSchedule({
   }
 });
 
+// Personalized notifications based on user behavior
+// Calls LoopBack API to get targets and sends personalized messages
+export const sendPersonalizedNotifications = onSchedule({
+  schedule: "0 9-17 * * *", // Every hour 9 AM - 5 PM (Europe/Amsterdam)
+  timeZone: "Europe/Amsterdam",
+}, async (_event) => {
+  // 22% chance each hour = ~2 notifications per day
+  const sendProbability = 0.22;
+  const shouldSend = Math.random() < sendProbability;
+
+  if (!shouldSend) {
+    console.log("[Personalized] Skipping notification this time (random chance)");
+    return;
+  }
+
+  // Randomly choose notification type
+  const notificationType = Math.random() > 0.5 ? "doing-well" : "skipping";
+  console.log(`[Personalized] Fetching ${notificationType} targets...`);
+
+  const backendUrl = "https://group-repository-2025-android-1-6of2.onrender.com";
+
+  try {
+    // Fetch notification targets from LoopBack API
+    const targetsResponse = await fetch(
+      `${backendUrl}/api/notifications/targets/${notificationType}`
+    );
+
+    if (!targetsResponse.ok) {
+      console.error(`[Personalized] Failed to fetch targets: ${targetsResponse.status}`);
+      return;
+    }
+
+    const targets = await targetsResponse.json();
+    console.log(`[Personalized] Found ${targets.length} users for ${notificationType} notifications`);
+
+    if (targets.length === 0) {
+      console.log("[Personalized] No eligible users found");
+      return;
+    }
+
+    // Send personalized notifications to each target
+    let successCount = 0;
+    let errorCount = 0;
+
+    for (const target of targets) {
+      try {
+        // Get personalized message for this user
+        const messageResponse = await fetch(
+          `${backendUrl}/api/notifications/message`,
+          {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+              userId: target.userId,
+              reason: target.reason,
+              context: target.context,
+            }),
+          }
+        );
+
+        if (!messageResponse.ok) {
+          console.error(`[Personalized] Failed to get message for user ${target.userId}`);
+          continue;
+        }
+
+        const message = await messageResponse.json();
+
+        // Generate unique notification ID
+        const notificationId = `notif_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+        // Send to all user's devices
+        for (const token of target.fcmTokens) {
+          const payload = {
+            token: token,
+            notification: {
+              title: message.title,
+              body: message.body,
+            },
+            data: {
+              type: message.type,
+              timestamp: Date.now().toString(),
+              notificationId: notificationId,
+              action: message.data.action || "open_map",
+              userId: target.userId.toString(),
+            },
+            android: {
+              priority: "high" as const,
+              notification: {
+                channelId: "explore_daily_reminders",
+                priority: "max" as const,
+                visibility: "public" as const,
+                sound: "default",
+                defaultSound: true,
+                defaultVibrateTimings: true,
+                defaultLightSettings: true,
+              },
+            },
+          };
+
+          try {
+            const fcmResponse = await admin.messaging().send(payload);
+            console.log(`[Personalized] Sent to user ${target.userId}: ${fcmResponse}`);
+            successCount++;
+          } catch (fcmError: any) {
+            console.error(`[Personalized] FCM error for token ${token}:`, fcmError.message);
+            errorCount++;
+            // TODO: Mark token as inactive if error is "invalid token"
+          }
+        }
+
+        // Mark notification as sent in backend
+        await fetch(
+          `${backendUrl}/api/notifications/mark-sent`,
+          {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+              userId: target.userId,
+              type: notificationType,
+              title: message.title,
+              body: message.body,
+            }),
+          }
+        );
+      } catch (userError: any) {
+        console.error(`[Personalized] Error processing user ${target.userId}:`, userError.message);
+        errorCount++;
+      }
+    }
+
+    console.log(`[Personalized] Summary: ${successCount} sent, ${errorCount} errors`);
+  } catch (error: any) {
+    console.error("[Personalized] Fatal error:", error.message);
+    throw error;
+  }
+});
+
 setGlobalOptions({maxInstances: 10});
