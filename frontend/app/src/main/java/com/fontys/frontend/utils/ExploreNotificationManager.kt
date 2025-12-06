@@ -75,10 +75,6 @@ class ExploreNotificationManager(private val context: Context) {
     }
 
     /**
-     * Cancel all notifications
-     */
-    fun cancelAllNotifications() {
-    /**
      * Show a notification with dismissal tracking
      * Accepts a deletePendingIntent that triggers when user dismisses the notification
      */
@@ -99,8 +95,6 @@ class ExploreNotificationManager(private val context: Context) {
         )
 
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .setContentTitle(title)
             .setContentText(message)
             .setStyle(NotificationCompat.BigTextStyle()
                 .bigText(message)
@@ -116,6 +110,10 @@ class ExploreNotificationManager(private val context: Context) {
         notificationManager.notify(NOTIFICATION_ID, notification)
     }
 
+    /**
+     * Cancel all notifications
+     */
+    fun cancelAllNotifications() {
         notificationManager.cancelAll()
     }
 }
