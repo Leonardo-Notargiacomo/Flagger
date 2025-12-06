@@ -10,7 +10,3 @@ data class UserLogin(
     val password : String
 )
 
-data class LoginResponse(
-    @SerializedName("token")
-    val token: String
-)

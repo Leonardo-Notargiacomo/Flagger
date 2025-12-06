@@ -14,7 +14,7 @@ import retrofit2.converter.scalars.ScalarsConverterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.http.*
-import com.fontys.frontend.domain.UserAPIService
+import com.fontys.frontend.services.UserAPIService
 
 
 
