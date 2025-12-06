@@ -31,6 +31,7 @@
     "migrate": "node ./dist/migrate",
     "seed": "node ./dist/seed-badges",
     "seed-badges": "npm run build && node ./dist/seed-badges",
+    "seed-test-users": "npm run build && node ./dist/seed-test-users",
     "preopenapi-spec": "npm run build",
     "openapi-spec": "node ./dist/openapi-spec",
     "prestart": "npm run rebuild",
