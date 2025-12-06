@@ -96,7 +96,7 @@ export class NotificationTriggerService {
 
     const activeUsersResult = await this.explorationEventRepository.execute(
       `SELECT "userId", COUNT(*) as count
-       FROM exploration_event
+       FROM explorationevent
        WHERE "completedAt" >= $1
        GROUP BY "userId"
        HAVING COUNT(*) >= 2`,
@@ -205,7 +205,7 @@ export class NotificationTriggerService {
 
     const frequentDismissers = await this.notificationHistoryRepository.execute(
       `SELECT "userId", COUNT(*) as "dismissCount"
-       FROM notification_history
+       FROM notificationhistory
        WHERE "wasDismissed" = true
          AND "dismissedAt" >= $1
        GROUP BY "userId"
