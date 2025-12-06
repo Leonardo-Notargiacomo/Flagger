@@ -27,13 +27,13 @@ interface NotificationRules {
 }
 
 interface UserExplorationCount {
-  userId: number;
+  userid: number;
   count: number;
 }
 
 interface UserDismissalCount {
-  userId: number;
-  dismissCount: number;
+  userid: number;
+  dismisscount: number;
 }
 
 const NOTIFICATION_FREQUENCY_RULES: Record<string, NotificationRules> = {
@@ -95,10 +95,10 @@ export class NotificationTriggerService {
     startOfDay.setHours(0, 0, 0, 0);
 
     const activeUsersResult = await this.explorationEventRepository.execute(
-      `SELECT "userId", COUNT(*) as count
+      `SELECT userid, COUNT(*) as count
        FROM explorationevent
-       WHERE "completedAt" >= $1
-       GROUP BY "userId"
+       WHERE completedat >= $1
+       GROUP BY userid
        HAVING COUNT(*) >= 2`,
       [startOfDay],
     ) as unknown as UserExplorationCount[];
@@ -106,7 +106,7 @@ export class NotificationTriggerService {
     for (const user of activeUsersResult) {
       // Use different frequency for multiple explorations (every 3 days)
       const lastNotification = await this.getLastNotification(
-        user.userId,
+        user.userid,
         'doing_well',
       );
 
@@ -115,11 +115,11 @@ export class NotificationTriggerService {
         : 999;
 
       if (daysSince >= 3) {
-        const tokens = await this.getActiveTokens(user.userId);
+        const tokens = await this.getActiveTokens(user.userid);
 
         if (tokens.length > 0) {
           targets.push({
-            userId: user.userId,
+            userId: user.userid,
             fcmTokens: tokens,
             reason: 'multiple_explorations_today',
             context: {explorationsToday: user.count},
@@ -204,11 +204,11 @@ export class NotificationTriggerService {
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
     const frequentDismissers = await this.notificationHistoryRepository.execute(
-      `SELECT "userId", COUNT(*) as "dismissCount"
+      `SELECT userid, COUNT(*) as dismisscount
        FROM notificationhistory
-       WHERE "wasDismissed" = true
-         AND "dismissedAt" >= $1
-       GROUP BY "userId"
+       WHERE wasdismissed = true
+         AND dismissedat >= $1
+       GROUP BY userid
        HAVING COUNT(*) >= 3`,
       [sevenDaysAgo],
     ) as unknown as UserDismissalCount[];
@@ -216,7 +216,7 @@ export class NotificationTriggerService {
     for (const user of frequentDismissers) {
       // Send gentle "we miss you" message (allow every 5 days)
       const lastNotification = await this.getLastNotification(
-        user.userId,
+        user.userid,
         'skipping',
       );
 
@@ -225,14 +225,14 @@ export class NotificationTriggerService {
         : 999;
 
       if (daysSince >= 5) {
-        const tokens = await this.getActiveTokens(user.userId);
+        const tokens = await this.getActiveTokens(user.userid);
 
         if (tokens.length > 0) {
           targets.push({
-            userId: user.userId,
+            userId: user.userid,
             fcmTokens: tokens,
             reason: 'frequent_dismissal',
-            context: {dismissCount: user.dismissCount},
+            context: {dismissCount: user.dismisscount},
           });
         }
       }
