@@ -119,7 +119,7 @@ describe('NotificationTriggerService', () => {
       );
 
       expect(message.title).to.match(/Day Streak/);
-      expect(message.body).to.contain('7');
+      expect(message.body).to.include('7');
       expect(message.type).to.equal('doing_well');
       expect(message.data.action).to.equal('open_map');
     });
@@ -132,7 +132,7 @@ describe('NotificationTriggerService', () => {
       );
 
       expect(message.title).to.match(/Super Explorer/);
-      expect(message.body).to.contain('3');
+      expect(message.body).to.include('3');
       expect(message.type).to.equal('doing_well');
     });
 
@@ -144,7 +144,7 @@ describe('NotificationTriggerService', () => {
       );
 
       expect(message.title).to.match(/Miss You/);
-      expect(message.body).to.contain('5 days');
+      expect(message.body).to.include('5 days');
       expect(message.type).to.equal('skipping');
     });
 
@@ -156,7 +156,7 @@ describe('NotificationTriggerService', () => {
       );
 
       expect(message.title).to.match(/Start Fresh/);
-      expect(message.body).to.contain('10');
+      expect(message.body).to.include('10');
       expect(message.type).to.equal('skipping');
     });
 
