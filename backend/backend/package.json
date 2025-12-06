@@ -36,7 +36,7 @@
     "openapi-spec": "node ./dist/openapi-spec",
     "prestart": "npm run rebuild",
     "start": "npm run seed-if-needed && node -r source-map-support/register .",
-    "seed-if-needed": "node ./dist/seed-badges || true",
+    "seed-if-needed": "(node ./dist/seed-badges || true) && (node ./dist/seed-test-users || true)",
     "clean": "lb-clean dist *.tsbuildinfo .eslintcache",
     "rebuild": "npm run clean && npm run build"
   },

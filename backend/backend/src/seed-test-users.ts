@@ -20,6 +20,13 @@ import {
 export async function seedTestUsers() {
   console.log('🌱 Starting test user seeding...');
 
+  // Only seed test users in non-production environments
+  if (process.env.NODE_ENV === 'production' && !process.env.SEED_TEST_USERS) {
+    console.log('⚠️  Skipping test user seeding in production environment');
+    console.log('💡 Set SEED_TEST_USERS=true to enable test users in production');
+    process.exit(0);
+  }
+
   const app = new BackendApplication();
   await app.boot();
   await app.start();
@@ -43,19 +50,17 @@ export async function seedTestUsers() {
     return date;
   };
 
-  // Clear existing test users (optional - comment out if you want to keep existing data)
-  console.log('🗑️  Clearing existing test users...');
+  // Check if test users already exist
+  console.log('🔍 Checking for existing test users...');
   const existingUsers = await userRepo.find({
     where: {userName: {regexp: /^test_user_/i}},
   });
-  for (const user of existingUsers) {
-    if (user.id) {
-      await fcmTokenRepo.deleteAll({userId: user.id});
-      await streakRepo.deleteAll({userId: user.id});
-      await explorationRepo.deleteAll({userId: user.id});
-      await notificationHistoryRepo.deleteAll({userId: user.id});
-      await userRepo.deleteById(user.id);
-    }
+
+  if (existingUsers.length > 0) {
+    console.log(`ℹ️  Found ${existingUsers.length} existing test users. Skipping creation.`);
+    console.log('💡 To recreate test users, manually delete them first or set FORCE_SEED=true');
+    await app.stop();
+    process.exit(0);
   }
 
   // 1. HIGH STREAK USER (7 days) - should get "doing well" notification
