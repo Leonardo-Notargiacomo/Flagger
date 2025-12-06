@@ -7,7 +7,7 @@ import retrofit2.http.HeaderMap
 import retrofit2.http.Path
 
 interface AdminApiService {
-    @GET("/flags/user/{userId}")
+    @GET("/go-users/{id}/is-admin")
     suspend fun getCords(@HeaderMap headers: Map<String, String>, @Path("userId") userId: Int) : Response<List<AdminResponse>>
 
     companion object
