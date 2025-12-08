@@ -2,7 +2,7 @@ import {inject, lifeCycleObserver, LifeCycleObserver} from '@loopback/core';
 import {juggler} from '@loopback/repository';
 
 const config = {
-  name: 'db',
+  name: 'gopersonal',
   connector: 'postgresql',
   url: 'postgresql://gopersonal:tqqdxP1AoqM194zFZ2mMKslMCuYxKoTe@dpg-d4raghogjchc73bp4m6g-a.frankfurt-postgres.render.com/gopersonal?ssl=true'
 };
