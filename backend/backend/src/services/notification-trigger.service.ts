@@ -11,7 +11,7 @@ export interface NotificationTarget {
   userId: number;
   fcmTokens: string[];
   reason: string;
-  context: any;
+  context: Record<string, unknown>;
 }
 
 export interface NotificationContent {
