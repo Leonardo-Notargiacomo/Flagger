@@ -4,8 +4,8 @@ import android.util.Log
 import com.fontys.frontend.config.ApiConfig
 import com.fontys.frontend.data.FlagResponse
 import com.fontys.frontend.data.UserReturn
+import com.fontys.frontend.domain.UserRepository.token
 import com.fontys.frontend.services.AdminApiService
-import com.fontys.frontend.services.FlagApiService
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -14,15 +14,12 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 
 object AdminRepository {
-    var token = ""
-    var userId = 0
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY
     }
 
     private val okHttpClient = OkHttpClient.Builder()
-        // No custom auth interceptor needed here if using @HeaderMap directly
-        .addInterceptor(loggingInterceptor) // Keep logging for debugging
+        .addInterceptor(loggingInterceptor)
         .build()
 
     private val gson = GsonBuilder()
@@ -30,78 +27,61 @@ object AdminRepository {
         .create()
     private val retrofit = Retrofit.Builder()
         .baseUrl(ApiConfig.BASE_URL)
-        .client(okHttpClient) // Use the OkHttpClient
+        .client(okHttpClient)
         .addConverterFactory(GsonConverterFactory.create(gson))
         .addConverterFactory(ScalarsConverterFactory.create())
         .build()
     private val adminApiService = retrofit.create(AdminApiService::class.java)
 
+    private fun getAuthHeaders(): Map<String, String> {
+        return hashMapOf(
+            "Accept" to "application/json",
+            "Content-Type" to "application/json",
+            "Authorization" to "Bearer ${UserRepository.token}"
+        )
+    }
+
     suspend fun isAdmin(): Boolean {
-        val userId = UserRepository.userId
-        val headers = HashMap<String, String>().apply {
-            put("Accept", "application/json")
-            put("Content-Type", "application/json")
-            token.let { token ->
-                put("Authorization", "Bearer $token")
+        return try {
+            val response = adminApiService.isAdmin(getAuthHeaders(), UserRepository.userId)
+            if (response.isSuccessful) {
+                response.body() == true
+            } else {
+                Log.e("AdminRepository", "Error checking admin status: ${response.code()} ${response.message()}")
+                false
             }
-        }
-        val response = adminApiService.isAdmin(headers, userId)
-        try {
-        if (response.isSuccessful) {
-            val adminData = response.body()
-            return adminData == true
-        } else {
-            return false
-        } }
-        catch (e: Exception) {
+        } catch (e: Exception) {
             Log.e("AdminRepository", "Error checking admin status", e)
-            return false
+            false
         }
     }
 
-    suspend fun getRecentFlags(amount: Int): Result<List<FlagResponse>> {
-        // This creates a filter to get the 'amount' most recent flags, sorted by creation date
-        val filter = """{"limit":$amount, "order":"dateTaken DESC"}"""
-        val headers = HashMap<String, String>().apply {
-            put("Accept", "application/json")
-            put("Content-Type", "application/json")
-            token.let { token ->
-                put("Authorization", "Bearer $token")
-            }
-        }
-        return try {
-            val response = adminApiService.getFlags(headers, filter)
-            if (response.isSuccessful) {
-                Result.success(response.body() ?: emptyList())
-            } else {
-                Result.failure(Exception("Failed to get flags"))
-            }
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+    suspend fun getRecentFlags(amount: Int): List<FlagResponse> {
+
+    return emptyList()
     }
 
-    suspend fun getRecentUsers(amount: Int): Result<List<UserReturn>> {
-        // This creates a filter to get the 'amount' most recent flags, sorted by creation date
-        val filter = """{"limit":$amount, "order":"dateTaken DESC"}"""
-        val headers = HashMap<String, String>().apply {
-            put("Accept", "application/json")
-            put("Content-Type", "application/json")
-            token.let { token ->
-                put("Authorization", "Bearer $token")
+    suspend fun getRecentUsers(amount: Int): List<UserReturn> {
+        try {
+            val filter = " \"limit\" : $amount "
+            val headers = HashMap<String, String>().apply {
+                put("Accept", "application/json")
+                put("Content-Type", "application/json")
+                put("Authorization", "Bearer $token") ?: run {
+                    throw IllegalStateException("JWT token is missing for authenticated request")
+                }
             }
-        }
-        return try {
             val response = adminApiService.getUsers(headers, filter)
-            if (response.isSuccessful) {
-                Result.success(response.body() ?: emptyList())
+            if (response.isSuccessful){
+                return response.body() ?: emptyList()
             } else {
-                Result.failure(Exception("Failed to get flags"))
+                Log.e("AdminRepository", "Error getting recent users: ${response.code()} - ${response.message()}")
+                return emptyList()
             }
-        } catch (e: Exception) {
-            Result.failure(e)
+        } catch (a: Exception) {
+            Log.e("AdminRepository", "Exception getting recent users: ${a.message}", a)
+            return emptyList()
         }
+
     }
-
-
 }
