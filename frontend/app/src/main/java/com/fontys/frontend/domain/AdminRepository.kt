@@ -1,7 +1,11 @@
 package com.fontys.frontend.domain
 
+import android.util.Log
 import com.fontys.frontend.config.ApiConfig
+import com.fontys.frontend.data.FlagResponse
+import com.fontys.frontend.data.UserReturn
 import com.fontys.frontend.services.AdminApiService
+import com.fontys.frontend.services.FlagApiService
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -42,12 +46,62 @@ object AdminRepository {
             }
         }
         val response = adminApiService.isAdmin(headers, userId)
+        try {
         if (response.isSuccessful) {
             val adminData = response.body()
             return adminData == true
         } else {
             return false
+        } }
+        catch (e: Exception) {
+            Log.e("AdminRepository", "Error checking admin status", e)
+            return false
         }
     }
+
+    suspend fun getRecentFlags(amount: Int): Result<List<FlagResponse>> {
+        // This creates a filter to get the 'amount' most recent flags, sorted by creation date
+        val filter = """{"limit":$amount, "order":"dateTaken DESC"}"""
+        val headers = HashMap<String, String>().apply {
+            put("Accept", "application/json")
+            put("Content-Type", "application/json")
+            token.let { token ->
+                put("Authorization", "Bearer $token")
+            }
+        }
+        return try {
+            val response = adminApiService.getFlags(headers, filter)
+            if (response.isSuccessful) {
+                Result.success(response.body() ?: emptyList())
+            } else {
+                Result.failure(Exception("Failed to get flags"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun getRecentUsers(amount: Int): Result<List<UserReturn>> {
+        // This creates a filter to get the 'amount' most recent flags, sorted by creation date
+        val filter = """{"limit":$amount, "order":"dateTaken DESC"}"""
+        val headers = HashMap<String, String>().apply {
+            put("Accept", "application/json")
+            put("Content-Type", "application/json")
+            token.let { token ->
+                put("Authorization", "Bearer $token")
+            }
+        }
+        return try {
+            val response = adminApiService.getUsers(headers, filter)
+            if (response.isSuccessful) {
+                Result.success(response.body() ?: emptyList())
+            } else {
+                Result.failure(Exception("Failed to get flags"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
 
 }

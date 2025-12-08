@@ -18,10 +18,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.fontys.frontend.domain.UserRepository
 
-// Dummy composables for tab content
-@Composable fun RecentPostsScreen() { Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text("Recent Posts") } }
-@Composable fun RecentUsersScreen() { Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text("Recent Users") } }
-@Composable fun RecentOffendersScreen() { Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text("Recent Offenders") } }
+@Composable fun RecentPostsScreen() {
+    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text("Recent Posts") } }
+@Composable fun RecentUsersScreen() {
+    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text("Recent Users") } }
+@Composable fun RecentOffendersScreen() {
+    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text("Recent Offenders") } }
 
 @Composable
 fun AdminScreen(mainNavController: NavController) {
@@ -64,7 +66,16 @@ fun AdminNavBar(navController: NavController, onExit: () -> Unit) {
         AdminNavItem("Exit", Icons.AutoMirrored.Filled.ExitToApp, "exit")
     )
 
-    NavigationBar {
+    NavigationBar(
+        containerColor = MaterialTheme.colorScheme.primaryContainer
+    ) {
+        val navItemColors = NavigationBarItemDefaults.colors(
+            selectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            selectedIconColor = MaterialTheme.colorScheme.onSecondaryContainer,
+            unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            indicatorColor = MaterialTheme.colorScheme.secondaryContainer
+        )
 
         items.forEachIndexed { index, item ->
             NavigationBarItem(
@@ -81,7 +92,8 @@ fun AdminNavBar(navController: NavController, onExit: () -> Unit) {
                             launchSingleTop = true
                         }
                     }
-                }
+                },
+                colors = navItemColors
             )
         }
     }
