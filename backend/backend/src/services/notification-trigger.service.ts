@@ -6,6 +6,7 @@ import {
   UserStreakRepository,
   ExplorationEventRepository,
 } from '../repositories';
+import {NotificationHistory} from '../models';
 
 export interface NotificationTarget {
   userId: number;
@@ -197,17 +198,6 @@ export class NotificationTriggerService {
       },
     });
 
-      for (const user of frequentDismissers) {
-        if (eligibleUserIds.includes(user.userid)) {
-          const tokens = tokensMap.get(user.userid) || [];
-          if (tokens.length > 0) {
-            targets.push({
-              userId: user.userid,
-              fcmTokens: tokens,
-              reason: 'frequent_dismissal',
-              context: {dismissCount: user.dismisscount},
-            });
-          }
     if (brokenStreakUsers.length > 0) {
       const userIds = brokenStreakUsers.map(u => u.userId);
       const lastNotificationsMap = await this.getLastNotificationsBatch(userIds, 'skipping');
@@ -267,6 +257,17 @@ export class NotificationTriggerService {
 
       const tokensMap = await this.getActiveTokensBatch(eligibleUserIds);
 
+      for (const user of frequentDismissers) {
+        if (eligibleUserIds.includes(user.userid)) {
+          const tokens = tokensMap.get(user.userid) || [];
+          if (tokens.length > 0) {
+            targets.push({
+              userId: user.userid,
+              fcmTokens: tokens,
+              reason: 'frequent_dismissal',
+              context: {dismissCount: user.dismisscount},
+            });
+          }
         }
       }
     }
@@ -317,7 +318,7 @@ export class NotificationTriggerService {
   async getPersonalizedMessage(
     userId: number,
     reason: string,
-    context: any,
+    context: Record<string, unknown>,
   ): Promise<NotificationContent> {
     if (reason === 'high_streak') {
       return {
@@ -402,7 +403,7 @@ export class NotificationTriggerService {
   private async getLastNotification(
     userId: number,
     type: string,
-  ): Promise<any | null> {
+  ): Promise<NotificationHistory | null> {
     const notifications = await this.notificationHistoryRepository.find({
       where: {
         userId,
@@ -458,7 +459,7 @@ export class NotificationTriggerService {
   private async getLastNotificationsBatch(
     userIds: number[],
     type: string,
-  ): Promise<Map<number, any>> {
+  ): Promise<Map<number, NotificationHistory>> {
     if (userIds.length === 0) return new Map();
 
     const notifications = await this.notificationHistoryRepository.find({
@@ -469,7 +470,7 @@ export class NotificationTriggerService {
       order: ['sentAt DESC'],
     });
 
-    const notificationMap = new Map<number, any>();
+    const notificationMap = new Map<number, NotificationHistory>();
     for (const notif of notifications) {
       if (!notificationMap.has(notif.userId)) {
         notificationMap.set(notif.userId, notif);
