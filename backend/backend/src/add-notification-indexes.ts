@@ -22,7 +22,7 @@ export async function addNotificationIndexes() {
   const dataSource = await app.get<DbDataSource>('datasources.db');
   const connector = dataSource.connector;
 
-  if (!connector) {
+  if (!connector || !connector.execute) {
     throw new Error('Database connector not available');
   }
 
@@ -30,7 +30,7 @@ export async function addNotificationIndexes() {
   const executeSql = async (sql: string, description: string) => {
     try {
       console.log(`  → ${description}...`);
-      await connector.execute(sql, []);
+      await connector.execute!(sql, []);
       console.log(`    ✓ Success`);
     } catch (error: any) {
       if (error.message?.includes('already exists')) {

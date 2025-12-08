@@ -15,35 +15,8 @@ import {
   NotificationTriggerService,
   NotificationTarget,
   NotificationContent,
+  NotificationContext
 } from '../services/notification-trigger.service';
-
-// Type-safe notification context definitions
-interface HighStreakContext {
-  streak: number;
-}
-
-interface MultipleExplorationsContext {
-  explorationsToday: number;
-}
-
-interface InactiveContext {
-  daysSinceActivity: number;
-}
-
-interface BrokenStreakContext {
-  longestStreak: number;
-}
-
-interface FrequentDismissalContext {
-  dismissCount: number;
-}
-
-type NotificationContext =
-  | HighStreakContext
-  | MultipleExplorationsContext
-  | InactiveContext
-  | BrokenStreakContext
-  | FrequentDismissalContext;
 
 export class NotificationController {
   constructor(

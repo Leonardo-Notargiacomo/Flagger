@@ -22,6 +22,34 @@ export interface NotificationContent {
   data: Record<string, string>;
 }
 
+// Type-safe notification context definitions
+export interface HighStreakContext {
+  streak: number;
+}
+
+export interface MultipleExplorationsContext {
+  explorationsToday: number;
+}
+
+export interface InactiveContext {
+  daysSinceActivity: number;
+}
+
+export interface BrokenStreakContext {
+  longestStreak: number;
+}
+
+export interface FrequentDismissalContext {
+  dismissCount: number;
+}
+
+export type NotificationContext =
+  | HighStreakContext
+  | MultipleExplorationsContext
+  | InactiveContext
+  | BrokenStreakContext
+  | FrequentDismissalContext;
+
 interface NotificationRules {
   minDaysBetween: number;
   maxPerMonth: number;
@@ -123,8 +151,8 @@ export class NotificationTriggerService {
       const eligibleUserIds: number[] = [];
       for (const user of activeUsersResult) {
         const lastNotification = lastNotificationsMap.get(user.userid);
-        const daysSince = lastNotification
-          ? this.daysSince(lastNotification.sentAt!)
+        const daysSince = (lastNotification && lastNotification.sentAt)
+          ? this.daysSince(lastNotification.sentAt)
           : 999;
         if (daysSince >= 3) {
           eligibleUserIds.push(user.userid);
@@ -175,10 +203,10 @@ export class NotificationTriggerService {
       const tokensMap = await this.getActiveTokensBatch(eligibleUserIds);
 
       for (const user of inactiveUsers) {
-        if (eligibilityMap.get(user.userId)) {
+        if (eligibilityMap.get(user.userId) && user.lastActivityDate) {
           const tokens = tokensMap.get(user.userId) || [];
           if (tokens.length > 0) {
-            const daysSinceActivity = this.daysSince(user.lastActivityDate!);
+            const daysSinceActivity = this.daysSince(user.lastActivityDate);
             targets.push({
               userId: user.userId,
               fcmTokens: tokens,
@@ -205,7 +233,9 @@ export class NotificationTriggerService {
       const eligibleUserIds: number[] = [];
       for (const user of brokenStreakUsers) {
         const lastNotification = lastNotificationsMap.get(user.userId);
-        const daysSince = lastNotification ? this.daysSince(lastNotification.sentAt!) : 999;
+        const daysSince = (lastNotification && lastNotification.sentAt)
+          ? this.daysSince(lastNotification.sentAt)
+          : 999;
         if (daysSince >= 1) {
           eligibleUserIds.push(user.userId);
         }
@@ -249,7 +279,9 @@ export class NotificationTriggerService {
       const eligibleUserIds: number[] = [];
       for (const user of frequentDismissers) {
         const lastNotification = lastNotificationsMap.get(user.userid);
-        const daysSince = lastNotification ? this.daysSince(lastNotification.sentAt!) : 999;
+        const daysSince = (lastNotification && lastNotification.sentAt)
+          ? this.daysSince(lastNotification.sentAt)
+          : 999;
         if (daysSince >= 5) {
           eligibleUserIds.push(user.userid);
         }
@@ -288,8 +320,8 @@ export class NotificationTriggerService {
     // Check last notification of this type
     const lastNotification = await this.getLastNotification(userId, type);
 
-    if (lastNotification) {
-      const daysSince = this.daysSince(lastNotification.sentAt!);
+    if (lastNotification && lastNotification.sentAt) {
+      const daysSince = this.daysSince(lastNotification.sentAt);
       if (daysSince < rules.minDaysBetween) {
         return false; // Too soon
       }
@@ -318,23 +350,25 @@ export class NotificationTriggerService {
   async getPersonalizedMessage(
     userId: number,
     reason: string,
-    context: Record<string, unknown>,
+    context: NotificationContext,
   ): Promise<NotificationContent> {
     if (reason === 'high_streak') {
+      const ctx = context as HighStreakContext;
       return {
-        title: `${context.streak} Day Streak! 🔥`,
-        body: `You're on fire! Keep exploring to maintain your ${context.streak}-day streak!`,
+        title: `${ctx.streak} Day Streak! 🔥`,
+        body: `You're on fire! Keep exploring to maintain your ${ctx.streak}-day streak!`,
         type: 'doing_well',
         data: {
           action: 'open_map',
           userId: userId.toString(),
-          streak: context.streak.toString(),
+          streak: ctx.streak.toString(),
         },
       };
     } else if (reason === 'multiple_explorations_today') {
+      const ctx = context as MultipleExplorationsContext;
       return {
         title: 'Super Explorer! 🌟',
-        body: `${context.explorationsToday} explorations today! You're unstoppable!`,
+        body: `${ctx.explorationsToday} explorations today! You're unstoppable!`,
         type: 'doing_well',
         data: {
           action: 'open_badges',
@@ -342,10 +376,10 @@ export class NotificationTriggerService {
         },
       };
     } else if (reason === 'inactive_for_days') {
-      const daysSince = context.daysSinceActivity;
+      const ctx = context as InactiveContext;
       return {
         title: 'We Miss You! 👋',
-        body: `It's been ${daysSince} days since your last exploration. Ready for a new adventure?`,
+        body: `It's been ${ctx.daysSinceActivity} days since your last exploration. Ready for a new adventure?`,
         type: 'skipping',
         data: {
           action: 'open_map',
@@ -353,9 +387,10 @@ export class NotificationTriggerService {
         },
       };
     } else if (reason === 'streak_broken') {
+      const ctx = context as BrokenStreakContext;
       return {
         title: 'Start Fresh! 🌱',
-        body: `Your ${context.longestStreak}-day streak was impressive! Let's start a new one today.`,
+        body: `Your ${ctx.longestStreak}-day streak was impressive! Let's start a new one today.`,
         type: 'skipping',
         data: {
           action: 'open_map',
@@ -538,7 +573,7 @@ export class NotificationTriggerService {
     const resultMap = new Map<number, boolean>();
     for (const userId of userIds) {
       const lastNotif = lastNotifications.get(userId);
-      if (lastNotif) {
+      if (lastNotif && lastNotif.sentAt) {
         const daysSince = this.daysSince(lastNotif.sentAt);
         if (daysSince < rules.minDaysBetween) {
           resultMap.set(userId, false);
