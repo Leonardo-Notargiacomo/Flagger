@@ -67,9 +67,7 @@ object AdminRepository {
             val headers = HashMap<String, String>().apply {
                 put("Accept", "application/json")
                 put("Content-Type", "application/json")
-                put("Authorization", "Bearer $token") ?: run {
-                    throw IllegalStateException("JWT token is missing for authenticated request")
-                }
+                put("Authorization", "Bearer $token")
             }
             val response = adminApiService.getUsers(headers, filter)
             if (response.isSuccessful){
