@@ -258,8 +258,35 @@ export const sendPersonalizedNotifications = onSchedule({
               `[Personalized] FCM error for token ${token}:`,
               error.message
             );
+
+            // Mark token as inactive if it's invalid
+            if (
+              error.message.includes("not-registered") ||
+              error.message.includes("invalid") ||
+              error.message.includes("not found") ||
+              error.message.includes("unregistered")
+            ) {
+              try {
+                await fetch(
+                  `${backendUrl}/api/users/${target.userId}/fcm-token/deactivate`,
+                  {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({token}),
+                  }
+                );
+                console.log(
+                  `[Personalized] Marked token as inactive: ${token.substring(0, 20)}...`
+                );
+              } catch (deactivateError) {
+                console.error(
+                  "[Personalized] Failed to deactivate token:",
+                  deactivateError
+                );
+              }
+            }
+
             errorCount++;
-            // TODO: Mark token as inactive if error is "invalid token"
           }
         }
 
