@@ -1,6 +1,20 @@
 import {Entity, model, property} from '@loopback/repository';
 
-@model()
+@model({
+  settings: {
+    indexes: {
+      uniqueUserToken: {
+        keys: {
+          userId: 1,
+          token: 1,
+        },
+        options: {
+          unique: true,
+        },
+      },
+    },
+  },
+})
 export class FcmToken extends Entity {
   @property({
     type: 'number',

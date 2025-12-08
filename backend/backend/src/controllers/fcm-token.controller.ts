@@ -72,23 +72,9 @@ export class FcmTokenController {
     console.log(`[FcmTokenController] Registering token for userId: ${userId}`);
 
     try {
-      // Check if token already exists for this user
-      const existingToken = await this.fcmTokenRepository.findOne({
-        where: {
-          userId,
-          token: tokenData.token,
-        },
-      });
-
-      if (existingToken) {
-        // Update existing token
-        await this.fcmTokenRepository.updateById(existingToken.id!, {
-          lastUpdated: new Date(),
-          isActive: true,
-        });
-        console.log(`[FcmTokenController] Token updated for userId: ${userId}`);
-      } else {
-        // Create new token
+      // Try to create new token first (optimistic approach)
+      // If it already exists, the unique constraint will prevent duplicate
+      try {
         await this.fcmTokenRepository.create({
           userId,
           token: tokenData.token,
@@ -98,6 +84,32 @@ export class FcmTokenController {
           lastUpdated: new Date(),
         });
         console.log(`[FcmTokenController] New token created for userId: ${userId}`);
+      } catch (createError: any) {
+        // Check if error is due to unique constraint violation
+        if (createError.code === '23505' || createError.message?.includes('duplicate key')) {
+          // Token already exists, update it instead
+          const existingToken = await this.fcmTokenRepository.findOne({
+            where: {
+              userId,
+              token: tokenData.token,
+            },
+          });
+
+          if (existingToken) {
+            await this.fcmTokenRepository.updateById(existingToken.id!, {
+              lastUpdated: new Date(),
+              isActive: true,
+              platform: tokenData.platform || existingToken.platform,
+            });
+            console.log(`[FcmTokenController] Token updated for userId: ${userId}`);
+          } else {
+            // This shouldn't happen, but handle it gracefully
+            throw createError;
+          }
+        } else {
+          // Different error, re-throw
+          throw createError;
+        }
       }
 
       return {

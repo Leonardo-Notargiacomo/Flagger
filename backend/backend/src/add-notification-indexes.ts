@@ -70,6 +70,13 @@ export async function addNotificationIndexes() {
 
   console.log('\n📱 Creating indexes for FCM tokens...');
 
+  // Unique constraint to prevent duplicate tokens (prevents race condition)
+  await executeSql(
+    `CREATE UNIQUE INDEX CONCURRENTLY IF NOT EXISTS idx_fcm_token_unique
+     ON fcmtoken(userid, token)`,
+    'Unique constraint on (userId, token)'
+  );
+
   // Partial index for active FCM tokens only
   await executeSql(
     `CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_fcm_token_active
