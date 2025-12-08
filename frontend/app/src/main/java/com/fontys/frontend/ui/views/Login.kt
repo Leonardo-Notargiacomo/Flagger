@@ -40,6 +40,7 @@ fun LoginView(
     LaunchedEffect(loginSuccess) {
         if (loginSuccess) {
             navController.navigate("main") {
+            navController.navigate("loader") {
                 popUpTo("login") { inclusive = true }
             }
         }

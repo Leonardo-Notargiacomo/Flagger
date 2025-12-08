@@ -1,9 +1,5 @@
 package com.fontys.frontend.data.models
 
-//admin check model
-data class AdminResponse(
-    val isAdmin : Boolean
-)
 
 //warning and ban models
 data class WarnMsg(

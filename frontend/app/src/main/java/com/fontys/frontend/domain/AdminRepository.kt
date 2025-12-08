@@ -9,7 +9,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 
-class AdminRepository {
+object AdminRepository {
     var token = ""
     var userId = 0
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
@@ -32,6 +32,22 @@ class AdminRepository {
         .build()
     private val adminApiService = retrofit.create(AdminApiService::class.java)
 
-
+    suspend fun isAdmin(): Boolean {
+        val userId = UserRepository.userId
+        val headers = HashMap<String, String>().apply {
+            put("Accept", "application/json")
+            put("Content-Type", "application/json")
+            token.let { token ->
+                put("Authorization", "Bearer $token")
+            }
+        }
+        val response = adminApiService.isAdmin(headers, userId)
+        if (response.isSuccessful) {
+            val adminData = response.body()
+            return adminData == true
+        } else {
+            return false
+        }
+    }
 
 }
