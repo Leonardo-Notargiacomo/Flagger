@@ -8,9 +8,13 @@ import {
   HttpErrors,
 } from '@loopback/rest';
 import {repository} from '@loopback/repository';
+import {authenticate} from '@loopback/authentication';
+import {inject} from '@loopback/core';
+import {SecurityBindings, UserProfile} from '@loopback/security';
 import {FcmToken} from '../models';
 import {FcmTokenRepository} from '../repositories';
 
+@authenticate('jwt')
 export class FcmTokenController {
   constructor(
     @repository(FcmTokenRepository)
@@ -37,6 +41,7 @@ export class FcmTokenController {
     },
   })
   async registerToken(
+    @inject(SecurityBindings.USER) currentUser: UserProfile,
     @param.path.number('userId') userId: number,
     @requestBody({
       content: {
@@ -57,6 +62,13 @@ export class FcmTokenController {
       platform?: string;
     },
   ) {
+    const authenticatedUserId = parseInt(currentUser.id);
+
+    // Authorization: Users can only register tokens for themselves
+    if (authenticatedUserId !== userId) {
+      throw new HttpErrors.Forbidden('Cannot register FCM token for another user');
+    }
+
     console.log(`[FcmTokenController] Registering token for userId: ${userId}`);
 
     try {
@@ -115,8 +127,16 @@ export class FcmTokenController {
     },
   })
   async getUserTokens(
+    @inject(SecurityBindings.USER) currentUser: UserProfile,
     @param.path.number('userId') userId: number,
   ) {
+    const authenticatedUserId = parseInt(currentUser.id);
+
+    // Authorization: Users can only get their own tokens
+    if (authenticatedUserId !== userId) {
+      throw new HttpErrors.Forbidden('Cannot access another user\'s FCM tokens');
+    }
+
     console.log(`[FcmTokenController] Getting tokens for userId: ${userId}`);
 
     try {
@@ -156,6 +176,7 @@ export class FcmTokenController {
     },
   })
   async removeToken(
+    @inject(SecurityBindings.USER) currentUser: UserProfile,
     @param.path.number('userId') userId: number,
     @requestBody({
       content: {
@@ -174,6 +195,13 @@ export class FcmTokenController {
       token: string;
     },
   ) {
+    const authenticatedUserId = parseInt(currentUser.id);
+
+    // Authorization: Users can only remove their own tokens
+    if (authenticatedUserId !== userId) {
+      throw new HttpErrors.Forbidden('Cannot remove another user\'s FCM token');
+    }
+
     console.log(`[FcmTokenController] Removing token for userId: ${userId}`);
 
     try {
