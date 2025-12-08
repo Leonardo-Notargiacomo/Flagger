@@ -147,4 +147,20 @@ export class UserCustomFlagController {
   async deleteById(@param.path.number('id') id: number): Promise<void> {
     await this.userCustomFlagRepository.deleteById(id);
   }
+  @get('/user-custom-flag/{goUserId}')
+@response(200, {
+  description: 'UserCustomFlag by goUserId',
+  content: {
+    'application/json': {
+      schema: getModelSchemaRef(UserCustomFlag, {includeRelations: true}),
+    },
+  },
+})
+async findByGoUserId(
+  @param.path.number('goUserId') goUserId: number,
+): Promise<UserCustomFlag | null> {
+  return this.userCustomFlagRepository.findOne({
+    where: {goUserId: goUserId},
+  });
+}
 }
