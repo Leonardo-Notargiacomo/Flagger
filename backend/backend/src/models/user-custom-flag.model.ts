@@ -18,6 +18,8 @@ export class UserCustomFlag extends Entity {
 
   @property({
     type: 'string',
+    default: "❤️",
+
   })
   emoji?: string;
 
