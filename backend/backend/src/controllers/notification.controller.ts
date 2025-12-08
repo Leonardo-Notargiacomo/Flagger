@@ -8,6 +8,8 @@ import {
 } from '@loopback/rest';
 import {repository} from '@loopback/repository';
 import {inject} from '@loopback/core';
+import {authenticate} from '@loopback/authentication';
+import {SecurityBindings, UserProfile} from '@loopback/security';
 import {NotificationHistoryRepository} from '../repositories';
 import {
   NotificationTriggerService,
@@ -226,6 +228,7 @@ export class NotificationController {
    * Report that user dismissed a notification
    * Called from Android app
    */
+  @authenticate('jwt')
   @post('/api/users/{userId}/notifications/{notificationId}/dismiss')
   @response(200, {
     description: 'Notification dismissal recorded',
@@ -241,9 +244,17 @@ export class NotificationController {
     },
   })
   async reportDismissal(
+    @inject(SecurityBindings.USER) currentUser: UserProfile,
     @param.path.number('userId') userId: number,
     @param.path.string('notificationId') notificationId: string,
   ) {
+    const authenticatedUserId = parseInt(currentUser.id);
+
+    // Authorization: Users can only dismiss their own notifications
+    if (authenticatedUserId !== userId) {
+      throw new HttpErrors.Forbidden('Cannot dismiss another user\'s notifications');
+    }
+
     console.log(`[NotificationController] Recording dismissal for user ${userId}, notification ${notificationId}`);
     try {
       // Try to find the notification by ID (if it's a database ID)
