@@ -13,51 +13,68 @@ import * as admin from "firebase-admin";
 
 admin.initializeApp();
 
-// Array of exploration titles
+// Array of wisdom and inspiration titles
 const titles = [
-  "Time to Explore!",
-  "Adventure Awaits! 🗺️",
-  "We Miss You...",
-  "Still There?",
-  "Hello? 👀",
-  "Don't Make This Awkward",
-  "We Need to Talk",
-  "This Is Your Final Warning",
-  "You've Left Us No Choice",
-  "Deploy Guilt Trip? ✅",
-  "The Consequences...",
+  "Explorer's Wisdom 🧭",
+  "Daily Inspiration ✨",
+  "Adventure Awaits 🗺️",
+  "Travel Wisdom 🌍",
+  "Exploration Tip 💡",
+  "Did You Know? 🤔",
+  "Words of Wanderlust 🌟",
+  "Discovery Insight 🔍",
+  "Explorer's Quote 📖",
+  "Journey Inspiration 🚶",
 ];
 
-// Array of exploration messages
+// Array of inspirational messages, quotes, tips, and facts
 const messages = [
-  // Friendly reminders (days 1-2)
-  "The world is waiting! Time to explore something new today 🌍",
-  "Your next adventure is just around the corner...",
-  "Discover something amazing in your neighborhood today!",
+  // Classic exploration quotes
+  "The world is a book, and those who do not travel read only one page. " +
+    "- Saint Augustine",
+  "Not all those who wander are lost. - J.R.R. Tolkien",
+  "Adventure is worthwhile in itself. - Amelia Earhart",
+  "To travel is to live. - Hans Christian Andersen",
+  "Life is either a daring adventure or nothing at all. " +
+    "- Helen Keller",
+  "The journey of a thousand miles begins with a single step. - Lao Tzu",
+  "We travel not to escape life, but for life not to escape us. - Anonymous",
+  "Jobs fill your pocket, but adventures fill your soul. - Jamie Lyn Beatty",
 
-  // Getting personal (days 3-4)
-  "We noticed you haven't explored today... yet 😉",
-  "Your exploration streak is crying in the corner right now",
-  "Remember when you used to explore? Those were good times...",
-  "Your local area has secrets. Don't you want to know them?",
+  // Exploration tips and wisdom
+  "Pro tip: The best discoveries often happen within walking distance " +
+    "of home. Explore your neighborhood today!",
+  "Walking just 15-20 minutes in a new direction can reveal hidden gems " +
+    "you never knew existed.",
+  "Every street you haven't walked down is a mystery waiting to be solved.",
+  "Your city has layers of history. Every building, every corner has " +
+    "a story to tell.",
+  "The best time to explore was yesterday. The second best time is now.",
+  "Exploration isn't about distance traveled, it's about curiosity embraced.",
+  "Today's routine path could become tomorrow's forgotten adventure. " +
+    "Mix it up!",
 
-  // Passive aggressive (days 5-6)
-  "I'm not mad. Just disappointed. 💔",
-  "Go is sad. You wouldn't like Go when Go is sad.",
-  "I see how it is. We're just not important to you anymore.",
-  "Other users are exploring right now. Just saying. 👀",
+  // Fun facts about exploration and discovery
+  "Did you know? The average person walks past 36 murderers in their " +
+    "lifetime... but also 36,000 interesting places!",
+  "Fun fact: Walking in nature for just 20 minutes can boost your " +
+    "creativity by 50%!",
+  "Studies show that people who explore new places regularly are happier " +
+    "and more creative.",
+  "Ancient explorers navigated by stars. You have GPS. No excuses! ⭐",
 
-  // Unhinged territory (day 7+)
-  "I know where you live. Because you haven't explored anywhere else.",
-  "Your plants are watered. Your pets fed. Exploration streak? Dead.",
-  "We have a very particular set of skills... in guilt-tripping.",
-  "Spanish or vanish? More like EXPLORE OR... we'll be sad 🥺",
-  "5 minutes of exploration = not having to see this notification tomorrow",
-  "Fine. Don't explore. See if we care. (We care very much please come back)",
-  "Your ancestors didn't explore new lands for you to stay on the couch",
-  "We're not angry, just... *checks notes* ...actually we're pretty angry",
+  // Motivational and poetic
+  "Every explorer was once a beginner who decided to take that first step.",
+  "The world rewards the curious. What will you discover today?",
+  "Your comfort zone is a beautiful place, but nothing ever grows there.",
+  "Adventure is calling. Will you answer? 📞",
+  "Somewhere, something incredible is waiting to be known. " +
+    "- Carl Sagan",
+  "The only impossible journey is the one you never begin. " +
+    "- Tony Robbins",
 ];
 
+// Sends inspirational exploration wisdom to all subscribed users
 // Runs every hour 9 AM - 5 PM, randomly sends ~2 notifications per day
 // PRODUCTION: Hourly checks with 22% probability = ~2 notifications/day
 // TESTING: To make notifications every minute, change schedule to "* * * * *"
@@ -72,11 +89,11 @@ export const sendDailyExplorationReminder = onSchedule({
   const shouldSend = Math.random() < sendProbability;
 
   if (!shouldSend) {
-    console.log("Skipping notification this time (random chance)");
+    console.log("Skipping wisdom notification this time (random chance)");
     return;
   }
 
-  // Pick random title and message
+  // Pick random inspirational title and message
   const title = titles[Math.floor(Math.random() * titles.length)];
   const message = messages[Math.floor(Math.random() * messages.length)];
 
@@ -88,7 +105,7 @@ export const sendDailyExplorationReminder = onSchedule({
       body: message,
     },
     data: {
-      type: "daily_reminder",
+      type: "exploration_wisdom",
       timestamp: Date.now().toString(),
     },
     android: {
@@ -107,10 +124,10 @@ export const sendDailyExplorationReminder = onSchedule({
 
   try {
     const response = await admin.messaging().send(payload);
-    console.log("Successfully sent daily reminder:", response);
+    console.log("Successfully sent exploration wisdom:", response);
     console.log(`Title: ${title}, Message: ${message}`);
   } catch (error) {
-    console.error("Error sending notification:", error);
+    console.error("Error sending wisdom notification:", error);
     throw error;
   }
 });
