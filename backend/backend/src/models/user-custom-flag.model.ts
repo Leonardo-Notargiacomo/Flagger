@@ -12,7 +12,7 @@ export class UserCustomFlag extends Entity {
 
   @property({
     type: 'string',
-    default: Color.RED,
+    default: "Color.RED",
   })
   background?: string;
 
