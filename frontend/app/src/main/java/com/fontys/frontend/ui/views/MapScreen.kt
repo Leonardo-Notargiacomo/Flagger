@@ -2,7 +2,9 @@ package com.fontys.frontend.ui.views
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.nfc.Tag
+import android.widget.TextView
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Flag
@@ -32,6 +34,7 @@ import com.google.android.gms.maps.GoogleMapOptions
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
+import com.google.android.gms.maps.model.PinConfig
 import com.google.maps.android.compose.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -53,7 +56,6 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
     val userFlags by viewModel.userFlags.collectAsState()
     val currentUserId = UserRepository.userId
 
-    // Check if location permission is granted
     val hasLocationPermission = remember {
         ContextCompat.checkSelfPermission(
             context,
@@ -96,13 +98,23 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
                 myLocationButtonEnabled = false
             )
         ) {
+            val pinConfigBuilder: PinConfig.Builder = PinConfig.builder()
+            val glyphText = PinConfig.Glyph("\uD83D\uDC80")
+            pinConfigBuilder.setGlyph(glyphText)
+            pinConfigBuilder.setBackgroundColor(Color.BLACK)
+            val pinConfig: PinConfig = pinConfigBuilder.build()
 
             userFlags.forEach { spot ->
-                Marker(
+                val textView = TextView(context)
+                textView.text = "\uD83D\uDC80"
+                textView.setBackgroundColor(Color.BLACK)
+                textView.setTextColor(Color.YELLOW)
+                AdvancedMarker(
                     state = MarkerState(position = LatLng(spot.location.latitude, spot.location.longitude)),
                     title = spot.displayName,
                     snippet = "Flagged by you",
-                    alpha = 0.7f
+                    alpha = 0.9f,
+                    pinConfig = pinConfig
                 )
         }
 

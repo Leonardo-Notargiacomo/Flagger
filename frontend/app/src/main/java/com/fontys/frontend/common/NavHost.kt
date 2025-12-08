@@ -49,7 +49,9 @@ object RegistrationView
 data class PublicProfileView(val userId: Int)
 
 @Serializable
-object CameraView
+object CameraView{
+    const val route = "camera_view"
+}
 
 @Composable
 fun NavHost(
@@ -96,7 +98,7 @@ fun NavHost(
                 NavBar()
             }
 
-            composable<CameraView> {
+            composable<CameraView>  {
                 val cameraViewModel: CameraPreviewViewModel = viewModel()
                 PictureCaptureScreen(navController, cameraViewModel)
             }
