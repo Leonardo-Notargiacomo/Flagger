@@ -22,15 +22,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.fontys.frontend.data.models.Challenge
 import com.fontys.frontend.data.models.ChallengeType
 import com.fontys.frontend.data.models.UserChallenge
-import com.fontys.frontend.domain.UserRepository
 import com.fontys.frontend.ui.viewmodels.ChallengeViewModel
 import com.fontys.frontend.ui.viewmodels.ChallengeUiState
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -38,22 +31,20 @@ import java.util.concurrent.TimeUnit
 
 @Composable
 fun ChallengeScreen(
-    userId: Int = UserRepository.userId,
     viewModel: ChallengeViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val activeChallenges by viewModel.activeChallenges.collectAsState()
-    val completedChallenges by viewModel.completedChallenges.collectAsState()
+    val activeChallenge by viewModel.activeChallenge.collectAsState()
+    val history by viewModel.history.collectAsState()
     val availableChallenges by viewModel.availableChallenges.collectAsState()
+    val isOnCooldown by viewModel.isOnCooldown.collectAsState()
+    val cooldownEndsAt by viewModel.cooldownEndsAt.collectAsState()
     val showCompletionDialog by viewModel.showCompletionDialog.collectAsState()
     val completionData by viewModel.completionData.collectAsState()
     val errorMessage by viewModel.errorMessage.collectAsState()
 
-    var selectedTab by remember { mutableStateOf(0) }
-
-    LaunchedEffect(userId) {
-        viewModel.loadUserChallenges(userId)
-        viewModel.loadAvailableChallenges()
+    LaunchedEffect(Unit) {
+        viewModel.refresh()
     }
 
     // Show completion dialog when challenge is completed
@@ -110,6 +101,7 @@ fun ChallengeScreen(
         }
 
         // Tabs
+        var selectedTab by remember { mutableStateOf(0) }
         TabRow(
             selectedTabIndex = selectedTab,
             modifier = Modifier.fillMaxWidth()
@@ -117,17 +109,17 @@ fun ChallengeScreen(
             Tab(
                 selected = selectedTab == 0,
                 onClick = { selectedTab = 0 },
-                text = { Text("Active (${activeChallenges.size})") }
+                text = { Text("Active") }
             )
             Tab(
                 selected = selectedTab == 1,
                 onClick = { selectedTab = 1 },
-                text = { Text("Available (${availableChallenges.size})") }
+                text = { Text("Available") }
             )
             Tab(
                 selected = selectedTab == 2,
                 onClick = { selectedTab = 2 },
-                text = { Text("Completed (${completedChallenges.size})") }
+                text = { Text("Completed") }
             )
         }
 
@@ -156,10 +148,7 @@ fun ChallengeScreen(
                             style = MaterialTheme.typography.bodyLarge
                         )
                         Spacer(modifier = Modifier.height(16.dp))
-                        Button(onClick = {
-                            viewModel.loadUserChallenges(userId)
-                            viewModel.loadAvailableChallenges()
-                        }) {
+                        Button(onClick = viewModel::refresh) {
                             Text("Retry")
                         }
                     }
@@ -167,9 +156,14 @@ fun ChallengeScreen(
             }
             is ChallengeUiState.Success -> {
                 when (selectedTab) {
-                    0 -> ActiveChallengesTab(activeChallenges, viewModel, userId)
-                    1 -> AvailableChallengesTab(availableChallenges, viewModel, userId)
-                    2 -> CompletedChallengesTab(completedChallenges)
+                    0 -> ActiveChallengesTab(activeChallenge, onCompleteCheck = viewModel::checkCompletion)
+                    1 -> AvailableChallengesTab(
+                        challenges = availableChallenges,
+                        isOnCooldown = isOnCooldown,
+                        cooldownEndsAt = cooldownEndsAt,
+                        onSelect = viewModel::selectChallenge
+                    )
+                    2 -> CompletedChallengesTab(history.filter { it.status == "completed" })
                 }
             }
         }
@@ -177,12 +171,8 @@ fun ChallengeScreen(
 }
 
 @Composable
-fun ActiveChallengesTab(
-    challenges: List<UserChallenge>,
-    viewModel: ChallengeViewModel,
-    userId: Int
-) {
-    if (challenges.isEmpty()) {
+fun ActiveChallengesTab(activeChallenge: UserChallenge?, onCompleteCheck: () -> Unit) {
+    if (activeChallenge == null) {
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
@@ -194,18 +184,18 @@ fun ActiveChallengesTab(
             )
         }
     } else {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            items(challenges) { userChallenge ->
-                UserChallengeCard(
-                    userChallenge = userChallenge,
-                    onProgressUpdate = { progress ->
-                        viewModel.updateChallengeProgress(userId, userChallenge.challenge.id, progress)
-                    }
-                )
+            UserChallengeCard(activeChallenge)
+            Button(
+                onClick = onCompleteCheck,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Check Progress")
             }
         }
     }
@@ -214,17 +204,17 @@ fun ActiveChallengesTab(
 @Composable
 fun AvailableChallengesTab(
     challenges: List<Challenge>,
-    viewModel: ChallengeViewModel,
-    userId: Int
+    isOnCooldown: Boolean,
+    cooldownEndsAt: String?,
+    onSelect: (Int) -> Unit
 ) {
-    val canSelectChallenge by viewModel.canSelectChallenge.collectAsState()
-    val timeUntilNextSelection by viewModel.timeUntilNextSelection.collectAsState()
-
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
         // Show cooldown message if user can't select a challenge
-        if (!canSelectChallenge) {
+        if (isOnCooldown) {
+            val timeRemaining = remember(cooldownEndsAt) { cooldownEndsAt?.let { parseDateTime(it) - System.currentTimeMillis() } ?: 0L }
+
             Surface(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -244,7 +234,7 @@ fun AvailableChallengesTab(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "You can choose a new challenge in ${formatTimeRemaining(timeUntilNextSelection)}",
+                        text = "You can choose a new challenge in ${formatTimeRemaining(timeRemaining)}",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onErrorContainer
                     )
@@ -273,11 +263,9 @@ fun AvailableChallengesTab(
                 items(challenges) { challenge ->
                     AvailableChallengeCard(
                         challenge = challenge,
-                        canSelect = canSelectChallenge,
-                        onStartChallenge = {
-                            if (canSelectChallenge) {
-                                viewModel.startChallenge(userId, challenge.id)
-                            }
+                        canSelect = !isOnCooldown,
+                        onSelect = {
+                            onSelect(challenge.id)
                         }
                     )
                 }
@@ -312,105 +300,48 @@ fun CompletedChallengesTab(challenges: List<UserChallenge>) {
     }
 }
 
-private object ChallengeTimerCache {
-    private val timers = mutableMapOf<Int, MutableStateFlow<Long>>()
-    private val startTimes = mutableMapOf<Int, Long>()
-    private val timerJobs = mutableMapOf<Int, kotlinx.coroutines.Job>()
-
-    @Synchronized
-    fun getOrCreateTimer(challengeId: Int, startedAt: String?): StateFlow<Long> {
-        if (timers.containsKey(challengeId)) {
-            return timers[challengeId]!!.asStateFlow()
-        }
-
-
-        val startTime = if (com.fontys.frontend.utils.ChallengePreferences.getChallengeId() == challengeId) {
-            val savedStartTime = com.fontys.frontend.utils.ChallengePreferences.getChallengeStartTime()
-            if (savedStartTime > 0L) savedStartTime else {
-                if (startedAt != null) parseDateTime(startedAt) else System.currentTimeMillis()
-            }
-        } else {
-
-            if (startedAt != null) parseDateTime(startedAt) else System.currentTimeMillis()
-        }
-
-        startTimes[challengeId] = startTime
-        timers[challengeId] = MutableStateFlow(System.currentTimeMillis())
-
-        timerJobs[challengeId] = GlobalScope.launch {
-            while (true) {
-                timers[challengeId]?.value = System.currentTimeMillis()
-                delay(1000)
-
-                val cachedStartTime = startTimes[challengeId]
-                if (cachedStartTime != null) {
-                    val expiresAt = cachedStartTime + (24 * 60 * 60 * 1000L)
-                    if (System.currentTimeMillis() >= expiresAt) {
-                        break
-                    }
-                } else {
-                    break
-                }
-            }
-        }
-
-        return timers[challengeId]!!.asStateFlow()
-    }
-
-    fun removeTimer(challengeId: Int) {
-        timerJobs[challengeId]?.cancel()
-        timerJobs.remove(challengeId)
-        timers.remove(challengeId)
-        startTimes.remove(challengeId)
-    }
-
-    fun getStartTime(challengeId: Int): Long {
-        return startTimes[challengeId] ?: System.currentTimeMillis()
-    }
-}
-
 @Composable
 fun UserChallengeCard(
-    userChallenge: UserChallenge,
-    onProgressUpdate: (Int) -> Unit
+    userChallenge: UserChallenge
 ) {
-    val challengeType = userChallenge.challenge.getType()
-
-    val totalMillis = 24 * 60 * 60 * 1000L
-
-    val currentTimeFlow = ChallengeTimerCache.getOrCreateTimer(userChallenge.id, userChallenge.startedAt)
-    val currentTime by currentTimeFlow.collectAsState()
-
-    // Calculate start time directly from cache
-    val startedAtMillis = ChallengeTimerCache.getStartTime(userChallenge.id)
-
-    val timeRemaining = remember(currentTime, startedAtMillis) {
-        val expiresAtMillis = startedAtMillis + totalMillis
-        (expiresAtMillis - currentTime).coerceAtLeast(0)
+    val challengeType = userChallenge.challenge?.getType() ?: ChallengeType.TIME_BASED
+    val expiresAt = remember(userChallenge.expiresAt) { userChallenge.expiresAt?.let(::parseDateTime) }
+    val activatedAt = remember(userChallenge.activatedAt) { userChallenge.activatedAt?.let(::parseDateTime) }
+    val expiresIn = remember(activatedAt, expiresAt) {
+        if (activatedAt == null || expiresAt == null) 0L else (expiresAt - System.currentTimeMillis()).coerceAtLeast(0L)
     }
-
-
 
     val progressFraction = when (challengeType) {
         ChallengeType.TIME_BASED -> {
-            val elapsed = (totalMillis - timeRemaining).coerceAtLeast(0L)
-            elapsed.toFloat() / totalMillis
+            if (activatedAt != null && expiresAt != null && expiresAt > activatedAt) {
+                val total = expiresAt - activatedAt
+                (total - expiresIn).toFloat() / total.toFloat()
+            } else 0f
         }
         ChallengeType.COUNT -> {
-            val target = userChallenge.challenge.targetValue
-            if (target > 0) userChallenge.currentProgress.toFloat() / target else 0f
+            val current = (userChallenge.progressData?.get("currentCount") as? Number)?.toFloat() ?: 0f
+            val target = (userChallenge.challenge?.conditionParams?.get("count") as? Number)?.toFloat() ?: 1f
+            (current / target).coerceIn(0f, 1f)
         }
         ChallengeType.STREAK -> {
-            val target = userChallenge.challenge.targetValue
-            if (target > 0) userChallenge.currentProgress.toFloat() / target else 0f
+            val current = (userChallenge.progressData?.get("currentStreak") as? Number)?.toFloat() ?: 0f
+            val target = (userChallenge.challenge?.conditionParams?.get("days") as? Number)?.toFloat() ?: 1f
+            (current / target).coerceIn(0f, 1f)
         }
     }
 
-    // Display-friendly progress text
     val progressText = when (challengeType) {
-        ChallengeType.TIME_BASED -> "${userChallenge.currentProgress} / 1"
-        ChallengeType.COUNT -> "${userChallenge.currentProgress} / ${userChallenge.challenge.targetValue}"
-        ChallengeType.STREAK -> "${userChallenge.currentProgress} / ${userChallenge.challenge.targetValue} days"
+        ChallengeType.TIME_BASED -> if (userChallenge.completedAt != null) "Completed" else formatTimeRemaining(expiresIn)
+        ChallengeType.COUNT -> {
+            val current = (userChallenge.progressData?.get("currentCount") as? Number)?.toInt() ?: 0
+            val target = (userChallenge.challenge?.conditionParams?.get("count") as? Number)?.toInt() ?: 0
+            "$current / $target"
+        }
+        ChallengeType.STREAK -> {
+            val current = (userChallenge.progressData?.get("currentStreak") as? Number)?.toInt() ?: 0
+            val target = (userChallenge.challenge?.conditionParams?.get("days") as? Number)?.toInt() ?: 0
+            "$current / $target days"
+        }
     }
 
     Card(
@@ -428,17 +359,17 @@ fun UserChallengeCard(
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = userChallenge.challenge.name,
+                        text = userChallenge.challenge?.name ?: "Unknown Challenge",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = userChallenge.challenge.description,
+                        text = userChallenge.challenge?.description ?: "",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                     )
                 }
-                if (userChallenge.challenge.badgeId != null) {
+                if (userChallenge.challenge?.rewardBadgeId != null) {
                     Icon(
                         imageVector = Icons.Default.EmojiEvents,
                         contentDescription = "Badge Reward",
@@ -477,7 +408,7 @@ fun UserChallengeCard(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                if (challengeType == ChallengeType.TIME_BASED && timeRemaining > 0) {
+                if (challengeType == ChallengeType.TIME_BASED && expiresIn > 0) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
                             imageVector = Icons.Default.Timer,
@@ -487,7 +418,7 @@ fun UserChallengeCard(
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
-                            text = formatTimeRemaining(timeRemaining),
+                            text = formatTimeRemaining(expiresIn),
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.Medium,
                             color = MaterialTheme.colorScheme.error
@@ -511,24 +442,13 @@ fun UserChallengeCard(
                     horizontalArrangement = Arrangement.End,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    if (userChallenge.challenge.badgeId != null) {
+                    if (userChallenge.challenge?.rewardBadgeId != null) {
                         Text(
                             text = "🏅 Badge reward",
                             style = MaterialTheme.typography.bodySmall,
                             fontWeight = FontWeight.Medium,
                             color = Color(0xFFFFD700)
                         )
-                    }
-
-                    // Provide a small action to update progress for COUNT and STREAK challenges
-                    if (challengeType == ChallengeType.COUNT || challengeType == ChallengeType.STREAK) {
-                        Spacer(modifier = Modifier.width(8.dp))
-                        OutlinedButton(
-                            onClick = { onProgressUpdate(userChallenge.currentProgress + 1) },
-                            modifier = Modifier.height(36.dp)
-                        ) {
-                            Text("Add progress")
-                        }
                     }
                 }
             }
@@ -540,7 +460,7 @@ fun UserChallengeCard(
 fun AvailableChallengeCard(
     challenge: Challenge,
     canSelect: Boolean,
-    onStartChallenge: () -> Unit
+    onSelect: () -> Unit
 ) {
     val challengeType = challenge.getType()
 
@@ -575,7 +495,7 @@ fun AvailableChallengeCard(
                         color = if (canSelect) MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f) else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
                     )
                 }
-                if (challenge.badgeId != null) {
+                if (challenge.rewardBadgeId != null) {
                     Icon(
                         imageVector = Icons.Default.EmojiEvents,
                         contentDescription = "Badge Reward",
@@ -595,8 +515,8 @@ fun AvailableChallengeCard(
                 Column {
                     val targetText = when (challengeType) {
                         ChallengeType.TIME_BASED -> "Complete within 24 hours"
-                        ChallengeType.COUNT -> "Target: ${challenge.targetValue}"
-                        ChallengeType.STREAK -> "Streak: ${challenge.targetValue} days"
+                        ChallengeType.COUNT -> "Target: ${(challenge.conditionParams?.get("count") as? Number)?.toInt() ?: 0}"
+                        ChallengeType.STREAK -> "Streak: ${(challenge.conditionParams?.get("days") as? Number)?.toInt() ?: 0} days"
                     }
 
                     Text(
@@ -605,7 +525,7 @@ fun AvailableChallengeCard(
                         color = if (canSelect) MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f) else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
                     )
 
-                    if (challenge.badgeId != null) {
+                    if (challenge.rewardBadgeId != null) {
                         Text(
                             text = "🏅 Badge reward",
                             style = MaterialTheme.typography.bodyMedium,
@@ -616,7 +536,7 @@ fun AvailableChallengeCard(
                 }
 
                 Button(
-                    onClick = onStartChallenge,
+                    onClick = onSelect,
                     modifier = Modifier.height(40.dp),
                     enabled = canSelect
                 ) {
@@ -690,7 +610,7 @@ fun CompletedChallengeCard(userChallenge: UserChallenge) {
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.6f)
                 )
-                if (userChallenge.challenge.badgeId != null) {
+                if (userChallenge.challenge?.rewardBadgeId != null) {
                     Text(
                         text = "🏅 Badge earned",
                         style = MaterialTheme.typography.bodyMedium,
@@ -705,7 +625,7 @@ fun CompletedChallengeCard(userChallenge: UserChallenge) {
 
 @Composable
 fun ChallengeCompletionDialog(
-    completionData: com.fontys.frontend.data.models.ChallengeCompletionResponse,
+    completionData: ChallengeCompletionResult,
     onDismiss: () -> Unit
 ) {
     AlertDialog(
@@ -733,9 +653,9 @@ fun ChallengeCompletionDialog(
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(modifier = Modifier.height(8.dp))
-                Text("You earned ${completionData.pointsAwarded} points!")
+                Text("We notified you about any rewards.")
 
-                completionData.newBadge?.let { badge ->
+                completionData.badge?.let { badge ->
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
                         text = "🏅 New Badge Unlocked: ${badge.name}",

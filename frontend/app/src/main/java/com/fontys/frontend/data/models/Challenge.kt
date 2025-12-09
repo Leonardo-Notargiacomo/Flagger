@@ -10,18 +10,21 @@ data class Challenge(
     val id: Int,
     val name: String,
     val description: String,
-    val targetValue: Int,
-    val rewardPoints: Int,
-    val badgeId: Int?,
-    val startDate: String,
-    val endDate: String,
-    val isActive: Boolean = true,
-    val challengeType: String? = "TIME_BASED" // Backend sends as string, can be null
+    val iconUrl: String?,
+    val conditionType: String,
+    val conditionParams: Map<String, Any>?,
+    val rewardBadgeId: Int?,
+    val cooldownHours: Int?,
+    val expirationHours: Int?,
+    val isActive: Boolean,
+    val difficulty: String,
+    val displayOrder: Int,
+    val allowsExtension: Boolean?
 ) {
     // Helper to get the enum type
     fun getType(): ChallengeType {
-        return when (challengeType?.uppercase()) {
-            "COUNT" -> ChallengeType.COUNT
+        return when (conditionType.uppercase()) {
+            "EXPLORATION_COUNT" -> ChallengeType.COUNT
             "STREAK" -> ChallengeType.STREAK
             else -> ChallengeType.TIME_BASED
         }
@@ -30,34 +33,32 @@ data class Challenge(
 
 data class UserChallenge(
     val id: Int,
-    val challenge: Challenge,
-    val currentProgress: Int,
-    val isCompleted: Boolean,
-    val completedAt: String?,
-    val startedAt: String? // Backend can return null for this field
-)
-
-data class ChallengeProgress(
     val challengeId: Int,
-    val progress: Int,
-    val isCompleted: Boolean
+    val userId: Int,
+    val status: String,
+    val activatedAt: String?,
+    val completedAt: String?,
+    val expiresAt: String?,
+    val cooldownEndsAt: String?,
+    val progressData: Map<String, Any>?,
+    val challenge: Challenge?
 )
 
-data class UserChallengesResponse(
-    val activeChallenges: List<UserChallenge>,
-    val completedChallenges: List<UserChallenge>,
-    val totalChallenges: Int,
-    val completedCount: Int
+data class ChallengeStatusResponse(
+    val hasActiveChallenge: Boolean,
+    val activeChallenge: UserChallenge?,
+    val isOnCooldown: Boolean,
+    val cooldownEndsAt: String?,
+    val availableChallenges: List<Challenge>?
 )
 
-data class ChallengeProgressRequest(
-    val progress: Int
+data class ChallengeSelectionResponse(
+    val userChallenge: UserChallenge,
+    val challenge: Challenge,
+    val cooldownEndsAt: String
 )
 
-data class ChallengeCompletionResponse(
-    val success: Boolean,
-    val challenge: UserChallenge,
-    val newBadge: Badge?,
-    val pointsAwarded: Int
-)
+data class ChallengeCompletionResult(
+    val completed: Boolean,
+    val badge: Badge?)
 

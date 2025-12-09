@@ -79,9 +79,7 @@ fun NavHost(
                 )
             }
             composable<ChallengeView> {
-                ChallengeScreen(
-                    userId = UserRepository.userId
-                )
+                ChallengeScreen()
             }
             composable<LoginView> {
                 LoginView(navController)

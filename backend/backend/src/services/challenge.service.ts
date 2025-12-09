@@ -232,7 +232,7 @@ export class ChallengeService {
     const isCompleted = await this.evaluateChallengeCondition(userId, challenge, activeUserChallenge);
 
     if (isCompleted) {
-      // Mark as completed
+      // Mark as completed but keep cooldown intact
       activeUserChallenge.status = 'completed';
       activeUserChallenge.completedAt = new Date();
       await this.userChallengeRepository.update(activeUserChallenge);
@@ -271,35 +271,46 @@ export class ChallengeService {
   /**
    * Evaluate if the challenge condition is met
    */
-  private async evaluateChallengeCondition(
+  protected async evaluateChallengeCondition(
     userId: number,
     challenge: Challenge,
     userChallenge: UserChallenge,
   ): Promise<boolean> {
+    if (userChallenge.status !== 'active') {
+      return false;
+    }
+
+    const window = this.resolveEvaluationWindow(userChallenge, new Date());
+    if (!window) {
+      return false;
+    }
+
     switch (challenge.conditionType) {
       case 'exploration_count': {
-        // Count explorations since challenge activation
         const count = await this.explorationEventRepository.count({
           userId,
-          completedAt: {gte: userChallenge.activatedAt},
+          completedAt: {between: [window.start, window.end]},
         });
         const target = challenge.conditionParams.count ?? 0;
         return count.count >= target;
       }
 
       case 'time_based': {
-        // Check if user has completed an exploration at the specified hour
-        const targetHour = challenge.conditionParams.hour ?? 0;
+        const targetHourRaw = challenge.conditionParams.hour ?? 0;
+        const normalizedTargetHour = ((targetHourRaw % 24) + 24) % 24;
         const explorations = await this.explorationEventRepository.find({
           where: {
             userId,
-            completedAt: {gte: userChallenge.activatedAt},
+            completedAt: {between: [window.start, window.end]},
           },
         });
 
         return explorations.some(exp => {
-          const hour = exp.completedAt ? new Date(exp.completedAt).getHours() : -1;
-          return hour === targetHour;
+          const completedAt = exp.completedAt ? new Date(exp.completedAt) : undefined;
+          if (!completedAt) {
+            return false;
+          }
+          return completedAt.getUTCHours() === normalizedTargetHour;
         });
       }
 
@@ -313,6 +324,25 @@ export class ChallengeService {
       default:
         return false;
     }
+  }
+
+  private resolveEvaluationWindow(
+    userChallenge: UserChallenge,
+    referenceDate: Date = new Date(),
+  ): {start: Date; end: Date} | null {
+    if (!userChallenge.activatedAt) {
+      return null;
+    }
+
+    const start = new Date(userChallenge.activatedAt);
+    const rawEnd = userChallenge.expiresAt ? new Date(userChallenge.expiresAt) : referenceDate;
+    const end = rawEnd > referenceDate ? referenceDate : rawEnd;
+
+    if (end < start) {
+      return null;
+    }
+
+    return {start, end};
   }
 
   /**
@@ -374,4 +404,3 @@ private async getAvailableChallengesWithoutCooldownCheck(userId: number): Promis
   }
 
 }
-

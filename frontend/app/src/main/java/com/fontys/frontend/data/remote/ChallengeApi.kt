@@ -28,13 +28,13 @@ interface ChallengeApi {
     @GET("challenges/count")
     suspend fun getChallengeCount(): Response<Int>
 
+    // GET /challenges/status - Get challenge status
+    @GET("challenges/status")
+    suspend fun getChallengeStatus(): Response<ChallengeStatusResponse>
+
     // GET /challenges/history - Get challenge history
     @GET("challenges/history")
     suspend fun getChallengeHistory(): Response<List<UserChallenge>>
-
-    // GET /challenges/status - Get challenge status
-    @GET("challenges/status")
-    suspend fun getChallengeStatus(): Response<Any>
 
     // GET /challenges/{id} - Get specific challenge
     @GET("challenges/{id}")
@@ -52,13 +52,11 @@ interface ChallengeApi {
     @POST("challenges/{id}/select")
     suspend fun selectChallenge(
         @Path("id") challengeId: Int
-    ): Response<UserChallenge>
+    ): Response<ChallengeSelectionResponse>
 
     // POST /challenges/check-completion - Check challenge completion
     @POST("challenges/check-completion")
-    suspend fun checkChallengeCompletion(
-        @Body completionRequest: Any
-    ): Response<ChallengeCompletionResponse>
+    suspend fun checkChallengeCompletion(): Response<ChallengeCompletionResult>
 
     // PATCH /challenges - Update challenges (batch)
     @PATCH("challenges")
@@ -79,4 +77,3 @@ interface ChallengeApi {
         @Path("id") challengeId: Int
     ): Response<Void>
 }
-
