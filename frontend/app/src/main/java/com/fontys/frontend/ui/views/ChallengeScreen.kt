@@ -19,7 +19,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.fontys.frontend.data.models.Badge
 import com.fontys.frontend.data.models.Challenge
+import com.fontys.frontend.data.models.ChallengeCompletionResult
 import com.fontys.frontend.data.models.ChallengeType
 import com.fontys.frontend.data.models.UserChallenge
 import com.fontys.frontend.ui.viewmodels.ChallengeViewModel
