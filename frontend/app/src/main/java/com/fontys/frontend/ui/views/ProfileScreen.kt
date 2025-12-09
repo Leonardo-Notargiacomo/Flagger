@@ -136,7 +136,7 @@ fun ProfileScreen(userViewModel: ProfileViewModel = viewModel()) {
                                         onClick = {
                                             coroutineScope.launch {
                                                 val userUpdate = UserUpdate(
-                                                    id = 1,
+                                                    id = "1",
                                                     userName = editUsername,
                                                     bio = editBio,
                                                     userImage = "Empty"
