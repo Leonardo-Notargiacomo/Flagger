@@ -3,18 +3,7 @@ package com.fontys.frontend.ui.views
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -22,33 +11,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -57,14 +27,13 @@ import com.fontys.frontend.data.models.FlagShowData
 import com.fontys.frontend.domain.UserRepository
 import com.fontys.frontend.ui.components.EditableAccountField
 import com.fontys.frontend.ui.components.ProfileHeader
-import com.fontys.frontend.ui.theme.ProfileColors
 import com.fontys.frontend.ui.viewmodels.ProfileViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Profile(viewModel: ProfileViewModel) {
-    //Local variables for the profile
+    // Local variables for the profile
     var pfp: String? by remember { mutableStateOf("") }
     var name: String? by remember { mutableStateOf("") }
     var bio: String? by remember { mutableStateOf("") }
@@ -72,11 +41,10 @@ fun Profile(viewModel: ProfileViewModel) {
     // Dynamic data
     val friends by viewModel.friendsNr.collectAsState()
     val friendsCount = friends ?: 0
-    val posts by viewModel.flag.collectAsState()
     val postNr by viewModel.flagNrs.collectAsState()
     val postNames by viewModel.flagName.collectAsState()
 
-    //ViewModel variables
+    // ViewModel variables
     val user by viewModel.user.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val error by viewModel.error.collectAsState()
@@ -88,34 +56,44 @@ fun Profile(viewModel: ProfileViewModel) {
         viewModel.getUser(UserRepository.userId.toString())
     }
 
+    // Main Screen Background (Warm Cream / Parchment)
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(ProfileColors.Background),
+            .background(MaterialTheme.colorScheme.background),
         contentAlignment = Alignment.Center
     ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight()
+                .statusBarsPadding() // Added for safety
+                .padding(16.dp) // Added outer padding so card doesn't touch edges
         ) {
+            // Main Profile Card (Darker Cream "Paper" look)
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .shadow(8.dp, RoundedCornerShape(24.dp))
                     .clip(RoundedCornerShape(24.dp))
-                    .background(ProfileColors.Container)
-                    .border(3.dp, ProfileColors.Border, RoundedCornerShape(24.dp)),
+                    .background(MaterialTheme.colorScheme.secondaryContainer)
+                    .border(
+                        width = 2.dp,
+                        color = MaterialTheme.colorScheme.outline,
+                        shape = RoundedCornerShape(24.dp)
+                    ),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                // Assuming ProfileHeader is custom, ensure it uses Theme colors internally
                 ProfileHeader()
+
                 when {
                     isLoading -> {
                         Box(
                             modifier = Modifier.fillMaxSize(),
                             contentAlignment = Alignment.Center
                         ) {
-                            CircularProgressIndicator(color = ProfileColors.Primary)
+                            CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
                         }
                     }
 
@@ -124,15 +102,18 @@ fun Profile(viewModel: ProfileViewModel) {
                             modifier = Modifier.fillMaxSize(),
                             contentAlignment = Alignment.Center
                         ) {
-                            Text(text = error ?: "Unknown error", color = ProfileColors.Primary)
+                            Text(
+                                text = error ?: "Unknown error",
+                                color = MaterialTheme.colorScheme.error,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.padding(16.dp)
+                            )
                         }
                     }
 
                     else -> {
                         LaunchedEffect(user) {
                             user?.let { uD ->
-                                // Only update local state if we are essentially initializing
-                                // (or force update on fresh load)
                                 pfp = uD.userImage
                                 name = uD.userName
                                 bio = uD.bio
@@ -142,7 +123,7 @@ fun Profile(viewModel: ProfileViewModel) {
                             Column(
                                 modifier = Modifier
                                     .weight(1f)
-                                    .padding(16.dp),
+                                    .padding(horizontal = 16.dp),
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 TopAppBar(
@@ -151,16 +132,29 @@ fun Profile(viewModel: ProfileViewModel) {
                                             modifier = Modifier.fillMaxWidth(),
                                             contentAlignment = Alignment.Center
                                         ) {
-                                            Text("Account")
+                                            Text(
+                                                "Account",
+                                                style = MaterialTheme.typography.titleLarge,
+                                                fontWeight = FontWeight.Bold,
+                                                color = MaterialTheme.colorScheme.onSecondaryContainer
+                                            )
                                         }
                                     },
                                     colors = TopAppBarDefaults.topAppBarColors(
                                         containerColor = Color.Transparent
-                                    )
+                                    ),
+                                    actions = {
+                                        // Moved settings here for better UX, or keep empty if handled externally
+                                        SettingsMenu(
+                                            modifier = Modifier,
+                                            X = {}, Y = {}, Z = {}
+                                        )
+                                    }
                                 )
 
-                                Spacer(modifier = Modifier.height(16.dp))
+                                Spacer(modifier = Modifier.height(8.dp))
 
+                                // Profile Picture Logic
                                 pfp?.let {
                                     val image = remember(pfp) {
                                         viewModel.base64ToImageBitmap(pfp)
@@ -172,7 +166,11 @@ fun Profile(viewModel: ProfileViewModel) {
                                             modifier = Modifier
                                                 .size(120.dp)
                                                 .clip(CircleShape)
-                                                .border(2.dp, ProfileColors.Border, CircleShape)
+                                                .border(
+                                                    width = 3.dp,
+                                                    color = MaterialTheme.colorScheme.primary, // Orange accent
+                                                    shape = CircleShape
+                                                )
                                         )
                                     } else {
                                         CircleInitials(name ?: "G1")
@@ -181,9 +179,10 @@ fun Profile(viewModel: ProfileViewModel) {
 
                                 Spacer(modifier = Modifier.height(16.dp))
 
-                                //Username
+                                // Username Input
+                                // Ensure EditableAccountField uses MaterialTheme colors internally!
                                 EditableAccountField(
-                                    label = "name",
+                                    label = "Name",
                                     value = name ?: "NO NAME",
                                     onValueChange = {
                                         name = it
@@ -193,33 +192,22 @@ fun Profile(viewModel: ProfileViewModel) {
 
                                 Spacer(modifier = Modifier.height(16.dp))
 
-                                //Friends and Flags list
+                                // Friends and Flags stats
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),
                                     horizontalArrangement = Arrangement.Center,
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    Column(
-                                        horizontalAlignment = Alignment.CenterHorizontally,
-                                        verticalArrangement = Arrangement.spacedBy(4.dp)
-                                    ) {
-                                        Text("Friends", style = MaterialTheme.typography.labelLarge)
-                                        Text(friendsCount.toString(), style = MaterialTheme.typography.bodyLarge)
-                                    }
+                                    StatColumn(label = "Friends", count = friendsCount)
                                     Spacer(modifier = Modifier.width(32.dp))
-                                    Column(
-                                        horizontalAlignment = Alignment.CenterHorizontally,
-                                        verticalArrangement = Arrangement.spacedBy(4.dp)
-                                    ) {
-                                        Text("Posts", style = MaterialTheme.typography.labelLarge)
-                                        Text(postNr.toString(), style = MaterialTheme.typography.bodyLarge)
-                                    }
+                                    StatColumn(label = "Posts", count = postNr ?: 0)
                                 }
 
                                 Spacer(modifier = Modifier.height(16.dp))
 
+                                // Bio Input
                                 EditableAccountField(
-                                    label = "bio",
+                                    label = "Bio",
                                     value = bio ?: "NO BIO",
                                     onValueChange = {
                                         bio = it
@@ -229,29 +217,40 @@ fun Profile(viewModel: ProfileViewModel) {
 
                                 Spacer(modifier = Modifier.height(16.dp))
 
-                                // LOGIC CHANGE IS HERE
+                                // Posts List Section
                                 val currentPosts = postNames
                                 if (currentPosts.isNullOrEmpty()) {
                                     Box(
                                         modifier = Modifier
                                             .fillMaxWidth()
-                                            .height(300.dp)
-                                            .border(1.dp, ProfileColors.Border.copy(alpha = 0.5f), RoundedCornerShape(12.dp)),
+                                            .weight(1f) // Fill remaining space instead of fixed height
+                                            .border(
+                                                width = 1.dp,
+                                                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
+                                                shape = RoundedCornerShape(12.dp)
+                                            ),
                                         contentAlignment = Alignment.Center
                                     ) {
-                                        Text(
-                                            text = "No posts yet! Time to explore",
-                                            style = MaterialTheme.typography.bodyLarge,
-                                            color = Color.Gray,
-                                            textAlign = TextAlign.Center
-                                        )
+                                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                            Text(
+                                                text = "No posts yet!",
+                                                style = MaterialTheme.typography.titleMedium,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                            )
+                                            Text(
+                                                text = "Time to explore the world.",
+                                                style = MaterialTheme.typography.bodyMedium,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                                            )
+                                        }
                                     }
                                 } else {
                                     LazyColumn(
                                         modifier = Modifier
                                             .fillMaxWidth()
-                                            .height(300.dp),
-                                        horizontalAlignment = Alignment.CenterHorizontally
+                                            .weight(1f), // Fill remaining space
+                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                        contentPadding = PaddingValues(bottom = 16.dp)
                                     ) {
                                         items(items = currentPosts) { flag ->
                                             FlagItem(flag, viewModel)
@@ -261,6 +260,7 @@ fun Profile(viewModel: ProfileViewModel) {
                                 }
                             }
 
+                            // Save Button Logic
                             if (changed) {
                                 Box(
                                     modifier = Modifier
@@ -275,28 +275,27 @@ fun Profile(viewModel: ProfileViewModel) {
                                                     id = uD.id,
                                                     userName = name,
                                                     bio = bio,
-                                                    userImage = ""
+                                                    userImage = pfp
                                                 )
                                                 viewModel.updateUser(uD.id, userUpdate)
                                             }
                                         },
                                         modifier = Modifier
                                             .fillMaxWidth()
-                                            .height(50.dp)
-                                            .clip(RoundedCornerShape(12.dp))
-                                            .border(
-                                                2.dp,
-                                                ProfileColors.Border,
-                                                RoundedCornerShape(12.dp)
-                                            ),
+                                            .height(50.dp),
+                                        shape = RoundedCornerShape(12.dp),
                                         colors = ButtonDefaults.buttonColors(
-                                            containerColor = ProfileColors.Accent,
-                                            contentColor = ProfileColors.Primary
-                                        )
+                                            containerColor = MaterialTheme.colorScheme.secondary, // Warm Orange
+                                            contentColor = MaterialTheme.colorScheme.onSecondary // White
+                                        ),
+                                        elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
                                     ) {
                                         Icon(Icons.Default.Check, contentDescription = "Save")
                                         Spacer(modifier = Modifier.width(8.dp))
-                                        Text("SAVE CHANGES")
+                                        Text(
+                                            "SAVE CHANGES",
+                                            fontWeight = FontWeight.Bold
+                                        )
                                     }
                                 }
                             }
@@ -305,6 +304,26 @@ fun Profile(viewModel: ProfileViewModel) {
                 }
             }
         }
+    }
+}
+
+@Composable
+fun StatColumn(label: String, count: Int) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.7f)
+        )
+        Text(
+            text = count.toString(),
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onSecondaryContainer
+        )
     }
 }
 
@@ -320,13 +339,15 @@ fun CircleInitials(name: String, size: Dp = 120.dp) {
         modifier = Modifier
             .size(size)
             .clip(CircleShape)
-            .background(ProfileColors.Accent),
+            .background(MaterialTheme.colorScheme.primary) // Orange Accent
+            .border(2.dp, MaterialTheme.colorScheme.onPrimaryContainer, CircleShape),
         contentAlignment = Alignment.Center
     ) {
         Text(
             text = initials,
             style = MaterialTheme.typography.headlineMedium,
-            color = ProfileColors.Primary
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onPrimary // White text
         )
     }
 }
@@ -344,35 +365,24 @@ fun SettingsMenu(
         IconButton(onClick = { expanded = true }) {
             Icon(
                 imageVector = Icons.Default.Settings,
-                contentDescription = "Settings"
+                contentDescription = "Settings",
+                tint = MaterialTheme.colorScheme.onSecondaryContainer
             )
         }
 
         DropdownMenu(
             expanded = expanded,
-            onDismissRequest = { expanded = false }
+            onDismissRequest = { expanded = false },
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
         ) {
             DropdownMenuItem(
-                text = { Text("X") },
+                text = { Text("Edit Profile", color = MaterialTheme.colorScheme.onSurfaceVariant) },
                 onClick = {
                     expanded = false
                     X()
                 }
             )
-            DropdownMenuItem(
-                text = { Text("Y") },
-                onClick = {
-                    expanded = false
-                    Y()
-                }
-            )
-            DropdownMenuItem(
-                text = { Text("Z") },
-                onClick = {
-                    expanded = false
-                    Z()
-                }
-            )
+            // Add other items...
         }
     }
 }
@@ -384,7 +394,13 @@ fun FlagItem(flag: FlagShowData, viewModel: ProfileViewModel) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp),
+            .padding(horizontal = 4.dp), // Slight padding
+        colors = CardDefaults.cardColors(
+            // Make these cards slightly lighter than the profile background to pop
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Row(
             modifier = Modifier
@@ -394,8 +410,16 @@ fun FlagItem(flag: FlagShowData, viewModel: ProfileViewModel) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(modifier = Modifier.weight(1f)) {
-                Text(text = flag.name, style = MaterialTheme.typography.bodyLarge)
-                Text(text = flag.dateTaken, style = MaterialTheme.typography.bodySmall)
+                Text(
+                    text = flag.name,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Text(
+                    text = flag.dateTaken,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
+                )
             }
             if (image != null) {
                 Image(
@@ -404,6 +428,7 @@ fun FlagItem(flag: FlagShowData, viewModel: ProfileViewModel) {
                     modifier = Modifier
                         .size(48.dp)
                         .clip(RoundedCornerShape(8.dp))
+                        .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(8.dp))
                 )
             }
         }

@@ -9,6 +9,7 @@ import androidx.core.app.ActivityCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.fontys.frontend.data.FlagDisplay
+import com.fontys.frontend.data.FlagResponse
 import com.fontys.frontend.data.PlaceService
 import com.fontys.frontend.data.models.Badge
 import com.fontys.frontend.data.models.ExplorationEvent
@@ -40,6 +41,9 @@ class MapsViewModel(application: Application) : AndroidViewModel(application) {
     private val _userFlags = MutableStateFlow<List<FlagDisplay>>(emptyList())
 
     val userFlags: StateFlow<List<FlagDisplay>> = _userFlags
+    private val _userFullFlags = MutableStateFlow<List<FlagResponse>>(emptyList())
+
+    val userFullFlags: StateFlow<List<FlagResponse>> = _userFullFlags
 
     private val _userLocation = MutableStateFlow(LatLng(0.0, 0.0))
     val userLocation: StateFlow<LatLng> = _userLocation
@@ -73,45 +77,13 @@ class MapsViewModel(application: Application) : AndroidViewModel(application) {
             _error.value = "Location permission not granted."
         }
     }
-    fun markTheSpot(userId: Int, placeId: String, locationName: String, latLng: LatLng) {
+    fun markTheSpot(userId: Int, placeId: String, photoId: String) {
         viewModelScope.launch {
             _isLoading.value = true
             _error.value = null
             try {
-                // 1. Add flag to backend
-                val result = flagRepository.addFlag(userId, placeId)
-
-                // 2. Log exploration event (this triggers badge check)
-                try {
-                    val explorationEvent = ExplorationEvent(
-                        locationName = locationName,
-                        latitude = latLng.latitude,
-                        longitude = latLng.longitude,
-                        notes = null
-                    )
-                    val explorationResult = badgeRepository.logExploration(userId, explorationEvent)
-
-                    explorationResult.onSuccess { response ->
-                        // Check if any new badges were unlocked
-                        if (response.newBadges.isNotEmpty()) {
-                            _newlyUnlockedBadges.value = response.newBadges
-                            _showBadgeDialog.value = true
-                            Log.d("MapsViewModel", "Unlocked ${response.newBadges.size} new badge(s)!")
-                        }
-                        // Note: streak info is ignored here, ProfileViewModel handles it
-                    }.onFailure { e ->
-                        Log.e("MapsViewModel", "Failed to log exploration (flag still added)", e)
-                        // Don't fail the entire operation - flag was still added successfully
-                    }
-                } catch (e: Exception) {
-                    Log.e("MapsViewModel", "Error logging exploration (flag still added)", e)
-                    // Don't propagate error - flagging succeeded even if exploration logging failed
-                }
-
-                // 3. Refresh flags to show new marker (runs in background, doesn't block badge dialog)
-                viewModelScope.launch {
-                    getFlags(userId)
-                }
+                val result = flagRepository.addFlag(userId,placeId,photoId)
+                getFlags(userId)
             } catch (e: Exception) {
                 _error.value = e.localizedMessage ?: "The place has not been marked"
                 Log.e("MapsViewModel", "Error marking the place", e)
@@ -126,7 +98,7 @@ class MapsViewModel(application: Application) : AndroidViewModel(application) {
             _error.value = null
             try {
                 val result = flagRepository.getFlags(userId);
-
+                _userFullFlags.value = flagRepository.getFullFlags(userId)
                 val spots = mapRepository.getLatlngs(result)
                 spots.onSuccess { details ->  _userFlags.value = details }
             } catch (e: Exception) {

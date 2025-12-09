@@ -1,7 +1,7 @@
 package com.fontys.frontend.domain
 
-import android.util.Log
 import com.fontys.frontend.config.ApiConfig
+import android.util.Log
 import com.fontys.frontend.data.UserLogin
 import com.fontys.frontend.data.UserRegister
 import com.fontys.frontend.data.UserReturn
@@ -15,6 +15,9 @@ import retrofit2.Retrofit
 import retrofit2.converter.scalars.ScalarsConverterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.http.*
+import com.fontys.frontend.domain.UserAPIService
+
 
 
 object UserRepository {
@@ -39,10 +42,11 @@ object UserRepository {
         .addConverterFactory(GsonConverterFactory.create(gson))
         .addConverterFactory(ScalarsConverterFactory.create())
         .build()
+
     private val userApiService = retrofit.create(UserAPIService::class.java)
     private val friendsApiService = retrofit.create(FriendsApi::class.java)
-    suspend fun getUser(userId: String): UserReturn? {
-        try {
+    suspend fun getUser(userId: String) : UserReturn? {
+         try {
             val headers = HashMap<String, String>().apply {
                 put("Accept", "application/json")
                 put("Content-Type", "application/json")
@@ -71,53 +75,34 @@ object UserRepository {
             e: Exception
         ) {
             // Handle exceptions such as network errors
-            Log.e(TAG, "Exception getting user: ${e.message}", e)
+            println("Exception: ${e.message}")
             return null
         }
     }
     suspend fun login(email : String, password: String) {
-        val headers = HashMap<String, String>().apply {
-            put("Accept", "application/json")
-            put("Content-Type", "application/json")
-        }
-        val response = userApiService.login(headers, UserLogin(email,password))
-        if(response.isSuccessful){
-            val loginResponse = response.body()
-            token = loginResponse?.token ?: ""
-            println("Login successful, token set: ${token.take(20)}...")
-        } else {
-            val errorMessage = when(response.code()) {
-                401 -> "Invalid email or password"
-                404 -> "User not found"
-                500 -> "Server error, please try again later"
-                else -> "Login failed: ${response.message()}"
+        try {
+            val headers = HashMap<String, String>().apply {
+                put("Accept", "application/json")
+                put("Content-Type", "application/json")
             }
-            println("Login failed: ${response.code()} - ${response.message()}")
-            throw Exception(errorMessage)
-        }
-    }
-    suspend fun whoAmIm()  {
-        val headers = HashMap<String, String>().apply {
-            put("Accept", "application/json")
-            put("Content-Type", "application/json")
-            if (token.isNotEmpty()) {
-                put("Authorization", "Bearer $token")
+            val response = userApiService.login(headers, UserLogin(email,password))
+            if(response.isSuccessful){
+                val loginResponse = response.body()
+                token = loginResponse?.token ?: ""
+                Log.d(TAG, "Login successful, token set: ${token.take(20)}...")
             } else {
-                throw IllegalStateException("Cannot fetch user ID: No authentication token available")
+                val errorMessage = when(response.code()) {
+                    401 -> "Invalid email or password"
+                    404 -> "User not found"
+                    500 -> "Server error, please try again later"
+                    else -> "Login failed: ${response.message()}"
+                }
+                Log.e(TAG, "Login failed: ${response.code()} - ${response.message()}")
+                throw Exception(errorMessage)
             }
-        }
-        val response = userApiService.getId(headers)
-        println(response)
-        if(response.isSuccessful){
-            val json = response.body() ?: throw Exception("Failed to get user ID: Response body is null")
-            userId = json
-        } else {
-            val errorMessage = when(response.code()) {
-                401 -> "Session expired, please login again"
-                500 -> "Server error, please try again later"
-                else -> "Failed to get user ID: ${response.message()}"
-            }
-            throw Exception(errorMessage)
+        } catch (e: Exception) {
+            Log.e(TAG, "Exception during login: ${e.message}", e)
+            throw e
         }
     }
 
@@ -135,10 +120,7 @@ object UserRepository {
             return true
         } else {
             val errorBody = response.errorBody()?.string()
-            Log.e(
-                TAG,
-                "Registration error: ${response.code()} - ${response.message()} - Body: $errorBody"
-            )
+            Log.e(TAG, "Registration error: ${response.code()} - ${response.message()} - Body: $errorBody")
 
             // Try to parse error message from backend
             val errorMessage = try {
@@ -152,7 +134,6 @@ object UserRepository {
                         json.has("error") && json.getJSONObject("error").has("message") -> {
                             json.getJSONObject("error").getString("message")
                         }
-
                         json.has("message") -> json.getString("message")
                         json.has("error") -> json.getString("error")
                         json.has("detail") -> json.getString("detail")
@@ -188,15 +169,12 @@ object UserRepository {
                 response.code() == 409 -> {
                     "This username or email is already registered."
                 }
-
                 response.code() == 500 -> {
                     "This username or email is already taken. Please try a different one."
                 }
-
                 response.code() == 400 -> {
                     "Invalid registration data. Please check your information."
                 }
-
                 else -> {
                     "Registration failed. Please try again."
                 }
@@ -204,6 +182,29 @@ object UserRepository {
 
             Log.d(TAG, "Final error message to display: $finalErrorMessage")
             throw Exception(finalErrorMessage)
+        }
+    }
+
+    suspend fun whoAmIm() {
+        try {
+            val headers = HashMap<String, String>().apply {
+                put("Accept", "application/json")
+                put("Content-Type", "application/json")
+                token?.let { token ->
+                    put("Authorization", "Bearer $token")
+                } ?: run {
+                    // Optional: Log a warning or throw an error if token is missing for authenticated endpoint
+                    // throw IllegalStateException("JWT token is missing for authenticated request")
+                }
+            }
+            val response = userApiService.getId(headers)
+            Log.d(TAG, "whoAmIm response: $response")
+            if (response.isSuccessful) {
+                val json = response.body() ?: 0
+                userId = json
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Exception in whoAmIm: ${e.message}", e)
         }
     }
 
@@ -219,7 +220,7 @@ object UserRepository {
                     // throw IllegalStateException("JWT token is missing for authenticated request")
                 }
             }
-            val response = userApiService.updateUser(headers, userId, userUpdate)
+            val response = userApiService.updateUser(headers , userId, userUpdate)
             if (response.isSuccessful) {
                 response.body()
             } else {
@@ -229,7 +230,6 @@ object UserRepository {
             "Exception: ${e.message}"
         }
     }
-
     suspend fun getFlag(userId: String): List<Flag>? {
         return try {
             val headers = HashMap<String, String>().apply {
@@ -256,7 +256,7 @@ object UserRepository {
         }
     }
 
-     suspend fun getFriendsNr(): Int? {
+    suspend fun getFriendsNr(): Int? {
         return try {
             val headers = HashMap<String, String>().apply {
                 put("Accept", "application/json")

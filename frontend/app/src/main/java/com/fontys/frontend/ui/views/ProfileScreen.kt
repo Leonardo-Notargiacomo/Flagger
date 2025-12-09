@@ -1,32 +1,23 @@
 package com.fontys.frontend.ui.views
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.fontys.frontend.data.UserUpdate
 import com.fontys.frontend.domain.UserRepository
 import com.fontys.frontend.ui.components.*
-import com.fontys.frontend.ui.theme.ProfileColors
 import com.fontys.frontend.ui.viewmodels.ProfileViewModel
 import kotlinx.coroutines.launch
-
-
-
 
 @Composable
 fun ProfileScreen(userViewModel: ProfileViewModel = viewModel()) {
@@ -46,154 +37,130 @@ fun ProfileScreen(userViewModel: ProfileViewModel = viewModel()) {
         userViewModel.getUser(UserRepository.userId.toString())
     }
 
-    Box(
+    Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(ProfileColors.Background),
-        contentAlignment = Alignment.Center
+            .background(MaterialTheme.colorScheme.background)
+            .statusBarsPadding()
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight()
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .shadow(8.dp, RoundedCornerShape(24.dp))
-                    .clip(RoundedCornerShape(24.dp))
-                    .background(ProfileColors.Container)
-                    .border(3.dp, ProfileColors.Border, RoundedCornerShape(24.dp))
-            ) {
-                ProfileHeader()
+        when {
+            isLoading -> {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+                }
+            }
+            error != null -> {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text(text = error ?: "Unknown error", color = MaterialTheme.colorScheme.primary)
+                }
+            }
+            user != null -> {
+                val userData = user!!
 
-                when {
-                    isLoading -> {
-                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                            CircularProgressIndicator(color = ProfileColors.Primary)
-                        }
+                if (!isEditing) {
+                    // Populate edit fields when switching to edit mode
+                    editUsername = userData.userName
+                    editEmail = userData.email
+                    editBio = userData.bio
+                }
+
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .verticalScroll(rememberScrollState())
+                        .padding(top = 24.dp, start = 16.dp, end = 16.dp, bottom = 16.dp)
+                ) {
+                    ProfilePictureSection(
+                        username = if (isEditing) editUsername else userData.userName,
+                        isEditing = isEditing,
+                        onImageEdit = { /* TODO */ }
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    if (isEditing) {
+                        EditableAccountField(
+                            label = "Username",
+                            value = editUsername,
+                            onValueChange = { editUsername = it }
+                        )
+                        EditableAccountField(
+                            label = "Email",
+                            value = editEmail,
+                            onValueChange = { editEmail = it }
+                        )
+                        EditableAccountField(
+                            label = "Bio",
+                            value = editBio,
+                            onValueChange = { editBio = it },
+                            multiline = true
+                        )
+                    } else {
+                        AccountField("Username", userData.userName)
+                        AccountField("Email", userData.email)
+                        AccountField("Bio", userData.bio, multiline = true)
                     }
-                    error != null -> {
-                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                            Text(text = error ?: "Unknown error", color = ProfileColors.Primary)
-                        }
-                    }
-                    user != null -> {
-                        val userData = user!!
 
-                        if (!isEditing) {
-                            // Populate edit fields when switching to edit mode
-                            editUsername = userData.userName
-                            editEmail = userData.email
-                            editBio = userData.bio
-                        }
+                    Spacer(modifier = Modifier.height(16.dp))
 
-                        Column(
-                            modifier = Modifier
-                                .weight(1f)
-                                .verticalScroll(rememberScrollState())
-                                .padding(16.dp)
-                        ) {
-                            ProfilePictureSection(
-                                username = if (isEditing) editUsername else userData.userName,
-                                isEditing = isEditing,
-                                onImageEdit = { /* TODO */ }
-                            )
-
-                            Spacer(modifier = Modifier.height(8.dp))
-
-                            if (isEditing) {
-                                EditableAccountField(
-                                    label = "Username",
-                                    value = editUsername,
-                                    onValueChange = { editUsername = it }
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        if (isEditing) {
+                            Button(
+                                onClick = {
+                                    coroutineScope.launch {
+                                        val userUpdate = UserUpdate(
+                                            id = 1,
+                                            userName = editUsername,
+                                            email = editEmail,
+                                            bio = editBio,
+                                            userImage = 0
+                                        )
+                                        userViewModel.updateUser(userData.id, userUpdate)
+                                        isEditing = false
+                                    }
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(50.dp),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = MaterialTheme.colorScheme.secondary,
+                                    contentColor = MaterialTheme.colorScheme.onSecondary
+                                ),
+                                shape = RoundedCornerShape(8.dp),
+                                elevation = ButtonDefaults.buttonElevation(
+                                    defaultElevation = 0.dp,
+                                    pressedElevation = 0.dp
                                 )
-                                EditableAccountField(
-                                    label = "Email",
-                                    value = editEmail,
-                                    onValueChange = { editEmail = it }
-                                )
-                                EditableAccountField(
-                                    label = "Bio",
-                                    value = editBio,
-                                    onValueChange = { editBio = it },
-                                    multiline = true
-                                )
-                            } else {
-                                AccountField("Username", userData.userName)
-                                AccountField("Email", userData.email)
-                                AccountField("Bio", userData.bio, multiline = true)
+                            ) {
+                                Text("Save Changes", fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold, fontSize = 14.sp)
                             }
 
-                            Spacer(modifier = Modifier.height(16.dp))
-
-                            Column(
-                                modifier = Modifier.fillMaxWidth(),
-                                verticalArrangement = Arrangement.spacedBy(12.dp)
+                            TextButton(
+                                onClick = { isEditing = false },
+                                modifier = Modifier.fillMaxWidth()
                             ) {
-                                if (isEditing) {
-                                    Button(
-                                        onClick = {
-                                            coroutineScope.launch {
-                                                val userUpdate = UserUpdate(
-                                                    id = "1",
-                                                    userName = editUsername,
-                                                    bio = editBio,
-                                                    userImage = "Empty"
-                                                )
-                                                userViewModel.updateUser(userData.id, userUpdate)
-                                                isEditing = false
-                                            }
-                                        },
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .height(50.dp)
-                                            .clip(RoundedCornerShape(12.dp))
-                                            .border(2.dp, ProfileColors.Border, RoundedCornerShape(12.dp)),
-                                        colors = ButtonDefaults.buttonColors(
-                                            containerColor = ProfileColors.Accent,
-                                            contentColor = ProfileColors.Primary
-                                        )
-                                    ) {
-                                        Icon(Icons.Default.Check, contentDescription = "Save")
-                                        Spacer(modifier = Modifier.width(8.dp))
-                                        Text("SAVE CHANGES")
-                                    }
-
-                                    Button(
-                                        onClick = { isEditing = false },
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .height(50.dp)
-                                            .clip(RoundedCornerShape(12.dp))
-                                            .border(2.dp, ProfileColors.Border, RoundedCornerShape(12.dp)),
-                                        colors = ButtonDefaults.buttonColors(
-                                            containerColor = ProfileColors.Container,
-                                            contentColor = ProfileColors.Primary
-                                        )
-                                    ) {
-                                        Icon(Icons.Default.Close, contentDescription = "Cancel")
-                                        Spacer(modifier = Modifier.width(8.dp))
-                                        Text("CANCEL")
-                                    }
-                                } else {
-                                    Button(
-                                        onClick = { isEditing = true },
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .height(50.dp)
-                                            .clip(RoundedCornerShape(12.dp))
-                                            .border(2.dp, ProfileColors.Border, RoundedCornerShape(12.dp)),
-                                        colors = ButtonDefaults.buttonColors(
-                                            containerColor = ProfileColors.Accent,
-                                            contentColor = ProfileColors.Primary
-                                        )
-                                    ) {
-                                        Icon(Icons.Default.Settings, contentDescription = "Edit")
-                                        Spacer(modifier = Modifier.width(8.dp))
-                                        Text("EDIT PROFILE")
-                                    }
-                                }
+                                Text("Cancel", fontWeight = androidx.compose.ui.text.font.FontWeight.Medium, fontSize = 14.sp)
+                            }
+                        } else {
+                            Button(
+                                onClick = { isEditing = true },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(50.dp),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = MaterialTheme.colorScheme.secondary,
+                                    contentColor = MaterialTheme.colorScheme.onSecondary
+                                ),
+                                shape = RoundedCornerShape(8.dp),
+                                elevation = ButtonDefaults.buttonElevation(
+                                    defaultElevation = 0.dp,
+                                    pressedElevation = 0.dp
+                                )
+                            ) {
+                                Text("Edit Profile", fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold, fontSize = 14.sp)
                             }
                         }
                     }

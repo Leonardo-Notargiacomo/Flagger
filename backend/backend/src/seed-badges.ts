@@ -62,7 +62,7 @@ export async function seedBadges() {
       displayOrder: 6,
     },
     {
-        name: 'Avid Nature Enjoyer',
+        name: 'Nature Enjoyer',
         description: 'Complete 250 explorations. You really enjoy the outdoors!',
         iconUrl: '🗿',
         category: 'Chad',
