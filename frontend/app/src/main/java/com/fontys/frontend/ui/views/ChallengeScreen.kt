@@ -583,12 +583,12 @@ fun CompletedChallengeCard(userChallenge: UserChallenge) {
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = userChallenge.challenge.name,
+                        text = userChallenge.challenge?.name ?: "Unknown Challenge",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = userChallenge.challenge.description,
+                        text = userChallenge.challenge?.description ?: "",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.7f)
                     )
@@ -648,12 +648,7 @@ fun ChallengeCompletionDialog(
         },
         text = {
             Column {
-                Text("Congratulations! You've completed the challenge:")
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = completionData.challenge.challenge.name,
-                    fontWeight = FontWeight.Bold
-                )
+                Text("Congratulations! You've completed your challenge!")
                 Spacer(modifier = Modifier.height(8.dp))
                 Text("We notified you about any rewards.")
 
