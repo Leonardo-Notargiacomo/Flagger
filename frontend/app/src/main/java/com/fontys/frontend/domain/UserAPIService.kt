@@ -1,5 +1,6 @@
 package com.fontys.frontend.domain
 
+import com.fontys.frontend.data.CustomFlagUpdate
 import com.fontys.frontend.data.LoginResponse
 import com.fontys.frontend.data.UserLogin
 import com.fontys.frontend.data.UserRegister
@@ -26,4 +27,9 @@ interface UserAPIService {
     suspend fun getId(@HeaderMap headers: Map<String,String>): Response<Int>
     @POST(value = "signup")
     suspend fun signup(@HeaderMap headers: Map<String,String>,@Body user: UserRegister ): Response<UserReturn>
+
+    @PATCH("user-custom-flags")
+    suspend fun customFlagUpdate(@HeaderMap headers: Map<String,String>,@Body customFlagUpdate: CustomFlagUpdate)
+    @GET ("user-custom-flags/{goUserId}")
+    suspend fun userFlagStyle(@HeaderMap headers: Map<String,String>,@Path("id") userId: String)
 }

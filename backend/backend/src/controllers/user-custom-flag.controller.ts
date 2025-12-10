@@ -19,6 +19,8 @@ import {
 } from '@loopback/rest';
 import {UserCustomFlag} from '../models';
 import {UserCustomFlagRepository} from '../repositories';
+import { authenticate } from '@loopback/authentication';
+@authenticate('jwt')
 
 export class UserCustomFlagController {
   constructor(

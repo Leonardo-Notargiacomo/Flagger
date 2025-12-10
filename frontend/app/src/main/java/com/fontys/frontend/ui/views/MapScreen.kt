@@ -39,6 +39,7 @@ import com.google.maps.android.compose.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import okhttp3.internal.wait
+import androidx.core.graphics.toColorInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -55,6 +56,7 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
     LaunchedEffect(Unit) { viewModel.loadUserLocation() }
     val userFlags by viewModel.userFlags.collectAsState()
     val currentUserId = UserRepository.userId
+    val flagStyle = viewModel.flagStyle.collectAsState()
 
     val hasLocationPermission = remember {
         ContextCompat.checkSelfPermission(
@@ -99,22 +101,26 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
             )
         ) {
             val pinConfigBuilder: PinConfig.Builder = PinConfig.builder()
-            val glyphText = PinConfig.Glyph("\uD83D\uDC80")
-            pinConfigBuilder.setGlyph(glyphText)
-            pinConfigBuilder.setBackgroundColor(Color.BLACK)
-            val pinConfig: PinConfig = pinConfigBuilder.build()
+
 
             userFlags.forEach { spot ->
-                val textView = TextView(context)
-                textView.text = "\uD83D\uDC80"
-                textView.setBackgroundColor(Color.BLACK)
-                textView.setTextColor(Color.YELLOW)
+                val glyphText = PinConfig.Glyph(flagStyle.value.emoji)
+                pinConfigBuilder.setGlyph(glyphText)
+                pinConfigBuilder.setBackgroundColor(flagStyle.value.background.toColorInt())
+                pinConfigBuilder.setBorderColor(flagStyle.value.border.toColorInt())
+
+                val pinConfig: PinConfig = pinConfigBuilder.build()
+                val marker = MarkerState(position = LatLng(spot.location.latitude, spot.location.longitude))
                 AdvancedMarker(
-                    state = MarkerState(position = LatLng(spot.location.latitude, spot.location.longitude)),
+                    state = marker,
                     title = spot.displayName,
                     snippet = "Flagged by you",
                     alpha = 0.9f,
-                    pinConfig = pinConfig
+                    pinConfig = pinConfig,
+                    onClick = {
+                        marker.showInfoWindow()
+                        true
+                    }
                 )
         }
 

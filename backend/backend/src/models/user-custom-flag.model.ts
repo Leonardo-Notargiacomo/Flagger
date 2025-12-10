@@ -12,7 +12,7 @@ export class UserCustomFlag extends Entity {
 
   @property({
     type: 'string',
-    default: "Color.RED",
+    default: "#1A0000",
   })
   background?: string;
 
@@ -22,7 +22,12 @@ export class UserCustomFlag extends Entity {
 
   })
   emoji?: string;
+  @property({
+    type: 'string',
+    default: "FF3131",
 
+  })
+  border?: string;
   @belongsTo(() => GoUser)
   goUserId: number;
 
