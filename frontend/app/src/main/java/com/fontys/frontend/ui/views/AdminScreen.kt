@@ -93,7 +93,6 @@ fun userCard (user: UserReturn) {
     Card(modifier = Modifier
         .padding(bottom = 8.dp)
         .fillMaxWidth()) {
-        // Implement the user card UI here
         Text(text = user.userName, modifier = Modifier.padding(16.dp))
 
     }

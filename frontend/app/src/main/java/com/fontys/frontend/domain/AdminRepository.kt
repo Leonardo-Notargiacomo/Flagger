@@ -63,7 +63,7 @@ object AdminRepository {
 
     suspend fun getRecentUsers(amount: Int): List<UserReturn> {
         try {
-            val filter = " \"limit\" : $amount "
+            val filter = "{ \"limit\" : $amount }"
             val headers = HashMap<String, String>().apply {
                 put("Accept", "application/json")
                 put("Content-Type", "application/json")
