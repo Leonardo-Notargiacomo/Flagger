@@ -71,6 +71,9 @@ fun FriendItem(
 
     if (showRemoveDialog) {
         AlertDialog(
+            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+            titleContentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+            textContentColor = MaterialTheme.colorScheme.onSecondaryContainer,
             onDismissRequest = { showRemoveDialog = false },
             title = { Text("Remove Friend") },
             text = { Text("Are you sure you want to remove ${friend.friendDetails?.userName ?: "this user"} from your friends?") },
@@ -79,13 +82,21 @@ fun FriendItem(
                     onClick = {
                         onRemove()
                         showRemoveDialog = false
-                    }
+                    },
+                    colors = ButtonDefaults.textButtonColors(
+                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                    )
                 ) {
                     Text("Remove")
                 }
             },
             dismissButton = {
-                TextButton(onClick = { showRemoveDialog = false }) {
+                TextButton(
+                    onClick = { showRemoveDialog = false },
+                    colors = ButtonDefaults.textButtonColors(
+                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                    )
+                ) {
                     Text("Cancel")
                 }
             }
