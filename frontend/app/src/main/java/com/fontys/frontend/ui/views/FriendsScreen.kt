@@ -1,14 +1,11 @@
 package com.fontys.frontend.ui.views
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -22,6 +19,10 @@ import androidx.navigation.compose.rememberNavController
 import com.fontys.frontend.common.PublicProfileView
 import com.fontys.frontend.data.models.FriendListItem
 import com.fontys.frontend.data.models.FriendRequest
+import com.fontys.frontend.ui.components.friends.FriendItem
+import com.fontys.frontend.ui.components.friends.ReceivedRequestItem
+import com.fontys.frontend.ui.components.friends.SentRequestItem
+import com.fontys.frontend.ui.components.friends.SearchUserItem
 import com.fontys.frontend.ui.viewmodels.FriendsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -164,7 +165,8 @@ fun FriendsScreen(
                     isSearching = uiState.isSearching,
                     onSearch = { viewModel.searchUsers(it) },
                     onSendFriendRequest = { viewModel.sendFriendRequest(it) },
-                    onViewProfile = { userId -> navController.navigate(PublicProfileView(userId)) }
+                    onViewProfile = { userId -> navController.navigate(PublicProfileView(userId)) },
+                    viewModel = viewModel
                 )
             }
         }
@@ -213,88 +215,6 @@ fun FriendsListTab(
                 )
             }
         }
-    }
-}
-
-@Composable
-fun FriendItem(
-    friend: FriendListItem,
-    onRemove: () -> Unit,
-    onViewProfile: () -> Unit
-) {
-    var showRemoveDialog by remember { mutableStateOf(false) }
-
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onViewProfile() },
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.secondaryContainer
-        )
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = friend.friendDetails?.userName ?: "User #${friend.friendId}",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSecondaryContainer
-                )
-                friend.friendDetails?.email?.let { email ->
-                    Text(
-                        text = email,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.7f)
-                    )
-                }
-                friend.friendDetails?.bio?.let { bio ->
-                    Text(
-                        text = bio,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.6f),
-                        modifier = Modifier.padding(top = 4.dp)
-                    )
-                }
-            }
-
-            IconButton(onClick = { showRemoveDialog = true }) {
-                Icon(
-                    Icons.Default.PersonRemove,
-                    contentDescription = "Remove friend",
-                    tint = MaterialTheme.colorScheme.error
-                )
-            }
-        }
-    }
-
-    if (showRemoveDialog) {
-        AlertDialog(
-            onDismissRequest = { showRemoveDialog = false },
-            title = { Text("Remove Friend") },
-            text = { Text("Are you sure you want to remove ${friend.friendDetails?.userName ?: "this user"} from your friends?") },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        onRemove()
-                        showRemoveDialog = false
-                    }
-                ) {
-                    Text("Remove")
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showRemoveDialog = false }) {
-                    Text("Cancel")
-                }
-            }
-        )
     }
 }
 
@@ -373,121 +293,6 @@ fun FriendRequestsTab(
                 )
             }
         }
-        }
-    }
-}
-
-@Composable
-fun ReceivedRequestItem(
-    request: FriendRequest,
-    onAccept: () -> Unit,
-    onReject: () -> Unit
-) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.secondaryContainer
-        )
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
-            Text(
-                text = request.fromUser?.userName ?: "User #${request.fromUserId}",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSecondaryContainer
-            )
-            request.fromUser?.email?.let { email ->
-                Text(
-                    text = email,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.7f)
-                )
-            }
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 12.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Button(
-                    onClick = onAccept,
-                    modifier = Modifier.weight(1f),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.secondary
-                    ),
-                    shape = RoundedCornerShape(12.dp)
-                ) {
-                    Icon(Icons.Default.Check, contentDescription = null)
-                    Spacer(Modifier.width(4.dp))
-                    Text("Accept", fontWeight = FontWeight.Bold)
-                }
-                OutlinedButton(
-                    onClick = onReject,
-                    modifier = Modifier.weight(1f),
-                    border = androidx.compose.foundation.BorderStroke(2.dp, MaterialTheme.colorScheme.outline),
-                    shape = RoundedCornerShape(12.dp)
-                ) {
-                    Icon(Icons.Default.Close, contentDescription = null)
-                    Spacer(Modifier.width(4.dp))
-                    Text("Reject", fontWeight = FontWeight.Bold)
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun SentRequestItem(
-    request: FriendRequest,
-    onCancel: () -> Unit
-) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.secondaryContainer
-        )
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = request.toUser?.userName ?: "User #${request.toUserId}",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSecondaryContainer
-                )
-                request.toUser?.email?.let { email ->
-                    Text(
-                        text = email,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.7f)
-                    )
-                }
-                Text(
-                    text = "Status: ${request.status}",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.7f),
-                    modifier = Modifier.padding(top = if (request.toUser?.email != null) 4.dp else 0.dp)
-                )
-            }
-
-            if (request.status == "PENDING") {
-                OutlinedButton(onClick = onCancel) {
-                    Text("Cancel")
-                }
-            }
         }
     }
 }
@@ -606,114 +411,13 @@ fun SearchTab(
             ) {
                 items(searchResults) { user ->
                     val relationshipStatus = viewModel.getRelationshipStatus(user.id)
-                                            SearchUserItem(
-                                                user = user,
-                                                relationshipStatus = relationshipStatus,
-                                                onSendRequest = { user.id?.let { onSendFriendRequest(it) } },
-                                                onViewProfile = { user.id?.let { onViewProfile(it) } },
-                                                viewModel = viewModel // Explicitly pass the ViewModel
-                                            )                }
-            }
-        }
-    }
-}
-
-@Composable
-fun SearchUserItem(
-    user: com.fontys.frontend.data.models.User,
-    relationshipStatus: com.fontys.frontend.ui.viewmodels.RelationshipStatus,
-    onSendRequest: () -> Unit,
-    onViewProfile: () -> Unit,
-    viewModel: FriendsViewModel // Add ViewModel as a parameter
-) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onViewProfile() },
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.secondaryContainer
-        )
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = user.userName ?: "Unknown User",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSecondaryContainer
-                )
-                // Email removed for privacy - only show to actual friends
-                user.bio?.let { bio ->
-                    Text(
-                        text = bio,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.6f),
-                        modifier = Modifier.padding(top = 4.dp)
+                    SearchUserItem(
+                        user = user,
+                        relationshipStatus = relationshipStatus,
+                        onSendRequest = { user.id?.let { onSendFriendRequest(it) } },
+                        onViewProfile = { user.id?.let { onViewProfile(it) } },
+                        viewModel = viewModel
                     )
-                }
-            }
-
-            // Show different button based on relationship status
-            when (relationshipStatus) {
-                com.fontys.frontend.ui.viewmodels.RelationshipStatus.FRIENDS -> {
-                    Button(
-                        onClick = { /* Navigate to friend profile or manage */ },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.secondary
-                        ),
-                        shape = RoundedCornerShape(12.dp)
-                    ) {
-                        Icon(Icons.Default.Check, contentDescription = null)
-                        Spacer(Modifier.width(4.dp))
-                        Text("Friends", fontWeight = FontWeight.Bold)
-                    }
-                }
-                com.fontys.frontend.ui.viewmodels.RelationshipStatus.PENDING_SENT -> {
-                    OutlinedButton(
-                        onClick = { /* Maybe cancel request? */ },
-                        enabled = false,
-                        shape = RoundedCornerShape(12.dp)
-                    ) {
-                        Icon(Icons.Default.Schedule, contentDescription = null)
-                        Spacer(Modifier.width(4.dp))
-                        Text("Pending", fontWeight = FontWeight.Bold)
-                    }
-                }
-                com.fontys.frontend.ui.viewmodels.RelationshipStatus.PENDING_RECEIVED -> {
-                    Button(
-                        onClick = {
-                            val requestId = viewModel.getReceivedRequestIdForUser(user.id)
-                            requestId?.let { viewModel.acceptFriendRequest(it) }
-                        },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.secondary
-                        ),
-                        shape = RoundedCornerShape(12.dp)
-                    ) {
-                        Icon(Icons.Default.Check, contentDescription = null)
-                        Spacer(Modifier.width(4.dp))
-                        Text("Accept", fontWeight = FontWeight.Bold)
-                    }
-                }
-                com.fontys.frontend.ui.viewmodels.RelationshipStatus.NONE -> {
-                    Button(
-                        onClick = onSendRequest,
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.secondary
-                        ),
-                        shape = RoundedCornerShape(12.dp)
-                    ) {
-                        Icon(Icons.Default.PersonAdd, contentDescription = null)
-                        Spacer(Modifier.width(4.dp))
-                        Text("Add", fontWeight = FontWeight.Bold)
-                    }
                 }
             }
         }
