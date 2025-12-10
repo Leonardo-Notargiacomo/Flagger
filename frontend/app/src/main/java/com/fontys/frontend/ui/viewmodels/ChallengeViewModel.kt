@@ -94,10 +94,10 @@ class ChallengeViewModel : ViewModel() {
     fun clearError() {
         _errorMessage.value = null
     }
-}
 
-sealed class ChallengeUiState {
-    object Loading : ChallengeUiState()
+    fun refreshFromExternalEvent() {
+        refresh()
+    }
     object Success : ChallengeUiState()
     data class Error(val message: String) : ChallengeUiState()
 }

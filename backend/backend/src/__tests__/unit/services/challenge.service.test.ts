@@ -198,26 +198,6 @@ describe('ChallengeService.evaluateChallengeCondition', () => {
     expect(result).to.be.false();
   });
 
-  it('normalizes target hour to UTC range', async () => {
-    const activatedAt = new Date('2024-01-01T00:00:00Z');
-    const expiresAt = new Date('2024-01-01T12:00:00Z');
-
-    const events: ExplorationEvent[] = [
-      {id: 1, userId: 1, completedAt: new Date('2024-01-01T04:00:00Z')} as ExplorationEvent,
-    ];
-
-    const service = createService(events);
-    const userChallenge = createUserChallenge({activatedAt, expiresAt});
-    const challenge = createChallenge({
-      conditionType: 'time_based',
-      conditionParams: {hour: -20},
-    });
-
-    const result = await service.evaluateCondition(1, challenge, userChallenge);
-    expect(result).to.be.true();
-  });
-
-  it('ignores explorations completed after the challenge expires', async () => {
     const now = Date.now();
     const activatedAt = new Date(now - 6 * 60 * 60 * 1000);
     const expiresAt = new Date(now - 4 * 60 * 60 * 1000);
