@@ -6,9 +6,11 @@ import android.graphics.Color
 import android.nfc.Tag
 import android.widget.TextView
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Flag
 import androidx.compose.material.icons.filled.MyLocation
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -17,6 +19,7 @@ import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -56,7 +59,8 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
     LaunchedEffect(Unit) { viewModel.loadUserLocation() }
     val userFlags by viewModel.userFlags.collectAsState()
     val currentUserId = UserRepository.userId
-    val flagStyle = viewModel.flagStyle.collectAsState()
+    val flagStyle by viewModel.flagStyle.collectAsState()
+    var mapSettings by remember{ mutableStateOf(false) }
 
     val hasLocationPermission = remember {
         ContextCompat.checkSelfPermission(
@@ -104,10 +108,10 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
 
 
             userFlags.forEach { spot ->
-                val glyphText = PinConfig.Glyph(flagStyle.value.emoji)
+                val glyphText = PinConfig.Glyph(flagStyle.emoji)
                 pinConfigBuilder.setGlyph(glyphText)
-                pinConfigBuilder.setBackgroundColor(flagStyle.value.background.toColorInt())
-                pinConfigBuilder.setBorderColor(flagStyle.value.border.toColorInt())
+                pinConfigBuilder.setBackgroundColor(flagStyle.background.toColorInt())
+                pinConfigBuilder.setBorderColor(flagStyle.border.toColorInt())
 
                 val pinConfig: PinConfig = pinConfigBuilder.build()
                 val marker = MarkerState(position = LatLng(spot.location.latitude, spot.location.longitude))
@@ -157,7 +161,31 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
                 )
             }
         }
-
+        Box(
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(top = 56.dp, start = 16.dp)
+        ) {
+            FloatingActionButton(
+                onClick = {
+                    mapSettings = true
+                },
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                elevation = FloatingActionButtonDefaults.elevation(
+                    defaultElevation = 6.dp,
+                    pressedElevation = 8.dp
+                ),
+                modifier = Modifier.size(48.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Settings,
+                    contentDescription = "Settings",
+                    modifier = Modifier.size(24.dp),
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
+        }
         // My Location button - styled for explorer theme
         Box(
             modifier = Modifier
@@ -297,5 +325,93 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
             badges = newlyUnlockedBadges,
             onDismiss = { viewModel.dismissBadgeDialog() }
         )
+    }
+    if(mapSettings){
+        CustomFlagSettingsPopup(
+            initialEmoji = flagStyle.emoji ?: "❤️",
+            initialBackground = flagStyle.background ?: "#1A0000",
+            initialBorder = flagStyle.border ?: "#FF3131",
+
+            onDismiss = { mapSettings = false },
+
+            onSave = { emoji, background, border ->
+                viewModel.updateFlagStyle(emoji, background, border)
+                mapSettings = false
+            }
+        )
+    }
+}
+@Composable
+fun CustomFlagSettingsPopup(
+    initialEmoji: String,
+    initialBackground: String,
+    initialBorder: String,
+    onDismiss: () -> Unit,
+    onSave: (emoji: String, background: String, border: String) -> Unit
+) {
+    var emoji by remember { mutableStateOf(initialEmoji) }
+    var background by remember { mutableStateOf(initialBackground) }
+    var border by remember { mutableStateOf(initialBorder) }
+
+    Dialog(onDismissRequest = { onDismiss() }) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface
+            )
+        ) {
+            Column(
+                modifier = Modifier.padding(20.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+
+                Text(
+                    text = "Customize Your Flag",
+                    style = MaterialTheme.typography.titleMedium
+                )
+
+                // Emoji
+                OutlinedTextField(
+                    value = emoji,
+                    onValueChange = { emoji = it },
+                    label = { Text("Emoji") },
+                    singleLine = true
+                )
+
+                // Background Color
+                OutlinedTextField(
+                    value = background,
+                    onValueChange = { background = it },
+                    label = { Text("Background Color (#RRGGBB)") },
+                    singleLine = true
+                )
+
+                // Border Color
+                OutlinedTextField(
+                    value = border,
+                    onValueChange = { border = it },
+                    label = { Text("Border Color (#RRGGBB)") },
+                    singleLine = true
+                )
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    TextButton(onClick = { onDismiss() }) {
+                        Text("Cancel")
+                    }
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    Button(onClick = { onSave(emoji, background, border) }) {
+                        Text("Save")
+                    }
+                }
+            }
+        }
     }
 }

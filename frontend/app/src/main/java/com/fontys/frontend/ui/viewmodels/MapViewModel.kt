@@ -67,7 +67,8 @@ class MapsViewModel(application: Application) : AndroidViewModel(application) {
 
     private val _showBadgeDialog = MutableStateFlow(false)
     val showBadgeDialog: StateFlow<Boolean> = _showBadgeDialog
-
+    private val _showMapSettings = MutableStateFlow(false)
+    val showMapSettings: StateFlow<Boolean> = _showMapSettings
 
     fun loadUserLocation() {
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -136,6 +137,16 @@ class MapsViewModel(application: Application) : AndroidViewModel(application) {
     fun dismissBadgeDialog() {
         _showBadgeDialog.value = false
         _newlyUnlockedBadges.value = emptyList()
+    }
+    fun updateFlagStyle(emoji: String, background: String, border: String){
+         viewModelScope.launch {
+             try {
+                 flagRepository.updateUserCustomFlag(UserRepository.userId,background,emoji,border)
+             } catch (e: Exception){
+                 _error.value = e.localizedMessage ?: "Unknown error customizing a flag"
+                 Log.e("MapsViewModel", "Error error customizing a flag", e)
+             }
+         }
     }
 
 }

@@ -155,7 +155,7 @@ class FlagRepository{
         }
         return CustomFlagUpdate("#FF888888","", "#FF888888",UserRepository.userId)
     }
-    suspend fun updateUserCustomFlag(userId: Int, background:String, emoji: String){
+    suspend fun updateUserCustomFlag(userId: Int, background:String, emoji: String, border: String){
         try {
             val headers = HashMap<String, String>().apply {
                 put("Accept", "application/json")
@@ -167,7 +167,7 @@ class FlagRepository{
                     // throw IllegalStateException("JWT token is missing for authenticated request")
                 }
             }
-            val response = flagApiService.customFlagUpdate(headers, CustomFlagUpdate(background,emoji,"#FF888888",userId))
+            val response = flagApiService.customFlagUpdate(headers, CustomFlagUpdate(background,emoji,border,userId))
 
             if (response.isSuccessful) {
 
