@@ -1,11 +1,14 @@
 package com.fontys.frontend.ui.views
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.nfc.Tag
 import android.widget.TextView
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Flag
@@ -15,10 +18,14 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -43,6 +50,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import okhttp3.internal.wait
 import androidx.core.graphics.toColorInt
+import androidx.emoji2.emojipicker.EmojiPickerView
+import com.github.skydoves.colorpicker.compose.ColorPickerController
+import com.github.skydoves.colorpicker.compose.HsvColorPicker
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -147,7 +157,7 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
                     containerColor = MaterialTheme.colorScheme.secondary,
                     contentColor = androidx.compose.ui.graphics.Color.White
                 ),
-                shape = androidx.compose.foundation.shape.CircleShape,
+                shape = CircleShape,
                 modifier = Modifier.size(72.dp),
                 elevation = ButtonDefaults.buttonElevation(
                     defaultElevation = 8.dp,
@@ -227,7 +237,7 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
                 title = {
                     Text(
                         "No Places Found",
-                        fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+                        fontWeight = FontWeight.Bold,
                         letterSpacing = 1.sp,
                         color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
@@ -246,7 +256,7 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
                         ),
                         shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp)
                     ) {
-                        Text("OK", fontWeight = androidx.compose.ui.text.font.FontWeight.Bold)
+                        Text("OK", fontWeight = FontWeight.Bold)
                     }
                 },
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -258,7 +268,7 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
                 title = {
                     Text(
                         "Select a Place to Mark",
-                        fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+                        fontWeight = FontWeight.Bold,
                         letterSpacing = 1.sp,
                         color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
@@ -307,10 +317,10 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
                 dismissButton = {
                     OutlinedButton(
                         onClick = { showDialog = false },
-                        border = androidx.compose.foundation.BorderStroke(2.dp, MaterialTheme.colorScheme.outline),
+                        border = BorderStroke(2.dp, MaterialTheme.colorScheme.outline),
                         shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp)
                     ) {
-                        Text("Cancel", fontWeight = androidx.compose.ui.text.font.FontWeight.Bold)
+                        Text("Cancel", fontWeight = FontWeight.Bold)
                     }
                 },
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -328,6 +338,7 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
     }
     if(mapSettings){
         CustomFlagSettingsPopup(
+            context,
             initialEmoji = flagStyle.emoji ?: "❤️",
             initialBackground = flagStyle.background ?: "#1A0000",
             initialBorder = flagStyle.border ?: "#FF3131",
@@ -343,6 +354,7 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
 }
 @Composable
 fun CustomFlagSettingsPopup(
+    context: Context,
     initialEmoji: String,
     initialBackground: String,
     initialBorder: String,
@@ -373,28 +385,45 @@ fun CustomFlagSettingsPopup(
                     style = MaterialTheme.typography.titleMedium
                 )
 
-                // Emoji
-                OutlinedTextField(
-                    value = emoji,
-                    onValueChange = { emoji = it },
-                    label = { Text("Emoji") },
-                    singleLine = true
+                AndroidView(
+                    factory = {
+                        EmojiPickerView(context).apply {
+                            setOnEmojiPickedListener { picked ->
+                                emoji = picked.emoji
+                            }
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth()
                 )
 
+
+
                 // Background Color
-                OutlinedTextField(
-                    value = background,
-                    onValueChange = { background = it },
-                    label = { Text("Background Color (#RRGGBB)") },
-                    singleLine = true
+                HsvColorPicker(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp),
+                    controller = remember { ColorPickerController() },
+                    wheelImageBitmap = ImageBitmap.imageResource(R.drawable.color_wheel),
+                    onColorChanged = {
+                            color -> background=color.hexCode
+                    },
+                    initialColor = androidx.compose.ui.graphics.Color(Color.RED)
+
                 )
 
                 // Border Color
-                OutlinedTextField(
-                    value = border,
-                    onValueChange = { border = it },
-                    label = { Text("Border Color (#RRGGBB)") },
-                    singleLine = true
+                HsvColorPicker(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp),
+                    controller = remember { ColorPickerController() },
+                    wheelImageBitmap = ImageBitmap.imageResource(R.drawable.color_wheel),
+                    onColorChanged = {
+                        color -> border=color.hexCode
+                    },
+                    initialColor = androidx.compose.ui.graphics.Color(Color.RED)
+
                 )
 
                 Row(
