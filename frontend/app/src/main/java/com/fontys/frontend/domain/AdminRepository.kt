@@ -37,7 +37,7 @@ object AdminRepository {
         return hashMapOf(
             "Accept" to "application/json",
             "Content-Type" to "application/json",
-            "Authorization" to "Bearer ${UserRepository.token}"
+            "Authorization" to "Bearer $token"
         )
     }
 
@@ -64,12 +64,8 @@ object AdminRepository {
     suspend fun getRecentUsers(amount: Int): List<UserReturn> {
         try {
             val filter = "{ \"limit\" : $amount }"
-            val headers = HashMap<String, String>().apply {
-                put("Accept", "application/json")
-                put("Content-Type", "application/json")
-                put("Authorization", "Bearer $token")
-            }
-            val response = adminApiService.getUsers(headers, filter)
+
+            val response = adminApiService.getUsers(getAuthHeaders(), filter)
             if (response.isSuccessful){
                 return response.body() ?: emptyList()
             } else {
@@ -82,4 +78,23 @@ object AdminRepository {
         }
 
     }
+
+    suspend fun getFlags(amount: Int): List<FlagResponse> {
+        return try {
+            val filter = "{ \"limit\" : $amount }"
+            val response = adminApiService.getFlags(
+                getAuthHeaders(),
+                filter)
+            if (response.isSuccessful) {
+                response.body() ?: emptyList()
+            } else {
+                Log.e("AdminRepository", "Error getting flags: ${response.code()} - ${response.message()}")
+                emptyList()
+            }
+        } catch (e: Exception) {
+            Log.e("AdminRepository", "Exception getting flags: ${e.message}", e)
+            emptyList()
+        }
+    }
+
 }

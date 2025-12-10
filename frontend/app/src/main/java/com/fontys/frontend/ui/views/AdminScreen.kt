@@ -2,28 +2,19 @@ package com.fontys.frontend.ui.views
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Article
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.Gavel
 import androidx.compose.material.icons.filled.People
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -40,19 +31,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import coil.compose.AsyncImage
-import com.fontys.frontend.config.ApiConfig
 import com.fontys.frontend.data.FlagResponse
 import com.fontys.frontend.data.UserReturn
 import com.fontys.frontend.domain.UserRepository
@@ -60,11 +45,53 @@ import com.fontys.frontend.ui.viewmodels.AdminViewModel
 
 @Composable
 fun RecentPostsScreen(viewModel: AdminViewModel) {
-    Column(
+
+    val uiState by viewModel.uiState.collectAsState()
+    val flags = uiState.flags
+
+    LaunchedEffect(Unit) {
+        viewModel.loadFlags()
+    }
+
+    LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) { Text("Recent posts") }
+        contentPadding = PaddingValues(16.dp)
+    ) {
+        items(flags) { flag ->
+            FlagCard(flag)
+        }
+    }
+
+}
+
+@Composable
+fun FlagCard (flag: FlagResponse, viewModel: AdminViewModel = viewModel()) {
+    Card(modifier = Modifier
+        .padding(bottom = 8.dp)
+        .fillMaxWidth()) {
+        Text(
+            text = flag.locationId,
+            modifier = Modifier.padding(16.dp),
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+            val image = viewModel.base64ToImageBitmap(flag.photoCode)
+            if (image != null) {
+                Image(
+                    bitmap = image,
+                    contentDescription = "Profile Picture",
+                    modifier = Modifier
+
+                )
+            } else {
+                Text(
+                    text = "No Image Available",
+                    modifier = Modifier.padding(16.dp),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+
+
+    }
 
 }
 
@@ -82,18 +109,43 @@ fun RecentUsersScreen(viewModel: AdminViewModel) {
         contentPadding = PaddingValues(16.dp)
     ) {
         items(users) { user ->
-            userCard(user)
+            UserCard(user)
         }
     }
+
 
 }
 
 @Composable
-fun userCard (user: UserReturn) {
+fun UserCard (user: UserReturn, viewModel: AdminViewModel = viewModel()) {
     Card(modifier = Modifier
         .padding(bottom = 8.dp)
         .fillMaxWidth()) {
-        Text(text = user.userName, modifier = Modifier.padding(16.dp))
+        Text(
+            text = user.userName,
+            modifier = Modifier.padding(16.dp),
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Text(
+            text = user.bio,
+            modifier = Modifier.padding(16.dp),
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        val image = viewModel.base64ToImageBitmap(user.userImage)
+        if (image != null) {
+            Image(
+                bitmap = image,
+                contentDescription = "Profile Picture",
+                modifier = Modifier
+
+            )
+        } else {
+            Text(
+                text = "No Image Available",
+                modifier = Modifier.padding(16.dp),
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
 
     }
 
