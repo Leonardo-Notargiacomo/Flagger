@@ -11,6 +11,15 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
+sealed class FriendsOperation {
+    object None : FriendsOperation()
+    object SendingRequest : FriendsOperation()
+    object AcceptingRequest : FriendsOperation()
+    object RejectingRequest : FriendsOperation()
+    object CancellingRequest : FriendsOperation()
+    object RemovingFriend : FriendsOperation()
+}
+
 data class FriendsUiState(
     val friends: List<FriendListItem> = emptyList(),
     val receivedRequests: List<FriendRequest> = emptyList(),
@@ -19,7 +28,7 @@ data class FriendsUiState(
     val isSearching: Boolean = false,
     val isLoadingFriends: Boolean = false,
     val isLoadingRequests: Boolean = false,
-    val isSendingRequest: Boolean = false,
+    val currentOperation: FriendsOperation = FriendsOperation.None,
     val error: String? = null,
     val successMessage: String? = null
 )
@@ -97,6 +106,48 @@ class FriendsViewModel : ViewModel() {
         _uiState.value = _uiState.value.copy(searchResults = emptyList())
     }
 
+    /**
+     * Generic helper function to fetch and enhance data with missing user details.
+     * Reduces code duplication across loadFriends, loadReceivedRequests, and loadSentRequests.
+     */
+    private suspend fun <T> fetchAndEnhanceWithUserDetails(
+        items: List<T>,
+        getMissingUserId: (T) -> Int,
+        hasUserDetails: (T) -> Boolean,
+        enhanceItem: (T, User?) -> T
+    ): List<T> {
+        // Identify items with missing user data
+        val missingUserIds = items
+            .filter { !hasUserDetails(it) }
+            .map { getMissingUserId(it) }
+            .distinct()
+
+        Log.d(TAG, "fetchAndEnhanceWithUserDetails() found ${missingUserIds.size} missing users: $missingUserIds")
+
+        // Fetch missing users from API
+        val fetchedUsers = mutableMapOf<Int, User>()
+        missingUserIds.forEach { userId ->
+            repository.getUserById(authToken, userId).fold(
+                onSuccess = { user ->
+                    fetchedUsers[user.id] = user
+                    Log.d(TAG, "fetchAndEnhanceWithUserDetails() fetched user: ${user.userName} (id=${user.id})")
+                },
+                onFailure = { error ->
+                    Log.e(TAG, "fetchAndEnhanceWithUserDetails() failed to fetch user $userId: ${error.message}")
+                }
+            )
+        }
+
+        // Enhance items with fetched data
+        return items.map { item ->
+            if (!hasUserDetails(item) && fetchedUsers.containsKey(getMissingUserId(item))) {
+                enhanceItem(item, fetchedUsers[getMissingUserId(item)])
+            } else {
+                item
+            }
+        }
+    }
+
     fun loadFriends() {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoadingFriends = true, error = null)
@@ -105,36 +156,12 @@ class FriendsViewModel : ViewModel() {
                 onSuccess = { friends ->
                     Log.d(TAG, "loadFriends() loaded ${friends.size} friends")
 
-                    // Identify friends with missing details
-                    val missingUserIds = friends
-                        .filter { it.friendDetails == null }
-                        .map { it.friendId }
-                        .distinct()
-
-                    Log.d(TAG, "loadFriends() found ${missingUserIds.size} missing friend details: $missingUserIds")
-
-                    // Fetch missing friend details from API
-                    val fetchedUsers = mutableMapOf<Int, User>()
-                    missingUserIds.forEach { userId ->
-                        repository.getUserById(authToken, userId).fold(
-                            onSuccess = { user ->
-                                fetchedUsers[user.id] = user
-                                Log.d(TAG, "loadFriends() fetched user: ${user.userName} (id=${user.id})")
-                            },
-                            onFailure = { error ->
-                                Log.e(TAG, "loadFriends() failed to fetch user $userId: ${error.message}")
-                            }
-                        )
-                    }
-
-                    // Populate friendDetails with fetched data
-                    val enhancedFriends = friends.map { friend ->
-                        if (friend.friendDetails == null && fetchedUsers.containsKey(friend.friendId)) {
-                            friend.copy(friendDetails = fetchedUsers[friend.friendId])
-                        } else {
-                            friend
-                        }
-                    }
+                    val enhancedFriends = fetchAndEnhanceWithUserDetails(
+                        items = friends,
+                        getMissingUserId = { it.friendId },
+                        hasUserDetails = { it.friendDetails != null },
+                        enhanceItem = { friend, user -> friend.copy(friendDetails = user) }
+                    )
 
                     enhancedFriends.forEachIndexed { index, friend ->
                         Log.d(TAG, "loadFriends() friend[$index]: friendId=${friend.friendId}, userName=${friend.friendDetails?.userName}")
@@ -163,36 +190,12 @@ class FriendsViewModel : ViewModel() {
                 onSuccess = { requests ->
                     Log.d(TAG, "loadReceivedRequests() success: loaded ${requests.size} requests")
 
-                    // Identify requests with missing user data
-                    val missingUserIds = requests
-                        .filter { it.fromUser == null }
-                        .map { it.fromUserId }
-                        .distinct()
-
-                    Log.d(TAG, "loadReceivedRequests() found ${missingUserIds.size} missing users: $missingUserIds")
-
-                    // Fetch missing users from API
-                    val fetchedUsers = mutableMapOf<Int, User>()
-                    missingUserIds.forEach { userId ->
-                        repository.getUserById(authToken, userId).fold(
-                            onSuccess = { user ->
-                                fetchedUsers[user.id] = user
-                                Log.d(TAG, "loadReceivedRequests() fetched user: ${user.userName} (id=${user.id})")
-                            },
-                            onFailure = { error ->
-                                Log.e(TAG, "loadReceivedRequests() failed to fetch user $userId: ${error.message}")
-                            }
-                        )
-                    }
-
-                    // Populate fromUser with fetched data
-                    val enhancedRequests = requests.map { request ->
-                        if (request.fromUser == null && fetchedUsers.containsKey(request.fromUserId)) {
-                            request.copy(fromUser = fetchedUsers[request.fromUserId])
-                        } else {
-                            request
-                        }
-                    }
+                    val enhancedRequests = fetchAndEnhanceWithUserDetails(
+                        items = requests,
+                        getMissingUserId = { it.fromUserId },
+                        hasUserDetails = { it.fromUser != null },
+                        enhanceItem = { request, user -> request.copy(fromUser = user) }
+                    )
 
                     enhancedRequests.forEachIndexed { index, request ->
                         Log.d(TAG, "loadReceivedRequests() request[$index]: fromUserId=${request.fromUserId}, userName=${request.fromUser?.userName}, status=${request.status}")
@@ -226,36 +229,12 @@ class FriendsViewModel : ViewModel() {
                 onSuccess = { requests ->
                     Log.d(TAG, "loadSentRequests() success: loaded ${requests.size} requests")
 
-                    // Identify requests with missing user data
-                    val missingUserIds = requests
-                        .filter { it.toUser == null }
-                        .map { it.toUserId }
-                        .distinct()
-
-                    Log.d(TAG, "loadSentRequests() found ${missingUserIds.size} missing users: $missingUserIds")
-
-                    // Fetch missing users from API
-                    val fetchedUsers = mutableMapOf<Int, User>()
-                    missingUserIds.forEach { userId ->
-                        repository.getUserById(authToken, userId).fold(
-                            onSuccess = { user ->
-                                fetchedUsers[user.id] = user
-                                Log.d(TAG, "loadSentRequests() fetched user: ${user.userName} (id=${user.id})")
-                            },
-                            onFailure = { error ->
-                                Log.e(TAG, "loadSentRequests() failed to fetch user $userId: ${error.message}")
-                            }
-                        )
-                    }
-
-                    // Populate toUser with fetched data
-                    val enhancedRequests = requests.map { request ->
-                        if (request.toUser == null && fetchedUsers.containsKey(request.toUserId)) {
-                            request.copy(toUser = fetchedUsers[request.toUserId])
-                        } else {
-                            request
-                        }
-                    }
+                    val enhancedRequests = fetchAndEnhanceWithUserDetails(
+                        items = requests,
+                        getMissingUserId = { it.toUserId },
+                        hasUserDetails = { it.toUser != null },
+                        enhanceItem = { request, user -> request.copy(toUser = user) }
+                    )
 
                     enhancedRequests.forEachIndexed { index, request ->
                         Log.d(TAG, "loadSentRequests() request[$index]: toUserId=${request.toUserId}, userName=${request.toUser?.userName}, status=${request.status}")
@@ -284,13 +263,13 @@ class FriendsViewModel : ViewModel() {
     fun sendFriendRequest(toUserId: Int) {
         Log.d(TAG, "sendFriendRequest() called with toUserId: $toUserId")
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isSendingRequest = true, error = null)
+            _uiState.value = _uiState.value.copy(currentOperation = FriendsOperation.SendingRequest, error = null)
 
             repository.sendFriendRequest(authToken, toUserId).fold(
                 onSuccess = { request ->
                     Log.d(TAG, "sendFriendRequest() success: request created with id=${request.id}")
                     _uiState.value = _uiState.value.copy(
-                        isSendingRequest = false,
+                        currentOperation = FriendsOperation.None,
                         successMessage = "Friend request sent successfully"
                     )
                     // Reload sent requests
@@ -300,7 +279,7 @@ class FriendsViewModel : ViewModel() {
                 onFailure = { error ->
                     Log.e(TAG, "sendFriendRequest() failed: ${error.message}", error)
                     _uiState.value = _uiState.value.copy(
-                        isSendingRequest = false,
+                        currentOperation = FriendsOperation.None,
                         error = error.message ?: "Failed to send friend request"
                     )
                 }
@@ -310,12 +289,12 @@ class FriendsViewModel : ViewModel() {
 
     fun acceptFriendRequest(requestId: Int) {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isSendingRequest = true, error = null)
+            _uiState.value = _uiState.value.copy(currentOperation = FriendsOperation.AcceptingRequest, error = null)
 
             repository.acceptFriendRequest(authToken, requestId).fold(
                 onSuccess = { response ->
                     _uiState.value = _uiState.value.copy(
-                        isSendingRequest = false,
+                        currentOperation = FriendsOperation.None,
                         successMessage = response.message
                     )
                     // Reload both friends and received requests
@@ -324,7 +303,7 @@ class FriendsViewModel : ViewModel() {
                 },
                 onFailure = { error ->
                     _uiState.value = _uiState.value.copy(
-                        isSendingRequest = false,
+                        currentOperation = FriendsOperation.None,
                         error = error.message ?: "Failed to accept friend request"
                     )
                 }
@@ -334,12 +313,12 @@ class FriendsViewModel : ViewModel() {
 
     fun rejectFriendRequest(requestId: Int) {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isSendingRequest = true, error = null)
+            _uiState.value = _uiState.value.copy(currentOperation = FriendsOperation.RejectingRequest, error = null)
 
             repository.rejectFriendRequest(authToken, requestId).fold(
                 onSuccess = { response ->
                     _uiState.value = _uiState.value.copy(
-                        isSendingRequest = false,
+                        currentOperation = FriendsOperation.None,
                         successMessage = response.message
                     )
                     // Reload received requests
@@ -347,7 +326,7 @@ class FriendsViewModel : ViewModel() {
                 },
                 onFailure = { error ->
                     _uiState.value = _uiState.value.copy(
-                        isSendingRequest = false,
+                        currentOperation = FriendsOperation.None,
                         error = error.message ?: "Failed to reject friend request"
                     )
                 }
@@ -357,12 +336,12 @@ class FriendsViewModel : ViewModel() {
 
     fun cancelFriendRequest(requestId: Int) {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isSendingRequest = true, error = null)
+            _uiState.value = _uiState.value.copy(currentOperation = FriendsOperation.CancellingRequest, error = null)
 
             repository.cancelFriendRequest(authToken, requestId).fold(
                 onSuccess = {
                     _uiState.value = _uiState.value.copy(
-                        isSendingRequest = false,
+                        currentOperation = FriendsOperation.None,
                         successMessage = "Friend request cancelled"
                     )
                     // Reload sent requests
@@ -370,7 +349,7 @@ class FriendsViewModel : ViewModel() {
                 },
                 onFailure = { error ->
                     _uiState.value = _uiState.value.copy(
-                        isSendingRequest = false,
+                        currentOperation = FriendsOperation.None,
                         error = error.message ?: "Failed to cancel friend request"
                     )
                 }
@@ -380,12 +359,12 @@ class FriendsViewModel : ViewModel() {
 
     fun removeFriend(friendId: Int) {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isSendingRequest = true, error = null)
+            _uiState.value = _uiState.value.copy(currentOperation = FriendsOperation.RemovingFriend, error = null)
 
             repository.removeFriend(authToken, friendId).fold(
                 onSuccess = {
                     _uiState.value = _uiState.value.copy(
-                        isSendingRequest = false,
+                        currentOperation = FriendsOperation.None,
                         successMessage = "Friend removed"
                     )
                     // Reload friends list
@@ -393,7 +372,7 @@ class FriendsViewModel : ViewModel() {
                 },
                 onFailure = { error ->
                     _uiState.value = _uiState.value.copy(
-                        isSendingRequest = false,
+                        currentOperation = FriendsOperation.None,
                         error = error.message ?: "Failed to remove friend"
                     )
                 }
