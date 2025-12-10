@@ -416,4 +416,10 @@ class FriendsViewModel : ViewModel() {
 
         return RelationshipStatus.NONE
     }
+
+    fun getReceivedRequestIdForUser(userId: Int): Int? {
+        return _uiState.value.receivedRequests
+            .firstOrNull { it.fromUserId == userId && it.status == "PENDING" }
+            ?.id
+    }
 }

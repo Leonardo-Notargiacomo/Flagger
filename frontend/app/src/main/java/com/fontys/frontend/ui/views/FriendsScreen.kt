@@ -606,13 +606,13 @@ fun SearchTab(
             ) {
                 items(searchResults) { user ->
                     val relationshipStatus = viewModel.getRelationshipStatus(user.id)
-                    SearchUserItem(
-                        user = user,
-                        relationshipStatus = relationshipStatus,
-                        onSendRequest = { user.id?.let { onSendFriendRequest(it) } },
-                        onViewProfile = { user.id?.let { onViewProfile(it) } }
-                    )
-                }
+                                            SearchUserItem(
+                                                user = user,
+                                                relationshipStatus = relationshipStatus,
+                                                onSendRequest = { user.id?.let { onSendFriendRequest(it) } },
+                                                onViewProfile = { user.id?.let { onViewProfile(it) } },
+                                                viewModel = viewModel // Explicitly pass the ViewModel
+                                            )                }
             }
         }
     }
@@ -623,7 +623,8 @@ fun SearchUserItem(
     user: com.fontys.frontend.data.models.User,
     relationshipStatus: com.fontys.frontend.ui.viewmodels.RelationshipStatus,
     onSendRequest: () -> Unit,
-    onViewProfile: () -> Unit
+    onViewProfile: () -> Unit,
+    viewModel: FriendsViewModel // Add ViewModel as a parameter
 ) {
     Card(
         modifier = Modifier
@@ -687,7 +688,10 @@ fun SearchUserItem(
                 }
                 com.fontys.frontend.ui.viewmodels.RelationshipStatus.PENDING_RECEIVED -> {
                     Button(
-                        onClick = onSendRequest,
+                        onClick = {
+                            val requestId = viewModel.getReceivedRequestIdForUser(user.id)
+                            requestId?.let { viewModel.acceptFriendRequest(it) }
+                        },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.secondary
                         ),
