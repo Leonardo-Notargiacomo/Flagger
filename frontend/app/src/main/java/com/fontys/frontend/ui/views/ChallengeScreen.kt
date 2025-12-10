@@ -309,8 +309,21 @@ fun UserChallengeCard(
     val challengeType = userChallenge.challenge?.getType() ?: ChallengeType.TIME_BASED
     val expiresAt = remember(userChallenge.expiresAt) { userChallenge.expiresAt?.let(::parseDateTime) }
     val activatedAt = remember(userChallenge.activatedAt) { userChallenge.activatedAt?.let(::parseDateTime) }
-    val expiresIn = remember(activatedAt, expiresAt) {
-        if (activatedAt == null || expiresAt == null) 0L else (expiresAt - System.currentTimeMillis()).coerceAtLeast(0L)
+
+    // All challenges have a 24-hour expiration timer, update every second
+    var currentTime by remember { mutableStateOf(System.currentTimeMillis()) }
+
+    LaunchedEffect(expiresAt) {
+        if (expiresAt != null) {
+            while (true) {
+                kotlinx.coroutines.delay(1000L)
+                currentTime = System.currentTimeMillis()
+            }
+        }
+    }
+
+    val expiresIn = remember(activatedAt, expiresAt, currentTime) {
+        if (activatedAt == null || expiresAt == null) 0L else (expiresAt - currentTime).coerceAtLeast(0L)
     }
 
     val progressFraction = when (challengeType) {
@@ -410,8 +423,19 @@ fun UserChallengeCard(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                if (challengeType == ChallengeType.TIME_BASED && expiresIn > 0) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
+                // All challenges have a 24-hour timer
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // Show challenge type icon
+                    when (challengeType) {
+                        ChallengeType.STREAK -> Text("🔥 ", style = MaterialTheme.typography.bodyMedium)
+                        ChallengeType.COUNT -> Text("📊 ", style = MaterialTheme.typography.bodyMedium)
+                        ChallengeType.TIME_BASED -> {}
+                    }
+
+                    // Always show the 24-hour timer
+                    if (expiresIn > 0) {
                         Icon(
                             imageVector = Icons.Default.Timer,
                             contentDescription = "Time remaining",
@@ -426,18 +450,6 @@ fun UserChallengeCard(
                             color = MaterialTheme.colorScheme.error
                         )
                     }
-                } else if (challengeType == ChallengeType.STREAK) {
-                    Text(
-                        text = "🔥 Daily streak challenge",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                } else if (challengeType == ChallengeType.COUNT) {
-                    Text(
-                        text = "📊 Count challenge",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.primary
-                    )
                 }
 
                 Row(
