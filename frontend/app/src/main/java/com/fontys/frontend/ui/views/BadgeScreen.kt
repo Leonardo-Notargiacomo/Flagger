@@ -524,36 +524,36 @@ fun BadgeItem(badge: Badge, onClick: () -> Unit) {
                 }
             }
 
-            // Lock icon for locked badges in top-right corner
-            if (!badge.isUnlocked) {
+            // Challenge badge indicator in top-left corner
+            if (badge.requiresActiveChallenge) {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(6.dp),
-                    contentAlignment = Alignment.TopEnd
+                    contentAlignment = Alignment.TopStart
                 ) {
-                    Text(
-                        text = "🔒",
-                        fontSize = 14.sp
-                    )
+                    Box(
+                        modifier = Modifier
+                            .size(16.dp)
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.secondary)
+                            .border(
+                                width = 1.dp,
+                                color = MaterialTheme.colorScheme.onSecondary,
+                                shape = CircleShape
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "C",
+                            fontSize = 8.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSecondary
+                        )
+                    }
                 }
             }
-        }
-    }
-}
 
-@Composable
-fun BadgeDetailDialog(
-    badge: Badge,
-    onDismiss: () -> Unit
-) {
-    // Format the date if available
-    val formattedDate = badge.unlockedAt?.let { dateString ->
-        try {
-            val zonedDateTime = ZonedDateTime.parse(dateString)
-            val localDateTime = zonedDateTime.withZoneSameInstant(ZoneId.systemDefault())
-            val dateFormatter = DateTimeFormatter.ofPattern("d/M/yyyy")
-            val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
             "${localDateTime.format(dateFormatter)} at ${localDateTime.format(timeFormatter)}"
         } catch (_: Exception) {
             dateString // Fallback to original string if parsing fails
@@ -817,17 +817,59 @@ fun BadgeDetailDialog(
                 ),
                 shape = RoundedCornerShape(12.dp),
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-            ) {
-                Text(
-                    "CLOSE",
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = 1.sp,
-                    modifier = Modifier.padding(vertical = 4.dp)
-                )
-            }
-        }
-    )
-}
 
+                // Challenge badge indicator
+                if (badge.requiresActiveChallenge) {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .border(
+                                width = 2.dp,
+                                color = MaterialTheme.colorScheme.secondary,
+                                shape = RoundedCornerShape(12.dp)
+                            ),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.secondaryContainer
+                        ),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(12.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(24.dp)
+                                    .clip(CircleShape)
+                                    .background(MaterialTheme.colorScheme.secondary),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = "C",
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onSecondary
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Column {
+                                Text(
+                                    text = "CHALLENGE BADGE",
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    letterSpacing = 0.5.sp,
+                                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                                )
+                                Text(
+                                    text = "Requires active challenge",
+                                    fontSize = 10.sp,
+                                    color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.8f)
+                                )
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+                }

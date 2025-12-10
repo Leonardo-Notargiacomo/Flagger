@@ -1,7 +1,7 @@
 import {get, del, param, response} from '@loopback/rest';
 import {repository} from '@loopback/repository';
-import {BadgeRepository, UserBadgeRepository, ExplorationEventRepository, UserStreakRepository} from '../repositories';
-import {Badge} from '../models';
+import {BadgeRepository, UserBadgeRepository, ExplorationEventRepository, UserStreakRepository, UserChallengeRepository, ChallengeRepository} from '../repositories';
+import {Badge, UserChallenge, Challenge} from '../models';
 
 export class BadgeController {
   constructor(
@@ -13,10 +13,10 @@ export class BadgeController {
     public explorationEventRepository: ExplorationEventRepository,
     @repository(UserStreakRepository)
     public userStreakRepository: UserStreakRepository,
-  ) {}
-
-  @get('/api/badges')
-  @response(200, {
+    @repository(UserChallengeRepository)
+    public userChallengeRepository: UserChallengeRepository,
+    @repository(ChallengeRepository)
+    public challengeRepository: ChallengeRepository,
     description: 'List of all badges',
     content: {
       'application/json': {
@@ -81,64 +81,88 @@ export class BadgeController {
       const unlockedIds = new Set(userBadges.map(ub => ub.badgeId));
       console.log(`[BadgeController] Unlocked badge IDs: ${Array.from(unlockedIds).join(', ')}`);
 
-      const badgesWithStatus = allBadges.map((badge: Badge) => {
-        // Calculate progress based on badge criteria
-        let currentProgress = 0;
-        let maxProgress = badge.unlockCriteria.threshold;
-
-        if (badge.unlockCriteria.type === 'exploration_count') {
-          currentProgress = Math.min(explorationCount.count, maxProgress);
-        } else if (badge.unlockCriteria.type === 'streak') {
-          currentProgress = Math.min(currentStreak, maxProgress);
-        }
-
-        return {
-          ...badge,
-          isUnlocked: unlockedIds.has(badge.id!),
-          unlockedAt: userBadges.find(ub => ub.badgeId === badge.id)?.unlockedAt,
-          currentProgress,
-          maxProgress,
-        };
+      // Get active challenge to calculate progress for challenge badges
+      const now = new Date();
+      const activeChallenge = await this.userChallengeRepository.findOne({
+        where: {
+          userId,
+          status: 'active',
+        },
+        include: [{relation: 'challenge'}],
       });
 
-      const result = {
-        badges: badgesWithStatus,
+      let activeChallengeData: {userChallenge: UserChallenge; challenge: Challenge; rewardBadgeId: number} | null = null;
+
+      if (activeChallenge && activeChallenge.expiresAt && activeChallenge.expiresAt > now) {
+        const challenge = (activeChallenge as UserChallenge & {challenge: Challenge}).challenge;
+        activeChallengeData = {
+          userChallenge: activeChallenge,
+          challenge,
+          rewardBadgeId: challenge.rewardBadgeId,
+        };
+        console.log(`[BadgeController] Active challenge found: ${challenge.name}, reward badge ID: ${challenge.rewardBadgeId}`);
+      }
+
         earnedBadges: userBadges.length,
         totalBadges: allBadges.length,
       };
 
-      console.log(`[BadgeController] Returning: ${result.earnedBadges}/${result.totalBadges} badges earned`);
+      const badgesWithStatus = await Promise.all(allBadges.map(async (badge: Badge) => {
       return result;
     } catch (error) {
-      console.error('[BadgeController] Error in getUserBadges:', error);
+        let requiresActiveChallenge = false;
       throw error;
-    }
-  }
+        // Check if this is a challenge badge
+        if (badge.isChallengeBadge) {
+          requiresActiveChallenge = true;
 
-  /**
-   * DELETE /api/users/{userId}/badges
-   * Delete all badges for a specific user
-   */
-  @del('/api/users/{userId}/badges')
-  @response(200, {
-    description: 'User badges deleted successfully',
-  })
-  async deleteUserBadges(
-    @param.path.number('userId') userId: number,
-  ) {
-    console.log(`[BadgeController] deleteUserBadges() called for userId: ${userId}`);
-    try {
-      const deletedBadges = await this.userBadgeRepository.deleteAll({userId});
-      console.log(`[BadgeController] Deleted ${deletedBadges.count} badge(s) for user ${userId}`);
+          // Only calculate progress if this badge's challenge is currently active
+          if (activeChallengeData && activeChallengeData.rewardBadgeId === badge.id) {
+            const {userChallenge, challenge} = activeChallengeData;
+            const window = {
+              start: userChallenge.activatedAt,
+              end: userChallenge.expiresAt && userChallenge.expiresAt < now ? userChallenge.expiresAt : now,
+            };
 
-      return {
-        success: true,
-        message: `Deleted ${deletedBadges.count} badge(s) for user ${userId}`,
-        deletedCount: deletedBadges.count,
-      };
-    } catch (error) {
-      console.error(`[BadgeController] Error deleting badges for user ${userId}:`, error);
-      throw error;
-    }
-  }
-}
+            if (challenge.conditionType === 'exploration_count') {
+              // Count explorations within the challenge window
+              const count = await this.explorationEventRepository.count({
+                userId,
+                completedAt: {between: [window.start, window.end]},
+              });
+              currentProgress = Math.min(count.count, maxProgress);
+              console.log(`[BadgeController] Challenge badge ${badge.name}: ${currentProgress}/${maxProgress}`);
+            } else if (challenge.conditionType === 'time_based') {
+              // Check if any exploration within the window matches the target hour
+              const targetHour = challenge.conditionParams.hour ?? 0;
+              const normalizedTargetHour = ((targetHour % 24) + 24) % 24;
+
+              const explorations = await this.explorationEventRepository.find({
+                where: {
+                  userId,
+                  completedAt: {between: [window.start, window.end]},
+                },
+              });
+
+              const hasMatchingExploration = explorations.some(exp => {
+                const completedAt = exp.completedAt ? new Date(exp.completedAt) : undefined;
+                if (!completedAt) return false;
+                return completedAt.getUTCHours() === normalizedTargetHour;
+              });
+
+              currentProgress = hasMatchingExploration ? 1 : 0;
+              maxProgress = 1;
+              console.log(`[BadgeController] Time-based challenge badge ${badge.name}: ${currentProgress}/${maxProgress}`);
+            }
+          } else {
+            // Challenge badge but its challenge is not active - show 0 progress
+            currentProgress = 0;
+            console.log(`[BadgeController] Challenge badge ${badge.name} - no active challenge, progress: 0/${maxProgress}`);
+          }
+        } else {
+          // Regular badge (not challenge-specific)
+          if (badge.unlockCriteria.type === 'exploration_count') {
+            currentProgress = Math.min(explorationCount.count, maxProgress);
+          } else if (badge.unlockCriteria.type === 'streak') {
+            currentProgress = Math.min(currentStreak, maxProgress);
+          }
