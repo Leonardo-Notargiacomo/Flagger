@@ -12,9 +12,6 @@ data class FriendListItem(
     @SerializedName("friendId")
     val friendId: Int,
 
-    @SerializedName("createdAt")
-    val createdAt: String?,
-
     @SerializedName("friendDetails")
     val friendDetails: User? = null
 )

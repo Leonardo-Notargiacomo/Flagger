@@ -18,9 +18,6 @@ data class FriendRequest(
     @SerializedName("createdAt")
     val createdAt: String?,
 
-    @SerializedName("updatedAt")
-    val updatedAt: String?,
-
     // Relations from backend (if includeRelations: true)
     @SerializedName("fromUser")
     val fromUser: User? = null,
@@ -36,10 +33,7 @@ data class SendFriendRequestBody(
 
 data class AcceptFriendRequestResponse(
     @SerializedName("message")
-    val message: String,
-
-    @SerializedName("friendRequest")
-    val friendRequest: FriendRequest
+    val message: String
 )
 
 data class RejectFriendRequestResponse(
