@@ -62,8 +62,8 @@ export class ExplorationController {
       completedAt: new Date(),
     });
 
-    await this.challengeService.recordExplorationProgress(userId, event.completedAt ?? new Date());
-
+    // 2. Update user's streak
+    const updatedStreak = await this.streakCalculatorService.updateStreak(userId);
 
     // 3. Check for newly unlocked badges
     const newBadges = await this.badgeUnlockService.checkAndUnlockBadges(userId);

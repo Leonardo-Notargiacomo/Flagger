@@ -33,10 +33,10 @@ export interface ChallengeStatus {
   availableChallenges?: Challenge[];
 }
 
-interface ChallengeProgressOptions {
-  currentStreak?: number;
-}
-
+@injectable({scope: BindingScope.TRANSIENT})
+export class ChallengeService {
+  constructor(
+    @repository(ChallengeRepository)
     public challengeRepository: ChallengeRepository,
     @repository(UserChallengeRepository)
     public userChallengeRepository: UserChallengeRepository,
@@ -210,44 +210,44 @@ interface ChallengeProgressOptions {
   async checkChallengeCompletion(userId: number): Promise<Badge | null> {
     // First, check and expire any old challenges
     await this.checkAndExpireChallenges(userId);
-  async recordExplorationProgress(
-    userId: number,
-    explorationDate: Date,
-    options: ChallengeProgressOptions = {},
-  ): Promise<boolean> {
-    const activeChallenge = await this.userChallengeRepository.findOne({
+
+    const activeUserChallenge = await this.userChallengeRepository.findOne({
       where: {userId, status: 'active'},
       include: [{relation: 'challenge'}],
     });
 
-    if (!activeChallenge || activeChallenge.status !== 'active') {
-      return false;
+    if (!activeUserChallenge) {
+      return null;
     }
 
-    if (!this.isEventWithinWindow(activeChallenge, explorationDate)) {
-      return false;
+    // Check if challenge has expired (shouldn't happen after checkAndExpireChallenges, but safety check)
+    const now = new Date();
+    if (activeUserChallenge.expiresAt && activeUserChallenge.expiresAt < now) {
+      activeUserChallenge.status = 'expired';
+      await this.userChallengeRepository.update(activeUserChallenge);
+      return null;
     }
 
-    const challenge = await this.resolveChallengeFromUserChallenge(activeChallenge);
-    if (!challenge) {
-      return false;
+    const challenge = (activeUserChallenge as UserChallenge & {challenge: Challenge}).challenge;
+    const isCompleted = await this.evaluateChallengeCondition(userId, challenge, activeUserChallenge);
+
+    if (isCompleted) {
+      // Mark as completed but keep cooldown intact
+      activeUserChallenge.status = 'completed';
+      activeUserChallenge.completedAt = new Date();
+      await this.userChallengeRepository.update(activeUserChallenge);
+
+      // Award the badge
+      const badge = await this.awardChallengeBadge(userId, challenge.rewardBadgeId);
+
+      return badge;
     }
 
-    const updatedProgress = this.applyProgressUpdate(
-      challenge,
-      activeChallenge,
-      explorationDate,
-      options,
-    );
-
-    if (!updatedProgress) {
-      return false;
-    }
-
-    activeChallenge.progressData = updatedProgress;
-    await this.userChallengeRepository.update(activeChallenge);
-    return true;
+    return null;
   }
+
+  /**
+   * Award a badge to a user
    */
   private async awardChallengeBadge(userId: number, badgeId: number): Promise<Badge> {
     // Check if user already has this badge
