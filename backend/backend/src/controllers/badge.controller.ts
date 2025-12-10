@@ -1,4 +1,4 @@
-import {get, param, response} from '@loopback/rest';
+import {get, del, param, response} from '@loopback/rest';
 import {repository} from '@loopback/repository';
 import {BadgeRepository, UserBadgeRepository, ExplorationEventRepository, UserStreakRepository} from '../repositories';
 import {Badge} from '../models';
@@ -111,6 +111,33 @@ export class BadgeController {
       return result;
     } catch (error) {
       console.error('[BadgeController] Error in getUserBadges:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * DELETE /api/users/{userId}/badges
+   * Delete all badges for a specific user
+   */
+  @del('/api/users/{userId}/badges')
+  @response(200, {
+    description: 'User badges deleted successfully',
+  })
+  async deleteUserBadges(
+    @param.path.number('userId') userId: number,
+  ) {
+    console.log(`[BadgeController] deleteUserBadges() called for userId: ${userId}`);
+    try {
+      const deletedBadges = await this.userBadgeRepository.deleteAll({userId});
+      console.log(`[BadgeController] Deleted ${deletedBadges.count} badge(s) for user ${userId}`);
+
+      return {
+        success: true,
+        message: `Deleted ${deletedBadges.count} badge(s) for user ${userId}`,
+        deletedCount: deletedBadges.count,
+      };
+    } catch (error) {
+      console.error(`[BadgeController] Error deleting badges for user ${userId}:`, error);
       throw error;
     }
   }
