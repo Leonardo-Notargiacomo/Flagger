@@ -73,9 +73,15 @@ fun SearchUserItem(
                     }
                 }
                 RelationshipStatus.PENDING_SENT -> {
-                    OutlinedButton(
+                    Button(
                         onClick = { /* Maybe cancel request? */ },
-                        enabled = false,
+                        enabled = false, // Keep it disabled as it's just a status display here
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.secondary,
+                            contentColor = MaterialTheme.colorScheme.onSecondary,
+                            disabledContainerColor = MaterialTheme.colorScheme.secondary,
+                            disabledContentColor = MaterialTheme.colorScheme.onSecondary
+                        ),
                         shape = RoundedCornerShape(12.dp)
                     ) {
                         Icon(Icons.Default.Schedule, contentDescription = null)
