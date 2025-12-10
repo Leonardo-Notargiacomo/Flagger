@@ -1,6 +1,6 @@
 import {get, del, param, response} from '@loopback/rest';
 import {repository} from '@loopback/repository';
-import {BadgeRepository, UserBadgeRepository, ExplorationEventRepository, UserStreakRepository} from '../repositories';
+import {BadgeRepository, UserBadgeRepository, ExplorationEventRepository, UserStreakRepository, UserChallengeRepository} from '../repositories';
 import {Badge} from '../models';
 
 export class BadgeController {
@@ -13,6 +13,8 @@ export class BadgeController {
     public explorationEventRepository: ExplorationEventRepository,
     @repository(UserStreakRepository)
     public userStreakRepository: UserStreakRepository,
+    @repository(UserChallengeRepository)
+    public userChallengeRepository: UserChallengeRepository,
   ) {}
 
   @get('/api/badges')
@@ -77,19 +79,50 @@ export class BadgeController {
 
       console.log(`[BadgeController] User stats - Explorations: ${explorationCount.count}, Streak: ${currentStreak}`);
 
+      // Get active challenge to calculate progress for challenge badges
+      const activeChallenge = await this.userChallengeRepository.findOne({
+        where: {userId, status: 'active'},
+        include: [{relation: 'challenge'}],
+      });
+
+      console.log(`[BadgeController] Active challenge: ${activeChallenge ? `Challenge ID ${activeChallenge.challengeId}` : 'None'}`);
+
       // Map badges to include unlock status
       const unlockedIds = new Set(userBadges.map(ub => ub.badgeId));
       console.log(`[BadgeController] Unlocked badge IDs: ${Array.from(unlockedIds).join(', ')}`);
 
-      const badgesWithStatus = allBadges.map((badge: Badge) => {
+      const badgesWithStatus = await Promise.all(allBadges.map(async (badge: Badge) => {
         // Calculate progress based on badge criteria
         let currentProgress = 0;
         let maxProgress = badge.unlockCriteria.threshold;
 
-        if (badge.unlockCriteria.type === 'exploration_count') {
-          currentProgress = Math.min(explorationCount.count, maxProgress);
-        } else if (badge.unlockCriteria.type === 'streak') {
-          currentProgress = Math.min(currentStreak, maxProgress);
+        // Challenge badges: only show progress when the respective challenge is active
+        if (badge.isChallengeBadge) {
+          // If there's an active challenge and it matches this badge's reward
+          if (activeChallenge && activeChallenge.challenge?.rewardBadgeId === badge.id) {
+            // Calculate progress based on explorations/actions during the challenge period
+            const challengeStart = activeChallenge.activatedAt;
+            const now = new Date();
+
+            if (badge.unlockCriteria.type === 'exploration_count') {
+              const challengeExplorationCount = await this.explorationEventRepository.count({
+                userId,
+                completedAt: {between: [challengeStart, now]},
+              });
+              currentProgress = Math.min(challengeExplorationCount.count, maxProgress);
+            } else if (badge.unlockCriteria.type === 'streak') {
+              // For streak challenges, use current streak
+              currentProgress = Math.min(currentStreak, maxProgress);
+            }
+          }
+          // If no active challenge or different challenge is active, progress stays 0
+        } else {
+          // Regular badges: use total stats
+          if (badge.unlockCriteria.type === 'exploration_count') {
+            currentProgress = Math.min(explorationCount.count, maxProgress);
+          } else if (badge.unlockCriteria.type === 'streak') {
+            currentProgress = Math.min(currentStreak, maxProgress);
+          }
         }
 
         return {
@@ -99,7 +132,7 @@ export class BadgeController {
           currentProgress,
           maxProgress,
         };
-      });
+      }));
 
       const result = {
         badges: badgesWithStatus,
