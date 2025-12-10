@@ -24,11 +24,11 @@ export class UserCustomFlag extends Entity {
   emoji?: string;
   @property({
     type: 'string',
-    default: "FF3131",
+    default: "#FF3131",
 
   })
   border?: string;
-  @belongsTo(() => GoUser)
+  @belongsTo(() => GoUser)  
   goUserId: number;
 
   constructor(data?: Partial<UserCustomFlag>) {
