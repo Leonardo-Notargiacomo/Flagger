@@ -32,6 +32,7 @@ class FriendsRepository {
         Log.d(TAG, "searchUsers() called with query: $query")
         return try {
             // Escape special regex characters to treat query as literal string
+            // We cannot use Pattern.quote() because the backend (Node.js) doesn't support \Q...\E
             val escapedQuery = query.replace("\\", "\\\\")
                 .replace(".", "\\.")
                 .replace("*", "\\*")
@@ -47,31 +48,22 @@ class FriendsRepository {
                 .replace(")", "\\)")
                 .replace("|", "\\|")
 
-            // Construct JSON filter for backend API
-            // Format: {"where":{"or":[{"userName":{"regexp":"/query/i"}},{"email":{"regexp":"/query/i"}}]}}
-            // The regex /.../i matches the query anywhere in the string (substring/contains matching)
-            val filterJson = JSONObject().apply {
-                put("where", JSONObject().apply {
-                    put("or", org.json.JSONArray().apply {
-                        // Search by userName (case-insensitive, substring match)
-                        put(JSONObject().apply {
-                            put("userName", JSONObject().apply {
-                                put("regexp", "/$escapedQuery/i")
-                            })
-                        })
-                        // Search by email (case-insensitive, substring match)
-                        put(JSONObject().apply {
-                            put("email", JSONObject().apply {
-                                put("regexp", "/$escapedQuery/i")
-                            })
-                        })
-                    })
-                })
-            }.toString()
+            val regexPattern = "/$escapedQuery/i"
+
+            // Construct the filter object using JSONObject
+            // Structure: {"where": {"or": [{"userName": {"regexp": ...}}, {"email": {"regexp": ...}}]}}
+            val userNameClause = JSONObject().put("userName", JSONObject().put("regexp", regexPattern))
+            val emailClause = JSONObject().put("email", JSONObject().put("regexp", regexPattern))
+            
+            val orArray = org.json.JSONArray()
+                .put(userNameClause)
+                .put(emailClause)
+
+            val whereClause = JSONObject().put("or", orArray)
+            val filterJson = JSONObject().put("where", whereClause).toString()
 
             val response = api.searchUsers("Bearer $token", filterJson)
             Log.d(TAG, "searchUsers() response code: ${response.code()}")
-            Log.d(TAG, "searchUsers() response body: ${response.body()}")
             handleResponse(response)
         } catch (e: Exception) {
             Log.e(TAG, "searchUsers() error: ${e.message}", e)
