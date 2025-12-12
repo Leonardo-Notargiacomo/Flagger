@@ -87,7 +87,7 @@ fun BadgeUnlockDialog(
                 ) {
                     // Celebration header
                     Text(
-                        text = if (badges.size == 1) "🎊 NEW BADGE! 🎊" else "🎊 NEW BADGES! 🎊",
+                        text = if (badges.size == 1) "NEW BADGE!" else "NEW BADGES!",
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
