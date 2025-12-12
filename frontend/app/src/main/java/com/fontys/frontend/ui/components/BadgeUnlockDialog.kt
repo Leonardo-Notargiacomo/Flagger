@@ -1,6 +1,8 @@
 package com.fontys.frontend.ui.components
 
-import androidx.compose.animation.core.*
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -12,11 +14,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
@@ -28,8 +26,6 @@ import com.airbnb.lottie.compose.*
 import com.fontys.frontend.R
 import com.fontys.frontend.data.models.Badge
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlin.math.sin
 
 /**
  * Dialog to celebrate newly unlocked badges
@@ -42,7 +38,7 @@ fun BadgeUnlockDialog(
 ) {
     val haptic = LocalHapticFeedback.current
     var canDismiss by remember { mutableStateOf(false) }
-    
+
     // Confetti Animation State
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.confetti))
     val progress by animateLottieCompositionAsState(
@@ -54,8 +50,8 @@ fun BadgeUnlockDialog(
         // Haptic Feedback
         haptic.performHapticFeedback(HapticFeedbackType.LongPress)
 
-        // Prevent immediate dismissal
-        delay(2000)
+        // Prevent immediate dismissal - 3 seconds to savor the win!
+        delay(3000)
         canDismiss = true
     }
 
