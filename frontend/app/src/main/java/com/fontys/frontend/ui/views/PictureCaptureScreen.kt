@@ -30,6 +30,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -100,15 +101,17 @@ fun PictureCaptureScreen(navController: NavHostController, viewModel: CameraPrev
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(24.dp)
-                .size(64.dp)
-                .background(Color.Black, CircleShape),
+                .size(64.dp),
 
-            colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.primary
+            ),
+            shape = CircleShape
         ) {
             Icon(
                 imageVector = Icons.Default.CameraAlt,
                 contentDescription = "Take picture",
-                tint = Color.White,
+                tint = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier.size(32.dp)            )
             Spacer(modifier = Modifier.width(8.dp))
         }
@@ -121,18 +124,16 @@ fun PictureCaptureScreen(navController: NavHostController, viewModel: CameraPrev
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(24.dp)
-                .size(64.dp)
-                .background(Color.Black, CircleShape),
-            colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
-
-
-
+                .size(64.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.secondary
+            ),
+            shape = CircleShape
         ) {
             Icon(
                 imageVector = Icons.Outlined.SwitchCamera,
                 contentDescription = "Camera view change",
-                tint = Color.White,
-
+                tint = MaterialTheme.colorScheme.onSecondary,
                 modifier = Modifier.size(32.dp)
             )
             Spacer(modifier = Modifier.width(8.dp))
@@ -146,19 +147,17 @@ fun PictureCaptureScreen(navController: NavHostController, viewModel: CameraPrev
             modifier = Modifier
                 .align(Alignment.BottomStart)
                 .padding(24.dp)
-                .size(64.dp)
-                .background(Color.Black, CircleShape),
-            colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
-
-
-
+                .size(64.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.secondary
+            ),
+            shape = CircleShape
         ) {
             Icon(
                 imageVector = if (viewModel.flash)
                     Icons.Default.FlashOn else Icons.Default.FlashOff,
                 contentDescription = "Camera view change",
-                tint = Color.White,
-
+                tint = MaterialTheme.colorScheme.onSecondary,
                 modifier = Modifier.size(32.dp)
             )
             Spacer(modifier = Modifier.width(8.dp))
