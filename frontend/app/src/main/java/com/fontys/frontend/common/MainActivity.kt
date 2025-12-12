@@ -68,10 +68,26 @@ class MainActivity : ComponentActivity() {
         // Configure window to draw behind system bars
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
-        // Style navigation bar to match app theme
-        window.navigationBarColor = Color.parseColor("#E8DCC4") // Explorer cream color
+        // Style navigation and status bars to match app theme based on dark mode
+        val isDarkMode = (resources.configuration.uiMode and
+            android.content.res.Configuration.UI_MODE_NIGHT_MASK) ==
+            android.content.res.Configuration.UI_MODE_NIGHT_YES
+
+        window.navigationBarColor = if (isDarkMode) {
+            Color.parseColor("#2D2420") // Dark brown for dark mode
+        } else {
+            Color.parseColor("#E8DCC4") // Cream for light mode
+        }
+
+        window.statusBarColor = if (isDarkMode) {
+            Color.parseColor("#2D2420") // Dark brown for dark mode
+        } else {
+            Color.parseColor("#E8DCC4") // Cream for light mode
+        }
+
         val windowInsetsController = WindowCompat.getInsetsController(window, window.decorView)
-        windowInsetsController.isAppearanceLightNavigationBars = true // Dark icons for light background
+        windowInsetsController.isAppearanceLightNavigationBars = !isDarkMode
+        windowInsetsController.isAppearanceLightStatusBars = !isDarkMode
 
         // Check permissions
         permissionHandler.checkPermissions()

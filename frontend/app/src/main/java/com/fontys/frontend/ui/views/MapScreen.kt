@@ -36,10 +36,12 @@ import com.google.maps.android.compose.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import okhttp3.internal.wait
+import androidx.compose.foundation.isSystemInDarkTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewModel()) {
+    val isDarkTheme = isSystemInDarkTheme()
     val scope = rememberCoroutineScope()
     val userLocation by viewModel.userLocation.collectAsState()
     val fullFlags by viewModel.userFullFlags.collectAsState()
@@ -83,11 +85,14 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
 //        GoogleMapOptions().mapId("349a2b06249ce5213e12a47b")
 //    }
 
-    val mapProperties by remember {
+    val mapProperties by remember(isDarkTheme) {
         mutableStateOf(
             MapProperties(
                 isMyLocationEnabled = hasLocationPermission,
-                mapStyleOptions = MapStyleOptions.loadRawResourceStyle(context, R.raw.map_style)
+                mapStyleOptions = MapStyleOptions.loadRawResourceStyle(
+                    context,
+                    if (isDarkTheme) R.raw.map_style_dark else R.raw.map_style
+                )
             )
         )
     }

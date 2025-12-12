@@ -125,7 +125,7 @@ fun BadgeScreen(
                     ) {
                         Text(
                             text = "Error: ${state.message}",
-                            color = Color(0xFF8B4513),
+                            color = MaterialTheme.colorScheme.error,
                             textAlign = TextAlign.Center
                         )
                         Spacer(modifier = Modifier.height(16.dp))
@@ -190,7 +190,7 @@ fun BadgeProfileSection(earnedBadges: Int, totalBadges: Int) {
             Icon(
                 imageVector = Icons.Default.EmojiEvents,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.surface,
+                tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(64.dp)
             )
         }
@@ -349,7 +349,7 @@ fun BadgeItem(badge: Badge, onClick: () -> Unit) {
             containerColor = if (badge.isUnlocked)
                 MaterialTheme.colorScheme.primaryContainer
             else
-                Color(0xFFD4C5B0) // Slightly darker cream for locked badges
+                MaterialTheme.colorScheme.surfaceVariant
         ),
         shape = RoundedCornerShape(16.dp)
     ) {
@@ -375,7 +375,10 @@ fun BadgeItem(badge: Badge, onClick: () -> Unit) {
                     Icon(
                         imageVector = BadgeIcons.getIcon(badge.name, badge.id),
                         contentDescription = badge.name,
-                        tint = if (badge.isUnlocked) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f),
+                        tint = if (badge.isUnlocked)
+                            MaterialTheme.colorScheme.primary
+                        else
+                            MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
                         modifier = Modifier.size(28.dp)
                     )
                     Spacer(modifier = Modifier.height(4.dp))
@@ -389,7 +392,7 @@ fun BadgeItem(badge: Badge, onClick: () -> Unit) {
                         color = if (badge.isUnlocked)
                             MaterialTheme.colorScheme.onPrimaryContainer
                         else
-                            Color(0xFF000000),
+                            MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 2.dp)
                     )
                 }
@@ -407,7 +410,7 @@ fun BadgeItem(badge: Badge, onClick: () -> Unit) {
                         color = if (badge.isUnlocked)
                             MaterialTheme.colorScheme.primary
                         else
-                            Color(0xFF666666)
+                            MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
                     )
 
                     Spacer(modifier = Modifier.height(2.dp))
@@ -429,7 +432,7 @@ fun BadgeItem(badge: Badge, onClick: () -> Unit) {
                                     if (badge.isUnlocked)
                                         MaterialTheme.colorScheme.primary
                                     else
-                                        Color(0xFF8B4513)
+                                        MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
                                 )
                         )
                     }
@@ -503,7 +506,7 @@ fun BadgeDetailDialog(
                         containerColor = if (badge.isUnlocked)
                             MaterialTheme.colorScheme.primaryContainer
                         else
-                            Color(0xFFE8DCC8) // Solid muted beige for locked badges
+                            MaterialTheme.colorScheme.surfaceVariant
                     ),
                     shape = RoundedCornerShape(20.dp)
                 ) {
@@ -514,7 +517,10 @@ fun BadgeDetailDialog(
                         Icon(
                             imageVector = BadgeIcons.getIcon(badge.name, badge.id),
                             contentDescription = null,
-                            tint = if (badge.isUnlocked) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f),
+                            tint = if (badge.isUnlocked)
+                                MaterialTheme.colorScheme.primary
+                            else
+                                MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
                             modifier = Modifier.size(64.dp)
                         )
 
