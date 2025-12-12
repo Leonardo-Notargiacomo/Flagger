@@ -106,12 +106,17 @@ class MapsViewModel(application: Application) : AndroidViewModel(application) {
             .onFailure { Log.e("MapsViewModel", "Badge check failed", it) }
     }
 
-    private fun createExplorationEvent(userId: Int, placeId: String) =
-        ExplorationEvent(
-            userId = userId,
-            placeId = placeId,
-            timestamp = System.currentTimeMillis()
+    private fun createExplorationEvent(userId: Int, placeId: String): ExplorationEvent {
+        // Find the place in our current places list to get its coordinates
+        val place = _places.value.find { it.id == placeId }
+
+        return ExplorationEvent(
+            locationName = place?.displayName ?: placeId,
+            latitude = place?.latitude,
+            longitude = place?.longitude,
+            notes = null
         )
+    }
 
     private fun handleNewBadges(badges: List<Badge>) {
         if (badges.isNotEmpty()) {
