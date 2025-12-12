@@ -2,22 +2,24 @@ import {
   Count,
   CountSchema,
   Filter,
-  FilterExcludingWhere, model, property,
+  FilterExcludingWhere,
+  model,
+  property,
   repository,
   Where,
 } from '@loopback/repository';
 import {
-  post,
-  param,
+  del,
   get,
   getModelSchemaRef,
+  HttpErrors,
+  param,
   patch,
+  post,
   put,
-  del,
   requestBody,
   response,
   SchemaObject,
-  HttpErrors,
 } from '@loopback/rest';
 import {GoUser} from '../models';
 import {GoUserRepository} from '../repositories';
@@ -31,6 +33,8 @@ import {SecurityBindings, securityId, UserProfile} from '@loopback/security';
 import {genSalt, hash} from 'bcryptjs';
 import _ from 'lodash';
 import {Credentials, MyUserService} from '../services';
+import fs from 'fs';
+import path from 'path';
 
 
 @model()
@@ -337,5 +341,31 @@ export class GoUserController {
     }
     return user.isAdmin;
   }
+
+  @response(200, {
+    description: 'Filtered Users',
+    content: {
+      'application/json': {
+        schema: {
+          type: 'array',
+          items: getModelSchemaRef(GoUser, {includeRelations: true}),
+        },
+      },
+    },
+  })
+  async filterUsersBio(): Promise<GoUser[]> {
+    const csvFilePath = path.join(__dirname, '../CsvFiles/profanity_en.csv');
+    const csvData = fs.readFileSync(csvFilePath, 'utf-8');
+    const profanityWords = csvData.split('\n').map(line => line.split(',')[0]);
+
+    const users = await this.goUserRepository.find();
+
+    return users.filter(user => {
+      if (!user.bio) return true;
+      const bioLower = user.bio.toLowerCase();
+      return profanityWords.some(word => bioLower.includes(word));
+    });
+  }
 }
+
 
