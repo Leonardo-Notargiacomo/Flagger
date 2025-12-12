@@ -104,14 +104,14 @@ fun PictureCaptureScreen(navController: NavHostController, viewModel: CameraPrev
                 .size(64.dp),
 
             colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primary
+                containerColor = MaterialTheme.colorScheme.primaryContainer
             ),
             shape = CircleShape
         ) {
             Icon(
                 imageVector = Icons.Default.CameraAlt,
                 contentDescription = "Take picture",
-                tint = MaterialTheme.colorScheme.onPrimary,
+                tint = MaterialTheme.colorScheme.onPrimaryContainer,
                 modifier = Modifier.size(32.dp)            )
             Spacer(modifier = Modifier.width(8.dp))
         }
@@ -126,14 +126,14 @@ fun PictureCaptureScreen(navController: NavHostController, viewModel: CameraPrev
                 .padding(24.dp)
                 .size(64.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.secondary
+                containerColor = MaterialTheme.colorScheme.primaryContainer
             ),
             shape = CircleShape
         ) {
             Icon(
                 imageVector = Icons.Outlined.SwitchCamera,
                 contentDescription = "Camera view change",
-                tint = MaterialTheme.colorScheme.onSecondary,
+                tint = MaterialTheme.colorScheme.onPrimaryContainer,
                 modifier = Modifier.size(32.dp)
             )
             Spacer(modifier = Modifier.width(8.dp))
@@ -149,7 +149,7 @@ fun PictureCaptureScreen(navController: NavHostController, viewModel: CameraPrev
                 .padding(24.dp)
                 .size(64.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.secondary
+                containerColor = MaterialTheme.colorScheme.primaryContainer
             ),
             shape = CircleShape
         ) {
@@ -157,7 +157,7 @@ fun PictureCaptureScreen(navController: NavHostController, viewModel: CameraPrev
                 imageVector = if (viewModel.flash)
                     Icons.Default.FlashOn else Icons.Default.FlashOff,
                 contentDescription = "Camera view change",
-                tint = MaterialTheme.colorScheme.onSecondary,
+                tint = MaterialTheme.colorScheme.onPrimaryContainer,
                 modifier = Modifier.size(32.dp)
             )
             Spacer(modifier = Modifier.width(8.dp))
