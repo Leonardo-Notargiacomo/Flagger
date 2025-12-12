@@ -36,7 +36,7 @@ class CameraPreviewViewModel : ViewModel() {
     private val _base64 = MutableStateFlow<String>("")
     val base64: StateFlow<String> = _base64
 
-    var front = true
+    var front = false  // Start with back camera (matches bindToCamera default)
     var flash = true
     val flagRepository = FlagRepository()
     private fun buildImageCaptureUseCase(): ImageCapture {
