@@ -342,6 +342,7 @@ export class GoUserController {
     return user.isAdmin;
   }
 
+  @get('/users/filter-bio')
   @response(200, {
     description: 'Filtered Users',
     content: {
