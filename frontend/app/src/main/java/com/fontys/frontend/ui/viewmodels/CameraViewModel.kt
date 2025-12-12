@@ -118,10 +118,12 @@ class CameraPreviewViewModel : ViewModel() {
                         // Save the flag
                         flagRepository.addFlag(userid, placeId, toBase64(context, output.savedUri))
 
-                        // Check for badge unlocks
+                        // Check for badge unlocks (wait for it to complete!)
                         checkForBadgeUnlocks(userid, placeId)
+
+                        // Only navigate after badge check is done
+                        onPhotoSaved(output.savedUri)
                     }
-                    onPhotoSaved(output.savedUri)
                 }
 
                 override fun onError(exception: ImageCaptureException) {
@@ -134,25 +136,29 @@ class CameraPreviewViewModel : ViewModel() {
 
     private suspend fun checkForBadgeUnlocks(userId: Int, placeId: String) {
         try {
+            Log.d("CameraViewModel", "📍 Checking badges for user=$userId, place=$placeId")
             val event = ExplorationEvent(
                 locationName = placeId,
                 latitude = null,
                 longitude = null,
                 notes = null
             )
-            badgeRepository.logExploration(userId, event)
-                .onSuccess { response ->
-                    if (response.newBadges.isNotEmpty()) {
-                        Log.d("CameraViewModel", "Badges unlocked: ${response.newBadges.map { it.name }}")
-                        // Store in shared location so MapViewModel can pick it up
-                        PendingBadgeUnlocks.addBadges(response.newBadges)
-                    }
+            val result = badgeRepository.logExploration(userId, event)
+
+            result.onSuccess { response ->
+                Log.d("CameraViewModel", "✅ API Success: ${response.newBadges.size} badges")
+                if (response.newBadges.isNotEmpty()) {
+                    Log.d("CameraViewModel", "🏆 Badges unlocked: ${response.newBadges.map { it.name }}")
+                    PendingBadgeUnlocks.addBadges(response.newBadges)
+                } else {
+                    Log.d("CameraViewModel", "No new badges this time")
                 }
-                .onFailure { e ->
-                    Log.e("CameraViewModel", "Badge check failed", e)
-                }
+            }
+            result.onFailure { e ->
+                Log.e("CameraViewModel", "❌ Badge check failed: ${e.message}", e)
+            }
         } catch (e: Exception) {
-            Log.e("CameraViewModel", "Error checking badges", e)
+            Log.e("CameraViewModel", "💥 Exception checking badges", e)
         }
     }
 }
