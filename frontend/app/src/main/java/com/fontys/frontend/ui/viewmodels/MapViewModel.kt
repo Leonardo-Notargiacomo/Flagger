@@ -82,15 +82,51 @@ class MapsViewModel(application: Application) : AndroidViewModel(application) {
             _isLoading.value = true
             _error.value = null
             try {
-                val result = flagRepository.addFlag(userId,placeId,photoId)
-                getFlags(userId)
+                saveFlag(userId, placeId, photoId)
+                checkForBadgeUnlocks(userId, placeId)
+                refreshUserFlags(userId)
             } catch (e: Exception) {
-                _error.value = e.localizedMessage ?: "The place has not been marked"
-                Log.e("MapsViewModel", "Error marking the place", e)
+                handleFlaggingError(e)
             } finally {
                 _isLoading.value = false
             }
         }
+    }
+
+    // Private helper methods - each with single responsibility (SRP)
+
+    private suspend fun saveFlag(userId: Int, placeId: String, photoId: String) {
+        flagRepository.addFlag(userId, placeId, photoId)
+    }
+
+    private suspend fun checkForBadgeUnlocks(userId: Int, placeId: String) {
+        val event = createExplorationEvent(userId, placeId)
+        badgeRepository.logExploration(userId, event)
+            .onSuccess { response -> handleNewBadges(response.newBadges) }
+            .onFailure { Log.e("MapsViewModel", "Badge check failed", it) }
+    }
+
+    private fun createExplorationEvent(userId: Int, placeId: String) =
+        ExplorationEvent(
+            userId = userId,
+            placeId = placeId,
+            timestamp = System.currentTimeMillis()
+        )
+
+    private fun handleNewBadges(badges: List<Badge>) {
+        if (badges.isNotEmpty()) {
+            _newlyUnlockedBadges.value = badges
+            _showBadgeDialog.value = true
+        }
+    }
+
+    private suspend fun refreshUserFlags(userId: Int) {
+        getFlags(userId)
+    }
+
+    private fun handleFlaggingError(e: Exception) {
+        _error.value = e.localizedMessage ?: "Failed to mark location"
+        Log.e("MapsViewModel", "Error marking place", e)
     }
     fun getFlags(userId: Int){
         viewModelScope.launch {
