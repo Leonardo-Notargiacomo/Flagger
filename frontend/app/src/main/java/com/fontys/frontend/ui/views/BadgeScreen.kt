@@ -253,7 +253,7 @@ fun CircularBadgeProgress(earnedBadges: Int, totalBadges: Int) {
 @Composable
 fun BadgeItem(badge: Badge, onClick: () -> Unit) {
     val modifier = if (!badge.isUnlocked) {
-        Modifier.shimmerEffect(shimmerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.6f))
+        Modifier.shimmerEffect(shimmerColor = Color.White.copy(alpha = 0.3f))
     } else {
         Modifier
     }

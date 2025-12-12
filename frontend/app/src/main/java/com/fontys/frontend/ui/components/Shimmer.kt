@@ -11,12 +11,12 @@ import androidx.compose.ui.graphics.Color
 
 fun Modifier.shimmerEffect(
     shimmerColor: Color = Color.White.copy(alpha = 0.5f),
-    durationMillis: Int = 1500
+    durationMillis: Int = 3000
 ): Modifier = composed {
     val transition = rememberInfiniteTransition(label = "shimmer")
     val translateAnimation by transition.animateFloat(
         initialValue = 0f,
-        targetValue = 1000f,
+        targetValue = 2000f,
         animationSpec = infiniteRepeatable(
             animation = tween(
                 durationMillis = durationMillis,
@@ -30,7 +30,9 @@ fun Modifier.shimmerEffect(
     val brush = Brush.linearGradient(
         colors = listOf(
             Color.Transparent,
+            Color.Transparent,
             shimmerColor,
+            Color.Transparent,
             Color.Transparent
         ),
         start = Offset.Zero,
