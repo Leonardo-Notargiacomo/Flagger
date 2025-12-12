@@ -1,10 +1,6 @@
 package com.fontys.frontend.ui.components
 
-import android.media.AudioManager
-import android.media.ToneGenerator
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -16,7 +12,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
@@ -29,6 +29,7 @@ import com.fontys.frontend.R
 import com.fontys.frontend.data.models.Badge
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.math.sin
 
 /**
  * Dialog to celebrate newly unlocked badges
@@ -52,16 +53,6 @@ fun BadgeUnlockDialog(
     LaunchedEffect(Unit) {
         // Haptic Feedback
         haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-        
-        // Sound Effect
-        try {
-            val toneGen = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
-            toneGen.startTone(ToneGenerator.TONE_SUP_RINGTONE, 200)
-            delay(200)
-            toneGen.release()
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
 
         // Prevent immediate dismissal
         delay(2000)
