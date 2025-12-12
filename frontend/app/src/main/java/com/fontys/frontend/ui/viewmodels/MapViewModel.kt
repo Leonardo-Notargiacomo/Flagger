@@ -17,6 +17,7 @@ import com.fontys.frontend.data.models.StreakInfo
 import com.fontys.frontend.data.repositories.BadgeRepository
 import com.fontys.frontend.domain.FlagRepository
 import com.fontys.frontend.domain.MapRepository
+import com.fontys.frontend.ui.viewmodels.PendingBadgeUnlocks
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -171,6 +172,15 @@ class MapsViewModel(application: Application) : AndroidViewModel(application) {
     fun dismissBadgeDialog() {
         _showBadgeDialog.value = false
         _newlyUnlockedBadges.value = emptyList()
+    }
+
+    // Check for pending badge unlocks (called when returning to map from camera)
+    fun checkPendingBadges() {
+        val pendingBadges = PendingBadgeUnlocks.consume()
+        if (pendingBadges.isNotEmpty()) {
+            _newlyUnlockedBadges.value = pendingBadges
+            _showBadgeDialog.value = true
+        }
     }
 }
 

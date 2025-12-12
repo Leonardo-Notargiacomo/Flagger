@@ -72,6 +72,11 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
         }
     }
 
+    // Check for pending badge unlocks when returning from camera
+    LaunchedEffect(Unit) {
+        viewModel.checkPendingBadges()
+    }
+
     userLocation?.let {
         LaunchedEffect(it) {
             cameraPositionState.animate(

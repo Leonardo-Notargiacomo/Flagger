@@ -3,6 +3,7 @@ package com.fontys.frontend.ui.viewmodels
 import android.app.Application
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
@@ -16,6 +17,9 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.fontys.frontend.data.models.Badge
+import com.fontys.frontend.data.models.ExplorationEvent
+import com.fontys.frontend.data.repositories.BadgeRepository
 import com.fontys.frontend.domain.FlagRepository
 import com.fontys.frontend.domain.toBase64
 import kotlinx.coroutines.coroutineScope
@@ -39,6 +43,7 @@ class CameraPreviewViewModel : ViewModel() {
     var front = false  // Start with back camera (matches bindToCamera default)
     var flash = true
     val flagRepository = FlagRepository()
+    val badgeRepository = BadgeRepository()
     private fun buildImageCaptureUseCase(): ImageCapture {
         return ImageCapture.Builder()
             .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
@@ -110,7 +115,11 @@ class CameraPreviewViewModel : ViewModel() {
             object : ImageCapture.OnImageSavedCallback {
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
                     viewModelScope.launch {
+                        // Save the flag
                         flagRepository.addFlag(userid, placeId, toBase64(context, output.savedUri))
+
+                        // Check for badge unlocks
+                        checkForBadgeUnlocks(userid, placeId)
                     }
                     onPhotoSaved(output.savedUri)
                 }
@@ -122,4 +131,44 @@ class CameraPreviewViewModel : ViewModel() {
             }
         )
    }
+
+    private suspend fun checkForBadgeUnlocks(userId: Int, placeId: String) {
+        try {
+            val event = ExplorationEvent(
+                locationName = placeId,
+                latitude = null,
+                longitude = null,
+                notes = null
+            )
+            badgeRepository.logExploration(userId, event)
+                .onSuccess { response ->
+                    if (response.newBadges.isNotEmpty()) {
+                        Log.d("CameraViewModel", "Badges unlocked: ${response.newBadges.map { it.name }}")
+                        // Store in shared location so MapViewModel can pick it up
+                        PendingBadgeUnlocks.addBadges(response.newBadges)
+                    }
+                }
+                .onFailure { e ->
+                    Log.e("CameraViewModel", "Badge check failed", e)
+                }
+        } catch (e: Exception) {
+            Log.e("CameraViewModel", "Error checking badges", e)
+        }
+    }
+}
+
+// Shared object to pass badge unlocks between screens
+object PendingBadgeUnlocks {
+    private val _badges = MutableStateFlow<List<Badge>>(emptyList())
+    val badges: StateFlow<List<Badge>> = _badges
+
+    fun addBadges(newBadges: List<Badge>) {
+        _badges.value = newBadges
+    }
+
+    fun consume(): List<Badge> {
+        val current = _badges.value
+        _badges.value = emptyList()
+        return current
+    }
 }
