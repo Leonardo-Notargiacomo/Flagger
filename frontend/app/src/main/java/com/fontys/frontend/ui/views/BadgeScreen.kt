@@ -55,14 +55,7 @@ fun BadgeScreen(
     ) {
         when (val state = uiState) {
             is BadgeUiState.Loading -> {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator(
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                }
+                com.fontys.frontend.ui.components.BadgeGridSkeleton()
             }
 
             is BadgeUiState.Success -> {

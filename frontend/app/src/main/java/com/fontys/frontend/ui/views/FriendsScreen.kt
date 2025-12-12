@@ -179,12 +179,7 @@ fun FriendsListTab(
     onViewProfile: (Int) -> Unit
 ) {
     if (isLoading) {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            CircularProgressIndicator()
-        }
+        com.fontys.frontend.ui.components.FriendListSkeleton()
     } else if (friends.isEmpty()) {
         Box(
             modifier = Modifier
@@ -329,12 +324,7 @@ fun FriendRequestsTab(
     onCancel: (Int) -> Unit
 ) {
     if (isLoading && receivedRequests.isEmpty() && sentRequests.isEmpty()) {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            CircularProgressIndicator()
-        }
+        com.fontys.frontend.ui.components.FriendListSkeleton()
     } else {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
@@ -583,12 +573,7 @@ fun SearchTab(
 
         // Search Results
         if (isSearching) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
+            com.fontys.frontend.ui.components.FriendListSkeleton()
         } else if (searchQuery.isEmpty()) {
             Box(
                 modifier = Modifier.fillMaxSize(),
