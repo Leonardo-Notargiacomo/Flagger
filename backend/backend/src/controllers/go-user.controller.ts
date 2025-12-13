@@ -355,18 +355,30 @@ export class GoUserController {
     },
   })
   async filterUsersBio(): Promise<GoUser[]> {
-    const csvFilePath = path.join(__dirname, '../CsvFiles/profanity_en.csv');
-    const csvData = fs.readFileSync(csvFilePath, 'utf-8');
-    const profanityWords = csvData.split('\n').map(line => line.split(',')[0]);
+    try {
+      const csvFilePath = path.join(__dirname, '../CsvFiles/profanity_en.csv');
+      if (!fs.existsSync(csvFilePath)) {
+        throw new HttpErrors.InternalServerError('Profanity CSV file not found.');
+      }
 
-    const users = await this.goUserRepository.find();
+      const csvData = fs.readFileSync(csvFilePath, 'utf-8');
+      const profanityWords = csvData
+        .split('\n')
+        .map(line => line.split(',')[0].trim())
+        .filter(word => word); // Remove empty lines
 
-    return users.filter(user => {
-      if (!user.bio) return true;
-      const bioLower = user.bio.toLowerCase();
-      return profanityWords.some(word => bioLower.includes(word));
-    });
+      const users = await this.goUserRepository.find();
+
+      // Include users whose bio contains profanity
+      return users.filter(user => {
+        if (!user.bio) return false; // Exclude users with no bio
+        const bioLower = user.bio.toLowerCase();
+        return profanityWords.some(word => bioLower.includes(word));
+      });
+    } catch (error) {
+      console.error('Error in filterUsersBio:', error);
+      throw new HttpErrors.InternalServerError('An error occurred while filtering users.');
+    }
   }
 }
-
 
