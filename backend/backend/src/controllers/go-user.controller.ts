@@ -358,23 +358,37 @@ export class GoUserController {
     try {
       const csvFilePath = path.join(__dirname, '../CsvFiles/profanity_en.csv');
       if (!fs.existsSync(csvFilePath)) {
+        console.error('Profanity CSV file not found at:', csvFilePath);
         throw new HttpErrors.InternalServerError('Profanity CSV file not found.');
       }
 
       const csvData = fs.readFileSync(csvFilePath, 'utf-8');
+      if (!csvData.trim()) {
+        console.error('Profanity CSV file is empty.');
+        throw new HttpErrors.InternalServerError('Profanity CSV file is empty.');
+      }
+
       const profanityWords = csvData
         .split('\n')
         .map(line => line.split(',')[0].trim())
         .filter(word => word); // Remove empty lines
 
+      if (profanityWords.length === 0) {
+        console.error('No valid profanity words found in the CSV file.');
+        throw new HttpErrors.InternalServerError('No valid profanity words found in the CSV file.');
+      }
+
       const users = await this.goUserRepository.find();
 
       // Include users whose bio contains profanity
-      return users.filter(user => {
+      const filteredUsers = users.filter(user => {
         if (!user.bio) return false; // Exclude users with no bio
         const bioLower = user.bio.toLowerCase();
         return profanityWords.some(word => bioLower.includes(word));
       });
+
+      console.log(`Filtered ${filteredUsers.length} users with profanity in their bio.`);
+      return filteredUsers;
     } catch (error) {
       console.error('Error in filterUsersBio:', error);
       throw new HttpErrors.InternalServerError('An error occurred while filtering users.');
