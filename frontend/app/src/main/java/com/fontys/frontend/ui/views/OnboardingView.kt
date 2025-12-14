@@ -174,7 +174,7 @@ fun OnboardingScreen2() {
                 modifier = Modifier
                     .size(200.dp)
                     .background(
-                        MaterialTheme.colorScheme.primary.copy(alpha = 0.05f),
+                        MaterialTheme.colorScheme.primary.copy(alpha = 0.08f),
                         CircleShape
                     )
             )
@@ -183,7 +183,7 @@ fun OnboardingScreen2() {
                 modifier = Modifier
                     .size(140.dp)
                     .background(
-                        MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                        MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
                         CircleShape
                     )
             )
