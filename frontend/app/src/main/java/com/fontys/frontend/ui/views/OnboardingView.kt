@@ -18,16 +18,28 @@ import androidx.compose.material.icons.outlined.SportsEsports
 import androidx.compose.material.icons.outlined.Park
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.animation.core.*
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.Crossfade
 import androidx.navigation.NavHostController
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -79,7 +91,7 @@ fun OnboardingView(
                 }
             }
 
-            // Page indicators (more visible)
+            // Page indicators with smooth transitions
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -89,17 +101,31 @@ fun OnboardingView(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 repeat(4) { index ->
+                    val isSelected = pagerState.currentPage == index
+                    val size by animateDpAsState(
+                        targetValue = if (isSelected) 10.dp else 8.dp,
+                        animationSpec = spring(
+                            dampingRatio = Spring.DampingRatioMediumBouncy,
+                            stiffness = Spring.StiffnessMedium
+                        ),
+                        label = "dot_size_$index"
+                    )
+
+                    val color by animateColorAsState(
+                        targetValue = if (isSelected)
+                            MaterialTheme.colorScheme.primary
+                        else
+                            MaterialTheme.colorScheme.onBackground.copy(alpha = 0.25f),
+                        animationSpec = tween(300),
+                        label = "dot_color_$index"
+                    )
+
                     Box(
                         modifier = Modifier
                             .padding(horizontal = 6.dp)
-                            .size(if (pagerState.currentPage == index) 10.dp else 8.dp)
+                            .size(size)
                             .clip(CircleShape)
-                            .background(
-                                if (pagerState.currentPage == index)
-                                    MaterialTheme.colorScheme.primary
-                                else
-                                    MaterialTheme.colorScheme.onBackground.copy(alpha = 0.25f)
-                            )
+                            .background(color)
                     )
                 }
             }
@@ -107,9 +133,42 @@ fun OnboardingView(
     }
 }
 
-// Screen 1: The Problem - Gaming vs Reality (Material Icons)
+// Screen 1: The Problem - Gaming vs Reality (Material Icons with animations)
 @Composable
 fun OnboardingScreen1() {
+    // Animation for game controller pulse
+    val infiniteTransition = rememberInfiniteTransition(label = "controller_pulse")
+    val controllerScale by infiniteTransition.animateFloat(
+        initialValue = 1f,
+        targetValue = 1.1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1200, easing = EaseInOut),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "controller_scale"
+    )
+
+    val glowAlpha by infiniteTransition.animateFloat(
+        initialValue = 0.15f,
+        targetValue = 0.3f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1500, easing = EaseInOut),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "glow_alpha"
+    )
+
+    // Animation for tree fade
+    val treeAlpha by infiniteTransition.animateFloat(
+        initialValue = 0.2f,
+        targetValue = 0.3f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(2000, easing = EaseInOut),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "tree_alpha"
+    )
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -133,12 +192,12 @@ fun OnboardingScreen1() {
                     .background(Color(0xFF1A0F0D)),
                 contentAlignment = Alignment.Center
             ) {
-                // Glow layers
+                // Glow layers with animation
                 Box(
                     modifier = Modifier
                         .size(140.dp)
                         .background(
-                            MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
+                            MaterialTheme.colorScheme.primary.copy(alpha = glowAlpha),
                             CircleShape
                         )
                 )
@@ -146,16 +205,18 @@ fun OnboardingScreen1() {
                     modifier = Modifier
                         .size(100.dp)
                         .background(
-                            MaterialTheme.colorScheme.primary.copy(alpha = 0.25f),
+                            MaterialTheme.colorScheme.primary.copy(alpha = glowAlpha + 0.1f),
                             CircleShape
                         )
                 )
 
-                // Game controller icon
+                // Game controller icon with pulse
                 Icon(
                     imageVector = Icons.Outlined.SportsEsports,
                     contentDescription = "Gaming",
-                    modifier = Modifier.size(80.dp),
+                    modifier = Modifier
+                        .size(80.dp)
+                        .scale(controllerScale),
                     tint = MaterialTheme.colorScheme.primary
                 )
             }
@@ -168,12 +229,12 @@ fun OnboardingScreen1() {
                     .background(Color(0xFFD4C5B0).copy(alpha = 0.35f)),
                 contentAlignment = Alignment.Center
             ) {
-                // Tree/nature icon
+                // Tree/nature icon with subtle fade
                 Icon(
                     imageVector = Icons.Outlined.Park,
                     contentDescription = "Reality",
                     modifier = Modifier.size(80.dp),
-                    tint = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.25f)
+                    tint = MaterialTheme.colorScheme.onBackground.copy(alpha = treeAlpha)
                 )
             }
         }
@@ -200,9 +261,43 @@ fun OnboardingScreen1() {
     }
 }
 
-// Screen 2: The Solution (flag with orbiting elements)
+// Screen 2: The Solution (flag with orbiting elements + animations)
 @Composable
 fun OnboardingScreen2() {
+    // Animation for flag gentle wave/rotation
+    val infiniteTransition = rememberInfiniteTransition(label = "flag_wave")
+    val flagRotation by infiniteTransition.animateFloat(
+        initialValue = -3f,
+        targetValue = 3f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(2000, easing = EaseInOut),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "flag_rotation"
+    )
+
+    // Pulsing glow
+    val glowScale by infiniteTransition.animateFloat(
+        initialValue = 0.95f,
+        targetValue = 1.05f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1800, easing = EaseInOut),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "glow_scale"
+    )
+
+    // Orbiting icons rotation
+    val orbitRotation by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 360f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(20000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "orbit_rotation"
+    )
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -215,10 +310,11 @@ fun OnboardingScreen2() {
             modifier = Modifier.size(240.dp),
             contentAlignment = Alignment.Center
         ) {
-            // Background circle with subtle glow effect
+            // Background circle with pulsing glow effect
             Box(
                 modifier = Modifier
                     .size(200.dp)
+                    .scale(glowScale)
                     .background(
                         MaterialTheme.colorScheme.primary.copy(alpha = 0.08f),
                         CircleShape
@@ -228,56 +324,69 @@ fun OnboardingScreen2() {
             Box(
                 modifier = Modifier
                     .size(140.dp)
+                    .scale(glowScale)
                     .background(
                         MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
                         CircleShape
                     )
             )
 
-            // Center flag icon
+            // Orbiting icons container with rotation
+            Box(
+                modifier = Modifier
+                    .size(240.dp)
+                    .rotate(orbitRotation)
+            ) {
+                // Top
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.TopCenter)
+                        .offset(y = 20.dp)
+                        .rotate(-orbitRotation) // Counter-rotate to keep upright
+                ) {
+                    SmallIconCircle(Icons.Outlined.EmojiEvents)
+                }
+
+                // Bottom
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .offset(y = (-20).dp)
+                        .rotate(-orbitRotation)
+                ) {
+                    SmallIconCircle(Icons.Outlined.Whatshot)
+                }
+
+                // Left
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.CenterStart)
+                        .offset(x = 20.dp)
+                        .rotate(-orbitRotation)
+                ) {
+                    SmallIconCircle(Icons.Outlined.LocationOn)
+                }
+
+                // Right
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.CenterEnd)
+                        .offset(x = (-20).dp)
+                        .rotate(-orbitRotation)
+                ) {
+                    SmallIconCircle(Icons.Outlined.Groups)
+                }
+            }
+
+            // Center flag icon with gentle wave
             Icon(
                 imageVector = Icons.Outlined.Flag,
                 contentDescription = "Flag",
-                modifier = Modifier.size(80.dp),
+                modifier = Modifier
+                    .size(80.dp)
+                    .rotate(flagRotation),
                 tint = MaterialTheme.colorScheme.primary
             )
-
-            // Orbiting icons - positioned around the flag
-            // Top
-            Box(
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .offset(y = 20.dp)
-            ) {
-                SmallIconCircle(Icons.Outlined.EmojiEvents)
-            }
-
-            // Bottom
-            Box(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .offset(y = (-20).dp)
-            ) {
-                SmallIconCircle(Icons.Outlined.Whatshot)
-            }
-
-            // Left
-            Box(
-                modifier = Modifier
-                    .align(Alignment.CenterStart)
-                    .offset(x = 20.dp)
-            ) {
-                SmallIconCircle(Icons.Outlined.LocationOn)
-            }
-
-            // Right
-            Box(
-                modifier = Modifier
-                    .align(Alignment.CenterEnd)
-                    .offset(x = (-20).dp)
-            ) {
-                SmallIconCircle(Icons.Outlined.Groups)
-            }
         }
 
         Spacer(modifier = Modifier.height(48.dp))
@@ -303,9 +412,50 @@ fun OnboardingScreen2() {
     }
 }
 
-// Screen 3: How It Works (three-step flow)
+// Screen 3: How It Works (three-step flow with sequential animations)
 @Composable
 fun OnboardingScreen3() {
+    // Sequential drop-in animations
+    var icon1Visible by remember { mutableStateOf(false) }
+    var icon2Visible by remember { mutableStateOf(false) }
+    var icon3Visible by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        delay(200)
+        icon1Visible = true
+        delay(300)
+        icon2Visible = true
+        delay(300)
+        icon3Visible = true
+    }
+
+    val icon1Scale by animateFloatAsState(
+        targetValue = if (icon1Visible) 1f else 0f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessLow
+        ),
+        label = "icon1_scale"
+    )
+
+    val icon2Scale by animateFloatAsState(
+        targetValue = if (icon2Visible) 1f else 0f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessLow
+        ),
+        label = "icon2_scale"
+    )
+
+    val icon3Scale by animateFloatAsState(
+        targetValue = if (icon3Visible) 1f else 0f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessLow
+        ),
+        label = "icon3_scale"
+    )
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -313,17 +463,23 @@ fun OnboardingScreen3() {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        // Three-step icons with arrows
+        // Three-step icons with arrows and bounce animations
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconCircle(icon = Icons.Outlined.LocationOn)
+            Box(modifier = Modifier.scale(icon1Scale)) {
+                IconCircle(icon = Icons.Outlined.LocationOn)
+            }
             ArrowRight()
-            IconCircle(icon = Icons.Outlined.CameraAlt)
+            Box(modifier = Modifier.scale(icon2Scale)) {
+                IconCircle(icon = Icons.Outlined.CameraAlt)
+            }
             ArrowRight()
-            IconCircle(icon = Icons.Outlined.EmojiEvents)
+            Box(modifier = Modifier.scale(icon3Scale)) {
+                IconCircle(icon = Icons.Outlined.EmojiEvents)
+            }
         }
 
         Spacer(modifier = Modifier.height(48.dp))
@@ -435,9 +591,32 @@ fun StepItem(number: String, text: String) {
     }
 }
 
-// Screen 4: CTA
+// Screen 4: CTA (with animations)
 @Composable
 fun OnboardingScreen4(navController: NavHostController) {
+    // Flag subtle rotation
+    val infiniteTransition = rememberInfiniteTransition(label = "flag_rotation")
+    val flagRotation by infiniteTransition.animateFloat(
+        initialValue = -5f,
+        targetValue = 5f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(3000, easing = EaseInOut),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "flag_rotation"
+    )
+
+    // Button scale pulse
+    val buttonScale by infiniteTransition.animateFloat(
+        initialValue = 1f,
+        targetValue = 1.05f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1500, easing = EaseInOut),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "button_scale"
+    )
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -445,11 +624,13 @@ fun OnboardingScreen4(navController: NavHostController) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        // Large flag icon
+        // Large flag icon with rotation
         Icon(
             imageVector = Icons.Outlined.Flag,
             contentDescription = "Flag",
-            modifier = Modifier.size(120.dp),
+            modifier = Modifier
+                .size(120.dp)
+                .rotate(flagRotation),
             tint = MaterialTheme.colorScheme.primary
         )
 
@@ -466,7 +647,7 @@ fun OnboardingScreen4(navController: NavHostController) {
 
         Spacer(modifier = Modifier.height(48.dp))
 
-        // Start Exploring button
+        // Start Exploring button with pulse animation
         Button(
             onClick = {
                 navController.navigate("registration") {
@@ -475,7 +656,8 @@ fun OnboardingScreen4(navController: NavHostController) {
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .height(56.dp),
+                .height(56.dp)
+                .scale(buttonScale),
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = Color.White
