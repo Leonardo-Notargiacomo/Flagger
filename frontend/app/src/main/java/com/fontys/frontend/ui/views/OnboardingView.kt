@@ -252,6 +252,36 @@ fun OnboardingScreen3() {
 }
 
 @Composable
+fun IconCircle(icon: ImageVector) {
+    Box(
+        modifier = Modifier
+            .size(64.dp)
+            .background(
+                MaterialTheme.colorScheme.primaryContainer,
+                CircleShape
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            modifier = Modifier.size(32.dp),
+            tint = MaterialTheme.colorScheme.primary
+        )
+    }
+}
+
+@Composable
+fun ArrowRight() {
+    Text(
+        text = "→",
+        fontSize = 24.sp,
+        color = MaterialTheme.colorScheme.primary,
+        fontWeight = FontWeight.Bold
+    )
+}
+
+@Composable
 fun StepItem(number: String, text: String) {
     Row(
         verticalAlignment = Alignment.CenterVertically
