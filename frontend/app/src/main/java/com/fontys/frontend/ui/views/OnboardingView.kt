@@ -82,7 +82,8 @@ fun OnboardingView(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 40.dp, top = 16.dp),
+                    .padding(bottom = 80.dp, top = 16.dp)
+                    .navigationBarsPadding(),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
