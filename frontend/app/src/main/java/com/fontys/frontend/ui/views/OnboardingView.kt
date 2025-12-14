@@ -417,7 +417,9 @@ fun OnboardingScreen2() {
 fun OnboardingScreen3(isVisible: Boolean = true) {
     // Sequential drop-in animations
     var icon1Visible by remember { mutableStateOf(false) }
+    var arrow1Visible by remember { mutableStateOf(false) }
     var icon2Visible by remember { mutableStateOf(false) }
+    var arrow2Visible by remember { mutableStateOf(false) }
     var icon3Visible by remember { mutableStateOf(false) }
 
     // Reset and trigger animation when screen becomes visible
@@ -425,15 +427,21 @@ fun OnboardingScreen3(isVisible: Boolean = true) {
         if (isVisible) {
             // Reset first
             icon1Visible = false
+            arrow1Visible = false
             icon2Visible = false
+            arrow2Visible = false
             icon3Visible = false
 
-            // Then animate in sequence
+            // Then animate in sequence: icon -> arrow -> icon -> arrow -> icon
             delay(200)
             icon1Visible = true
             delay(300)
+            arrow1Visible = true
+            delay(200)
             icon2Visible = true
             delay(300)
+            arrow2Visible = true
+            delay(200)
             icon3Visible = true
         }
     }
@@ -447,6 +455,12 @@ fun OnboardingScreen3(isVisible: Boolean = true) {
         label = "icon1_scale"
     )
 
+    val arrow1Alpha by animateFloatAsState(
+        targetValue = if (arrow1Visible) 1f else 0f,
+        animationSpec = tween(300),
+        label = "arrow1_alpha"
+    )
+
     val icon2Scale by animateFloatAsState(
         targetValue = if (icon2Visible) 1f else 0f,
         animationSpec = spring(
@@ -454,6 +468,12 @@ fun OnboardingScreen3(isVisible: Boolean = true) {
             stiffness = Spring.StiffnessLow
         ),
         label = "icon2_scale"
+    )
+
+    val arrow2Alpha by animateFloatAsState(
+        targetValue = if (arrow2Visible) 1f else 0f,
+        animationSpec = tween(300),
+        label = "arrow2_alpha"
     )
 
     val icon3Scale by animateFloatAsState(
@@ -472,7 +492,7 @@ fun OnboardingScreen3(isVisible: Boolean = true) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        // Three-step icons with arrows and subtle bounce
+        // Three-step icons with arrows - animated in sequence
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly,
@@ -481,11 +501,15 @@ fun OnboardingScreen3(isVisible: Boolean = true) {
             Box(modifier = Modifier.scale(icon1Scale)) {
                 IconCircle(icon = Icons.Outlined.LocationOn)
             }
-            ArrowRight()
+            Box(modifier = Modifier.graphicsLayer { alpha = arrow1Alpha }) {
+                ArrowRight()
+            }
             Box(modifier = Modifier.scale(icon2Scale)) {
                 IconCircle(icon = Icons.Outlined.CameraAlt)
             }
-            ArrowRight()
+            Box(modifier = Modifier.graphicsLayer { alpha = arrow2Alpha }) {
+                ArrowRight()
+            }
             Box(modifier = Modifier.scale(icon3Scale)) {
                 IconCircle(icon = Icons.Outlined.EmojiEvents)
             }
