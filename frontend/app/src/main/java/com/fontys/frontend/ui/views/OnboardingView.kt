@@ -300,20 +300,12 @@ fun OnboardingScreen4(navController: NavHostController) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        // Placeholder for large flag icon
-        Box(
-            modifier = Modifier
-                .size(120.dp)
-                .background(
-                    MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                    RoundedCornerShape(16.dp)
-                ),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "🚩",
-                fontSize = 64.sp
-            )
+        // Large flag icon
+        Icon(
+            imageVector = Icons.Outlined.Flag,
+            contentDescription = "Flag",
+            modifier = Modifier.size(120.dp),
+            tint = MaterialTheme.colorScheme.primary
         }
 
         Spacer(modifier = Modifier.height(48.dp))
