@@ -9,6 +9,7 @@ import androidx.compose.material.icons.filled.Flag
 import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.BitmapPainter
@@ -51,16 +52,29 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
     var selectedPlace by remember { mutableStateOf<PlaceService?>(null) }
     val context = LocalContext.current
     val selectedPlaces = remember { mutableStateListOf<PlaceService>() }
-    LaunchedEffect(Unit) { viewModel.loadUserLocation() }
     val userFlags by viewModel.userFlags.collectAsState()
     val currentUserId = UserRepository.userId
 
-    // Check if location permission is granted
-    val hasLocationPermission = remember {
-        ContextCompat.checkSelfPermission(
-            context,
-            Manifest.permission.ACCESS_FINE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED
+    // Check if location permission is granted - continuously reactive
+    var hasLocationPermission by remember { mutableStateOf(false) }
+
+    // Poll for permission changes every second while on this screen
+    LaunchedEffect(Unit) {
+        while (true) {
+            val newPermissionState = ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+
+            if (newPermissionState != hasLocationPermission) {
+                hasLocationPermission = newPermissionState
+                if (newPermissionState) {
+                    // Permission just granted, reload location
+                    viewModel.loadUserLocation()
+                }
+            }
+            kotlinx.coroutines.delay(1000)
+        }
     }
 
     // Badge unlock dialog state
@@ -90,7 +104,7 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
 //        GoogleMapOptions().mapId("349a2b06249ce5213e12a47b")
 //    }
 
-    val mapProperties by remember(isDarkTheme) {
+    val mapProperties by remember(isDarkTheme, hasLocationPermission) {
         mutableStateOf(
             MapProperties(
                 isMyLocationEnabled = hasLocationPermission,
