@@ -405,7 +405,7 @@ fun OnboardingScreen4(navController: NavHostController) {
             contentDescription = "Flag",
             modifier = Modifier.size(120.dp),
             tint = MaterialTheme.colorScheme.primary
-        }
+        )
 
         Spacer(modifier = Modifier.height(48.dp))
 

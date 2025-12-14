@@ -30,8 +30,10 @@ import com.fontys.frontend.ui.components.PermissionDialogs
 import com.fontys.frontend.ui.theme.AppTheme
 import com.fontys.frontend.ui.views.LoginView
 import com.fontys.frontend.ui.views.NavBar
+import com.fontys.frontend.ui.views.OnboardingView
 import com.fontys.frontend.ui.views.RegistrationView as RegistrationViewComposable
 import com.fontys.frontend.utils.FCMTokenManager
+import com.fontys.frontend.utils.OnboardingPreferences
 import com.fontys.frontend.utils.PermissionHandler
 
 class MainActivity : ComponentActivity() {
@@ -106,6 +108,14 @@ class MainActivity : ComponentActivity() {
 
             val navController = rememberNavController()
 
+            // Determine start destination
+            val hasSeenOnboarding = OnboardingPreferences.hasSeenOnboarding(this)
+            val startDestination = when {
+                !hasSeenOnboarding -> "onboarding"
+                UserRepository.token.isEmpty() -> "login"
+                else -> "main"
+            }
+
             AppTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -113,8 +123,13 @@ class MainActivity : ComponentActivity() {
                 ) {
                     NavHost(
                         navController = navController,
-                        startDestination = if(UserRepository.token.isEmpty()) "login" else "main"
+                        startDestination = startDestination
                     ) {
+                        composable("onboarding") {
+                            OnboardingView(navController)
+                            // Mark onboarding as seen when this composable is launched
+                            OnboardingPreferences.setOnboardingSeen(this@MainActivity)
+                        }
                         composable(
                             route = "login?registrationSuccess={registrationSuccess}",
                             arguments = listOf(
