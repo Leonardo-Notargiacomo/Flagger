@@ -163,22 +163,74 @@ fun OnboardingScreen2() {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        // Placeholder for flag illustration with orbiting elements
+        // Flag with orbiting icons
         Box(
-            modifier = Modifier
-                .size(240.dp)
-                .background(
-                    MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                    RoundedCornerShape(16.dp)
-                ),
+            modifier = Modifier.size(240.dp),
             contentAlignment = Alignment.Center
         ) {
-            Text(
-                text = "[Flag Icon\n+ Orbiting Elements]",
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.4f),
-                fontSize = 16.sp,
-                textAlign = TextAlign.Center
+            // Background circle with subtle glow effect
+            Box(
+                modifier = Modifier
+                    .size(200.dp)
+                    .background(
+                        MaterialTheme.colorScheme.primary.copy(alpha = 0.05f),
+                        CircleShape
+                    )
             )
+
+            Box(
+                modifier = Modifier
+                    .size(140.dp)
+                    .background(
+                        MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                        CircleShape
+                    )
+            )
+
+            // Center flag icon
+            Icon(
+                imageVector = Icons.Outlined.Flag,
+                contentDescription = "Flag",
+                modifier = Modifier.size(80.dp),
+                tint = MaterialTheme.colorScheme.primary
+            )
+
+            // Orbiting icons - positioned around the flag
+            // Top
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .offset(y = 20.dp)
+            ) {
+                SmallIconCircle(Icons.Outlined.EmojiEvents)
+            }
+
+            // Bottom
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .offset(y = (-20).dp)
+            ) {
+                SmallIconCircle(Icons.Outlined.Whatshot)
+            }
+
+            // Left
+            Box(
+                modifier = Modifier
+                    .align(Alignment.CenterStart)
+                    .offset(x = 20.dp)
+            ) {
+                SmallIconCircle(Icons.Outlined.LocationOn)
+            }
+
+            // Right
+            Box(
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+                    .offset(x = (-20).dp)
+            ) {
+                SmallIconCircle(Icons.Outlined.Groups)
+            }
         }
 
         Spacer(modifier = Modifier.height(48.dp))
