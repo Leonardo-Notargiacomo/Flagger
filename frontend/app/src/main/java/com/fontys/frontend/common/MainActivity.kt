@@ -91,12 +91,13 @@ class MainActivity : ComponentActivity() {
         windowInsetsController.isAppearanceLightNavigationBars = !isDarkMode
         windowInsetsController.isAppearanceLightStatusBars = !isDarkMode
 
-        // Check permissions
-        permissionHandler.checkPermissions()
-        checkCameraPermission()
-
-        // Subscribe to FCM topic for daily notifications
-        subscribeToNotifications()
+        // Only check permissions and subscribe to notifications if onboarding is complete
+        val hasSeenOnboarding = OnboardingPreferences.hasSeenOnboarding(this)
+        if (hasSeenOnboarding) {
+            permissionHandler.checkPermissions()
+            checkCameraPermission()
+            subscribeToNotifications()
+        }
 
         setContent {
             // Create ImageLoader with GIF support
@@ -139,10 +140,26 @@ class MainActivity : ComponentActivity() {
                                 }
                             )
                         ) { backStackEntry ->
+                            // Request permissions when user reaches login after onboarding
+                            androidx.compose.runtime.LaunchedEffect(Unit) {
+                                if (OnboardingPreferences.hasSeenOnboarding(this@MainActivity)) {
+                                    permissionHandler.checkPermissions()
+                                    checkCameraPermission()
+                                    subscribeToNotifications()
+                                }
+                            }
                             val registrationSuccess = backStackEntry.arguments?.getBoolean("registrationSuccess") ?: false
                             LoginView(navController, registrationSuccess = registrationSuccess)
                         }
                         composable("registration") {
+                            // Request permissions when user reaches registration after onboarding
+                            androidx.compose.runtime.LaunchedEffect(Unit) {
+                                if (OnboardingPreferences.hasSeenOnboarding(this@MainActivity)) {
+                                    permissionHandler.checkPermissions()
+                                    checkCameraPermission()
+                                    subscribeToNotifications()
+                                }
+                            }
                             RegistrationViewComposable(navController)
                         }
                         composable("main") {
