@@ -10,7 +10,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Explore
+import androidx.compose.material.icons.outlined.Flag
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -61,7 +61,7 @@ fun RegistrationView(
     ) {
         Spacer(modifier = Modifier.height(32.dp))
 
-        // Compass Icon
+        // Flag Icon
         Box(
             modifier = Modifier
                 .size(80.dp)
@@ -70,8 +70,8 @@ fun RegistrationView(
             contentAlignment = Alignment.Center
         ) {
             Icon(
-                imageVector = Icons.Outlined.Explore,
-                contentDescription = "Compass",
+                imageVector = Icons.Outlined.Flag,
+                contentDescription = "Flag",
                 modifier = Modifier.size(48.dp),
                 tint = MaterialTheme.colorScheme.primary
             )
