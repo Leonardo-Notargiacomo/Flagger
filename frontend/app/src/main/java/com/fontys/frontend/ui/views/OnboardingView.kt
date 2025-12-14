@@ -14,6 +14,8 @@ import androidx.compose.material.icons.outlined.CameraAlt
 import androidx.compose.material.icons.outlined.EmojiEvents
 import androidx.compose.material.icons.outlined.Groups
 import androidx.compose.material.icons.outlined.Whatshot
+import androidx.compose.material.icons.outlined.SportsEsports
+import androidx.compose.material.icons.outlined.Park
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -25,7 +27,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.unit.IntOffset
 import androidx.navigation.NavHostController
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -106,7 +107,7 @@ fun OnboardingView(
     }
 }
 
-// Screen 1: The Problem (placeholder for now - we'll add custom illustration later)
+// Screen 1: The Problem - Gaming vs Reality (Material Icons)
 @Composable
 fun OnboardingScreen1() {
     Column(
@@ -116,21 +117,65 @@ fun OnboardingScreen1() {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        // Placeholder for custom illustration
-        Box(
+        // Split-screen with icons
+        Row(
             modifier = Modifier
-                .size(200.dp)
-                .background(
-                    MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                    RoundedCornerShape(16.dp)
-                ),
-            contentAlignment = Alignment.Center
+                .fillMaxWidth()
+                .height(200.dp)
+                .clip(RoundedCornerShape(16.dp)),
+            horizontalArrangement = Arrangement.spacedBy(0.dp)
         ) {
-            Text(
-                text = "[Illustration]",
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.4f),
-                fontSize = 16.sp
-            )
+            // LEFT SIDE - GAMING (vibrant)
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
+                    .background(Color(0xFF1A0F0D)),
+                contentAlignment = Alignment.Center
+            ) {
+                // Glow layers
+                Box(
+                    modifier = Modifier
+                        .size(140.dp)
+                        .background(
+                            MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
+                            CircleShape
+                        )
+                )
+                Box(
+                    modifier = Modifier
+                        .size(100.dp)
+                        .background(
+                            MaterialTheme.colorScheme.primary.copy(alpha = 0.25f),
+                            CircleShape
+                        )
+                )
+
+                // Game controller icon
+                Icon(
+                    imageVector = Icons.Outlined.SportsEsports,
+                    contentDescription = "Gaming",
+                    modifier = Modifier.size(80.dp),
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
+
+            // RIGHT SIDE - REALITY (muted)
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
+                    .background(Color(0xFFD4C5B0).copy(alpha = 0.35f)),
+                contentAlignment = Alignment.Center
+            ) {
+                // Tree/nature icon
+                Icon(
+                    imageVector = Icons.Outlined.Park,
+                    contentDescription = "Reality",
+                    modifier = Modifier.size(80.dp),
+                    tint = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.25f)
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(48.dp))
