@@ -212,23 +212,17 @@ fun OnboardingScreen3() {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        // Placeholder for three-step icons
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(120.dp)
-                .background(
-                    MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                    RoundedCornerShape(16.dp)
-                ),
-            contentAlignment = Alignment.Center
+        // Three-step icons with arrows
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = "[📍 → 📷 → 🏆]",
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.4f),
-                fontSize = 32.sp,
-                textAlign = TextAlign.Center
-            )
+            IconCircle(icon = Icons.Outlined.LocationOn)
+            ArrowRight()
+            IconCircle(icon = Icons.Outlined.CameraAlt)
+            ArrowRight()
+            IconCircle(icon = Icons.Outlined.EmojiEvents)
         }
 
         Spacer(modifier = Modifier.height(48.dp))
