@@ -78,25 +78,25 @@ fun OnboardingView(
                 }
             }
 
-            // Page indicators
+            // Page indicators (more visible)
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 32.dp),
+                    .padding(bottom = 40.dp, top = 16.dp),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 repeat(4) { index ->
                     Box(
                         modifier = Modifier
-                            .padding(horizontal = 4.dp)
-                            .size(8.dp)
+                            .padding(horizontal = 6.dp)
+                            .size(if (pagerState.currentPage == index) 10.dp else 8.dp)
                             .clip(CircleShape)
                             .background(
                                 if (pagerState.currentPage == index)
                                     MaterialTheme.colorScheme.primary
                                 else
-                                    MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)
+                                    MaterialTheme.colorScheme.onBackground.copy(alpha = 0.25f)
                             )
                     )
                 }
