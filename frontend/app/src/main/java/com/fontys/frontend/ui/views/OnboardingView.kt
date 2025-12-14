@@ -327,6 +327,26 @@ fun IconCircle(icon: ImageVector) {
 }
 
 @Composable
+fun SmallIconCircle(icon: ImageVector) {
+    Box(
+        modifier = Modifier
+            .size(48.dp)
+            .background(
+                MaterialTheme.colorScheme.primaryContainer,
+                CircleShape
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            modifier = Modifier.size(24.dp),
+            tint = MaterialTheme.colorScheme.primary
+        )
+    }
+}
+
+@Composable
 fun ArrowRight() {
     Text(
         text = "→",
