@@ -3,12 +3,12 @@ package com.fontys.frontend.ui.views
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
-import android.graphics.Color
-import android.nfc.Tag
-import android.widget.TextView
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Flag
@@ -36,19 +36,19 @@ import com.fontys.frontend.common.CameraView
 import com.fontys.frontend.data.PlaceService
 import com.fontys.frontend.ui.components.BadgeUnlockDialog
 import com.fontys.frontend.domain.UserRepository
-import com.fontys.frontend.domain.fromBase64
-import com.fontys.frontend.ui.viewmodels.CameraPreviewViewModel
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.graphics.Color
 import com.fontys.frontend.ui.viewmodels.MapsViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMapOptions
-import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MapStyleOptions
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import com.google.android.gms.maps.model.PinConfig
 import com.google.maps.android.compose.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import okhttp3.internal.wait
+import android.graphics.Color as AndroidColor
 import androidx.core.graphics.toColorInt
 import androidx.emoji2.emojipicker.EmojiPickerView
 import com.github.skydoves.colorpicker.compose.ColorPickerController
@@ -339,7 +339,7 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
     if(mapSettings){
         CustomFlagSettingsPopup(
             context,
-            initialEmoji = flagStyle.emoji ?: "❤️",
+            initialEmoji = flagStyle.emoji,
             initialBackground = flagStyle.background ?: "#1A0000",
             initialBorder = flagStyle.border ?: "#FF3131",
 
@@ -352,6 +352,26 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
         )
     }
 }
+
+
+@Composable
+fun ColorCircle(
+    color: Color,
+    selected: Boolean,
+    onClick: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .size(44.dp)
+            .background(color, CircleShape)
+            .border(
+                width = if (selected) 3.dp else 1.dp,
+                color = if (selected) Color.White else Color.DarkGray,
+                shape = CircleShape
+            )
+            .clickable { onClick() }
+    )
+}
 @Composable
 fun CustomFlagSettingsPopup(
     context: Context,
@@ -361,19 +381,30 @@ fun CustomFlagSettingsPopup(
     onDismiss: () -> Unit,
     onSave: (emoji: String, background: String, border: String) -> Unit
 ) {
+    var ibackground =Color(initialBackground.toColorInt())
+    var iborder =Color(initialBorder.toColorInt())
+
     var emoji by remember { mutableStateOf(initialEmoji) }
     var background by remember { mutableStateOf(initialBackground) }
     var border by remember { mutableStateOf(initialBorder) }
 
-    Dialog(onDismissRequest = { onDismiss() }) {
+    val presetColors = listOf(
+        Color.Red,
+        Color.Blue,
+        Color.Green,
+        Color.Yellow,
+        Color.Magenta,
+        Color.Cyan,
+        Color.Black,
+        Color.Gray
+    )
+
+    Dialog(onDismissRequest = onDismiss) {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface
-            )
+            shape = RoundedCornerShape(16.dp)
         ) {
             Column(
                 modifier = Modifier.padding(20.dp),
@@ -385,6 +416,22 @@ fun CustomFlagSettingsPopup(
                     style = MaterialTheme.typography.titleMedium
                 )
 
+                // 🔴 Preview
+                Box(
+                    modifier = Modifier
+                        .size(80.dp)
+                        .align(Alignment.CenterHorizontally)
+                        .background(ibackground, CircleShape)
+                        .border(4.dp, iborder, CircleShape),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = emoji,
+                        fontSize = 32.sp
+                    )
+                }
+
+                // 😀 Emoji Picker
                 AndroidView(
                     factory = {
                         EmojiPickerView(context).apply {
@@ -393,50 +440,50 @@ fun CustomFlagSettingsPopup(
                             }
                         }
                     },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth().height(200.dp)
                 )
 
+                Text("Background color")
 
+                FlowRow {
+                    presetColors.forEach { color ->
+                        ColorCircle(
+                            color = color,
+                            selected = ibackground == color,
+                            onClick = { ibackground = color }
+                        )
+                    }
+                }
 
-                // Background Color
-                HsvColorPicker(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp),
-                    controller = remember { ColorPickerController() },
-                    wheelImageBitmap = ImageBitmap.imageResource(R.drawable.color_wheel),
-                    onColorChanged = {
-                            color -> background=color.hexCode
-                    },
-                    initialColor = androidx.compose.ui.graphics.Color(Color.RED)
+                Text("Border color")
 
-                )
-
-                // Border Color
-                HsvColorPicker(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp),
-                    controller = remember { ColorPickerController() },
-                    wheelImageBitmap = ImageBitmap.imageResource(R.drawable.color_wheel),
-                    onColorChanged = {
-                        color -> border=color.hexCode
-                    },
-                    initialColor = androidx.compose.ui.graphics.Color(Color.RED)
-
-                )
+                FlowRow {
+                    presetColors.forEach { color ->
+                        ColorCircle(
+                            color = color,
+                            selected = iborder == color,
+                            onClick = { iborder = color }
+                        )
+                    }
+                }
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.End
                 ) {
-                    TextButton(onClick = { onDismiss() }) {
+                    TextButton(onClick = onDismiss) {
                         Text("Cancel")
                     }
 
                     Spacer(modifier = Modifier.width(8.dp))
 
-                    Button(onClick = { onSave(emoji, background, border) }) {
+                    Button(
+                        onClick = {
+                            onSave(            emoji,
+                                ibackground.toHexString(),
+                                iborder.toHexString())
+                        }
+                    ) {
                         Text("Save")
                     }
                 }
@@ -444,3 +491,14 @@ fun CustomFlagSettingsPopup(
         }
     }
 }
+
+private fun Color.toHexString(): String {
+    return String.format(
+        "#%02X%02X%02X",
+        (red * 255).toInt(),
+        (green * 255).toInt(),
+        (blue * 255).toInt()
+    )
+}
+
+
