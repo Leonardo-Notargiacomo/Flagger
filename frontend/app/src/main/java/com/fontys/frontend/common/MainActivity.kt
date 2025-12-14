@@ -91,13 +91,7 @@ class MainActivity : ComponentActivity() {
         windowInsetsController.isAppearanceLightNavigationBars = !isDarkMode
         windowInsetsController.isAppearanceLightStatusBars = !isDarkMode
 
-        // Only check permissions and subscribe to notifications if onboarding is complete
-        val hasSeenOnboarding = OnboardingPreferences.hasSeenOnboarding(this)
-        if (hasSeenOnboarding) {
-            permissionHandler.checkPermissions()
-            checkCameraPermission()
-            subscribeToNotifications()
-        }
+        // Permissions will be requested when user reaches main app after login/signup
 
         setContent {
             // Create ImageLoader with GIF support
@@ -140,29 +134,19 @@ class MainActivity : ComponentActivity() {
                                 }
                             )
                         ) { backStackEntry ->
-                            // Request permissions when user reaches login after onboarding
-                            androidx.compose.runtime.LaunchedEffect(Unit) {
-                                if (OnboardingPreferences.hasSeenOnboarding(this@MainActivity)) {
-                                    permissionHandler.checkPermissions()
-                                    checkCameraPermission()
-                                    subscribeToNotifications()
-                                }
-                            }
                             val registrationSuccess = backStackEntry.arguments?.getBoolean("registrationSuccess") ?: false
                             LoginView(navController, registrationSuccess = registrationSuccess)
                         }
                         composable("registration") {
-                            // Request permissions when user reaches registration after onboarding
-                            androidx.compose.runtime.LaunchedEffect(Unit) {
-                                if (OnboardingPreferences.hasSeenOnboarding(this@MainActivity)) {
-                                    permissionHandler.checkPermissions()
-                                    checkCameraPermission()
-                                    subscribeToNotifications()
-                                }
-                            }
                             RegistrationViewComposable(navController)
                         }
                         composable("main") {
+                            // Request permissions when user enters main app
+                            androidx.compose.runtime.LaunchedEffect(Unit) {
+                                permissionHandler.checkPermissions()
+                                checkCameraPermission()
+                                subscribeToNotifications()
+                            }
                             NavBar()
                         }
                     }
