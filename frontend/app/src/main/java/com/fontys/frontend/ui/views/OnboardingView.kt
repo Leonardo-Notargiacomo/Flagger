@@ -86,7 +86,7 @@ fun OnboardingView(
                 when (page) {
                     0 -> OnboardingScreen1()
                     1 -> OnboardingScreen2()
-                    2 -> OnboardingScreen3()
+                    2 -> OnboardingScreen3(isVisible = pagerState.currentPage == 2)
                     3 -> OnboardingScreen4(navController)
                 }
             }
@@ -412,21 +412,30 @@ fun OnboardingScreen2() {
     }
 }
 
-// Screen 3: How It Works (three-step flow with sequential animations)
+// Screen 3: How It Works (three-step flow with sequential drop-in)
 @Composable
-fun OnboardingScreen3() {
+fun OnboardingScreen3(isVisible: Boolean = true) {
     // Sequential drop-in animations
     var icon1Visible by remember { mutableStateOf(false) }
     var icon2Visible by remember { mutableStateOf(false) }
     var icon3Visible by remember { mutableStateOf(false) }
 
-    LaunchedEffect(Unit) {
-        delay(200)
-        icon1Visible = true
-        delay(300)
-        icon2Visible = true
-        delay(300)
-        icon3Visible = true
+    // Reset and trigger animation when screen becomes visible
+    LaunchedEffect(isVisible) {
+        if (isVisible) {
+            // Reset first
+            icon1Visible = false
+            icon2Visible = false
+            icon3Visible = false
+
+            // Then animate in sequence
+            delay(200)
+            icon1Visible = true
+            delay(300)
+            icon2Visible = true
+            delay(300)
+            icon3Visible = true
+        }
     }
 
     val icon1Scale by animateFloatAsState(
@@ -463,7 +472,7 @@ fun OnboardingScreen3() {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        // Three-step icons with arrows and bounce animations
+        // Three-step icons with arrows and subtle bounce
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly,
