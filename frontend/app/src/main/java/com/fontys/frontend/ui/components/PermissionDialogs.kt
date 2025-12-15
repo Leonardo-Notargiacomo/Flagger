@@ -153,7 +153,7 @@ fun CameraDeniedDialog(
                 // GIF Image - camera-related disappointment
                 val painter = rememberAsyncImagePainter(
                     model = ImageRequest.Builder(LocalContext.current)
-                        .data("https://media1.tenor.com/m/gHCGRz70z0wAAAAC/cat-camera.gif")
+                        .data("https://media1.tenor.com/m/-4yy_g2OVo0AAAAd/gravity-falls-camera.gif")
                         .build(),
                     imageLoader = imageLoader
                 )
@@ -897,7 +897,7 @@ fun PermissionDialogs(
                 title = "📸 say cheese!",
                 message = "we need camera access to make the magic happen ✨\n\nhere's why:\n\n📷 capture ur adventure moments\n🚩 prove u actually visited cool spots\n🏆 unlock achievements for exploring\n\nno camera = no flags = no fun 😭",
                 buttonText = "let's go 📸",
-                gifUrl = "https://media1.tenor.com/m/v8JHQ3Wd3IwAAAAC/cat-cute.gif",
+                gifUrl = "https://media1.tenor.com/m/h6vq5IKgTWQAAAAd/pinksviral-stantwt.gif",
                 imageLoader = imageLoader,
                 onConfirm = {
                     permissionHandler.requestCameraPermission()
