@@ -35,6 +35,9 @@ export interface ChallengeStatus {
 
 @injectable({scope: BindingScope.TRANSIENT})
 export class ChallengeService {
+  // Cache for user's available challenges (userId -> {challenges, expiresAt})
+  private static challengeCache: Map<number, {challenges: Challenge[], expiresAt: Date}> = new Map();
+
   constructor(
     @repository(ChallengeRepository)
     public challengeRepository: ChallengeRepository,
@@ -202,6 +205,10 @@ export class ChallengeService {
       expiresAt,
       progressData: this.initializeProgressData(challenge),
     });
+
+    // Clear the challenges cache so user gets new options after cooldown
+    ChallengeService.challengeCache.delete(userId);
+    console.log(`Cleared challenge cache for user ${userId} after selecting challenge`);
 
     return {
       userChallenge,
@@ -427,8 +434,19 @@ export class ChallengeService {
 
   /**
    * Get available challenges without cooldown check (internal use)
+   * Caches the selection for 24 hours
    */
 private async getAvailableChallengesWithoutCooldownCheck(userId: number): Promise<Challenge[]> {
+  const now = new Date();
+
+  // Check cache first
+  const cached = ChallengeService.challengeCache.get(userId);
+  if (cached && cached.expiresAt > now) {
+    console.log(`Returning cached challenges for user ${userId}, expires at ${cached.expiresAt}`);
+    return cached.challenges;
+  }
+
+  // Cache miss or expired, fetch new challenges
   const completedUserChallenges = await this.userChallengeRepository.find({
     where: {userId, status: 'completed'},
   });
@@ -442,7 +460,17 @@ private async getAvailableChallengesWithoutCooldownCheck(userId: number): Promis
   });
 
   const shuffled = this.shuffleArray(allChallenges);
-  return shuffled.slice(0, Math.min(3, shuffled.length));
+  const selectedChallenges = shuffled.slice(0, Math.min(3, shuffled.length));
+
+  // Cache for 24 hours
+  const expiresAt = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+  ChallengeService.challengeCache.set(userId, {
+    challenges: selectedChallenges,
+    expiresAt
+  });
+
+  console.log(`Cached new challenges for user ${userId}, expires at ${expiresAt}`);
+  return selectedChallenges;
 }
 
 
