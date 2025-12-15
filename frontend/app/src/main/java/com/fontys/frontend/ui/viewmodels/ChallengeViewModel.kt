@@ -1,5 +1,6 @@
 package com.fontys.frontend.ui.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fontys.frontend.data.models.*
@@ -36,11 +37,15 @@ class ChallengeViewModel : ViewModel() {
 
     fun refresh() {
         viewModelScope.launch {
+            Log.d("ChallengeViewModel", "refresh() called")
             _uiState.value = ChallengeUiState.Loading
             val statusResult = repository.getChallengeStatus()
             val historyResult = repository.getChallengeHistory()
 
-            statusResult.onSuccess { _status.value = it }
+            statusResult.onSuccess {
+                Log.d("ChallengeViewModel", "Status received - activeChallenge: ${it.activeChallenge?.challenge?.name}, progressData: ${it.activeChallenge?.progressData}")
+                _status.value = it
+            }
                 .onFailure { _errorMessage.value = it.message }
 
             historyResult.onSuccess { _history.value = it }
@@ -73,8 +78,10 @@ class ChallengeViewModel : ViewModel() {
 
     fun checkCompletion(onBadgeUnlocked: (() -> Unit)? = null) {
         viewModelScope.launch {
+            Log.d("ChallengeViewModel", "checkCompletion() called")
             repository.checkChallengeCompletion()
                 .onSuccess {
+                    Log.d("ChallengeViewModel", "Completion check result: completed=${it.completed}, badge=${it.badge?.name}")
                     if (it.completed) {
                         _completionData.value = it
                         _showCompletionDialog.value = true

@@ -360,8 +360,10 @@ fun UserChallengeCard(
             } else 0f
         }
         ChallengeType.COUNT -> {
+            Log.d("ChallengeUI", "COUNT challenge - full progressData: ${userChallenge.progressData}")
             val current = (userChallenge.progressData?.get("currentCount") as? Number)?.toFloat() ?: 0f
             val target = (userChallenge.challenge?.conditionParams?.get("count") as? Number)?.toFloat() ?: 1f
+            Log.d("ChallengeUI", "COUNT challenge - current: $current, target: $target")
             (current / target).coerceIn(0f, 1f)
         }
         ChallengeType.STREAK -> {
