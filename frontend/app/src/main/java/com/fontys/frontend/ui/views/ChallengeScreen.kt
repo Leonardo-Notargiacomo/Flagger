@@ -50,6 +50,13 @@ fun ChallengeScreen(
         viewModel.refresh()
     }
 
+    // Refresh when active challenge changes (e.g., when user accepts a challenge)
+    LaunchedEffect(activeChallenge?.id) {
+        if (activeChallenge != null) {
+            viewModel.refresh()
+        }
+    }
+
     // Show completion dialog when challenge is completed
     if (showCompletionDialog && completionData != null) {
         ChallengeCompletionDialog(
