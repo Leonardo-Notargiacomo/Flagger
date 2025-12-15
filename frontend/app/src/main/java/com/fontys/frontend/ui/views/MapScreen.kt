@@ -9,8 +9,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Flag
 import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material.icons.filled.Settings
@@ -19,7 +21,9 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.imageResource
@@ -409,15 +413,31 @@ fun ColorCircle(
 ) {
     Box(
         modifier = Modifier
-            .size(44.dp)
+            .padding(4.dp)
+            .size(48.dp)
+            .shadow(
+                elevation = if (selected) 4.dp else 0.dp,
+                shape = CircleShape
+            )
             .background(color, CircleShape)
             .border(
-                width = if (selected) 3.dp else 1.dp,
-                color = if (selected) Color.White else Color.DarkGray,
+                width = if (selected) 3.dp else 2.dp,
+                color = if (selected) Color(0xFFE98D58) else Color(0xFFC4B5A0),
                 shape = CircleShape
             )
             .clickable { onClick() }
-    )
+    ) {
+        if (selected) {
+            Icon(
+                imageVector = Icons.Filled.Check,
+                contentDescription = "Selected",
+                tint = if (color.luminance() > 0.5) Color.Black else Color.White,
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .size(24.dp)
+            )
+        }
+    }
 }
 @Composable
 fun CustomFlagSettingsPopup(
@@ -440,15 +460,20 @@ fun CustomFlagSettingsPopup(
     var background by remember { mutableStateOf(initialBackground) }
     var border by remember { mutableStateOf(initialBorder) }
 
+    // Explorer-themed color palette with warm, vintage tones
     val presetColors = listOf(
-        Color.Red,
-        Color.Blue,
-        Color.Green,
-        Color.Yellow,
-        Color.Magenta,
-        Color.Cyan,
-        Color.Black,
-        Color.Gray
+        Color(0xFFE98D58), // Warm orange - primary
+        Color(0xFF8B6F47), // Muted brown
+        Color(0xFFD4956C), // Coral orange
+        Color(0xFF5C4738), // Dark brown
+        Color(0xFFB85042), // Terra cotta
+        Color(0xFF6B9080), // Sage green
+        Color(0xFF4A362A), // Deep brown
+        Color(0xFFEBE3CD), // Parchment cream
+        Color(0xFF2D2420), // Charcoal brown
+        Color(0xFFC4B5A0), // Light tan
+        Color(0xFF8B4513), // Saddle brown
+        Color(0xFFD4C5B0)  // Warm beige
     )
 
     Dialog(onDismissRequest = onDismiss) {
@@ -456,84 +481,255 @@ fun CustomFlagSettingsPopup(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            shape = RoundedCornerShape(16.dp)
+            shape = RoundedCornerShape(24.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.primaryContainer
+            ),
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 8.dp
+            )
         ) {
             Column(
-                modifier = Modifier.padding(20.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(24.dp),
+                verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
-
-                Text(
-                    text = "Customize Your Flag",
-                    style = MaterialTheme.typography.titleMedium
-                )
-
-                Box(
-                    modifier = Modifier
-                        .size(80.dp)
-                        .align(Alignment.CenterHorizontally)
-                        .background(ibackground, CircleShape)
-                        .border(4.dp, iborder, CircleShape),
-                    contentAlignment = Alignment.Center
+                // Header with decorative accent
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = emoji,
-                        fontSize = 32.sp
+                        text = "Customize Your Flag",
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    // Decorative underline
+                    Box(
+                        modifier = Modifier
+                            .width(60.dp)
+                            .height(3.dp)
+                            .background(
+                                MaterialTheme.colorScheme.primary,
+                                RoundedCornerShape(2.dp)
+                            )
                     )
                 }
-                AndroidView(
-                    factory = {
-                        EmojiPickerView(context).apply {
-                            setOnEmojiPickedListener { picked ->
-                                emoji = picked.emoji
-                            }
+
+                // Prominent Flag Preview with shadow and decorative frame
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(120.dp)
+                            .shadow(8.dp, CircleShape)
+                            .background(ibackground, CircleShape)
+                            .border(6.dp, iborder, CircleShape)
+                            .padding(4.dp)
+                            .border(
+                                2.dp,
+                                MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
+                                CircleShape
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = emoji,
+                            fontSize = 52.sp
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Text(
+                        text = "Flag Preview",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
+                    )
+                }
+
+                // Emoji Picker Section
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(
+                        text = "Choose Your Symbol",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        fontWeight = FontWeight.SemiBold
+                    )
+
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.3f)
+                        )
+                    ) {
+                        AndroidView(
+                            factory = {
+                                EmojiPickerView(context).apply {
+                                    setOnEmojiPickedListener { picked ->
+                                        emoji = picked.emoji
+                                    }
+                                }
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(180.dp)
+                                .padding(8.dp)
+                        )
+                    }
+                }
+
+                // Background Color Section
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(20.dp)
+                                .background(ibackground, CircleShape)
+                                .border(
+                                    2.dp,
+                                    MaterialTheme.colorScheme.outline,
+                                    CircleShape
+                                )
+                        )
+
+                        Text(
+                            text = "Background Color",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+
+                    FlowRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.Start),
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        presetColors.forEach { color ->
+                            ColorCircle(
+                                color = color,
+                                selected = ibackground == color,
+                                onClick = { ibackground = color }
+                            )
                         }
-                    },
-                    modifier = Modifier.fillMaxWidth().height(200.dp)
-                )
-
-                Text("Background color")
-
-                FlowRow {
-                    presetColors.forEach { color ->
-                        ColorCircle(
-                            color = color,
-                            selected = ibackground == color,
-                            onClick = { ibackground = color }
-                        )
                     }
                 }
 
-                Text("Border color")
-
-                FlowRow {
-                    presetColors.forEach { color ->
-                        ColorCircle(
-                            color = color,
-                            selected = iborder == color,
-                            onClick = { iborder = color }
+                // Border Color Section
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(20.dp)
+                                .background(Color.Transparent, CircleShape)
+                                .border(
+                                    3.dp,
+                                    iborder,
+                                    CircleShape
+                                )
                         )
+
+                        Text(
+                            text = "Border Color",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+
+                    FlowRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.Start),
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        presetColors.forEach { color ->
+                            ColorCircle(
+                                color = color,
+                                selected = iborder == color,
+                                onClick = { iborder = color }
+                            )
+                        }
                     }
                 }
 
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Action Buttons
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End
+                    horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.End)
                 ) {
-                    TextButton(onClick = onDismiss) {
-                        Text("Cancel")
+                    OutlinedButton(
+                        onClick = onDismiss,
+                        shape = RoundedCornerShape(12.dp),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                        ),
+                        border = BorderStroke(
+                            2.dp,
+                            MaterialTheme.colorScheme.outline
+                        )
+                    ) {
+                        Text(
+                            text = "Cancel",
+                            style = MaterialTheme.typography.labelLarge,
+                            fontWeight = FontWeight.SemiBold
+                        )
                     }
-
-                    Spacer(modifier = Modifier.width(8.dp))
 
                     Button(
                         onClick = {
-                            onSave(            emoji,
+                            onSave(
+                                emoji,
                                 ibackground.toHexString(),
-                                iborder.toHexString())
-                        }
+                                iborder.toHexString()
+                            )
+                        },
+                        shape = RoundedCornerShape(12.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
+                        ),
+                        elevation = ButtonDefaults.buttonElevation(
+                            defaultElevation = 4.dp,
+                            pressedElevation = 8.dp
+                        )
                     ) {
-                        Text("Save")
+                        Icon(
+                            imageVector = Icons.Filled.Check,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = "Save Flag",
+                            style = MaterialTheme.typography.labelLarge,
+                            fontWeight = FontWeight.Bold
+                        )
                     }
                 }
             }
