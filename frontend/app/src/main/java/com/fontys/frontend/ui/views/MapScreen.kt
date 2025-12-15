@@ -394,8 +394,8 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
         CustomFlagSettingsPopup(
             context,
             initialEmoji = flagStyle.emoji,
-            initialBackground = flagStyle.background ?: "#1A0000",
-            initialBorder = flagStyle.border ?: "#FF3131",
+            initialBackground = flagStyle.background ?: "#E98D58", // Warm orange - app primary color
+            initialBorder = flagStyle.border ?: "#523735", // Dark brown - app text color
 
             onDismiss = { mapSettings = false },
 
