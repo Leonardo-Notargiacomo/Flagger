@@ -189,7 +189,7 @@ fun OnboardingScreen1() {
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxHeight()
-                    .background(Color(0xFF1A0F0D)),
+                    .background(MaterialTheme.colorScheme.background),
                 contentAlignment = Alignment.Center
             ) {
                 // Glow layers with animation
@@ -226,7 +226,7 @@ fun OnboardingScreen1() {
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxHeight()
-                    .background(Color(0xFFD4C5B0).copy(alpha = 0.35f)),
+                    .background(MaterialTheme.colorScheme.background),
                 contentAlignment = Alignment.Center
             ) {
                 // Tree/nature icon with subtle fade
