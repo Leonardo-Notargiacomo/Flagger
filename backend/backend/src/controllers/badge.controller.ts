@@ -98,8 +98,12 @@ export class BadgeController {
 
         // Challenge badges: only show progress when the respective challenge is active
         if (badge.isChallengeBadge) {
+          // If badge is already unlocked, show full progress
+          if (unlockedIds.has(badge.id!)) {
+            currentProgress = maxProgress;
+          }
           // If there's an active challenge and it matches this badge's reward
-          if (activeChallenge && activeChallenge.challenge?.rewardBadgeId === badge.id) {
+          else if (activeChallenge && activeChallenge.challenge?.rewardBadgeId === badge.id) {
             // Calculate progress based on explorations/actions during the challenge period
             const challengeStart = activeChallenge.activatedAt;
             const now = new Date();
