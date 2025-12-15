@@ -2,6 +2,7 @@ package com.fontys.frontend.ui.views
 
 import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -19,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.fontys.frontend.data.models.Badge
 import com.fontys.frontend.data.models.Challenge
@@ -87,49 +89,63 @@ fun ChallengeScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        // Header
-        Surface(
-            modifier = Modifier.fillMaxWidth(),
-            color = MaterialTheme.colorScheme.primary,
-            shadowElevation = 4.dp
+        // Header (matching BadgeScreen style)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.surface)
+                .padding(horizontal = 24.dp, vertical = 16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
         ) {
-            Column(
-                modifier = Modifier.padding(16.dp)
-            ) {
-                Text(
-                    text = "Challenges",
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onPrimary
-                )
-                Text(
-                    text = "Complete challenges to earn rewards",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f)
-                )
-            }
+            Text(
+                text = "CHALLENGES",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Medium,
+                color = MaterialTheme.colorScheme.onSurface,
+                letterSpacing = 1.sp
+            )
         }
 
-        // Tabs
+        // Tabs (matching FriendsScreen style)
         var selectedTab by remember { mutableStateOf(0) }
         TabRow(
             selectedTabIndex = selectedTab,
-            modifier = Modifier.fillMaxWidth()
+            containerColor = MaterialTheme.colorScheme.background,
+            contentColor = MaterialTheme.colorScheme.onBackground
         ) {
             Tab(
                 selected = selectedTab == 0,
                 onClick = { selectedTab = 0 },
-                text = { Text("Active") }
+                text = {
+                    Text(
+                        "Active",
+                        fontWeight = if (selectedTab == 0) FontWeight.SemiBold else FontWeight.Normal,
+                        fontSize = 14.sp
+                    )
+                }
             )
             Tab(
                 selected = selectedTab == 1,
                 onClick = { selectedTab = 1 },
-                text = { Text("Available") }
+                text = {
+                    Text(
+                        "Available",
+                        fontWeight = if (selectedTab == 1) FontWeight.SemiBold else FontWeight.Normal,
+                        fontSize = 14.sp
+                    )
+                }
             )
             Tab(
                 selected = selectedTab == 2,
                 onClick = { selectedTab = 2 },
-                text = { Text("Completed") }
+                text = {
+                    Text(
+                        "Completed",
+                        fontWeight = if (selectedTab == 2) FontWeight.SemiBold else FontWeight.Normal,
+                        fontSize = 14.sp
+                    )
+                }
             )
         }
 
@@ -158,8 +174,21 @@ fun ChallengeScreen(
                             style = MaterialTheme.typography.bodyLarge
                         )
                         Spacer(modifier = Modifier.height(16.dp))
-                        Button(onClick = viewModel::refresh) {
-                            Text("Retry")
+                        Button(
+                            onClick = viewModel::refresh,
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.secondary
+                            ),
+                            shape = RoundedCornerShape(12.dp),
+                            elevation = ButtonDefaults.buttonElevation(
+                                defaultElevation = 4.dp
+                            )
+                        ) {
+                            Text(
+                                "Retry",
+                                fontWeight = FontWeight.Bold,
+                                letterSpacing = 1.sp
+                            )
                         }
                     }
                 }
@@ -214,9 +243,20 @@ fun ActiveChallengesTab(activeChallenge: UserChallenge?, onCompleteCheck: () -> 
             UserChallengeCard(activeChallenge)
             Button(
                 onClick = onCompleteCheck,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary
+                ),
+                shape = RoundedCornerShape(12.dp),
+                elevation = ButtonDefaults.buttonElevation(
+                    defaultElevation = 4.dp
+                )
             ) {
-                Text("Check Progress")
+                Text(
+                    "Check Progress",
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = 1.sp
+                )
             }
         }
     }
@@ -388,9 +428,18 @@ fun UserChallengeCard(
     }
 
     Card(
-        modifier = Modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        shape = RoundedCornerShape(12.dp)
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(
+                width = 2.dp,
+                color = MaterialTheme.colorScheme.primary,
+                shape = RoundedCornerShape(16.dp)
+            ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer
+        ),
+        shape = RoundedCornerShape(16.dp)
     ) {
         Column(
             modifier = Modifier.padding(16.dp)
@@ -507,12 +556,21 @@ fun AvailableChallengeCard(
     val challengeType = challenge.getType()
 
     Card(
-        modifier = Modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        shape = RoundedCornerShape(12.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(
+                width = 2.dp,
+                color = if (canSelect)
+                    MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
+                else
+                    MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
+                shape = RoundedCornerShape(16.dp)
+            ),
+        elevation = CardDefaults.cardElevation(defaultElevation = if (canSelect) 4.dp else 2.dp),
         colors = CardDefaults.cardColors(
             containerColor = if (canSelect) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.surfaceVariant
-        )
+        ),
+        shape = RoundedCornerShape(16.dp)
     ) {
         Column(
             modifier = Modifier
@@ -580,7 +638,15 @@ fun AvailableChallengeCard(
                 Button(
                     onClick = onSelect,
                     modifier = Modifier.height(40.dp),
-                    enabled = canSelect
+                    enabled = canSelect,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant
+                    ),
+                    shape = RoundedCornerShape(12.dp),
+                    elevation = ButtonDefaults.buttonElevation(
+                        defaultElevation = 4.dp
+                    )
                 ) {
                     if (!canSelect) {
                         Icon(
@@ -606,12 +672,18 @@ fun AvailableChallengeCard(
 @Composable
 fun CompletedChallengeCard(userChallenge: UserChallenge) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        shape = RoundedCornerShape(12.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(
+                width = 2.dp,
+                color = Color(0xFF4CAF50).copy(alpha = 0.5f),
+                shape = RoundedCornerShape(16.dp)
+            ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.secondaryContainer
-        )
+        ),
+        shape = RoundedCornerShape(16.dp)
     ) {
         Column(
             modifier = Modifier.padding(16.dp)
@@ -703,8 +775,22 @@ fun ChallengeCompletionDialog(
             }
         },
         confirmButton = {
-            Button(onClick = onDismiss) {
-                Text("Awesome!")
+            Button(
+                onClick = onDismiss,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary
+                ),
+                shape = RoundedCornerShape(12.dp),
+                elevation = ButtonDefaults.buttonElevation(
+                    defaultElevation = 4.dp
+                ),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    "Awesome!",
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = 1.sp
+                )
             }
         }
     )
