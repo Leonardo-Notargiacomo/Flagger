@@ -3,6 +3,7 @@ package com.fontys.frontend.domain
 import android.util.Log
 import com.fontys.frontend.config.ApiConfig
 import com.fontys.frontend.data.AddFlagRequest
+import com.fontys.frontend.data.CustomFlagUpdate
 import com.fontys.frontend.data.PlaceService
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
@@ -128,5 +129,55 @@ class FlagRepository{
         }
         return listOf()
     }
+    suspend fun getUserCustomFlag(userId: Int) : CustomFlagUpdate{
+        try {
+            val headers = HashMap<String, String>().apply {
+                put("Accept", "application/json")
+                put("Content-Type", "application/json")
+                token?.let { token ->
+                    put("Authorization", "Bearer $token") // Add JWT token if available
+                } ?: run {
+                    // Optional: Log a warning or throw an error if token is missing for authenticated endpoint
+                    // throw IllegalStateException("JWT token is missing for authenticated request")
+                }
+            }
+            val response = flagApiService.userFlagStyle(headers, userId)
 
+            if (response.isSuccessful) {
+                val flagStyle = response.body()?: CustomFlagUpdate("#FF888888","", "",UserRepository.userId)
+                println(flagStyle.toString())
+                return flagStyle
+            } else{
+                println(response.errorBody()   )
+            }
+        } catch (e: Exception) {
+            Log.e("FlagRepository", "Error getting custom flag", e)
+        }
+        return CustomFlagUpdate("#FF888888","", "#FF888888",UserRepository.userId)
+    }
+    suspend fun updateUserCustomFlag(userId: Int, background:String, emoji: String, border: String){
+        try {
+            val headers = HashMap<String, String>().apply {
+                put("Accept", "application/json")
+                put("Content-Type", "application/json")
+                token?.let { token ->
+                    put("Authorization", "Bearer $token") // Add JWT token if available
+                } ?: run {
+                    // Optional: Log a warning or throw an error if token is missing for authenticated endpoint
+                    // throw IllegalStateException("JWT token is missing for authenticated request")
+                }
+            }
+            val response = flagApiService.customFlagUpdate(headers, CustomFlagUpdate(background,emoji,border,userId))
+
+            if (response.isSuccessful) {
+
+                println(response.message())
+            } else{
+                println(response.errorBody())
+
+            }
+        } catch (e: Exception) {
+            Log.e("FlagRepository", "Error updating custom flag", e)
+        }
+    }
 }

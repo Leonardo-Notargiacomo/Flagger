@@ -8,6 +8,7 @@ import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.fontys.frontend.data.CustomFlagUpdate
 import com.fontys.frontend.data.FlagDisplay
 import com.fontys.frontend.data.FlagResponse
 import com.fontys.frontend.data.PlaceService
@@ -17,6 +18,7 @@ import com.fontys.frontend.data.models.StreakInfo
 import com.fontys.frontend.data.repositories.BadgeRepository
 import com.fontys.frontend.domain.FlagRepository
 import com.fontys.frontend.domain.MapRepository
+import com.fontys.frontend.domain.UserRepository
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -38,6 +40,9 @@ class MapsViewModel(application: Application) : AndroidViewModel(application) {
     private val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
     private val client = OkHttpClient()
 
+
+    private val _flagStyle = MutableStateFlow<CustomFlagUpdate>(CustomFlagUpdate("#FF888888","", "#FF888888",UserRepository.userId))
+    val flagStyle: StateFlow<CustomFlagUpdate> = _flagStyle
     private val _userFlags = MutableStateFlow<List<FlagDisplay>>(emptyList())
 
     val userFlags: StateFlow<List<FlagDisplay>> = _userFlags
@@ -62,7 +67,8 @@ class MapsViewModel(application: Application) : AndroidViewModel(application) {
 
     private val _showBadgeDialog = MutableStateFlow(false)
     val showBadgeDialog: StateFlow<Boolean> = _showBadgeDialog
-
+    private val _showMapSettings = MutableStateFlow(false)
+    val showMapSettings: StateFlow<Boolean> = _showMapSettings
 
     fun loadUserLocation() {
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -101,6 +107,7 @@ class MapsViewModel(application: Application) : AndroidViewModel(application) {
                 _userFullFlags.value = flagRepository.getFullFlags(userId)
                 val spots = mapRepository.getLatlngs(result)
                 spots.onSuccess { details ->  _userFlags.value = details }
+                _flagStyle.value= flagRepository.getUserCustomFlag(userId)
             } catch (e: Exception) {
                 _error.value = e.localizedMessage ?: "The flags are not gathered"
                 Log.e("MapsViewModel", "Error finding the places", e)
@@ -131,5 +138,23 @@ class MapsViewModel(application: Application) : AndroidViewModel(application) {
         _showBadgeDialog.value = false
         _newlyUnlockedBadges.value = emptyList()
     }
+    fun updateFlagStyle(emoji: String, background: String, border: String){
+         viewModelScope.launch {
+             try {
+                 flagRepository.updateUserCustomFlag(UserRepository.userId,background,emoji,border)
+                 refreshFlags()
+             } catch (e: Exception){
+                 _error.value = e.localizedMessage ?: "Unknown error customizing a flag"
+                 Log.e("MapsViewModel", "Error error customizing a flag", e)
+             }
+         }
+    }
+    fun refreshFlags() {
+        viewModelScope.launch {
+            getFlags(UserRepository.userId)
+        }
+    }
+
+
 }
 

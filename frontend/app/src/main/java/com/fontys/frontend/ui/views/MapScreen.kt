@@ -1,20 +1,32 @@
 package com.fontys.frontend.ui.views
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
-import android.nfc.Tag
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Flag
 import androidx.compose.material.icons.filled.MyLocation
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.window.Dialog
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -24,18 +36,26 @@ import com.fontys.frontend.common.CameraView
 import com.fontys.frontend.data.PlaceService
 import com.fontys.frontend.ui.components.BadgeUnlockDialog
 import com.fontys.frontend.domain.UserRepository
-import com.fontys.frontend.domain.fromBase64
-import com.fontys.frontend.ui.viewmodels.CameraPreviewViewModel
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.graphics.Color
 import com.fontys.frontend.ui.viewmodels.MapsViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMapOptions
-import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MapStyleOptions
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import com.google.android.gms.maps.model.PinConfig
 import com.google.maps.android.compose.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import okhttp3.internal.wait
+import android.graphics.Color as AndroidColor
+import androidx.core.graphics.toColorInt
+import androidx.emoji2.emojipicker.EmojiPickerView
+import com.github.skydoves.colorpicker.compose.ColorPickerController
+import com.github.skydoves.colorpicker.compose.HsvColorPicker
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.time.delay
+import java.time.Duration
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,8 +72,10 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
     LaunchedEffect(Unit) { viewModel.loadUserLocation() }
     val userFlags by viewModel.userFlags.collectAsState()
     val currentUserId = UserRepository.userId
+    val flagStyle by viewModel.flagStyle.collectAsState()
+    var mapSettings by remember{ mutableStateOf(false) }
+    var selectedMarkerId by remember { mutableStateOf<String?>("") }
 
-    // Check if location permission is granted
     val hasLocationPermission = remember {
         ContextCompat.checkSelfPermission(
             context,
@@ -79,43 +101,56 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
     }
 
     // Use Google Map ID for custom styling
-//    val googleMapOptions = remember {
-//        GoogleMapOptions().mapId("349a2b06249ce5213e12a47b")
-//    }
-
-    val mapProperties by remember {
-        mutableStateOf(
-            MapProperties(
-                isMyLocationEnabled = hasLocationPermission,
-                mapStyleOptions = MapStyleOptions.loadRawResourceStyle(context, R.raw.map_style)
-            )
-        )
+    val googleMapOptions = remember {
+        GoogleMapOptions().mapId("349a2b06249ce5213e12a47b")
     }
-
 
     Box(Modifier.fillMaxSize()) {
         GoogleMap(
             modifier = Modifier.fillMaxSize(),
             cameraPositionState = cameraPositionState,
-//            googleMapOptionsFactory = { googleMapOptions },
-//            properties = MapProperties(
-//                isMyLocationEnabled = true
-//            ),
-            properties = mapProperties,
+            googleMapOptionsFactory = { googleMapOptions },
+            properties = MapProperties(
+                isMyLocationEnabled = true
+            ),
             uiSettings = MapUiSettings(
                 zoomControlsEnabled = false,
                 myLocationButtonEnabled = false
             )
         ) {
+            val pinConfigBuilder: PinConfig.Builder = PinConfig.builder()
+
 
             userFlags.forEach { spot ->
-                Marker(
-                    state = MarkerState(position = LatLng(spot.location.latitude, spot.location.longitude)),
+
+
+                val pinConfig = PinConfig.builder()
+                    .setGlyph(PinConfig.Glyph(flagStyle.emoji))
+                    .setBackgroundColor(flagStyle.background.toColorInt())
+                    .setBorderColor(flagStyle.border.toColorInt())
+                    .build()
+
+                val markerState = remember {
+                    MarkerState(
+                        position = LatLng(
+                            spot.location.latitude,
+                            spot.location.longitude
+                        )
+                    )
+                }
+
+                AdvancedMarker(
+                    state = markerState,
                     title = spot.displayName,
-                    snippet = "Flagged by you",
-                    alpha = 0.7f
+                    snippet = "",
+                    pinConfig = pinConfig,
+                    onClick = {
+                        selectedMarkerId = spot.locationId
+                        markerState.showInfoWindow()
+                        true
+                    }
                 )
-        }
+            }
 
         }
 
@@ -136,7 +171,7 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
                     containerColor = MaterialTheme.colorScheme.secondary,
                     contentColor = androidx.compose.ui.graphics.Color.White
                 ),
-                shape = androidx.compose.foundation.shape.CircleShape,
+                shape = CircleShape,
                 modifier = Modifier.size(72.dp),
                 elevation = ButtonDefaults.buttonElevation(
                     defaultElevation = 8.dp,
@@ -150,7 +185,31 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
                 )
             }
         }
-
+        Box(
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(top = 56.dp, start = 16.dp)
+        ) {
+            FloatingActionButton(
+                onClick = {
+                    mapSettings = true
+                },
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                elevation = FloatingActionButtonDefaults.elevation(
+                    defaultElevation = 6.dp,
+                    pressedElevation = 8.dp
+                ),
+                modifier = Modifier.size(48.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Settings,
+                    contentDescription = "Settings",
+                    modifier = Modifier.size(24.dp),
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
+        }
         // My Location button - styled for explorer theme
         Box(
             modifier = Modifier
@@ -192,7 +251,7 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
                 title = {
                     Text(
                         "No Places Found",
-                        fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+                        fontWeight = FontWeight.Bold,
                         letterSpacing = 1.sp,
                         color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
@@ -211,7 +270,7 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
                         ),
                         shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp)
                     ) {
-                        Text("OK", fontWeight = androidx.compose.ui.text.font.FontWeight.Bold)
+                        Text("OK", fontWeight = FontWeight.Bold)
                     }
                 },
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -223,7 +282,7 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
                 title = {
                     Text(
                         "Select a Place to Mark",
-                        fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+                        fontWeight = FontWeight.Bold,
                         letterSpacing = 1.sp,
                         color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
@@ -254,6 +313,10 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
                                         picturedata.currentUserId = currentUserId
                                         picturedata.place_id = place.id
                                         navController.navigate(CameraView)
+                                        scope.launch {
+                                            delay(Duration.ofSeconds(10))
+                                        }
+                                        viewModel.refreshFlags()
                                     },
                                     colors = ButtonDefaults.textButtonColors(
                                         contentColor = MaterialTheme.colorScheme.onPrimaryContainer
@@ -272,10 +335,10 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
                 dismissButton = {
                     OutlinedButton(
                         onClick = { showDialog = false },
-                        border = androidx.compose.foundation.BorderStroke(2.dp, MaterialTheme.colorScheme.outline),
+                        border = BorderStroke(2.dp, MaterialTheme.colorScheme.outline),
                         shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp)
                     ) {
-                        Text("Cancel", fontWeight = androidx.compose.ui.text.font.FontWeight.Bold)
+                        Text("Cancel", fontWeight = FontWeight.Bold)
                     }
                 },
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -291,4 +354,171 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
             onDismiss = { viewModel.dismissBadgeDialog() }
         )
     }
+    if(mapSettings){
+        CustomFlagSettingsPopup(
+            context,
+            initialEmoji = flagStyle.emoji,
+            initialBackground = flagStyle.background ?: "#1A0000",
+            initialBorder = flagStyle.border ?: "#FF3131",
+
+            onDismiss = { mapSettings = false },
+
+            onSave = { emoji, background, border ->
+                viewModel.updateFlagStyle(emoji, background, border)
+                mapSettings = false
+            }
+        )
+    }
 }
+
+
+@Composable
+fun ColorCircle(
+    color: Color,
+    selected: Boolean,
+    onClick: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .size(44.dp)
+            .background(color, CircleShape)
+            .border(
+                width = if (selected) 3.dp else 1.dp,
+                color = if (selected) Color.White else Color.DarkGray,
+                shape = CircleShape
+            )
+            .clickable { onClick() }
+    )
+}
+@Composable
+fun CustomFlagSettingsPopup(
+    context: Context,
+    initialEmoji: String,
+    initialBackground: String,
+    initialBorder: String,
+    onDismiss: () -> Unit,
+    onSave: (emoji: String, background: String, border: String) -> Unit
+) {
+    var ibackground by remember {
+        mutableStateOf(Color(initialBackground.toColorInt()))
+    }
+
+    var iborder by remember {
+        mutableStateOf(Color(initialBorder.toColorInt()))
+    }
+
+    var emoji by remember { mutableStateOf(initialEmoji) }
+    var background by remember { mutableStateOf(initialBackground) }
+    var border by remember { mutableStateOf(initialBorder) }
+
+    val presetColors = listOf(
+        Color.Red,
+        Color.Blue,
+        Color.Green,
+        Color.Yellow,
+        Color.Magenta,
+        Color.Cyan,
+        Color.Black,
+        Color.Gray
+    )
+
+    Dialog(onDismissRequest = onDismiss) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            shape = RoundedCornerShape(16.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(20.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+
+                Text(
+                    text = "Customize Your Flag",
+                    style = MaterialTheme.typography.titleMedium
+                )
+
+                Box(
+                    modifier = Modifier
+                        .size(80.dp)
+                        .align(Alignment.CenterHorizontally)
+                        .background(ibackground, CircleShape)
+                        .border(4.dp, iborder, CircleShape),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = emoji,
+                        fontSize = 32.sp
+                    )
+                }
+                AndroidView(
+                    factory = {
+                        EmojiPickerView(context).apply {
+                            setOnEmojiPickedListener { picked ->
+                                emoji = picked.emoji
+                            }
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth().height(200.dp)
+                )
+
+                Text("Background color")
+
+                FlowRow {
+                    presetColors.forEach { color ->
+                        ColorCircle(
+                            color = color,
+                            selected = ibackground == color,
+                            onClick = { ibackground = color }
+                        )
+                    }
+                }
+
+                Text("Border color")
+
+                FlowRow {
+                    presetColors.forEach { color ->
+                        ColorCircle(
+                            color = color,
+                            selected = iborder == color,
+                            onClick = { iborder = color }
+                        )
+                    }
+                }
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    TextButton(onClick = onDismiss) {
+                        Text("Cancel")
+                    }
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    Button(
+                        onClick = {
+                            onSave(            emoji,
+                                ibackground.toHexString(),
+                                iborder.toHexString())
+                        }
+                    ) {
+                        Text("Save")
+                    }
+                }
+            }
+        }
+    }
+}
+
+private fun Color.toHexString(): String {
+    return String.format(
+        "#%02X%02X%02X",
+        (red * 255).toInt(),
+        (green * 255).toInt(),
+        (blue * 255).toInt()
+    )
+}
+
+

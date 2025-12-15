@@ -37,6 +37,8 @@ roomKtx = "2.8.3"
 navigationRuntimeKtx = "2.9.6"
 coil = "2.5.0"
 cameraView = "1.5.1"
+emoji2Emojipicker = "1.6.0"
+foundation = "1.10.0"
 
 [libraries]
 androidx-compose-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
@@ -87,6 +89,8 @@ androidx-camera-camera2 = { module = "androidx.camera:camera-camera2", version.r
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanist" }
 androidx-camera-view = { group = "androidx.camera", name = "camera-view", version.ref = "cameraView" }
 identity-jvm = { group = "com.android.identity", name = "identity-jvm", version.ref = "identityJvm" }
+androidx-emoji2-emojipicker = { group = "androidx.emoji2", name = "emoji2-emojipicker", version.ref = "emoji2Emojipicker" }
+androidx-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "foundation" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
