@@ -84,5 +84,20 @@ class AdminViewModel : ViewModel() {
         }
     }
 
+    fun filterUsers() {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
+            try {
+                _uiState.value.users = AdminRepository.filterUsersBio()
+                _uiState.value = _uiState.value.copy(isLoading = false)
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    errorMessage = e.message ?: "filtering users failed",
+                    isLoading = false
+                )
+            }
+        }
+    }
+
 
 }

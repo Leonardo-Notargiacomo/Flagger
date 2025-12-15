@@ -97,4 +97,20 @@ object AdminRepository {
         }
     }
 
+    suspend fun filterUsersBio(): List<UserReturn> {
+        return try {
+            val response = adminApiService.filterUsersBio(getAuthHeaders())
+            if (response.isSuccessful) {
+                response.body() ?: emptyList()
+            } else {
+                Log.e("AdminRepository", "Error filtering users by bio: ${response.code()} - ${response.message()}")
+                emptyList()
+            }
+
+        } catch (e: Exception){
+            Log.e("AdminRepository", "Exception filtering users by bio: ${e.message}", e)
+            emptyList()
+        }
+    }
+
 }

@@ -16,7 +16,7 @@ interface AdminApiService {
     suspend fun getFlags(@HeaderMap headers: Map<String, String>, @Query("filter") filter: String) : Response<List<FlagResponse>>
     @GET("/go-users")
     suspend fun getUsers(@HeaderMap headers: Map<String, String>, @Query("filter") filter: String) : Response<List<UserReturn>>
-    @GET("/users/filter-bio")
+    @GET("/go-users/filter-bio")
     suspend fun filterUsersBio(@HeaderMap headers: Map<String, String>): Response<List<UserReturn>>
 
     companion object

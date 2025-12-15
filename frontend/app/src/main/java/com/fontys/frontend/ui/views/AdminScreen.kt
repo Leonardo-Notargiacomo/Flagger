@@ -151,12 +151,22 @@ fun UserCard (user: UserReturn, viewModel: AdminViewModel = viewModel()) {
 
 }
 @Composable
-fun RecentOffendersScreen() {
-    Column(
+fun RecentOffendersScreen(viewModel: AdminViewModel) {
+    val uiState by viewModel.uiState.collectAsState()
+    val users = uiState.users
+
+    LaunchedEffect(Unit) {
+        viewModel.filterUsers()
+    }
+
+    LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) { Text("Recent Offenders") }
+        contentPadding = PaddingValues(16.dp)
+    ) {
+        items(users) { user ->
+            UserCard(user)
+        }
+    }
 }
 
 @Composable
@@ -185,7 +195,7 @@ fun AdminScreen(mainNavController: NavController, adminViewModel: AdminViewModel
         ) {
             composable("recent_posts") { RecentPostsScreen(adminViewModel) }
             composable("recent_users") { RecentUsersScreen(adminViewModel) }
-            composable("recent_offenders") { RecentOffendersScreen() }
+            composable("recent_offenders") { RecentOffendersScreen(adminViewModel) }
         }
     }
 }
