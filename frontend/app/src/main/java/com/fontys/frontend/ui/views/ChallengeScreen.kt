@@ -1,5 +1,6 @@
 package com.fontys.frontend.ui.views
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -162,6 +163,7 @@ fun ChallengeScreen(
                     1 -> AvailableChallengesTab(
                         challenges = availableChallenges,
                         isOnCooldown = isOnCooldown,
+                        hasActiveChallenge = activeChallenge != null,
                         cooldownEndsAt = cooldownEndsAt,
                         onSelect = viewModel::selectChallenge
                     )
@@ -217,14 +219,15 @@ fun ActiveChallengesTab(activeChallenge: UserChallenge?, onCompleteCheck: () -> 
 fun AvailableChallengesTab(
     challenges: List<Challenge>,
     isOnCooldown: Boolean,
+    hasActiveChallenge: Boolean,
     cooldownEndsAt: String?,
     onSelect: (Int) -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        // Show cooldown message if user can't select a challenge
-        if (isOnCooldown) {
+        // Show lock message if user can't select a challenge
+        if (isOnCooldown || hasActiveChallenge) {
             val timeRemaining = remember(cooldownEndsAt) { cooldownEndsAt?.let { parseDateTime(it) - System.currentTimeMillis() } ?: 0L }
 
             Surface(
@@ -246,7 +249,11 @@ fun AvailableChallengesTab(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "You can choose a new challenge in ${formatTimeRemaining(timeRemaining)}",
+                        text = if (isOnCooldown) {
+                            "You can choose a new challenge in ${formatTimeRemaining(timeRemaining)}"
+                        } else {
+                            "Complete your active challenge before starting a new one"
+                        },
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onErrorContainer
                     )
@@ -275,7 +282,7 @@ fun AvailableChallengesTab(
                 items(challenges) { challenge ->
                     AvailableChallengeCard(
                         challenge = challenge,
-                        canSelect = !isOnCooldown,
+                        canSelect = !isOnCooldown && !hasActiveChallenge,
                         onSelect = {
                             onSelect(challenge.id)
                         }
@@ -333,7 +340,9 @@ fun UserChallengeCard(
     }
 
     val expiresIn = remember(activatedAt, expiresAt, currentTime) {
-        if (activatedAt == null || expiresAt == null) 0L else (expiresAt - currentTime).coerceAtLeast(0L)
+        val timeRemaining = if (activatedAt == null || expiresAt == null) 0L else (expiresAt - currentTime).coerceAtLeast(0L)
+        Log.d("ChallengeTimer", "Challenge: ${userChallenge.challenge?.name}, expiresAt: ${userChallenge.expiresAt}, activatedAt: ${userChallenge.activatedAt}, expiresIn: $timeRemaining")
+        timeRemaining
     }
 
     val progressFraction = when (challengeType) {
