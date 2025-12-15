@@ -44,6 +44,7 @@ import com.google.android.gms.maps.GoogleMapOptions
 import com.google.android.gms.maps.model.LatLng
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import com.google.android.gms.maps.model.PinConfig
 import com.google.maps.android.compose.*
 import kotlinx.coroutines.delay
@@ -100,9 +101,16 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
         }
     }
 
-    // Use Google Map ID for custom styling
+    val isDark = isSystemInDarkTheme()
+
     val googleMapOptions = remember {
-        GoogleMapOptions().mapId("349a2b06249ce5213e12a47b")
+        GoogleMapOptions().mapId(
+            if (isDark) {
+                "349a2b06249ce5213aa52c34"
+            } else {
+                "349a2b06249ce5213e12a47b"
+            }
+        )
     }
 
     Box(Modifier.fillMaxSize()) {
