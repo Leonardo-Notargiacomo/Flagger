@@ -218,7 +218,7 @@ export class ChallengeService {
   }
 
 
-  async checkChallengeCompletion(userId: number): Promise<Badge | null> {
+  async checkChallengeCompletion(userId: number): Promise<{completed: boolean, badge: Badge | null}> {
     // First, check and expire any old challenges
     await this.checkAndExpireChallenges(userId);
 
@@ -228,7 +228,7 @@ export class ChallengeService {
     });
 
     if (!activeUserChallenge) {
-      return null;
+      return {completed: false, badge: null};
     }
 
     // Check if challenge has expired (shouldn't happen after checkAndExpireChallenges, but safety check)
@@ -237,7 +237,7 @@ export class ChallengeService {
       await this.userChallengeRepository.updateById(activeUserChallenge.id, {
         status: 'expired'
       });
-      return null;
+      return {completed: false, badge: null};
     }
 
     const challenge = (activeUserChallenge as UserChallenge & {challenge: Challenge}).challenge;
@@ -259,13 +259,16 @@ export class ChallengeService {
         completedAt: new Date()
       });
 
-      // Award the badge
-      const badge = await this.awardChallengeBadge(userId, challenge.rewardBadgeId);
+      // Award the badge if there is one
+      let badge: Badge | null = null;
+      if (challenge.rewardBadgeId) {
+        badge = await this.awardChallengeBadge(userId, challenge.rewardBadgeId);
+      }
 
-      return badge;
+      return {completed: true, badge};
     }
 
-    return null;
+    return {completed: false, badge: null};
   }
 
   /**

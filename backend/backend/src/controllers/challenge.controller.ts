@@ -229,10 +229,10 @@ export class ChallengeController {
     @inject(SecurityBindings.USER) currentUser: UserProfile,
   ): Promise<{completed: boolean; badge?: object}> {
     const userId = parseInt(currentUser.id);
-    const badge = await this.challengeService.checkChallengeCompletion(userId);
+    const result = await this.challengeService.checkChallengeCompletion(userId);
     return {
-      completed: badge !== null,
-      badge: badge ?? undefined,
+      completed: result.completed,
+      badge: result.badge ?? undefined,
     };
   }
 
