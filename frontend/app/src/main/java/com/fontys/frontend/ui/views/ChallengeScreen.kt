@@ -174,6 +174,16 @@ fun ChallengeScreen(
 
 @Composable
 fun ActiveChallengesTab(activeChallenge: UserChallenge?, onCompleteCheck: () -> Unit) {
+    // Auto-refresh progress every 30 seconds
+    LaunchedEffect(activeChallenge?.id) {
+        if (activeChallenge != null) {
+            while (true) {
+                kotlinx.coroutines.delay(30000L) // Refresh every 30 seconds
+                onCompleteCheck()
+            }
+        }
+    }
+
     if (activeChallenge == null) {
         Box(
             modifier = Modifier.fillMaxSize(),
