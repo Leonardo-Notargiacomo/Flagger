@@ -69,7 +69,7 @@ export class ExplorationController {
     const newBadges = await this.badgeUnlockService.checkAndUnlockBadges(userId);
 
     // 4. Check for challenge completion
-    const challengeBadge = await this.challengeService.checkChallengeCompletion(userId);
+    const challengeResult = await this.challengeService.checkChallengeCompletion(userId);
 
     // 5. Return response with exploration confirmation and any new badges
     return {
@@ -85,12 +85,12 @@ export class ExplorationController {
         description: b.description,
         iconUrl: b.iconUrl,
       })),
-      challengeCompleted: challengeBadge !== null,
-      challengeBadge: challengeBadge ? {
-        id: challengeBadge.id,
-        name: challengeBadge.name,
-        description: challengeBadge.description,
-        iconUrl: challengeBadge.iconUrl,
+      challengeCompleted: challengeResult.completed,
+      challengeBadge: challengeResult.badge ? {
+        id: challengeResult.badge.id,
+        name: challengeResult.badge.name,
+        description: challengeResult.badge.description,
+        iconUrl: challengeResult.badge.iconUrl,
       } : undefined,
     };
   }
