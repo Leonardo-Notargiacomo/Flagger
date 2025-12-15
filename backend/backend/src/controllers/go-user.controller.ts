@@ -358,7 +358,7 @@ export class GoUserController {
     try {
       const users = await this.goUserRepository.find();
 
-      const filePath = path.join(__dirname, '../CsvFiles/profanity_en.csv');
+      const filePath = path.join(__dirname, '../../src/CsvFiles/profanity_en.csv');
       if (!fs.existsSync(filePath)) {
         throw new Error('Profanity file not found');
       }
