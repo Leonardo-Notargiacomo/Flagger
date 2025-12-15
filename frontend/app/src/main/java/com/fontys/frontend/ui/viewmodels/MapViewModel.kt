@@ -42,7 +42,7 @@ class MapsViewModel(application: Application) : AndroidViewModel(application) {
     private val client = OkHttpClient()
 
 
-    private val _flagStyle = MutableStateFlow<CustomFlagUpdate>(CustomFlagUpdate("#FF888888","", "#FF888888",UserRepository.userId))
+    private val _flagStyle = MutableStateFlow<CustomFlagUpdate>(CustomFlagUpdate("#E98D58","❤️", "#523735",UserRepository.userId))
     val flagStyle: StateFlow<CustomFlagUpdate> = _flagStyle
     private val _userFlags = MutableStateFlow<List<FlagDisplay>>(emptyList())
 
