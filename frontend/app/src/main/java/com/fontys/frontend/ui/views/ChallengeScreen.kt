@@ -431,13 +431,13 @@ fun UserChallengeCard(
         modifier = Modifier
             .fillMaxWidth()
             .border(
-                width = 2.dp,
+                width = 3.dp,
                 color = MaterialTheme.colorScheme.primary,
                 shape = RoundedCornerShape(16.dp)
             ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer
+            containerColor = MaterialTheme.colorScheme.surface
         ),
         shape = RoundedCornerShape(16.dp)
     ) {
