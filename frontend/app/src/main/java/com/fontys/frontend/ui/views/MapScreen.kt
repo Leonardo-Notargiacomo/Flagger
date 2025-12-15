@@ -57,9 +57,12 @@ import kotlinx.coroutines.launch
 import android.graphics.Color as AndroidColor
 import androidx.core.graphics.toColorInt
 import androidx.emoji2.emojipicker.EmojiPickerView
+import androidx.emoji2.emojipicker.RecentEmojiProvider
 import com.github.skydoves.colorpicker.compose.ColorPickerController
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.rememberScrollState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -476,10 +479,13 @@ fun CustomFlagSettingsPopup(
         Color(0xFFD4C5B0)  // Warm beige
     )
 
+    val scrollState = rememberScrollState()
+
     Dialog(onDismissRequest = onDismiss) {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
+                .fillMaxHeight(0.9f)
                 .padding(16.dp),
             shape = RoundedCornerShape(24.dp),
             colors = CardDefaults.cardColors(
@@ -492,6 +498,7 @@ fun CustomFlagSettingsPopup(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .verticalScroll(scrollState)
                     .padding(24.dp),
                 verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
@@ -584,7 +591,7 @@ fun CustomFlagSettingsPopup(
                             },
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(180.dp)
+                                .height(200.dp)
                                 .padding(8.dp)
                         )
                     }
