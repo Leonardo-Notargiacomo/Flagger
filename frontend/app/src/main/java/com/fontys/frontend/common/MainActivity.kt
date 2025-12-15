@@ -38,15 +38,6 @@ import com.fontys.frontend.utils.PermissionHandler
 
 class MainActivity : ComponentActivity() {
 
-    // Camera permission launcher
-    val requestCameraPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        if (isGranted) {
-        } else {
-        }
-    }
-
     private lateinit var permissionHandler: PermissionHandler
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -144,7 +135,6 @@ class MainActivity : ComponentActivity() {
                             // Request permissions when user enters main app
                             androidx.compose.runtime.LaunchedEffect(Unit) {
                                 permissionHandler.checkPermissions()
-                                checkCameraPermission()
                                 subscribeToNotifications()
                             }
                             NavBar()
@@ -165,16 +155,6 @@ class MainActivity : ComponentActivity() {
         super.onResume()
         // Re-check permissions when returning from Settings
         permissionHandler.checkPermissionsOnResume()
-    }
-
-    private fun checkCameraPermission() {
-        if (ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.CAMERA
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            requestCameraPermissionLauncher.launch(Manifest.permission.CAMERA)
-        }
     }
 
     private fun subscribeToNotifications() {
