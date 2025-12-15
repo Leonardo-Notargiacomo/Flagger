@@ -374,7 +374,7 @@ export class GoUserController {
       });
     } catch (error) {
       console.error('Error filtering users by bio:', error);
-      // throw new HttpErrors.InternalServerError('Failed to filter users by bio');
+      throw new HttpErrors.InternalServerError('Failed to filter users by bio');
     }
   }
 
