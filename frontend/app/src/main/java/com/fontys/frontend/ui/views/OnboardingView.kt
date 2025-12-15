@@ -526,7 +526,7 @@ fun OnboardingScreen3(isVisible: Boolean = true) {
             Spacer(modifier = Modifier.height(16.dp))
             StepItem(number = "2", text = "Visit it and snap a photo")
             Spacer(modifier = Modifier.height(16.dp))
-            StepItem(number = "3", text = "Claim your flag & earn XP")
+            StepItem(number = "3", text = "Claim your flag & earn badges")
         }
 
         Spacer(modifier = Modifier.height(32.dp))
