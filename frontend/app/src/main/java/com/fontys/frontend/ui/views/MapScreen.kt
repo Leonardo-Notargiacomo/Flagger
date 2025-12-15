@@ -46,6 +46,7 @@ import com.google.android.gms.maps.model.LatLng
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import com.google.android.gms.maps.model.PinConfig
+import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.maps.android.compose.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -55,7 +56,6 @@ import androidx.emoji2.emojipicker.EmojiPickerView
 import com.github.skydoves.colorpicker.compose.ColorPickerController
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import androidx.compose.foundation.isSystemInDarkTheme
-import java.time.Duration
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -343,7 +343,7 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
                                         picturedata.place_id = place.id
                                         navController.navigate(CameraView)
                                         scope.launch {
-                                            delay(Duration.ofSeconds(10))
+                                            delay(10000L)
                                         }
                                         viewModel.refreshFlags()
                                     },
