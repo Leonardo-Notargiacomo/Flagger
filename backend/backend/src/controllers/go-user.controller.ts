@@ -357,7 +357,7 @@ export class GoUserController {
   async filterUsersBio(){
     const users = await this.goUserRepository.find();
 
-    const filePath = path.join(__dirname, '../CsvFiles/profanity_en.csv');
+    const filePath = path.join(__dirname, '../../src/CsvFiles/profanity_en.csv');
     const data = fs.readFileSync(filePath, 'utf8');
     const profaneWords = data.split(',').map(word => word.trim().toLowerCase());
     
