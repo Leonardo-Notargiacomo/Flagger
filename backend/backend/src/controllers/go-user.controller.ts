@@ -354,29 +354,20 @@ export class GoUserController {
       },
     },
   })
-  async filterUsersBio() {
-    try {
-      const users = await this.goUserRepository.find();
+  async filterUsersBio(){
+    const users = await this.goUserRepository.find();
 
-      const filePath = path.join(__dirname, '../CsvFiles/profanity_en.csv');
-      if (!fs.existsSync(filePath)) {
-        throw new Error('Profanity file not found');
-      }
-
-      const data = fs.readFileSync(filePath, 'utf8');
-      const profaneWords = data.split(/\r?\n/).map(word => word.trim().toLowerCase());
-
-      return users.filter(user => {
-        if (!user.bio) return false;
-
-        const bioWords = user.bio.toLowerCase().replace(/[^\w\s]/g, '').split(/\s+/);
-        return profaneWords.some(profaneWord => bioWords.includes(profaneWord));
-      });
-    } catch (error) {
-      console.error('Error filtering users by bio:', error);
-      throw new HttpErrors.InternalServerError('Failed to filter users by bio');
+    const filePath = path.join(__dirname, '../CsvFiles/profanity_en.csv');
+    const data = fs.readFileSync(filePath, 'utf8');
+    const profaneWords = data.split(',').map(word => word.trim().toLowerCase());
+    
+    const filteredUsers = users.filter(user => {
+      if(!user.bio) return false;
+      const bioWords = user.bio.toLowerCase().split(' ');
+      return profaneWords.some(profaneWord => bioWords.includes(profaneWord));
     }
+    );
+    return filteredUsers;
   }
-
 }
 
