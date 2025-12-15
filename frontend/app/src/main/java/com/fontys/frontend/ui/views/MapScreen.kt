@@ -53,6 +53,9 @@ import androidx.core.graphics.toColorInt
 import androidx.emoji2.emojipicker.EmojiPickerView
 import com.github.skydoves.colorpicker.compose.ColorPickerController
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.time.delay
+import java.time.Duration
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -71,6 +74,7 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
     val currentUserId = UserRepository.userId
     val flagStyle by viewModel.flagStyle.collectAsState()
     var mapSettings by remember{ mutableStateOf(false) }
+    var selectedMarkerId by remember { mutableStateOf<String?>("") }
 
     val hasLocationPermission = remember {
         ContextCompat.checkSelfPermission(
@@ -118,25 +122,35 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
 
 
             userFlags.forEach { spot ->
-                val glyphText = PinConfig.Glyph(flagStyle.emoji)
-                pinConfigBuilder.setGlyph(glyphText)
-                pinConfigBuilder.setBackgroundColor(flagStyle.background.toColorInt())
-                pinConfigBuilder.setBorderColor(flagStyle.border.toColorInt())
 
-                val pinConfig: PinConfig = pinConfigBuilder.build()
-                val marker = MarkerState(position = LatLng(spot.location.latitude, spot.location.longitude))
+
+                val pinConfig = PinConfig.builder()
+                    .setGlyph(PinConfig.Glyph(flagStyle.emoji))
+                    .setBackgroundColor(flagStyle.background.toColorInt())
+                    .setBorderColor(flagStyle.border.toColorInt())
+                    .build()
+
+                val markerState = remember {
+                    MarkerState(
+                        position = LatLng(
+                            spot.location.latitude,
+                            spot.location.longitude
+                        )
+                    )
+                }
+
                 AdvancedMarker(
-                    state = marker,
+                    state = markerState,
                     title = spot.displayName,
-                    snippet = "Flagged by you",
-                    alpha = 0.9f,
+                    snippet = "",
                     pinConfig = pinConfig,
                     onClick = {
-                        marker.showInfoWindow()
+                        selectedMarkerId = spot.locationId
+                        markerState.showInfoWindow()
                         true
                     }
                 )
-        }
+            }
 
         }
 
@@ -299,6 +313,10 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
                                         picturedata.currentUserId = currentUserId
                                         picturedata.place_id = place.id
                                         navController.navigate(CameraView)
+                                        scope.launch {
+                                            delay(Duration.ofSeconds(10))
+                                        }
+                                        viewModel.refreshFlags()
                                     },
                                     colors = ButtonDefaults.textButtonColors(
                                         contentColor = MaterialTheme.colorScheme.onPrimaryContainer
@@ -381,8 +399,13 @@ fun CustomFlagSettingsPopup(
     onDismiss: () -> Unit,
     onSave: (emoji: String, background: String, border: String) -> Unit
 ) {
-    var ibackground =Color(initialBackground.toColorInt())
-    var iborder =Color(initialBorder.toColorInt())
+    var ibackground by remember {
+        mutableStateOf(Color(initialBackground.toColorInt()))
+    }
+
+    var iborder by remember {
+        mutableStateOf(Color(initialBorder.toColorInt()))
+    }
 
     var emoji by remember { mutableStateOf(initialEmoji) }
     var background by remember { mutableStateOf(initialBackground) }
@@ -416,7 +439,6 @@ fun CustomFlagSettingsPopup(
                     style = MaterialTheme.typography.titleMedium
                 )
 
-                // 🔴 Preview
                 Box(
                     modifier = Modifier
                         .size(80.dp)
@@ -430,8 +452,6 @@ fun CustomFlagSettingsPopup(
                         fontSize = 32.sp
                     )
                 }
-
-                // 😀 Emoji Picker
                 AndroidView(
                     factory = {
                         EmojiPickerView(context).apply {

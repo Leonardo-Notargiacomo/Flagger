@@ -142,12 +142,19 @@ class MapsViewModel(application: Application) : AndroidViewModel(application) {
          viewModelScope.launch {
              try {
                  flagRepository.updateUserCustomFlag(UserRepository.userId,background,emoji,border)
+                 refreshFlags()
              } catch (e: Exception){
                  _error.value = e.localizedMessage ?: "Unknown error customizing a flag"
                  Log.e("MapsViewModel", "Error error customizing a flag", e)
              }
          }
     }
+    fun refreshFlags() {
+        viewModelScope.launch {
+            getFlags(UserRepository.userId)
+        }
+    }
+
 
 }
 
