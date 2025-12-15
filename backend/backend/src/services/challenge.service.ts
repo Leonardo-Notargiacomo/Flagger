@@ -91,8 +91,10 @@ export class ChallengeService {
     });
 
     if (activeChallenge && activeChallenge.expiresAt && activeChallenge.expiresAt < now) {
-      activeChallenge.status = 'expired';
-      await this.userChallengeRepository.update(activeChallenge);
+      // Update status without navigational properties
+      await this.userChallengeRepository.updateById(activeChallenge.id, {
+        status: 'expired'
+      });
       console.log(`Challenge ${activeChallenge.challengeId} expired for user ${userId}`);
     }
   }
@@ -110,8 +112,10 @@ export class ChallengeService {
 
     if (activeChallenge) {
       if (activeChallenge.expiresAt && activeChallenge.expiresAt < now) {
-        activeChallenge.status = 'expired';
-        await this.userChallengeRepository.update(activeChallenge);
+        // Update status without navigational properties
+        await this.userChallengeRepository.updateById(activeChallenge.id, {
+          status: 'expired'
+        });
 
         // Set cooldown
         return {
@@ -223,19 +227,30 @@ export class ChallengeService {
     // Check if challenge has expired (shouldn't happen after checkAndExpireChallenges, but safety check)
     const now = new Date();
     if (activeUserChallenge.expiresAt && activeUserChallenge.expiresAt < now) {
-      activeUserChallenge.status = 'expired';
-      await this.userChallengeRepository.update(activeUserChallenge);
+      await this.userChallengeRepository.updateById(activeUserChallenge.id, {
+        status: 'expired'
+      });
       return null;
     }
 
     const challenge = (activeUserChallenge as UserChallenge & {challenge: Challenge}).challenge;
+
+    // Update progress data before checking completion
+    const updatedProgressData = await this.updateProgressData(userId, challenge, activeUserChallenge);
+    if (updatedProgressData) {
+      await this.userChallengeRepository.updateById(activeUserChallenge.id, {
+        progressData: updatedProgressData
+      });
+    }
+
     const isCompleted = await this.evaluateChallengeCondition(userId, challenge, activeUserChallenge);
 
     if (isCompleted) {
-      // Mark as completed but keep cooldown intact
-      activeUserChallenge.status = 'completed';
-      activeUserChallenge.completedAt = new Date();
-      await this.userChallengeRepository.update(activeUserChallenge);
+      // Mark as completed but keep cooldown intact (without navigational properties)
+      await this.userChallengeRepository.updateById(activeUserChallenge.id, {
+        status: 'completed',
+        completedAt: new Date()
+      });
 
       // Award the badge
       const badge = await this.awardChallengeBadge(userId, challenge.rewardBadgeId);
@@ -367,6 +382,46 @@ export class ChallengeService {
         };
       default:
         return {};
+    }
+  }
+
+  /**
+   * Update progress data with actual current progress
+   */
+  private async updateProgressData(
+    userId: number,
+    challenge: Challenge,
+    userChallenge: UserChallenge,
+  ): Promise<object | null> {
+    const window = this.resolveEvaluationWindow(userChallenge, new Date());
+    if (!window) {
+      return null;
+    }
+
+    switch (challenge.conditionType) {
+      case 'exploration_count': {
+        const count = await this.explorationEventRepository.count({
+          userId,
+          completedAt: {between: [window.start, window.end]},
+        });
+        return {
+          currentCount: count.count,
+          targetCount: challenge.conditionParams.count,
+        };
+      }
+      case 'streak': {
+        const userStreak = await this.userStreakRepository.findOne({where: {userId}});
+        return {
+          currentStreak: userStreak?.currentStreak ?? 0,
+          targetStreak: challenge.conditionParams.days,
+        };
+      }
+      case 'time_based': {
+        // Time-based challenges don't have incremental progress
+        return null;
+      }
+      default:
+        return null;
     }
   }
 
