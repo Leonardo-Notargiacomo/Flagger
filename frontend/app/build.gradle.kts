@@ -119,6 +119,8 @@ dependencies {
     implementation(libs.accompanist.permissions)
     // emoji
     implementation("androidx.emoji2:emoji2-emojipicker:1.5.0")
+    implementation(libs.lottie.compose)
+
 }
 
 // ✅ Kotlin DSL way to configure Secrets plugin

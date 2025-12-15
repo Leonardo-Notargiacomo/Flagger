@@ -39,8 +39,10 @@ coil = "2.5.0"
 cameraView = "1.5.1"
 emoji2Emojipicker = "1.6.0"
 foundation = "1.10.0"
+lottie = "6.4.0"
 
 [libraries]
+lottie-compose = { group = "com.airbnb.android", name = "lottie-compose", version.ref = "lottie" }
 androidx-compose-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }

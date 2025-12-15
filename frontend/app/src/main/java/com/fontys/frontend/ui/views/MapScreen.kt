@@ -16,6 +16,7 @@ import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
@@ -53,13 +54,13 @@ import androidx.core.graphics.toColorInt
 import androidx.emoji2.emojipicker.EmojiPickerView
 import com.github.skydoves.colorpicker.compose.ColorPickerController
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.time.delay
+import androidx.compose.foundation.isSystemInDarkTheme
 import java.time.Duration
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewModel()) {
+    val isDarkTheme = isSystemInDarkTheme()
     val scope = rememberCoroutineScope()
     val userLocation by viewModel.userLocation.collectAsState()
     val fullFlags by viewModel.userFullFlags.collectAsState()
@@ -69,18 +70,32 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
     var selectedPlace by remember { mutableStateOf<PlaceService?>(null) }
     val context = LocalContext.current
     val selectedPlaces = remember { mutableStateListOf<PlaceService>() }
-    LaunchedEffect(Unit) { viewModel.loadUserLocation() }
     val userFlags by viewModel.userFlags.collectAsState()
     val currentUserId = UserRepository.userId
     val flagStyle by viewModel.flagStyle.collectAsState()
     var mapSettings by remember{ mutableStateOf(false) }
     var selectedMarkerId by remember { mutableStateOf<String?>("") }
 
-    val hasLocationPermission = remember {
-        ContextCompat.checkSelfPermission(
-            context,
-            Manifest.permission.ACCESS_FINE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED
+    // Check if location permission is granted - continuously reactive
+    var hasLocationPermission by remember { mutableStateOf(false) }
+
+    // Poll for permission changes every second while on this screen
+    LaunchedEffect(Unit) {
+        while (true) {
+            val newPermissionState = ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+
+            if (newPermissionState != hasLocationPermission) {
+                hasLocationPermission = newPermissionState
+                if (newPermissionState) {
+                    // Permission just granted, reload location
+                    viewModel.loadUserLocation()
+                }
+            }
+            kotlinx.coroutines.delay(1000)
+        }
     }
 
     // Badge unlock dialog state
@@ -92,6 +107,11 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
         }
     }
 
+    // Check for pending badge unlocks when returning from camera
+    LaunchedEffect(Unit) {
+        viewModel.checkPendingBadges()
+    }
+
     userLocation?.let {
         LaunchedEffect(it) {
             cameraPositionState.animate(
@@ -101,18 +121,27 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
     }
 
     // Use Google Map ID for custom styling
-    val googleMapOptions = remember {
-        GoogleMapOptions().mapId("349a2b06249ce5213e12a47b")
+//    val googleMapOptions = remember {
+//        GoogleMapOptions().mapId("349a2b06249ce5213e12a47b")
+//    }
+
+    val mapProperties by remember(isDarkTheme, hasLocationPermission) {
+        mutableStateOf(
+            MapProperties(
+                isMyLocationEnabled = hasLocationPermission,
+                mapStyleOptions = MapStyleOptions.loadRawResourceStyle(
+                    context,
+                    if (isDarkTheme) R.raw.map_style_dark else R.raw.map_style
+                )
+            )
+        )
     }
 
     Box(Modifier.fillMaxSize()) {
         GoogleMap(
             modifier = Modifier.fillMaxSize(),
             cameraPositionState = cameraPositionState,
-            googleMapOptionsFactory = { googleMapOptions },
-            properties = MapProperties(
-                isMyLocationEnabled = true
-            ),
+            properties = mapProperties,
             uiSettings = MapUiSettings(
                 zoomControlsEnabled = false,
                 myLocationButtonEnabled = false
