@@ -95,7 +95,7 @@ fun NavHost(
             }
 
             composable<ChallengeView> {
-                ChallengeScreen()
+                ChallengeScreen(navController = navController)
             }
 
             composable<LoginView> {
