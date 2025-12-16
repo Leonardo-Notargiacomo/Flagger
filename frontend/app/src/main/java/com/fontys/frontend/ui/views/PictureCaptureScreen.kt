@@ -2,7 +2,6 @@ package com.fontys.frontend.ui.views
 
 
 import androidx.camera.compose.CameraXViewfinder
-import androidx.c
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer

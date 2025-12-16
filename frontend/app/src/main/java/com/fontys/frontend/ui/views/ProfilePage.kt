@@ -28,6 +28,7 @@ import com.fontys.frontend.domain.UserRepository
 import com.fontys.frontend.ui.components.EditableAccountField
 import com.fontys.frontend.ui.components.ProfileHeader
 import com.fontys.frontend.ui.viewmodels.ProfileViewModel
+import com.fontys.frontend.ui.viewmodels.SettingsMenu
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -302,134 +303,6 @@ fun Profile(viewModel: ProfileViewModel) {
                         }
                     }
                 }
-            }
-        }
-    }
-}
-
-@Composable
-fun StatColumn(label: String, count: Int) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(4.dp)
-    ) {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.7f)
-        )
-        Text(
-            text = count.toString(),
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onSecondaryContainer
-        )
-    }
-}
-
-@Composable
-fun CircleInitials(name: String, size: Dp = 120.dp) {
-    val initials = name
-        .split(" ")
-        .take(2)
-        .mapNotNull { it.firstOrNull()?.uppercase() }
-        .joinToString("")
-
-    Box(
-        modifier = Modifier
-            .size(size)
-            .clip(CircleShape)
-            .background(MaterialTheme.colorScheme.primary) // Orange Accent
-            .border(2.dp, MaterialTheme.colorScheme.onPrimaryContainer, CircleShape),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = initials,
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onPrimary // White text
-        )
-    }
-}
-
-@Composable
-fun SettingsMenu(
-    modifier: Modifier = Modifier,
-    X: () -> Unit = {},
-    Y: () -> Unit = {},
-    Z: () -> Unit = {},
-) {
-    var expanded by remember { mutableStateOf(false) }
-
-    Box(modifier = modifier, contentAlignment = Alignment.Center) {
-        IconButton(onClick = { expanded = true }) {
-            Icon(
-                imageVector = Icons.Default.Settings,
-                contentDescription = "Settings",
-                tint = MaterialTheme.colorScheme.onSecondaryContainer
-            )
-        }
-
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-            containerColor = MaterialTheme.colorScheme.surfaceVariant
-        ) {
-            DropdownMenuItem(
-                text = { Text("Edit Profile", color = MaterialTheme.colorScheme.onSurfaceVariant) },
-                onClick = {
-                    expanded = false
-                    X()
-                }
-            )
-            // Add other items...
-        }
-    }
-}
-
-@Composable
-fun FlagItem(flag: FlagShowData, viewModel: ProfileViewModel) {
-    val image = viewModel.base64ToImageBitmap(flag.photoCode)
-
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 4.dp), // Slight padding
-        colors = CardDefaults.cardColors(
-            // Make these cards slightly lighter than the profile background to pop
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
-            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(12.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = flag.name,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold
-                )
-                Text(
-                    text = flag.dateTaken,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
-                )
-            }
-            if (image != null) {
-                Image(
-                    bitmap = image,
-                    contentDescription = "Image",
-                    modifier = Modifier
-                        .size(48.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                        .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(8.dp))
-                )
             }
         }
     }

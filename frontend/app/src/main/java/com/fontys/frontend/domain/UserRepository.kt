@@ -17,6 +17,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.http.*
 import com.fontys.frontend.domain.UserAPIService
+import java.util.concurrent.TimeUnit
 
 
 
@@ -24,13 +25,21 @@ object UserRepository {
     private const val TAG = "UserRepository"
     var token = ""
     var userId = 0
+
+
+    //BODY
+    //Logs request and response lines and their respective headers and bodies (if present).
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY
     }
 
     private val okHttpClient = OkHttpClient.Builder()
-        // No custom auth interceptor needed here if using @HeaderMap directly
-        .addInterceptor(loggingInterceptor) // Keep logging for debugging
+        .addInterceptor(loggingInterceptor)
+        // Render free tier can be cold; give extra breathing room to avoid socket timeouts during login
+        .connectTimeout(120, TimeUnit.SECONDS)
+        .readTimeout(120, TimeUnit.SECONDS)
+        .writeTimeout(120, TimeUnit.SECONDS)
+        .callTimeout(120, TimeUnit.SECONDS)
         .build()
 
     private val gson = GsonBuilder()
