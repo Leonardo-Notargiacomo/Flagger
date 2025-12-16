@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.PlayArrow
@@ -22,6 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import com.fontys.frontend.data.models.Badge
 import com.fontys.frontend.data.models.Challenge
 import com.fontys.frontend.data.models.ChallengeCompletionResult
@@ -36,6 +38,7 @@ import java.util.concurrent.TimeUnit
 
 @Composable
 fun ChallengeScreen(
+    navController: NavHostController,
     viewModel: ChallengeViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -89,20 +92,31 @@ fun ChallengeScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        // Header section matching BadgeScreen style
-        Column(
+        // Header section with back navigation
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 32.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .padding(top = 32.dp, bottom = 16.dp)
         ) {
+            IconButton(
+                onClick = { navController.popBackStack() },
+                modifier = Modifier
+                    .align(Alignment.CenterStart)
+                    .padding(start = 8.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = "Back",
+                    tint = MaterialTheme.colorScheme.onBackground
+                )
+            }
             Text(
                 text = "Challenge Collection",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onBackground
+                color = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier.align(Alignment.Center)
             )
-            Spacer(modifier = Modifier.height(16.dp))
         }
 
         // Tabs (matching FriendsScreen style)

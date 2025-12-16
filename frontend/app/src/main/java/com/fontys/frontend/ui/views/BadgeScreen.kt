@@ -14,6 +14,7 @@ import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Stars
 import androidx.compose.material3.*
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -69,7 +70,7 @@ fun BadgeScreen(
                 val badgesByCategory = remember(state.badges) {
                     state.badges.groupBy { it.category }
                 }
-                
+
                 // Order of categories
                 val categoryOrder = listOf("Explorer", "Social", "Streak", "Special")
                 val sortedCategories = badgesByCategory.keys.sortedBy { category ->
@@ -77,13 +78,18 @@ fun BadgeScreen(
                     if (index != -1) index else Int.MAX_VALUE
                 }
 
-                LazyVerticalGrid(
+                PullToRefreshBox(
+                    isRefreshing = false,
+                    onRefresh = {
+                        viewModel.loadUserBadges(userId)
+                    }
+                ) {
+                    LazyVerticalGrid(
                     columns = GridCells.Fixed(3),
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
+                        .fillMaxSize()
                         .padding(horizontal = 24.dp),
                     contentPadding = PaddingValues(top = 32.dp, bottom = 100.dp)
                 ) {
@@ -150,6 +156,7 @@ fun BadgeScreen(
                             )
                         }
                     }
+                }
                 }
 
                 // Show badge detail dialog when a badge is selected

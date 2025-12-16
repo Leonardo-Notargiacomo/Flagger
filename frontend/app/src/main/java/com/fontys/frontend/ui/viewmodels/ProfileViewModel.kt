@@ -24,6 +24,9 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
     private val _error = MutableStateFlow<String?>(null)
     val error: StateFlow<String?> = _error
 
+    private val _successMessage = MutableStateFlow<String?>(null)
+    val successMessage: StateFlow<String?> = _successMessage
+
 
     fun getUser(userId: String) {
         viewModelScope.launch {
@@ -50,11 +53,23 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
         viewModelScope.launch {
             _isLoading.value = true
             _error.value = null
+            _successMessage.value = null
 
             try {
                 val result = userRepository.updateUser(userId, userUpdate)
-                // Re-fetch the user data after successful update
-                getUser(userId)
+
+                // Check if the result indicates an error
+                if (result != null && (result.startsWith("Error:") || result.startsWith("Exception:"))) {
+                    // Extract error message
+                    val errorMsg = result.substringAfter(": ").ifBlank { "Failed to update profile" }
+                    _error.value = errorMsg
+                    _isLoading.value = false
+                } else {
+                    // Success!
+                    _successMessage.value = "Profile updated successfully!"
+                    // Re-fetch the user data after successful update
+                    getUser(userId)
+                }
             } catch (e: Exception) {
                 Log.e("UserViewModel", "Error updating user", e)
                 _error.value = e.localizedMessage ?: "Unknown error updating user"
@@ -65,5 +80,9 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
 
     fun clearError() {
         _error.value = null
+    }
+
+    fun clearSuccessMessage() {
+        _successMessage.value = null
     }
 }
