@@ -8,10 +8,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.EmojiEvents
+import androidx.compose.material.icons.filled.People
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -19,14 +22,24 @@ import com.fontys.frontend.data.UserUpdate
 import com.fontys.frontend.domain.UserRepository
 import com.fontys.frontend.ui.components.*
 import com.fontys.frontend.ui.viewmodels.ProfileViewModel
+import com.fontys.frontend.ui.viewmodels.BadgeViewModel
+import com.fontys.frontend.ui.viewmodels.FriendsViewModel
+import com.fontys.frontend.ui.viewmodels.BadgeUiState
 import kotlinx.coroutines.launch
 
 @Composable
-fun ProfileScreen(userViewModel: ProfileViewModel = viewModel()) {
+fun ProfileScreen(
+    userViewModel: ProfileViewModel = viewModel(),
+    badgeViewModel: BadgeViewModel = viewModel(),
+    friendsViewModel: FriendsViewModel = viewModel()
+) {
     val user by userViewModel.user.collectAsState()
     val isLoading by userViewModel.isLoading.collectAsState()
     val error by userViewModel.error.collectAsState()
     val successMessage by userViewModel.successMessage.collectAsState()
+
+    val badgeUiState by badgeViewModel.uiState.collectAsState()
+    val friendsUiState by friendsViewModel.uiState.collectAsState()
 
     var isEditing by remember { mutableStateOf(false) }
     var editUsername by remember { mutableStateOf("") }
@@ -35,10 +48,19 @@ fun ProfileScreen(userViewModel: ProfileViewModel = viewModel()) {
 
     val coroutineScope = rememberCoroutineScope()
 
-    // Load user data once when screen opens
+    // Load user data, badges, and friends once when screen opens
     LaunchedEffect(Unit) {
         userViewModel.getUser(UserRepository.userId.toString())
+        badgeViewModel.loadUserBadges(UserRepository.userId)
+        friendsViewModel.loadFriends()
     }
+
+    // Calculate stats
+    val badgeCount = when (val state = badgeUiState) {
+        is BadgeUiState.Success -> state.badges.count { it.unlockedAt != null }
+        else -> 0
+    }
+    val friendCount = friendsUiState.friends.size
 
     Column(
         modifier = Modifier
@@ -131,7 +153,76 @@ fun ProfileScreen(userViewModel: ProfileViewModel = viewModel()) {
                         onImageEdit = { /* TODO */ }
                     )
 
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // Statistics Card
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer
+                        ),
+                        shape = RoundedCornerShape(16.dp),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            horizontalArrangement = Arrangement.SpaceEvenly
+                        ) {
+                            // Badges stat
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.EmojiEvents,
+                                    contentDescription = "Badges",
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.size(32.dp)
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Text(
+                                    text = badgeCount.toString(),
+                                    style = MaterialTheme.typography.titleLarge,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                                Text(
+                                    text = "BADGES",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
+                                )
+                            }
+
+                            // Friends stat
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.People,
+                                    contentDescription = "Friends",
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.size(32.dp)
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Text(
+                                    text = friendCount.toString(),
+                                    style = MaterialTheme.typography.titleLarge,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                                Text(
+                                    text = "FRIENDS",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
+                                )
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
 
                     if (isEditing) {
                         EditableAccountField(
