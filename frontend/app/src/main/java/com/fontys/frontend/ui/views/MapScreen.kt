@@ -49,6 +49,7 @@ import com.google.android.gms.maps.GoogleMapOptions
 import com.google.android.gms.maps.model.LatLng
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import com.google.android.gms.maps.model.PinConfig
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.maps.android.compose.*
