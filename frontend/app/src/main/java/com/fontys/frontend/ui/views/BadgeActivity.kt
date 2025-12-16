@@ -7,27 +7,25 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import com.fontys.frontend.ui.theme.BadgeTheme
+import androidx.navigation.compose.rememberNavController
+import com.fontys.frontend.domain.UserRepository
 
 class BadgeActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // TODO: Replace hardcoded userId with actual authenticated user's ID
-        // Once authentication is merged, get userId from:
-        // - SharedPreferences/DataStore
-        // - Intent extra
-        // - Authentication token/session
-        val userId = 1
+        // Get userId from UserRepository (set during login)
+        val userId = UserRepository.userId
 
         setContent {
-            BadgeTheme {
+            val navController = rememberNavController()
+            MaterialTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    BadgeScreen(userId = userId)
+                    BadgeScreen(userId = userId, navController = navController)
                 }
             }
         }

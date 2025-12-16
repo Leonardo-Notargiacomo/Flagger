@@ -33,6 +33,7 @@ import com.fontys.frontend.ui.views.NavBar
 import com.fontys.frontend.ui.views.RegistrationView as RegistrationViewComposable
 import com.fontys.frontend.utils.FCMTokenManager
 import com.fontys.frontend.utils.PermissionHandler
+import com.fontys.frontend.utils.ChallengePreferences
 
 class MainActivity : ComponentActivity() {
 
@@ -49,6 +50,9 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Initialize ChallengePreferences for persistent challenge timer storage
+        ChallengePreferences.init(applicationContext)
+
 
         // Initialize permission handler
         permissionHandler = PermissionHandler(

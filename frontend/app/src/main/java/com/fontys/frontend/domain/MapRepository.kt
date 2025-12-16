@@ -42,7 +42,7 @@ class MapRepository { // No need for companion object if we want an instance for
                                 put("latitude", latlng.latitude)
                                 put("longitude", latlng.longitude)
                             })
-                            put("radius", 10.0)
+                            put("radius", 250.0)
                         })
                     })
                 }
@@ -103,7 +103,10 @@ class MapRepository { // No need for companion object if we want an instance for
                                     val displayNameObj = place.getJSONObject("displayName")
                                     val name = displayNameObj.getString("text")
                                     val iconMaskBaseUri = place.getString("iconMaskBaseUri")
-                                    val iconBackgroundColor = place.getString("iconBackgroundColor") // Corrected
+                                    // Use optString with default and check for blank to prevent crash
+                                    val iconBackgroundColor = place.optString("iconBackgroundColor", "#4285F4").let {
+                                        if (it.isNullOrBlank()) "#4285F4" else it
+                                    }
                                     val locationObj = place.getJSONObject("location")
                                     val lat = locationObj.getDouble("latitude")
                                     val lng = locationObj.getDouble("longitude")

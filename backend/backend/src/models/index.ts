@@ -8,3 +8,5 @@ export * from './friend-request.model';
 export * from './friendship.model';
 export * from './go-user-credentials.model';
 export * from './user-custom-flag.model';
+export * from './challenge.model';
+export * from './user-challenge.model';
