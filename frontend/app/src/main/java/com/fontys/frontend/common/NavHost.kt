@@ -6,18 +6,23 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.fontys.frontend.domain.UserRepository
+import com.fontys.frontend.ui.viewmodels.CameraPreviewViewModel
 import com.fontys.frontend.ui.views.BadgeScreen
+import com.fontys.frontend.ui.views.PictureCaptureScreen
 import com.fontys.frontend.ui.views.FriendsScreen
 import com.fontys.frontend.ui.views.LoginView
 import com.fontys.frontend.ui.views.RegistrationView
 import com.fontys.frontend.ui.views.MapsScreen
 import com.fontys.frontend.ui.views.ProfileScreen
+import com.fontys.frontend.ui.views.ChallengeScreen
 import kotlinx.serialization.Serializable
 import com.fontys.frontend.ui.views.NavBar
+import com.fontys.frontend.ui.views.PublicProfileScreen
 
 
 @Serializable
@@ -33,6 +38,9 @@ object ProfileView
 object BadgeView
 
 @Serializable
+object ChallengeView
+
+@Serializable
 object LoginView
 
 @Serializable
@@ -40,6 +48,14 @@ object NavigationView
 
 @Serializable
 object RegistrationView
+
+@Serializable
+data class PublicProfileView(val userId: Int)
+
+@Serializable
+object CameraView{
+    const val route = "camera_view"
+}
 
 @Composable
 fun NavHost(
@@ -58,28 +74,58 @@ fun NavHost(
             composable<MapView> {
                 MapsScreen(navController)
             }
-        composable<FriendView> {
-            // TODO: Pass actual auth token to FriendsViewModel when auth system is integrated
-            // Example: val viewModel: FriendsViewModel = viewModel()
-            //          viewModel.setAuthToken(authToken)
-            FriendsScreen()
-        }
-        composable<ProfileView> {
-            ProfileScreen()
-        }
-        composable<BadgeView> {
-            BadgeScreen(userId = UserRepository.userId)
-        }
-        composable<LoginView> {
-            LoginView(navController)
-        }
-        composable<RegistrationView> {
-            RegistrationView(navController)
-        }
 
-        composable <NavigationView>{
-            NavBar()
-        }
+            composable<FriendView> {
+                // TODO: Pass actual auth token to FriendsViewModel when auth system is integrated
+                // Example: val viewModel: FriendsViewModel = viewModel()
+                //          viewModel.setAuthToken(authToken)
+                FriendsScreen(navController = navController)
+            }
+
+            composable<ProfileView> {
+                ProfileScreen()
+            }
+
+            composable<BadgeView> {
+                // Pass the NavHostController to BadgeScreen so it can navigate to ChallengeView
+                BadgeScreen(
+                    userId = UserRepository.userId,
+                    navController = navController
+                )
+            }
+
+            composable<ChallengeView> {
+                ChallengeScreen()
+            }
+
+            composable<LoginView> {
+                LoginView(navController)
+            }
+
+            composable<RegistrationView> {
+                RegistrationView(navController)
+            }
+
+            composable<NavigationView> {
+                NavBar()
+            }
+
+            composable<CameraView>  {
+                val cameraViewModel: CameraPreviewViewModel = viewModel()
+                PictureCaptureScreen(navController, cameraViewModel)
+            }
+
+            composable<PublicProfileView> { backStackEntry ->
+                // Type-safe navigation with Kotlin serialization
+                // The route parameters are automatically parsed from the path
+                val args = backStackEntry.arguments
+                val userId = args?.getInt("userId") ?: 0
+
+                PublicProfileScreen(
+                    userId = userId,
+                    onNavigateBack = { navController.popBackStack() }
+                )
+            }
         }
     }
 }

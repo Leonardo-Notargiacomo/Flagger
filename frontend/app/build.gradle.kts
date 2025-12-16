@@ -59,7 +59,10 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.navigation.compose)
-    implementation(libs.androidx.compose.material3)
+    implementation(libs.identity.jvm)
+    implementation(libs.androidx.camera.view)
+    implementation(libs.androidx.emoji2.emojipicker)
+    implementation(libs.androidx.foundation)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     androidTestImplementation(platform(libs.androidx.compose.bom))
@@ -84,6 +87,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
+    implementation("androidx.core:core-splashscreen:1.0.1")
 
     // Google Play Services - Maps & Location
     implementation(libs.play.services.maps)
@@ -92,14 +96,26 @@ dependencies {
 
     // Image loading
     implementation("io.coil-kt:coil-compose:2.5.0")
+    implementation("io.coil-kt:coil-gif:2.5.0")
 
     // Other utilities
     implementation("org.json:json:20240303")
-
+    implementation("com.github.skydoves:colorpicker-compose:1.0.3")
     // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    //What is the name of a daughter of a mexican photographer?: camera diaz
+    implementation(libs.androidx.camera.core)
+    implementation(libs.androidx.camera.compose)
+    implementation(libs.androidx.camera.lifecycle)
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.accompanist.permissions)
+    // emoji
+    implementation("androidx.emoji2:emoji2-emojipicker:1.5.0")
+    implementation(libs.lottie.compose)
+
 }
 
 // ✅ Kotlin DSL way to configure Secrets plugin

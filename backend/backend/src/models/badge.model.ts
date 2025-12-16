@@ -35,11 +35,20 @@ export class Badge extends Entity {
   @property({
     type: 'object',
     required: true,
+    postgresql: {
+      dataType: 'jsonb',
+    },
   })
   unlockCriteria: {
     type: 'exploration_count' | 'streak';
     threshold: number;
   }
+
+  @property({
+    type: 'boolean',
+    default: false,
+  })
+  isChallengeBadge?: boolean;
 
   @property({
     type: 'number',

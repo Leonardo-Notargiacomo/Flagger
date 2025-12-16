@@ -1,5 +1,6 @@
 import {Entity, hasOne, model, property} from '@loopback/repository';
 import {GoUserCredentials} from './go-user-credentials.model';
+import {UserCustomFlag} from './user-custom-flag.model';
 
 @model()
 export class GoUser extends Entity {
@@ -12,13 +13,19 @@ export class GoUser extends Entity {
 
   @property({
     type: 'string',
-    default: 'User',
+    required: true,
+    index: {
+      unique: true,
+    },
   })
-  userName?: string;
+  userName: string;
 
   @property({
     type: 'string',
     required: true,
+    index: {
+      unique: true,
+    },
   })
   email: string;
 
@@ -35,6 +42,9 @@ export class GoUser extends Entity {
 
   @hasOne(() => GoUserCredentials, {keyTo: 'goUserId'})
   goUserCredentials: GoUserCredentials;
+
+  @hasOne(() => UserCustomFlag)
+  userCustomFlag: UserCustomFlag;
 
   constructor(data?: Partial<GoUser>) {
     super(data);

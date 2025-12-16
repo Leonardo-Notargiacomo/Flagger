@@ -1,10 +1,14 @@
 import {inject, lifeCycleObserver, LifeCycleObserver} from '@loopback/core';
 import {juggler} from '@loopback/repository';
+import * as dotenv from 'dotenv';
+
+// Load environment variables from .env file
+dotenv.config();
 
 const config = {
   name: 'db',
   connector: 'postgresql',
-  url: 'postgresql://prj3_group01_android_user:tFWrjSk52SUBmvQjGgQPcMolIIChnhyy@dpg-d41ju5ogjchc739ugf80-a.frankfurt-postgres.render.com/prj3_group01_android?ssl=true'
+  url: process.env.DATABASE_URL
 };
 
 // Observe application's life cycle to disconnect the datasource when

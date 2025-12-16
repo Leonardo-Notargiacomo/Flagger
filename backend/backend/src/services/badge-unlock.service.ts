@@ -41,6 +41,11 @@ export class BadgeUnlockService {
     const newlyUnlocked: Badge[] = [];
 
     for (const badge of allBadges) {
+      // Challenge-specific badges are awarded exclusively through challenges
+      if (badge.isChallengeBadge) {
+        continue;
+      }
+
       if (unlockedBadgeIds.includes(badge.id!)) {
         continue;
       }
