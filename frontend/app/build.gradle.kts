@@ -63,6 +63,7 @@ dependencies {
     implementation(libs.androidx.camera.view)
     implementation(libs.androidx.emoji2.emojipicker)
     implementation(libs.androidx.foundation)
+    implementation(libs.androidx.compose.material3)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     androidTestImplementation(platform(libs.androidx.compose.bom))

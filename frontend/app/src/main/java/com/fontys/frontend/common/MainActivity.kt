@@ -1,23 +1,19 @@
 package com.fontys.frontend.common
 
-import android.Manifest
-import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
+import android.view.Surface
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.core.content.ContextCompat
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -129,7 +125,8 @@ class MainActivity : ComponentActivity() {
                                 }
                             )
                         ) { backStackEntry ->
-                            val registrationSuccess = backStackEntry.arguments?.getBoolean("registrationSuccess") ?: false
+                            val registrationSuccess =
+                                backStackEntry.arguments?.getBoolean("registrationSuccess") ?: false
                             LoginView(navController, registrationSuccess = registrationSuccess)
                         }
                         composable("registration") {
@@ -137,7 +134,7 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("main") {
                             // Request permissions when user enters main app
-                            androidx.compose.runtime.LaunchedEffect(Unit) {
+                            LaunchedEffect(Unit) {
                                 permissionHandler.checkPermissions()
                                 subscribeToNotifications()
                             }
