@@ -159,6 +159,7 @@ export class ChallengeService {
   }
 
   async selectChallenge(userId: number, challengeId: number): Promise<ChallengeSelectionResult> {
+    // Validation checks before transaction
     const status = await this.getUserChallengeStatus(userId);
     if (status.isOnCooldown) {
       throw new HttpErrors.Forbidden('You are on cooldown. Please wait before selecting a new challenge.');
@@ -167,59 +168,72 @@ export class ChallengeService {
       throw new HttpErrors.BadRequest('You already have an active challenge.');
     }
 
-    // Get the challenge
-    const challenge = await this.challengeRepository.findById(challengeId);
-    if (!challenge.isActive) {
-      throw new HttpErrors.BadRequest('This challenge is not available.');
+    // Start transaction
+    const transaction = await this.challengeRepository.dataSource.beginTransaction();
+
+    try {
+      // Get the challenge within transaction
+      const challenge = await this.challengeRepository.findById(challengeId, {}, {transaction});
+      if (!challenge.isActive) {
+        throw new HttpErrors.BadRequest('This challenge is not available.');
+      }
+
+      // Check if user already completed this challenge
+      const existingCompletion = await this.userChallengeRepository.findOne({
+        where: {userId, challengeId, status: 'completed'},
+      }, {transaction});
+      if (existingCompletion) {
+        throw new HttpErrors.BadRequest('You have already completed this challenge.');
+      }
+
+      const now = new Date();
+      const cooldownEndsAt = new Date(now.getTime() + (challenge.cooldownHours ?? 24) * 60 * 60 * 1000);
+
+      let expiresAt: Date | undefined;
+      if (challenge.conditionType === 'streak') {
+        // Streak challenges can have custom expiration or no expiration
+        expiresAt = challenge.expirationHours
+          ? new Date(now.getTime() + challenge.expirationHours * 60 * 60 * 1000)
+          : undefined;
+      } else {
+        // All other challenges expire in 24 hours (or custom if specified)
+        const expirationTime = challenge.expirationHours ?? 24;
+        expiresAt = new Date(now.getTime() + expirationTime * 60 * 60 * 1000);
+      }
+
+      const userChallenge = await this.userChallengeRepository.create({
+        userId,
+        challengeId,
+        status: 'active',
+        activatedAt: now,
+        cooldownEndsAt,
+        expiresAt,
+        progressData: this.initializeProgressData(challenge),
+      }, {transaction});
+
+      // Commit transaction
+      await transaction.commit();
+
+      // Clear the challenges cache so user gets new options after cooldown
+      ChallengeService.challengeCache.delete(userId);
+      console.log(`Cleared challenge cache for user ${userId} after selecting challenge`);
+
+      return {
+        userChallenge,
+        challenge,
+        cooldownEndsAt,
+      };
+    } catch (error) {
+      // Rollback transaction on error
+      await transaction.rollback();
+      console.error(`Transaction rolled back for selectChallenge userId=${userId}, challengeId=${challengeId}:`, error);
+      throw error;
     }
-
-    // Check if user already completed this challenge
-    const existingCompletion = await this.userChallengeRepository.findOne({
-      where: {userId, challengeId, status: 'completed'},
-    });
-    if (existingCompletion) {
-      throw new HttpErrors.BadRequest('You have already completed this challenge.');
-    }
-
-    const now = new Date();
-    const cooldownEndsAt = new Date(now.getTime() + (challenge.cooldownHours ?? 24) * 60 * 60 * 1000);
-
-    let expiresAt: Date | undefined;
-    if (challenge.conditionType === 'streak') {
-      // Streak challenges can have custom expiration or no expiration
-      expiresAt = challenge.expirationHours
-        ? new Date(now.getTime() + challenge.expirationHours * 60 * 60 * 1000)
-        : undefined;
-    } else {
-      // All other challenges expire in 24 hours (or custom if specified)
-      const expirationTime = challenge.expirationHours ?? 24;
-      expiresAt = new Date(now.getTime() + expirationTime * 60 * 60 * 1000);
-    }
-
-    const userChallenge = await this.userChallengeRepository.create({
-      userId,
-      challengeId,
-      status: 'active',
-      activatedAt: now,
-      cooldownEndsAt,
-      expiresAt,
-      progressData: this.initializeProgressData(challenge),
-    });
-
-    // Clear the challenges cache so user gets new options after cooldown
-    ChallengeService.challengeCache.delete(userId);
-    console.log(`Cleared challenge cache for user ${userId} after selecting challenge`);
-
-    return {
-      userChallenge,
-      challenge,
-      cooldownEndsAt,
-    };
   }
 
 
   async checkChallengeCompletion(userId: number): Promise<{completed: boolean, badge: Badge | null}> {
-    // First, check and expire any old challenges
+    // First, check and expire any old challenges (outside transaction)
     await this.checkAndExpireChallenges(userId);
 
     const activeUserChallenge = await this.userChallengeRepository.findOne({
@@ -242,7 +256,7 @@ export class ChallengeService {
 
     const challenge = (activeUserChallenge as UserChallenge & {challenge: Challenge}).challenge;
 
-    // Update progress data before checking completion
+    // Update progress data before checking completion (outside transaction)
     const updatedProgressData = await this.updateProgressData(userId, challenge, activeUserChallenge);
     if (updatedProgressData) {
       await this.userChallengeRepository.updateById(activeUserChallenge.id, {
@@ -253,19 +267,32 @@ export class ChallengeService {
     const isCompleted = await this.evaluateChallengeCondition(userId, challenge, activeUserChallenge);
 
     if (isCompleted) {
-      // Mark as completed but keep cooldown intact (without navigational properties)
-      await this.userChallengeRepository.updateById(activeUserChallenge.id, {
-        status: 'completed',
-        completedAt: new Date()
-      });
+      // Start transaction for completing challenge and awarding badge
+      const transaction = await this.userChallengeRepository.dataSource.beginTransaction();
 
-      // Award the badge if there is one
-      let badge: Badge | null = null;
-      if (challenge.rewardBadgeId) {
-        badge = await this.awardChallengeBadge(userId, challenge.rewardBadgeId);
+      try {
+        // Mark as completed but keep cooldown intact (without navigational properties)
+        await this.userChallengeRepository.updateById(activeUserChallenge.id, {
+          status: 'completed',
+          completedAt: new Date()
+        }, {transaction});
+
+        // Award the badge if there is one
+        let badge: Badge | null = null;
+        if (challenge.rewardBadgeId) {
+          badge = await this.awardChallengeBadge(userId, challenge.rewardBadgeId, transaction);
+        }
+
+        // Commit transaction
+        await transaction.commit();
+
+        return {completed: true, badge};
+      } catch (error) {
+        // Rollback transaction on error
+        await transaction.rollback();
+        console.error(`Transaction rolled back for checkChallengeCompletion userId=${userId}:`, error);
+        throw error;
       }
-
-      return {completed: true, badge};
     }
 
     return {completed: false, badge: null};
@@ -273,12 +300,15 @@ export class ChallengeService {
 
   /**
    * Award a badge to a user
+   * @param transaction Optional transaction to use for database operations
    */
-  private async awardChallengeBadge(userId: number, badgeId: number): Promise<Badge> {
+  private async awardChallengeBadge(userId: number, badgeId: number, transaction?: any): Promise<Badge> {
+    const options = transaction ? {transaction} : {};
+
     // Check if user already has this badge
     const existing = await this.userBadgeRepository.findOne({
       where: {userId, badgeId},
-    });
+    }, options);
 
     if (!existing) {
       await this.userBadgeRepository.create({
@@ -286,10 +316,10 @@ export class ChallengeService {
         badgeId,
         unlockedAt: new Date(),
         notificationSent: false,
-      });
+      }, options);
     }
 
-    const badge = await this.badgeRepository.findById(badgeId);
+    const badge = await this.badgeRepository.findById(badgeId, {}, options);
     return badge;
   }
 
