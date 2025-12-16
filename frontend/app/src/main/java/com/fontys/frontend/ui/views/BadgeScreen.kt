@@ -60,9 +60,6 @@ fun BadgeScreen(
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
-            // Custom Header
-            BadgeHeader()
-
             when (val state = uiState) {
             is BadgeUiState.Loading -> {
                 com.fontys.frontend.ui.components.BadgeGridSkeleton()
