@@ -45,9 +45,7 @@ fun ProfileScreen(userViewModel: ProfileViewModel = viewModel()) {
     ) {
         when {
             isLoading -> {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
-                }
+                ProfileScreenSkeleton()
             }
             error != null -> {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
