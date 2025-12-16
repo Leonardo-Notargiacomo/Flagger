@@ -179,12 +179,7 @@ fun FriendsListTab(
     onViewProfile: (Int) -> Unit
 ) {
     if (isLoading) {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            CircularProgressIndicator()
-        }
+        com.fontys.frontend.ui.components.FriendListSkeleton()
     } else if (friends.isEmpty()) {
         Box(
             modifier = Modifier
@@ -192,12 +187,33 @@ fun FriendsListTab(
                 .padding(horizontal = 32.dp),
             contentAlignment = Alignment.Center
         ) {
-            Text(
-                text = "No friends yet. Send a friend request to get started!",
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = androidx.compose.ui.text.style.TextAlign.Center
-            )
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+                modifier = Modifier.padding(24.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.GroupAdd,
+                    contentDescription = null,
+                    modifier = Modifier.size(64.dp),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = "Your adventure is lonely!",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "Add friends to share your journey and compete for badges",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                )
+            }
         }
     } else {
         LazyColumn(
@@ -308,12 +324,7 @@ fun FriendRequestsTab(
     onCancel: (Int) -> Unit
 ) {
     if (isLoading && receivedRequests.isEmpty() && sentRequests.isEmpty()) {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            CircularProgressIndicator()
-        }
+        com.fontys.frontend.ui.components.FriendListSkeleton()
     } else {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
@@ -562,12 +573,7 @@ fun SearchTab(
 
         // Search Results
         if (isSearching) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
+            com.fontys.frontend.ui.components.FriendListSkeleton()
         } else if (searchQuery.isEmpty()) {
             Box(
                 modifier = Modifier.fillMaxSize(),

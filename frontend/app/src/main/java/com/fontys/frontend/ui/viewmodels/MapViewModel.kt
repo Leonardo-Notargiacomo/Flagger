@@ -19,6 +19,7 @@ import com.fontys.frontend.data.repositories.BadgeRepository
 import com.fontys.frontend.domain.FlagRepository
 import com.fontys.frontend.domain.MapRepository
 import com.fontys.frontend.domain.UserRepository
+import com.fontys.frontend.ui.viewmodels.PendingBadgeUnlocks
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -41,7 +42,7 @@ class MapsViewModel(application: Application) : AndroidViewModel(application) {
     private val client = OkHttpClient()
 
 
-    private val _flagStyle = MutableStateFlow<CustomFlagUpdate>(CustomFlagUpdate("#FF888888","", "#FF888888",UserRepository.userId))
+    private val _flagStyle = MutableStateFlow<CustomFlagUpdate>(CustomFlagUpdate("#E98D58","❤️", "#523735",UserRepository.userId))
     val flagStyle: StateFlow<CustomFlagUpdate> = _flagStyle
     private val _userFlags = MutableStateFlow<List<FlagDisplay>>(emptyList())
 
@@ -88,15 +89,56 @@ class MapsViewModel(application: Application) : AndroidViewModel(application) {
             _isLoading.value = true
             _error.value = null
             try {
-                val result = flagRepository.addFlag(userId,placeId,photoId)
-                getFlags(userId)
+                saveFlag(userId, placeId, photoId)
+                checkForBadgeUnlocks(userId, placeId)
+                refreshUserFlags(userId)
             } catch (e: Exception) {
-                _error.value = e.localizedMessage ?: "The place has not been marked"
-                Log.e("MapsViewModel", "Error marking the place", e)
+                handleFlaggingError(e)
             } finally {
                 _isLoading.value = false
             }
         }
+    }
+
+    // Private helper methods - each with single responsibility (SRP)
+
+    private suspend fun saveFlag(userId: Int, placeId: String, photoId: String) {
+        flagRepository.addFlag(userId, placeId, photoId)
+    }
+
+    private suspend fun checkForBadgeUnlocks(userId: Int, placeId: String) {
+        val event = createExplorationEvent(userId, placeId)
+        badgeRepository.logExploration(userId, event)
+            .onSuccess { response -> handleNewBadges(response.newBadges) }
+            .onFailure { Log.e("MapsViewModel", "Badge check failed", it) }
+    }
+
+    private fun createExplorationEvent(userId: Int, placeId: String): ExplorationEvent {
+        // Find the place in our current places list to get its coordinates
+        val place = _places.value.find { it.id == placeId }
+
+        return ExplorationEvent(
+            locationName = place?.displayName ?: placeId,
+            latitude = place?.latitude,
+            longitude = place?.longitude,
+            notes = null
+        )
+    }
+
+    private fun handleNewBadges(badges: List<Badge>) {
+        if (badges.isNotEmpty()) {
+            _newlyUnlockedBadges.value = badges
+            _showBadgeDialog.value = true
+        }
+    }
+
+    private suspend fun refreshUserFlags(userId: Int) {
+        getFlags(userId)
+    }
+
+    private fun handleFlaggingError(e: Exception) {
+        _error.value = e.localizedMessage ?: "Failed to mark location"
+        Log.e("MapsViewModel", "Error marking place", e)
     }
     fun getFlags(userId: Int){
         viewModelScope.launch {
@@ -138,6 +180,7 @@ class MapsViewModel(application: Application) : AndroidViewModel(application) {
         _showBadgeDialog.value = false
         _newlyUnlockedBadges.value = emptyList()
     }
+
     fun updateFlagStyle(emoji: String, background: String, border: String){
          viewModelScope.launch {
              try {
@@ -149,12 +192,20 @@ class MapsViewModel(application: Application) : AndroidViewModel(application) {
              }
          }
     }
+
     fun refreshFlags() {
         viewModelScope.launch {
             getFlags(UserRepository.userId)
         }
     }
 
-
+    // Check for pending badge unlocks (called when returning to map from camera)
+    fun checkPendingBadges() {
+        val pendingBadges = PendingBadgeUnlocks.consume()
+        if (pendingBadges.isNotEmpty()) {
+            _newlyUnlockedBadges.value = pendingBadges
+            _showBadgeDialog.value = true
+        }
+    }
 }
 

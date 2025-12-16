@@ -7,8 +7,8 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
-// Unified Retro-Clean Theme - Warm vintage map aesthetic, clean execution
-private val ExplorerLightColorScheme = lightColorScheme(
+// Flagger Light Theme - Warm vintage map aesthetic, clean execution
+private val FlaggerLightColorScheme = lightColorScheme(
     primary = Color(0xFFE98D58),           // Warm orange - map accent
     onPrimary = Color.White,
     primaryContainer = Color(0xFFEBE3CD),  // Light cream - parchment
@@ -43,15 +43,29 @@ private val LightColorScheme = lightColorScheme(
     onSurface = Color(0xFF1C1B1F),
 )
 
-private val DarkColorScheme = darkColorScheme(
-    primary = Color(0xFFBB86FC),
-    onPrimary = Color.Black,
-    primaryContainer = Color(0xFF3700B3),
-    secondary = Color(0xFF03DAC6),
-    background = Color(0xFF1C1B1F),
-    surface = Color(0xFF1C1B1F),
-    onBackground = Color(0xFFE6E1E5),
-    onSurface = Color(0xFFE6E1E5),
+// Flagger Dark Theme - Warm brown dark mode with explorer aesthetic
+private val FlaggerDarkColorScheme = darkColorScheme(
+    primary = Color(0xFFE98D58),           // Keep warm orange
+    onPrimary = Color(0xFF1C1B1F),         // Dark text on orange
+    primaryContainer = Color(0xFF5C4738),  // Darker brown container
+    onPrimaryContainer = Color(0xFFE8DCC4), // Light cream text
+    secondary = Color(0xFFE98D58),         // Warm orange accent
+    onSecondary = Color(0xFF1C1B1F),
+    secondaryContainer = Color(0xFF3D342E), // Medium brown
+    onSecondaryContainer = Color(0xFFD4C5B0),
+    tertiary = Color(0xFF8B6F47),          // Muted brown
+    onTertiary = Color.White,
+    background = Color(0xFF2D2420),        // Dark brown background
+    onBackground = Color(0xFFE8DCC4),      // Light cream text
+    surface = Color(0xFF3D342E),           // Lighter brown surface
+    onSurface = Color(0xFFE8DCC4),         // Light cream text
+    surfaceVariant = Color(0xFF4A362A),    // Medium dark brown
+    onSurfaceVariant = Color(0xFFD4C5B0),  // Light text
+    outline = Color(0xFF8B6F47),           // Muted brown borders
+    error = Color(0xFFCF6679),             // Softer red for dark mode
+    onError = Color(0xFF1C1B1F),
+    errorContainer = Color(0xFF5C3030),    // Dark red container
+    onErrorContainer = Color(0xFFF9DEDC),
 )
 
 // Badge Screen Theme - Warm brown and orange color scheme
@@ -78,8 +92,11 @@ fun AppTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
-    // Use the unified explorer theme instead of generic Material3
-    val colorScheme = ExplorerLightColorScheme
+    // Use Flagger theme with dark mode support
+    val colorScheme = when {
+        darkTheme -> FlaggerDarkColorScheme
+        else -> FlaggerLightColorScheme
+    }
 
     MaterialTheme(
         colorScheme = colorScheme,
@@ -98,11 +115,17 @@ fun BadgeTheme(
 }
 
 @Composable
-fun ExplorerTheme(
+fun FlaggerTheme(
+    darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
+    val colorScheme = when {
+        darkTheme -> FlaggerDarkColorScheme
+        else -> FlaggerLightColorScheme
+    }
+
     MaterialTheme(
-        colorScheme = ExplorerLightColorScheme,
+        colorScheme = colorScheme,
         content = content
     )
 }

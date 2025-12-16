@@ -108,6 +108,231 @@ fun PermissionDialog(
 }
 
 /**
+ * Dialog shown when camera permission is denied but can be requested again.
+ */
+@Composable
+fun CameraDeniedDialog(
+    imageLoader: ImageLoader,
+    onTryAgain: () -> Unit,
+    onExitApp: () -> Unit
+) {
+    Dialog(onDismissRequest = { /* Non-dismissible */ }) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            shape = RoundedCornerShape(20.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface
+            )
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                // Title with random humorous message
+                val titles = listOf(
+                    "📸 nah fr you need this",
+                    "🤳 camera denied? that's crazy",
+                    "😭 we literally can't work without it",
+                    "🤨 how are you gonna flag places then?",
+                    "😢 this isn't gonna work bestie"
+                )
+                val randomTitle = titles.random()
+
+                Text(
+                    text = randomTitle,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center
+                )
+
+                // GIF Image - camera-related disappointment
+                val painter = rememberAsyncImagePainter(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data("https://media1.tenor.com/m/-4yy_g2OVo0AAAAd/gravity-falls-camera.gif")
+                        .build(),
+                    imageLoader = imageLoader
+                )
+
+                Image(
+                    painter = painter,
+                    contentDescription = "Camera GIF",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp),
+                    contentScale = ContentScale.Crop
+                )
+
+                // Message
+                val messages = listOf(
+                    "okay so like... the whole point is taking pics 😭\n\nwithout camera access:\n\n📸 can't capture ur adventure moments\n🚩 can't prove u were actually there\n❌ literally can't flag any places\n\nit's giving 'i don't wanna play' energy ngl",
+                    "bestie... that's literally the main feature 😅\n\nlook what won't work:\n\n🎯 no proof of visiting spots\n🏆 no badge unlocks\n✨ no memories captured\n\nwe REALLY need this one fr fr 🙏",
+                    "without camera it's just a map app... 🥺\n\nhere's what's broken:\n\n❌ can't flag locations\n❌ can't earn achievements\n❌ can't share ur adventures\n\nplease... we need this 😭"
+                )
+                val randomMessage = messages.random()
+
+                Text(
+                    text = randomMessage,
+                    fontSize = 14.sp,
+                    textAlign = TextAlign.Start,
+                    lineHeight = 20.sp
+                )
+
+                // Two buttons: Try Again (primary) and Exit App (destructive)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    // Exit App button (destructive/secondary)
+                    OutlinedButton(
+                        onClick = onExitApp,
+                        modifier = Modifier.weight(1f),
+                        shape = RoundedCornerShape(999.dp),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            contentColor = MaterialTheme.colorScheme.onSurface
+                        )
+                    ) {
+                        Text(
+                            text = "exit app",
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+
+                    // Try Again button (primary)
+                    Button(
+                        onClick = onTryAgain,
+                        modifier = Modifier.weight(1f),
+                        shape = RoundedCornerShape(999.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.secondary,
+                            contentColor = MaterialTheme.colorScheme.onSecondary
+                        )
+                    ) {
+                        Text(
+                            text = "try again",
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Dialog shown when camera permission is permanently denied and user needs to go to Settings.
+ */
+@Composable
+fun CameraSettingsDialog(
+    imageLoader: ImageLoader,
+    onOpenSettings: () -> Unit,
+    onExitApp: () -> Unit
+) {
+    Dialog(onDismissRequest = { /* Non-dismissible */ }) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            shape = RoundedCornerShape(20.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface
+            )
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                // Title
+                val titles = listOf(
+                    "📸 blocked twice? we're hurt",
+                    "💔 android won't let us ask anymore",
+                    "😩 this is getting awkward fr",
+                    "🫠 camera = blocked. mood = sad",
+                    "😭 denied camera twice... why tho"
+                )
+                val randomTitle = titles.random()
+
+                Text(
+                    text = randomTitle,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center
+                )
+
+                // GIF Image - very sad camera moment
+                val painter = rememberAsyncImagePainter(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data("https://media1.tenor.com/m/8apd_6xEXD4AAAAC/cat-crying.gif")
+                        .build(),
+                    imageLoader = imageLoader
+                )
+
+                Image(
+                    painter = painter,
+                    contentDescription = "Sad Camera GIF",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp),
+                    contentScale = ContentScale.Crop
+                )
+
+                // Message - explain they need to go to Settings
+                Text(
+                    text = "you blocked camera twice... android said no more asking 😭\n\nbut fr we NEED it to work:\n\n⚙️ go to Settings manually\n📸 enable camera permission\n📱 come back and let's goooo\n\nwithout camera this app is useless bestie... pls 🥺",
+                    fontSize = 14.sp,
+                    textAlign = TextAlign.Start,
+                    lineHeight = 20.sp
+                )
+
+                // Two buttons: Go to Settings (primary) and Exit App (destructive)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    // Exit App button (destructive/secondary)
+                    OutlinedButton(
+                        onClick = onExitApp,
+                        modifier = Modifier.weight(1f),
+                        shape = RoundedCornerShape(999.dp),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            contentColor = MaterialTheme.colorScheme.onSurface
+                        )
+                    ) {
+                        Text(
+                            text = "nah i'm out 👋",
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+
+                    // Open Settings button (primary)
+                    Button(
+                        onClick = onOpenSettings,
+                        modifier = Modifier.weight(1f),
+                        shape = RoundedCornerShape(999.dp)
+                    ) {
+                        Text(
+                            text = "open settings",
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+/**
  * Dialog shown when notification permission is denied but can be requested again.
  */
 @Composable
@@ -657,6 +882,43 @@ fun PermissionDialogs(
 
         is PermissionDialogState.LocationPermanentlyDenied -> {
             LocationSettingsDialog(
+                imageLoader = imageLoader,
+                onOpenSettings = {
+                    permissionHandler.openAppSettings()
+                },
+                onExitApp = {
+                    permissionHandler.exitApp()
+                }
+            )
+        }
+
+        is PermissionDialogState.AskingCamera -> {
+            PermissionDialog(
+                title = "📸 say cheese!",
+                message = "we need camera access to make the magic happen ✨\n\nhere's why:\n\n📷 capture ur adventure moments\n🚩 prove u actually visited cool spots\n🏆 unlock achievements for exploring\n\nno camera = no flags = no fun 😭",
+                buttonText = "let's go 📸",
+                gifUrl = "https://media1.tenor.com/m/h6vq5IKgTWQAAAAd/pinksviral-stantwt.gif",
+                imageLoader = imageLoader,
+                onConfirm = {
+                    permissionHandler.requestCameraPermission()
+                }
+            )
+        }
+
+        is PermissionDialogState.CameraDenied -> {
+            CameraDeniedDialog(
+                imageLoader = imageLoader,
+                onTryAgain = {
+                    permissionHandler.requestCameraPermission()
+                },
+                onExitApp = {
+                    permissionHandler.exitApp()
+                }
+            )
+        }
+
+        is PermissionDialogState.CameraPermanentlyDenied -> {
+            CameraSettingsDialog(
                 imageLoader = imageLoader,
                 onOpenSettings = {
                     permissionHandler.openAppSettings()

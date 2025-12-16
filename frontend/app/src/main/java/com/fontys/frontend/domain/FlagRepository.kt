@@ -144,7 +144,7 @@ class FlagRepository{
             val response = flagApiService.userFlagStyle(headers, userId)
 
             if (response.isSuccessful) {
-                val flagStyle = response.body()?: CustomFlagUpdate("#FF888888","", "",UserRepository.userId)
+                val flagStyle = response.body()?: CustomFlagUpdate("#E98D58","❤️", "#523735",UserRepository.userId)
                 println(flagStyle.toString())
                 return flagStyle
             } else{
@@ -153,7 +153,7 @@ class FlagRepository{
         } catch (e: Exception) {
             Log.e("FlagRepository", "Error getting custom flag", e)
         }
-        return CustomFlagUpdate("#FF888888","", "#FF888888",UserRepository.userId)
+        return CustomFlagUpdate("#E98D58","❤️", "#523735",UserRepository.userId)
     }
     suspend fun updateUserCustomFlag(userId: Int, background:String, emoji: String, border: String){
         try {
