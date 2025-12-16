@@ -162,9 +162,9 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
 
 
                 val pinConfig = PinConfig.builder()
-                    .setGlyph(PinConfig.Glyph(flagStyle.emoji))
-                    .setBackgroundColor(flagStyle.background.toColorInt())
-                    .setBorderColor(flagStyle.border.toColorInt())
+                    .setGlyph(PinConfig.Glyph(if (flagStyle.emoji.isNullOrBlank()) "🏳️" else flagStyle.emoji))
+                    .setBackgroundColor((if (flagStyle.background.isNullOrBlank()) "#E98D58" else flagStyle.background).toColorInt())
+                    .setBorderColor((if (flagStyle.border.isNullOrBlank()) "#523735" else flagStyle.border).toColorInt())
                     .build()
 
                 val markerState = remember {

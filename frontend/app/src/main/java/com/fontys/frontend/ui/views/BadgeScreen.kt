@@ -12,6 +12,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Stars
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -25,6 +26,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import com.fontys.frontend.common.ChallengeView
 import com.fontys.frontend.data.models.Badge
 import com.fontys.frontend.ui.components.BadgeIcons
 import com.fontys.frontend.ui.components.shimmerEffect
@@ -39,6 +42,7 @@ import java.util.Locale
 @Composable
 fun BadgeScreen(
     userId: Int,
+    navController: NavHostController,
     viewModel: BadgeViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -48,12 +52,18 @@ fun BadgeScreen(
         viewModel.loadUserBadges(userId)
     }
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        when (val state = uiState) {
+        Column(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            // Custom Header
+            BadgeHeader()
+
+            when (val state = uiState) {
             is BadgeUiState.Loading -> {
                 com.fontys.frontend.ui.components.BadgeGridSkeleton()
             }
@@ -117,6 +127,32 @@ fun BadgeScreen(
                             }
                         }
                     }
+
+                    // Challenges button at the bottom
+                    item(span = { androidx.compose.foundation.lazy.grid.GridItemSpan(3) }) {
+                        Button(
+                            onClick = { navController.navigate(ChallengeView) },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 24.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.primary
+                            ),
+                            shape = RoundedCornerShape(12.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Stars,
+                                contentDescription = null,
+                                modifier = Modifier.size(24.dp)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = "View Challenges",
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
                 }
 
                 // Show badge detail dialog when a badge is selected
@@ -158,6 +194,7 @@ fun BadgeScreen(
                     }
                 }
             }
+        }
         }
     }
 }

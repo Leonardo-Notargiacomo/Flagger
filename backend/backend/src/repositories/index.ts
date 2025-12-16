@@ -8,3 +8,5 @@ export * from './friend-request.repository';
 export * from './friendship.repository';
 export * from './go-user-credentials.repository';
 export * from './user-custom-flag.repository';
+export * from './challenge.repository';
+export * from './user-challenge.repository';

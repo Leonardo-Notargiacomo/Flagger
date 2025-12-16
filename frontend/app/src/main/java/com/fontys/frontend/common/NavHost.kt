@@ -19,6 +19,7 @@ import com.fontys.frontend.ui.views.LoginView
 import com.fontys.frontend.ui.views.RegistrationView
 import com.fontys.frontend.ui.views.MapsScreen
 import com.fontys.frontend.ui.views.ProfileScreen
+import com.fontys.frontend.ui.views.ChallengeScreen
 import kotlinx.serialization.Serializable
 import com.fontys.frontend.ui.views.NavBar
 import com.fontys.frontend.ui.views.PublicProfileScreen
@@ -35,6 +36,9 @@ object ProfileView
 
 @Serializable
 object BadgeView
+
+@Serializable
+object ChallengeView
 
 @Serializable
 object LoginView
@@ -83,7 +87,15 @@ fun NavHost(
             }
 
             composable<BadgeView> {
-                BadgeScreen(userId = UserRepository.userId)
+                // Pass the NavHostController to BadgeScreen so it can navigate to ChallengeView
+                BadgeScreen(
+                    userId = UserRepository.userId,
+                    navController = navController
+                )
+            }
+
+            composable<ChallengeView> {
+                ChallengeScreen()
             }
 
             composable<LoginView> {
@@ -103,18 +115,17 @@ fun NavHost(
                 PictureCaptureScreen(navController, cameraViewModel)
             }
 
-
             composable<PublicProfileView> { backStackEntry ->
-            // Type-safe navigation with Kotlin serialization
-            // The route parameters are automatically parsed from the path
-            val args = backStackEntry.arguments
-            val userId = args?.getInt("userId") ?: 0
+                // Type-safe navigation with Kotlin serialization
+                // The route parameters are automatically parsed from the path
+                val args = backStackEntry.arguments
+                val userId = args?.getInt("userId") ?: 0
 
-            PublicProfileScreen(
-                userId = userId,
-                onNavigateBack = { navController.popBackStack() }
-            )
-        }
+                PublicProfileScreen(
+                    userId = userId,
+                    onNavigateBack = { navController.popBackStack() }
+                )
+            }
         }
     }
 }

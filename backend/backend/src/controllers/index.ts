@@ -10,3 +10,4 @@ export * from './friendship.controller';
 export * from './go-user-user-custom-flag.controller';
 export * from './user-custom-flag-go-user.controller';
 export * from './user-custom-flag.controller';
+export * from './challenge.controller';

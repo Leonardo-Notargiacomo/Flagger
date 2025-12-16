@@ -39,6 +39,7 @@ fun NavBar() {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
     val hide = currentDestination?.route == CameraView.route
+
     Scaffold(
 
         modifier = Modifier.fillMaxSize(),
