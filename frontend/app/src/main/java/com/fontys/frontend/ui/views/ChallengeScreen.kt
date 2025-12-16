@@ -89,22 +89,20 @@ fun ChallengeScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        // Header (matching BadgeScreen style)
-        Row(
+        // Header section matching BadgeScreen style
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.surface)
-                .padding(horizontal = 24.dp, vertical = 16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
+                .padding(top = 32.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "CHALLENGES",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Medium,
-                color = MaterialTheme.colorScheme.onSurface,
-                letterSpacing = 1.sp
+                text = "Challenge Collection",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground
             )
+            Spacer(modifier = Modifier.height(16.dp))
         }
 
         // Tabs (matching FriendsScreen style)
@@ -237,7 +235,7 @@ fun ActiveChallengesTab(activeChallenge: UserChallenge?, onCompleteCheck: () -> 
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
+                .padding(horizontal = 24.dp, vertical = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             UserChallengeCard(activeChallenge)
@@ -252,6 +250,12 @@ fun ActiveChallengesTab(activeChallenge: UserChallenge?, onCompleteCheck: () -> 
                     defaultElevation = 4.dp
                 )
             ) {
+                Icon(
+                    imageVector = Icons.Default.CheckCircle,
+                    contentDescription = null,
+                    modifier = Modifier.size(24.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     "Check Progress",
                     fontWeight = FontWeight.Bold,
@@ -282,7 +286,7 @@ fun AvailableChallengesTab(
                     .fillMaxWidth()
                     .padding(16.dp),
                 color = MaterialTheme.colorScheme.errorContainer,
-                shape = RoundedCornerShape(8.dp)
+                shape = RoundedCornerShape(12.dp)
             ) {
                 Row(
                     modifier = Modifier.padding(12.dp),
@@ -323,8 +327,8 @@ fun AvailableChallengesTab(
         } else {
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                contentPadding = PaddingValues(start = 24.dp, top = 16.dp, end = 24.dp, bottom = 100.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 items(challenges) { challenge ->
                     AvailableChallengeCard(
@@ -356,8 +360,8 @@ fun CompletedChallengesTab(challenges: List<UserChallenge>) {
     } else {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            contentPadding = PaddingValues(start = 24.dp, top = 16.dp, end = 24.dp, bottom = 100.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             items(challenges) { userChallenge ->
                 CompletedChallengeCard(userChallenge = userChallenge)
@@ -433,13 +437,13 @@ fun UserChallengeCard(
             .border(
                 width = 3.dp,
                 color = MaterialTheme.colorScheme.primary,
-                shape = RoundedCornerShape(16.dp)
+                shape = RoundedCornerShape(20.dp)
             ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         ),
-        shape = RoundedCornerShape(16.dp)
+        shape = RoundedCornerShape(20.dp)
     ) {
         Column(
             modifier = Modifier.padding(16.dp)
@@ -559,18 +563,18 @@ fun AvailableChallengeCard(
         modifier = Modifier
             .fillMaxWidth()
             .border(
-                width = 2.dp,
+                width = if (canSelect) 0.dp else 1.dp,
                 color = if (canSelect)
-                    MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
+                    Color.Transparent
                 else
-                    MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
-                shape = RoundedCornerShape(16.dp)
+                    MaterialTheme.colorScheme.outline.copy(alpha = 0.2f),
+                shape = RoundedCornerShape(20.dp)
             ),
-        elevation = CardDefaults.cardElevation(defaultElevation = if (canSelect) 4.dp else 2.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = if (canSelect) 8.dp else 0.dp),
         colors = CardDefaults.cardColors(
-            containerColor = if (canSelect) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.surfaceVariant
+            containerColor = if (canSelect) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
         ),
-        shape = RoundedCornerShape(16.dp)
+        shape = RoundedCornerShape(20.dp)
     ) {
         Column(
             modifier = Modifier
@@ -675,15 +679,15 @@ fun CompletedChallengeCard(userChallenge: UserChallenge) {
         modifier = Modifier
             .fillMaxWidth()
             .border(
-                width = 2.dp,
-                color = Color(0xFF4CAF50).copy(alpha = 0.5f),
-                shape = RoundedCornerShape(16.dp)
+                width = 0.dp,
+                color = Color.Transparent,
+                shape = RoundedCornerShape(20.dp)
             ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.secondaryContainer
+            containerColor = MaterialTheme.colorScheme.primaryContainer
         ),
-        shape = RoundedCornerShape(16.dp)
+        shape = RoundedCornerShape(20.dp)
     ) {
         Column(
             modifier = Modifier.padding(16.dp)
@@ -702,7 +706,7 @@ fun CompletedChallengeCard(userChallenge: UserChallenge) {
                     Text(
                         text = userChallenge.challenge?.description ?: "",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.7f)
+                        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
                     )
                 }
                 Icon(
@@ -722,7 +726,7 @@ fun CompletedChallengeCard(userChallenge: UserChallenge) {
                 Text(
                     text = "Completed: ${userChallenge.completedAt ?: "N/A"}",
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.6f)
+                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.6f)
                 )
                 if (userChallenge.challenge?.rewardBadgeId != null) {
                     Text(
@@ -744,6 +748,8 @@ fun ChallengeCompletionDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
+        containerColor = MaterialTheme.colorScheme.background,
+        shape = RoundedCornerShape(24.dp),
         icon = {
             Icon(
                 imageVector = Icons.Default.EmojiEvents,
@@ -755,14 +761,21 @@ fun ChallengeCompletionDialog(
         title = {
             Text(
                 text = "Challenge Completed!",
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground
             )
         },
         text = {
             Column {
-                Text("Congratulations! You've completed your challenge!")
+                Text(
+                    text = "Congratulations! You've completed your challenge!",
+                    color = MaterialTheme.colorScheme.onBackground
+                )
                 Spacer(modifier = Modifier.height(8.dp))
-                Text("We notified you about any rewards.")
+                Text(
+                    text = "We notified you about any rewards.",
+                    color = MaterialTheme.colorScheme.onBackground
+                )
 
                 completionData.badge?.let { badge ->
                     Spacer(modifier = Modifier.height(8.dp))
@@ -778,18 +791,22 @@ fun ChallengeCompletionDialog(
             Button(
                 onClick = onDismiss,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary
+                    containerColor = MaterialTheme.colorScheme.secondary,
+                    contentColor = Color.White
                 ),
                 shape = RoundedCornerShape(12.dp),
                 elevation = ButtonDefaults.buttonElevation(
                     defaultElevation = 4.dp
                 ),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
             ) {
                 Text(
-                    "Awesome!",
+                    "AWESOME!",
                     fontWeight = FontWeight.Bold,
-                    letterSpacing = 1.sp
+                    letterSpacing = 1.sp,
+                    modifier = Modifier.padding(vertical = 4.dp)
                 )
             }
         }
