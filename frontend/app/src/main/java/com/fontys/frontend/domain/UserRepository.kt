@@ -220,9 +220,55 @@ object UserRepository {
             if (response.isSuccessful) {
                 response.body()
             } else {
-                "Error: ${response.code()} - ${response.message()}"
+                // Try to parse error message from backend
+                val errorBody = response.errorBody()?.string()
+                Log.e(TAG, "Update user error: ${response.code()} - ${response.message()} - Body: $errorBody")
+
+                val errorMessage = try {
+                    if (!errorBody.isNullOrBlank()) {
+                        val cleanedBody = errorBody.replace("'", "\"")
+                        val json = JSONObject(cleanedBody)
+
+                        when {
+                            json.has("error") && json.getJSONObject("error").has("message") -> {
+                                json.getJSONObject("error").getString("message")
+                            }
+                            json.has("message") -> json.getString("message")
+                            json.has("error") -> json.getString("error")
+                            json.has("detail") -> json.getString("detail")
+                            else -> null
+                        }
+                    } else {
+                        null
+                    }
+                } catch (e: Exception) {
+                    Log.e(TAG, "Failed to parse error body: ${e.message}")
+                    null
+                }
+
+                // Use backend error message if available, otherwise use status code-based messages
+                val finalErrorMessage = when {
+                    !errorMessage.isNullOrBlank() && errorMessage != "Internal Server Error" -> {
+                        errorMessage
+                    }
+                    response.code() == 409 || response.code() == 500 -> {
+                        "This username or email is already taken. Please try a different one."
+                    }
+                    response.code() == 400 -> {
+                        "Invalid profile data. Please check your information."
+                    }
+                    response.code() == 401 -> {
+                        "You are not authorized to update this profile."
+                    }
+                    else -> {
+                        "Failed to update profile. Please try again."
+                    }
+                }
+
+                "Error: $finalErrorMessage"
             }
         } catch (e: Exception) {
+            Log.e(TAG, "Exception updating user: ${e.message}", e)
             "Exception: ${e.message}"
         }
     }

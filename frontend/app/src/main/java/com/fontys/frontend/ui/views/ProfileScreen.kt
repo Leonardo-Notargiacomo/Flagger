@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -24,6 +26,7 @@ fun ProfileScreen(userViewModel: ProfileViewModel = viewModel()) {
     val user by userViewModel.user.collectAsState()
     val isLoading by userViewModel.isLoading.collectAsState()
     val error by userViewModel.error.collectAsState()
+    val successMessage by userViewModel.successMessage.collectAsState()
 
     var isEditing by remember { mutableStateOf(false) }
     var editUsername by remember { mutableStateOf("") }
@@ -47,11 +50,6 @@ fun ProfileScreen(userViewModel: ProfileViewModel = viewModel()) {
             isLoading -> {
                 ProfileScreenSkeleton()
             }
-            error != null -> {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(text = error ?: "Unknown error", color = MaterialTheme.colorScheme.primary)
-                }
-            }
             user != null -> {
                 val userData = user!!
 
@@ -63,12 +61,71 @@ fun ProfileScreen(userViewModel: ProfileViewModel = viewModel()) {
                 }
 
                 Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .verticalScroll(rememberScrollState())
-                        .padding(top = 24.dp, start = 16.dp, end = 16.dp, bottom = 16.dp)
+                    modifier = Modifier.fillMaxSize()
                 ) {
-                    ProfilePictureSection(
+                    // Success message
+                    successMessage?.let { message ->
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.primaryContainer
+                            ),
+                            shape = RoundedCornerShape(12.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(16.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = message,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                    modifier = Modifier.weight(1f)
+                                )
+                                IconButton(onClick = { userViewModel.clearSuccessMessage() }) {
+                                    Icon(Icons.Default.Close, contentDescription = "Dismiss")
+                                }
+                            }
+                        }
+                    }
+
+                    // Error message
+                    error?.let { errorMsg ->
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.errorContainer
+                            ),
+                            shape = RoundedCornerShape(12.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(16.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = errorMsg,
+                                    color = MaterialTheme.colorScheme.onErrorContainer,
+                                    modifier = Modifier.weight(1f)
+                                )
+                                IconButton(onClick = { userViewModel.clearError() }) {
+                                    Icon(Icons.Default.Close, contentDescription = "Dismiss")
+                                }
+                            }
+                        }
+                    }
+
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                            .verticalScroll(rememberScrollState())
+                            .padding(top = 24.dp, start = 16.dp, end = 16.dp, bottom = 16.dp)
+                    ) {
+                        ProfilePictureSection(
                         username = if (isEditing) editUsername else userData.userName,
                         isEditing = isEditing,
                         onImageEdit = { /* TODO */ }
@@ -161,6 +218,7 @@ fun ProfileScreen(userViewModel: ProfileViewModel = viewModel()) {
                                 Text("Edit Profile", fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold, fontSize = 14.sp)
                             }
                         }
+                    }
                     }
                 }
             }
