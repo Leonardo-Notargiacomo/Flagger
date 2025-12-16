@@ -87,11 +87,24 @@ export class BadgeController {
 
       console.log(`[BadgeController] Active challenge: ${activeChallenge ? `Challenge ID ${activeChallenge.challengeId}` : 'None'}`);
 
+      // Pre-calculate challenge exploration count once if there's an active challenge
+      let challengeExplorationCount = 0;
+      if (activeChallenge) {
+        const challengeStart = activeChallenge.activatedAt;
+        const now = new Date();
+        const result = await this.explorationEventRepository.count({
+          userId,
+          completedAt: {between: [challengeStart, now]},
+        });
+        challengeExplorationCount = result.count;
+        console.log(`[BadgeController] Challenge exploration count: ${challengeExplorationCount}`);
+      }
+
       // Map badges to include unlock status
       const unlockedIds = new Set(userBadges.map(ub => ub.badgeId));
       console.log(`[BadgeController] Unlocked badge IDs: ${Array.from(unlockedIds).join(', ')}`);
 
-      const badgesWithStatus = await Promise.all(allBadges.map(async (badge: Badge) => {
+      const badgesWithStatus = allBadges.map((badge: Badge) => {
         // Calculate progress based on badge criteria
         let currentProgress = 0;
         let maxProgress = badge.unlockCriteria.threshold;
@@ -104,16 +117,9 @@ export class BadgeController {
           }
           // If there's an active challenge and it matches this badge's reward
           else if (activeChallenge && activeChallenge.challenge?.rewardBadgeId === badge.id) {
-            // Calculate progress based on explorations/actions during the challenge period
-            const challengeStart = activeChallenge.activatedAt;
-            const now = new Date();
-
+            // Use pre-calculated challenge exploration count
             if (badge.unlockCriteria.type === 'exploration_count') {
-              const challengeExplorationCount = await this.explorationEventRepository.count({
-                userId,
-                completedAt: {between: [challengeStart, now]},
-              });
-              currentProgress = Math.min(challengeExplorationCount.count, maxProgress);
+              currentProgress = Math.min(challengeExplorationCount, maxProgress);
             } else if (badge.unlockCriteria.type === 'streak') {
               // For streak challenges, use current streak
               currentProgress = Math.min(currentStreak, maxProgress);
@@ -136,7 +142,7 @@ export class BadgeController {
           currentProgress,
           maxProgress,
         };
-      }));
+      });
 
       const result = {
         badges: badgesWithStatus,
