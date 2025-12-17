@@ -28,7 +28,7 @@ import {
 } from '@loopback/authentication-jwt';
 import {authenticate, TokenService} from '@loopback/authentication';
 import {SecurityBindings, securityId, UserProfile} from '@loopback/security';
-import {genSalt, hash} from 'bcryptjs';
+import {compare, genSalt, hash} from 'bcryptjs';
 import _ from 'lodash';
 import {Credentials, MyUserService} from '../services';
 
@@ -40,6 +40,22 @@ export class NewUserRequest extends GoUser {
     required: true,
   })
   password: string;
+}
+
+@model()
+export class ChangePasswordRequest {
+  @property({
+    type: 'string',
+    required: true,
+  })
+  currentPassword: string;
+
+  @property({
+    type: 'string',
+    required: true,
+    minLength: 8,
+  })
+  newPassword: string;
 }
 
 const CredentialsSchema: SchemaObject = {
@@ -78,6 +94,41 @@ export class GoUserController {
     @repository(GoUserRepository)
     public goUserRepository : GoUserRepository,
   ) {}
+
+  private getAuthenticatedUserId(currentUserProfile: UserProfile): number {
+    const rawId = currentUserProfile[securityId];
+    const userId = Number(rawId);
+    if (!rawId || Number.isNaN(userId)) {
+      throw new HttpErrors.Unauthorized('Invalid user profile.');
+    }
+    return userId;
+  }
+
+  private async changePassword(
+    userId: number,
+    request: ChangePasswordRequest,
+  ): Promise<void> {
+    const credentials = await this.userRepository.findCredentials(userId);
+    if (!credentials) {
+      throw new HttpErrors.NotFound('User credentials not found.');
+    }
+
+    const passwordMatched = await compare(
+      request.currentPassword,
+      credentials.password,
+    );
+    if (!passwordMatched) {
+      throw new HttpErrors.Unauthorized('Invalid current password.');
+    }
+
+    const password = await hash(request.newPassword, await genSalt());
+    const updated = await this.userRepository
+      .goUserCredentials(userId)
+      .patch({password});
+    if (updated.count === 0) {
+      throw new HttpErrors.NotFound('User credentials not found.');
+    }
+  }
 
   @post('/go-users')
   @response(200, {
@@ -259,6 +310,56 @@ export class GoUserController {
     return currentUserProfile[securityId];
   }
 
+  @authenticate('jwt')
+  @patch('/go-users/me/password')
+  @response(204, {
+    description: 'Password updated',
+  })
+  async updateMyPassword(
+    @inject(SecurityBindings.USER)
+    currentUserProfile: UserProfile,
+    @requestBody({
+      content: {
+        'application/json': {
+          schema: getModelSchemaRef(ChangePasswordRequest, {
+            title: 'ChangeMyPasswordRequest',
+          }),
+        },
+      },
+    })
+    request: ChangePasswordRequest,
+  ): Promise<void> {
+    const userId = this.getAuthenticatedUserId(currentUserProfile);
+    await this.changePassword(userId, request);
+  }
+
+  @authenticate('jwt')
+  @patch('/go-users/{id}/password')
+  @response(204, {
+    description: 'Password updated',
+  })
+  async updatePasswordById(
+    @inject(SecurityBindings.USER)
+    currentUserProfile: UserProfile,
+    @param.path.number('id') id: number,
+    @requestBody({
+      content: {
+        'application/json': {
+          schema: getModelSchemaRef(ChangePasswordRequest, {
+            title: 'ChangePasswordByIdRequest',
+          }),
+        },
+      },
+    })
+    request: ChangePasswordRequest,
+  ): Promise<void> {
+    const currentUserId = this.getAuthenticatedUserId(currentUserProfile);
+    if (currentUserId !== id) {
+      throw new HttpErrors.Forbidden('You can only change your own password.');
+    }
+    await this.changePassword(id, request);
+  }
+
   @post('/signup', {
     responses: {
       '200': {
@@ -314,4 +415,3 @@ export class GoUserController {
     }
   }
 }
-
