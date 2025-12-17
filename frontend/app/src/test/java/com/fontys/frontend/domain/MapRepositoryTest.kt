@@ -21,15 +21,11 @@ import kotlin.test.assertEquals
 class MapRepositoryTest {
 
     @get:Rule
-    val dispatcherRule = MainDispatcherRule()
 
-    private lateinit var mockWebServer: MockWebServer
     private lateinit var repository: MapRepository
 
     @Before
     fun setup() {
-        mockWebServer = MockWebServer()
-        mockWebServer.start()
 
         val client = OkHttpClient.Builder().build()
 
@@ -40,7 +36,6 @@ class MapRepositoryTest {
 
     @After
     fun tearDown() {
-        mockWebServer.shutdown()
     }
 
     @Test
@@ -63,16 +58,3 @@ class MapRepositoryTest {
 
 
 
-@OptIn(ExperimentalCoroutinesApi::class)
-class MainDispatcherRule(
-    private val testDispatcher: TestDispatcher = UnconfinedTestDispatcher()
-) : TestWatcher() {
-
-    override fun starting(description: Description) {
-        Dispatchers.setMain(testDispatcher)
-    }
-
-    override fun finished(description: Description) {
-        Dispatchers.resetMain()
-    }
-}
