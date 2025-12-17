@@ -20,9 +20,8 @@ import androidx.compose.ui.Modifier
 @Composable
 fun SettingsMenu(
     modifier: Modifier = Modifier,
-    X: () -> Unit = {},
-    Y: () -> Unit = {},
-    Z: () -> Unit = {},
+    onEditProfile: () -> Unit = {},
+    onDeleteAccount: () -> Unit = {},
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -44,10 +43,16 @@ fun SettingsMenu(
                 text = { Text("Edit Profile", color = MaterialTheme.colorScheme.onSurfaceVariant) },
                 onClick = {
                     expanded = false
-                    X()
+                    onEditProfile()
                 }
             )
-            // Add other items...
+            DropdownMenuItem(
+                text = { Text("Delete Account", color = MaterialTheme.colorScheme.onSurfaceVariant) },
+                onClick = {
+                    expanded = false
+                    onDeleteAccount()
+                }
+            )
         }
     }
 }

@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.fontys.frontend.common.AccountView
 import com.fontys.frontend.data.UserUpdate
 import com.fontys.frontend.data.models.FlagShowData
 import com.fontys.frontend.domain.UserRepository
@@ -33,7 +34,12 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Profile(viewModel: ProfileViewModel) {
+fun Profile(
+    viewModel: ProfileViewModel,
+    onAccountClick: (() -> Unit)? = null,
+    onEditProfile: (() -> Unit)? = null,
+    onDeleteAccount: (() -> Unit)? = null
+) {
     // Local variables for the profile
     var pfp: String? by remember { mutableStateOf("") }
     var name: String? by remember { mutableStateOf("") }
@@ -86,7 +92,7 @@ fun Profile(viewModel: ProfileViewModel) {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 // Assuming ProfileHeader is custom, ensure it uses Theme colors internally
-                ProfileHeader()
+                ProfileHeader(onAccountClick = onAccountClick)
 
                 when {
                     isLoading -> {
@@ -148,7 +154,8 @@ fun Profile(viewModel: ProfileViewModel) {
                                         // Moved settings here for better UX, or keep empty if handled externally
                                         SettingsMenu(
                                             modifier = Modifier,
-                                            X = {}, Y = {}, Z = {}
+                                            onEditProfile = { onEditProfile?.invoke() },
+                                            onDeleteAccount = { onDeleteAccount?.invoke() }
                                         )
                                     }
                                 )

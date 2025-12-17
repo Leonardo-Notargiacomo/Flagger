@@ -19,6 +19,7 @@ import com.fontys.frontend.ui.views.RegistrationView
 import com.fontys.frontend.ui.views.DeleteAccountScreen
 import com.fontys.frontend.ui.views.MapsScreen
 import com.fontys.frontend.ui.views.ProfileScreen
+import com.fontys.frontend.ui.views.Profile
 import com.fontys.frontend.ui.viewmodels.ProfileViewModel
 import kotlinx.serialization.Serializable
 import com.fontys.frontend.ui.views.NavBar
@@ -36,6 +37,9 @@ object ProfileView
 
 @Serializable
 object BadgeView
+
+@Serializable
+object AccountView
 
 @Serializable
 object LoginView
@@ -82,14 +86,24 @@ fun NavHost(
 
             composable<ProfileView> {
                 val profileViewModel: ProfileViewModel = viewModel()
-                ProfileScreen(
-                    userViewModel = profileViewModel,
+                Profile(
+                    viewModel = profileViewModel,
+                    onAccountClick = { navController.navigate(AccountView) },
+                    onEditProfile = { navController.navigate(AccountView) },
                     onDeleteAccount = { navController.navigate(DeleteAccountView) }
                 )
             }
 
             composable<BadgeView> {
                 BadgeScreen(userId = UserRepository.userId)
+            }
+
+            composable<AccountView> {
+                val profileViewModel: ProfileViewModel = viewModel()
+                ProfileScreen(
+                    userViewModel = profileViewModel,
+                    onDeleteAccount = { navController.navigate(DeleteAccountView) }
+                )
             }
 
             composable<LoginView> {
