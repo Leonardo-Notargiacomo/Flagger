@@ -60,6 +60,7 @@ const CredentialsSchema: SchemaObject = {
     },
   },
 
+
 };
 
 export const CredentialsRequestBody = {
@@ -369,8 +370,8 @@ export class GoUserController {
 
     const filteredUsers = users.filter(user => {
       if(!user.bio) return false;
-      const bioWords = user.bio.toLowerCase().split(/\s+/); // Split by any whitespace
-      return profaneWords.some(profaneWord => bioWords.includes(profaneWord));
+      const bioLower = user.bio.toLowerCase();
+      return profaneWords.some(profaneWord => bioLower.includes(profaneWord));
     });
 
     return filteredUsers;

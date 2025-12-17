@@ -3,6 +3,9 @@ import {GoUserController} from '../../../controllers';
 import {GoUserRepository} from '../../../repositories';
 import {GoUser} from '../../../models';
 import sinon from 'sinon';
+// run with
+//npx lb-mocha --allow-console-logs "dist/__tests__" --grep "filterUsersBio"
+//
 
 describe('filterUsersBio', () => {
   let controller: GoUserController;
@@ -47,7 +50,7 @@ describe('filterUsersBio', () => {
     ]);
 
     expect((await controller.filterUsersBio()).length).to.equal(0);
-  });  
+  });
 
   it('detects uppercase', async () => {
     repo.find.resolves([
@@ -60,6 +63,14 @@ describe('filterUsersBio', () => {
   it('detects mixed case', async () => {
     repo.find.resolves([
       new GoUser({id: 1, email: 'a@test.com', bio: 'ArSe', isAdmin: false}),
+    ]);
+
+    expect((await controller.filterUsersBio()).length).to.equal(1);
+  });
+
+  it('detects substring match', async () => {
+    repo.find.resolves([
+      new GoUser({id: 1, email: 'a@test.com', bio: 'arseless', isAdmin: false}),
     ]);
 
     expect((await controller.filterUsersBio()).length).to.equal(1);
