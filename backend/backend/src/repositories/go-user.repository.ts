@@ -5,8 +5,9 @@ import {
   repository
 } from '@loopback/repository';
 import {DbDataSource} from '../datasources';
-import {GoUser, GoUserRelations, GoUserCredentials} from '../models';
+import {GoUser, GoUserRelations, GoUserCredentials, UserCustomFlag} from '../models';
 import {GoUserCredentialsRepository} from './go-user-credentials.repository';
+import {UserCustomFlagRepository} from './user-custom-flag.repository';
 
 export class GoUserRepository extends DefaultCrudRepository<
   GoUser,
@@ -18,12 +19,16 @@ export class GoUserRepository extends DefaultCrudRepository<
     typeof GoUser.prototype.id
   >;
 
+  public readonly userCustomFlag: HasOneRepositoryFactory<UserCustomFlag, typeof GoUser.prototype.id>;
+
   constructor(
     @inject('datasources.db') dataSource: DbDataSource,
     @repository.getter('GoUserCredentialsRepository')
-    protected goUserCredentialsRepositoryGetter: Getter<GoUserCredentialsRepository>,
+    protected goUserCredentialsRepositoryGetter: Getter<GoUserCredentialsRepository>, @repository.getter('UserCustomFlagRepository') protected userCustomFlagRepositoryGetter: Getter<UserCustomFlagRepository>,
   ) {
     super(GoUser, dataSource);
+    this.userCustomFlag = this.createHasOneRepositoryFactoryFor('userCustomFlag', userCustomFlagRepositoryGetter);
+    this.registerInclusionResolver('userCustomFlag', this.userCustomFlag.inclusionResolver);
     this.goUserCredentials = this.createHasOneRepositoryFactoryFor(
       'goUserCredentials',
       goUserCredentialsRepositoryGetter,

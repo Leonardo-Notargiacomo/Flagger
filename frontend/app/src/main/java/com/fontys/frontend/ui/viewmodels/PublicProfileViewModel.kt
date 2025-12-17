@@ -43,53 +43,6 @@ class PublicProfileViewModel(application: Application) : AndroidViewModel(applic
     private val _uiState = MutableStateFlow(PublicProfileUiState())
     val uiState: StateFlow<PublicProfileUiState> = _uiState.asStateFlow()
 
-    // Legacy API compatibility - expose individual properties for backward compatibility
-    val user: StateFlow<User?> = MutableStateFlow<User?>(null).apply {
-        viewModelScope.launch {
-            _uiState.collect { value = it.user }
-        }
-    }
-    val flags: StateFlow<List<Flag>> = MutableStateFlow<List<Flag>>(emptyList()).apply {
-        viewModelScope.launch {
-            _uiState.collect { value = it.flags }
-        }
-    }
-    val flagDisplayNames: StateFlow<Map<String, String>> = MutableStateFlow<Map<String, String>>(emptyMap()).apply {
-        viewModelScope.launch {
-            _uiState.collect { value = it.flagDisplayNames }
-        }
-    }
-    val flagLocations: StateFlow<Map<String, Pair<Double, Double>>> = MutableStateFlow<Map<String, Pair<Double, Double>>>(emptyMap()).apply {
-        viewModelScope.launch {
-            _uiState.collect { value = it.flagLocations }
-        }
-    }
-    val userStats: StateFlow<UserStats?> = MutableStateFlow<UserStats?>(null).apply {
-        viewModelScope.launch {
-            _uiState.collect { value = it.userStats }
-        }
-    }
-    val badgesEarned: StateFlow<Int> = MutableStateFlow(0).apply {
-        viewModelScope.launch {
-            _uiState.collect { value = it.badgesEarned }
-        }
-    }
-    val friendRequestStatus: StateFlow<FriendRequestStatus> = MutableStateFlow<FriendRequestStatus>(FriendRequestStatus.NotSent).apply {
-        viewModelScope.launch {
-            _uiState.collect { value = it.friendRequestStatus }
-        }
-    }
-    val isLoading: StateFlow<Boolean> = MutableStateFlow(false).apply {
-        viewModelScope.launch {
-            _uiState.collect { value = it.isLoading }
-        }
-    }
-    val error: StateFlow<String?> = MutableStateFlow<String?>(null).apply {
-        viewModelScope.launch {
-            _uiState.collect { value = it.error }
-        }
-    }
-
     companion object {
         private const val TAG = "PublicProfileViewModel"
 

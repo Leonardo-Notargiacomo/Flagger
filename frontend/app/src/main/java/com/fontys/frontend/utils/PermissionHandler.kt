@@ -24,9 +24,12 @@ class PermissionHandler(
     sealed class PermissionDialogState {
         object None : PermissionDialogState()
         object AskingLocation : PermissionDialogState()
+        object AskingCamera : PermissionDialogState()
         object AskingNotification : PermissionDialogState()
         object LocationDenied : PermissionDialogState()
         object LocationPermanentlyDenied : PermissionDialogState()
+        object CameraDenied : PermissionDialogState()
+        object CameraPermanentlyDenied : PermissionDialogState()
         object NotificationDenied : PermissionDialogState()
         object NotificationPermanentlyDenied : PermissionDialogState()
     }
@@ -35,6 +38,7 @@ class PermissionHandler(
         private set
 
     private var locationPermissionLauncher: ActivityResultLauncher<String>? = null
+    private var cameraPermissionLauncher: ActivityResultLauncher<String>? = null
     private var notificationPermissionLauncher: ActivityResultLauncher<String>? = null
 
     fun initialize() {
@@ -42,6 +46,12 @@ class PermissionHandler(
             ActivityResultContracts.RequestPermission()
         ) { isGranted ->
             handleLocationPermissionResult(isGranted)
+        }
+
+        cameraPermissionLauncher = activity.registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { isGranted ->
+            handleCameraPermissionResult(isGranted)
         }
 
         notificationPermissionLauncher = activity.registerForActivityResult(
@@ -61,6 +71,13 @@ class PermissionHandler(
                 if (isLocationPermissionGranted()) {
                     Log.d(TAG, "Location permission granted in Settings!")
                     dialogState = PermissionDialogState.None
+                    checkCameraPermission()
+                }
+            }
+            is PermissionDialogState.CameraPermanentlyDenied -> {
+                if (isCameraPermissionGranted()) {
+                    Log.d(TAG, "Camera permission granted in Settings!")
+                    dialogState = PermissionDialogState.None
                     checkNotificationPermission()
                 }
             }
@@ -79,6 +96,14 @@ class PermissionHandler(
         if (!isLocationPermissionGranted()) {
             dialogState = PermissionDialogState.AskingLocation
         } else {
+            checkCameraPermission()
+        }
+    }
+
+    private fun checkCameraPermission() {
+        if (!isCameraPermissionGranted()) {
+            dialogState = PermissionDialogState.AskingCamera
+        } else {
             checkNotificationPermission()
         }
     }
@@ -94,7 +119,7 @@ class PermissionHandler(
     private fun handleLocationPermissionResult(isGranted: Boolean) {
         if (isGranted) {
             dialogState = PermissionDialogState.None
-            checkNotificationPermission()
+            checkCameraPermission()
         } else {
             val isPermanentlyDenied = !ActivityCompat.shouldShowRequestPermissionRationale(
                 activity,
@@ -105,6 +130,24 @@ class PermissionHandler(
                 PermissionDialogState.LocationPermanentlyDenied
             } else {
                 PermissionDialogState.LocationDenied
+            }
+        }
+    }
+
+    private fun handleCameraPermissionResult(isGranted: Boolean) {
+        if (isGranted) {
+            dialogState = PermissionDialogState.None
+            checkNotificationPermission()
+        } else {
+            val isPermanentlyDenied = !ActivityCompat.shouldShowRequestPermissionRationale(
+                activity,
+                Manifest.permission.CAMERA
+            )
+
+            dialogState = if (isPermanentlyDenied) {
+                PermissionDialogState.CameraPermanentlyDenied
+            } else {
+                PermissionDialogState.CameraDenied
             }
         }
     }
@@ -135,6 +178,10 @@ class PermissionHandler(
         locationPermissionLauncher?.launch(Manifest.permission.ACCESS_FINE_LOCATION)
     }
 
+    fun requestCameraPermission() {
+        cameraPermissionLauncher?.launch(Manifest.permission.CAMERA)
+    }
+
     fun requestNotificationPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             notificationPermissionLauncher?.launch(Manifest.permission.POST_NOTIFICATIONS)
@@ -156,6 +203,13 @@ class PermissionHandler(
         return ContextCompat.checkSelfPermission(
             activity,
             Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun isCameraPermissionGranted(): Boolean {
+        return ContextCompat.checkSelfPermission(
+            activity,
+            Manifest.permission.CAMERA
         ) == PackageManager.PERMISSION_GRANTED
     }
 

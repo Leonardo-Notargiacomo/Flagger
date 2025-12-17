@@ -7,3 +7,7 @@ export * from './flag-go-user.controller';
 export * from './go-user-go-user-credentials.controller';
 export * from './friend-request.controller';
 export * from './friendship.controller';
+export * from './go-user-user-custom-flag.controller';
+export * from './user-custom-flag-go-user.controller';
+export * from './user-custom-flag.controller';
+export * from './challenge.controller';

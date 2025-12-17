@@ -102,15 +102,7 @@ fun PublicProfileScreen(
 ) {
     val context = LocalContext.current
     val hapticFeedback = LocalHapticFeedback.current
-    val user by viewModel.user.collectAsState()
-    val flags by viewModel.flags.collectAsState()
-    val flagDisplayNames by viewModel.flagDisplayNames.collectAsState()
-    val flagLocations by viewModel.flagLocations.collectAsState()
-    val userStats by viewModel.userStats.collectAsState()
-    val badgesEarned by viewModel.badgesEarned.collectAsState()
-    val friendRequestStatus by viewModel.friendRequestStatus.collectAsState()
-    val isLoading by viewModel.isLoading.collectAsState()
-    val error by viewModel.error.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
 
     // Pull-to-refresh state
     var isRefreshing by remember { mutableStateOf(false) }
@@ -128,15 +120,15 @@ fun PublicProfileScreen(
     }
 
     // Stop refreshing when loading completes
-    LaunchedEffect(isLoading) {
-        if (!isLoading && isRefreshing) {
+    LaunchedEffect(uiState.isLoading) {
+        if (!uiState.isLoading && isRefreshing) {
             isRefreshing = false
         }
     }
 
     // Animated content visibility
     val contentAlpha by animateFloatAsState(
-        targetValue = if (isLoading && !isRefreshing) 0f else 1f,
+        targetValue = if (uiState.isLoading && !isRefreshing) 0f else 1f,
         animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing),
         label = "contentAlpha"
     )
@@ -152,20 +144,20 @@ fun PublicProfileScreen(
             // Header with back button
             PublicProfileHeader(
                 onNavigateBack = onNavigateBack,
-                username = user?.userName ?: "Profile"
+                username = uiState.user?.userName ?: "Profile"
             )
 
             when {
-                isLoading && !isRefreshing -> {
+                uiState.isLoading && !isRefreshing -> {
                     LoadingState()
                 }
-                error != null && !isRefreshing -> {
+                uiState.error != null && !isRefreshing -> {
                     ErrorState(
-                        error = error ?: "Unknown error",
+                        error = uiState.error ?: "Unknown error",
                         onRetry = { viewModel.loadUserProfile(userId) }
                     )
                 }
-                user != null -> {
+                uiState.user != null -> {
                     Box(
                         modifier = Modifier
                             .weight(1f)
@@ -180,26 +172,26 @@ fun PublicProfileScreen(
                             verticalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
                             // Profile header section
-                            ProfileHeaderSection(user = user!!)
+                            ProfileHeaderSection(user = uiState.user!!)
 
                             // Stats card - prominent placement
                             EnhancedStatsCard(
-                                flagCount = flags.size,
-                                currentStreak = userStats?.currentStreak ?: 0,
-                                longestStreak = userStats?.longestStreak ?: 0,
-                                badgesEarned = badgesEarned
+                                flagCount = uiState.flags.size,
+                                currentStreak = uiState.userStats?.currentStreak ?: 0,
+                                longestStreak = uiState.userStats?.longestStreak ?: 0,
+                                badgesEarned = uiState.badgesEarned
                             )
 
                             // Bio section (if exists)
-                            if (user!!.bio.isNullOrEmpty()) {
-                                EmptyBioSection(username = user!!.userName ?: "This explorer")
+                            if (uiState.user!!.bio.isNullOrEmpty()) {
+                                EmptyBioSection(username = uiState.user!!.userName ?: "This explorer")
                             } else {
-                                BioSection(bio = user!!.bio!!)
+                                BioSection(bio = uiState.user!!.bio!!)
                             }
 
                             // Friend request button
                             FriendRequestButton(
-                                status = friendRequestStatus,
+                                status = uiState.friendRequestStatus,
                                 onSendRequest = {
                                     // Provide haptic feedback on press
                                     hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
@@ -213,24 +205,24 @@ fun PublicProfileScreen(
                             )
 
                             // Recent explorations or empty state
-                            if (flags.isEmpty()) {
+                            if (uiState.flags.isEmpty()) {
                                 EmptyFlagsSection(
-                                    username = user!!.userName?.uppercase() ?: "THIS EXPLORER",
-                                    friendRequestStatus = friendRequestStatus
+                                    username = uiState.user!!.userName?.uppercase() ?: "THIS EXPLORER",
+                                    friendRequestStatus = uiState.friendRequestStatus
                                 )
                             } else {
                                 RecentExplorationsSection(
-                                    flags = flags.take(5),
-                                    displayNames = flagDisplayNames,
-                                    locations = flagLocations,
+                                    flags = uiState.flags.take(5),
+                                    displayNames = uiState.flagDisplayNames,
+                                    locations = uiState.flagLocations,
                                     onFlagClick = { flag ->
                                         // Open location in Google Maps
-                                        flagLocations[flag.locationId]?.let { (lat, lng) ->
+                                        uiState.flagLocations[flag.locationId]?.let { (lat, lng) ->
                                             openLocationInGoogleMaps(
                                                 context = context,
                                                 latitude = lat,
                                                 longitude = lng,
-                                                locationName = flagDisplayNames[flag.locationId] ?: "Location"
+                                                locationName = uiState.flagDisplayNames[flag.locationId] ?: "Location"
                                             )
                                         }
                                     }
@@ -255,7 +247,7 @@ fun PublicProfileScreen(
         }
 
         // Celebration animation overlay
-        FriendRequestSuccessAnimation(status = friendRequestStatus)
+        FriendRequestSuccessAnimation(status = uiState.friendRequestStatus)
     }
 }
 
