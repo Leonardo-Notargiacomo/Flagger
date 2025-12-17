@@ -121,6 +121,12 @@ dependencies {
     implementation("androidx.emoji2:emoji2-emojipicker:1.5.0")
     implementation(libs.lottie.compose)
 
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+    testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
+    testImplementation("org.json:json:20240303")
+    testImplementation(kotlin("test"))
+
 }
 
 // ✅ Kotlin DSL way to configure Secrets plugin
