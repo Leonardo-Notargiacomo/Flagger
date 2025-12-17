@@ -362,19 +362,17 @@ export class GoUserController {
     const filePath = path.join(__dirname, '../../src/CsvFiles/profanity_en.csv');
     const data = fs.readFileSync(filePath, 'utf8');
 
-    // Split by lines, skip header, extract first column (the profane word)
-    const lines = data.split('\n').slice(1); // Skip header row
+    const lines = data.split('\n').slice(1);
     const profaneWords = lines
       .map(line => line.split(',')[0]?.trim().toLowerCase())
-      .filter(word => word); // Remove empty entries
+      .filter(word => word);
 
-    const filteredUsers = users.filter(user => {
-      if(!user.bio) return false;
+
+    return users.filter(user => {
+      if (!user.bio) return false;
       const bioLower = user.bio.toLowerCase();
       return profaneWords.some(profaneWord => bioLower.includes(profaneWord));
     });
-
-    return filteredUsers;
   }
 }
 
