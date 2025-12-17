@@ -17,11 +17,16 @@ import kotlinx.coroutines.launch
 
 
 
+data class FlagDisplayInfo(
+    val displayName: String,
+    val userName: String
+)
+
 data class AdminUiState(
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
     var users: List<UserReturn> = emptyList(),
-    var flags: List<FlagResponse> = emptyList()
+    var flags: Map<FlagResponse, FlagDisplayInfo> = emptyMap()
 )
 
 class AdminViewModel : ViewModel() {
@@ -35,8 +40,11 @@ class AdminViewModel : ViewModel() {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
             try {
-                _uiState.value.users = AdminRepository.getRecentUsers(20)
-                _uiState.value = _uiState.value.copy(isLoading = false)
+                val users = AdminRepository.getRecentUsers(20)
+                _uiState.value = _uiState.value.copy(
+                    users = users,
+                    isLoading = false
+                )
 
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
@@ -70,15 +78,33 @@ class AdminViewModel : ViewModel() {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
             try {
-                _uiState.value.flags = AdminRepository.getFlags(20)
-                _uiState.value = _uiState.value.copy(isLoading = false)
+                // Get flags with display names
+                val flagsWithDisplayNames = AdminRepository.getFlags(20)
 
-            } catch (e: Exception) {
+                // Build map with user information
+                val flagDisplayInfoMap = mutableMapOf<FlagResponse, FlagDisplayInfo>()
+
+                flagsWithDisplayNames.forEach { (flag, displayName) ->
+                    // Fetch user information for each flag
+                    val user = userRepository.getUser(flag.userId.toString())
+                    val userName = user?.userName ?: "Unknown User"
+
+                    flagDisplayInfoMap[flag] = FlagDisplayInfo(
+                        displayName = displayName,
+                        userName = userName
+                    )
+                }
+
                 _uiState.value = _uiState.value.copy(
-                    errorMessage = e.message ?: "fethcing flags failed",
+                    flags = flagDisplayInfoMap,
                     isLoading = false
                 )
 
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    errorMessage = e.message ?: "fetching flags failed",
+                    isLoading = false
+                )
             }
 
         }
@@ -88,8 +114,11 @@ class AdminViewModel : ViewModel() {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
             try {
-                _uiState.value.users = AdminRepository.filterUsersBio()
-                _uiState.value = _uiState.value.copy(isLoading = false)
+                val filteredUsers = AdminRepository.filterUsersBio()
+                _uiState.value = _uiState.value.copy(
+                    users = filteredUsers,
+                    isLoading = false
+                )
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
                     errorMessage = e.message ?: "filtering users failed",

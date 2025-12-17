@@ -1,7 +1,6 @@
 package com.fontys.frontend.ui.views
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,6 +14,7 @@ import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.Gavel
 import androidx.compose.material.icons.filled.People
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -29,8 +29,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -57,40 +57,70 @@ fun RecentPostsScreen(viewModel: AdminViewModel) {
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(16.dp)
     ) {
-        items(flags) { flag ->
-            FlagCard(flag)
+        items(flags.entries.toList()) { entry ->
+            FlagCard(flag = entry.key, displayInfo = entry.value, viewModel = viewModel)
         }
     }
 
 }
 
 @Composable
-fun FlagCard (flag: FlagResponse, viewModel: AdminViewModel = viewModel()) {
-    Card(modifier = Modifier
-        .padding(bottom = 8.dp)
-        .fillMaxWidth()) {
-        Text(
-            text = flag.locationId,
-            modifier = Modifier.padding(16.dp),
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
+fun FlagCard(
+    flag: FlagResponse,
+    displayInfo: com.fontys.frontend.ui.viewmodels.FlagDisplayInfo,
+    viewModel: AdminViewModel = viewModel()
+) {
+    Card(
+        modifier = Modifier
+            .padding(bottom = 8.dp)
+            .fillMaxWidth(),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer
+        ),
+        shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                text = "User: ${displayInfo.userName}",
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+            )
+            Text(
+                text = "Location: ${displayInfo.displayName}",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f),
+                modifier = Modifier.padding(top = 4.dp)
+            )
+
             val image = viewModel.base64ToImageBitmap(flag.photoCode)
             if (image != null) {
                 Image(
                     bitmap = image,
-                    contentDescription = "Profile Picture",
+                    contentDescription = "Flag Photo",
                     modifier = Modifier
-
+                        .padding(top = 12.dp)
+                        .fillMaxWidth()
+                        .clip(androidx.compose.foundation.shape.RoundedCornerShape(8.dp))
                 )
             } else {
-                Text(
-                    text = "No Image Available",
-                    modifier = Modifier.padding(16.dp),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                androidx.compose.material3.Surface(
+                    modifier = Modifier
+                        .padding(top = 12.dp)
+                        .fillMaxWidth(),
+                    shape = androidx.compose.foundation.shape.RoundedCornerShape(8.dp),
+                    color = MaterialTheme.colorScheme.surfaceVariant
+                ) {
+                    Text(
+                        text = "No Image Available",
+                        modifier = Modifier.padding(24.dp),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
             }
-
-
+        }
     }
 
 }
@@ -118,33 +148,56 @@ fun RecentUsersScreen(viewModel: AdminViewModel) {
 
 @Composable
 fun UserCard (user: UserReturn, viewModel: AdminViewModel = viewModel()) {
-    Card(modifier = Modifier
-        .padding(bottom = 8.dp)
-        .fillMaxWidth()) {
-        Text(
-            text = user.userName,
-            modifier = Modifier.padding(16.dp),
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        Text(
-            text = user.bio,
-            modifier = Modifier.padding(16.dp),
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        val image = viewModel.base64ToImageBitmap(user.userImage)
-        if (image != null) {
-            Image(
-                bitmap = image,
-                contentDescription = "Profile Picture",
-                modifier = Modifier
-
-            )
-        } else {
+    Card(
+        modifier = Modifier
+            .padding(bottom = 8.dp)
+            .fillMaxWidth(),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer
+        ),
+        shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
             Text(
-                text = "No Image Available",
-                modifier = Modifier.padding(16.dp),
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                text = "User: ${user.userName}",
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
             )
+            Text(
+                text = "Bio: ${user.bio}",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f),
+                modifier = Modifier.padding(top = 4.dp)
+            )
+
+            val image = viewModel.base64ToImageBitmap(user.userImage)
+            if (image != null) {
+                Image(
+                    bitmap = image,
+                    contentDescription = "Profile Picture",
+                    modifier = Modifier
+                        .padding(top = 12.dp)
+                        .fillMaxWidth()
+                        .clip(androidx.compose.foundation.shape.RoundedCornerShape(8.dp))
+                )
+            } else {
+                androidx.compose.material3.Surface(
+                    modifier = Modifier
+                        .padding(top = 12.dp)
+                        .fillMaxWidth(),
+                    shape = androidx.compose.foundation.shape.RoundedCornerShape(8.dp),
+                    color = MaterialTheme.colorScheme.surfaceVariant
+                ) {
+                    Text(
+                        text = "No Image Available",
+                        modifier = Modifier.padding(24.dp),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+            }
         }
 
     }
@@ -164,7 +217,82 @@ fun RecentOffendersScreen(viewModel: AdminViewModel) {
         contentPadding = PaddingValues(16.dp)
     ) {
         items(users) { user ->
-            UserCard(user)
+            OffenderCard(user, viewModel)
+        }
+    }
+}
+
+@Composable
+fun OffenderCard(user: UserReturn, viewModel: AdminViewModel = viewModel()) {
+    Card(
+        modifier = Modifier
+            .padding(bottom = 8.dp)
+            .fillMaxWidth(),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.errorContainer
+        ),
+        shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                text = "User: ${user.userName}",
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onErrorContainer,
+                fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+            )
+
+            // Emphasized bio section with warning styling
+            androidx.compose.material3.Surface(
+                modifier = Modifier
+                    .padding(top = 12.dp)
+                    .fillMaxWidth(),
+                shape = androidx.compose.foundation.shape.RoundedCornerShape(8.dp),
+                color = MaterialTheme.colorScheme.error.copy(alpha = 0.15f)
+            ) {
+                Column(modifier = Modifier.padding(12.dp)) {
+                    Text(
+                        text = "⚠️ FLAGGED BIO:",
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.error,
+                        fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                    )
+                    Text(
+                        text = user.bio,
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onErrorContainer,
+                        fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
+                }
+            }
+
+            val image = viewModel.base64ToImageBitmap(user.userImage)
+            if (image != null) {
+                Image(
+                    bitmap = image,
+                    contentDescription = "Profile Picture",
+                    modifier = Modifier
+                        .padding(top = 12.dp)
+                        .fillMaxWidth()
+                        .clip(androidx.compose.foundation.shape.RoundedCornerShape(8.dp))
+                )
+            } else {
+                androidx.compose.material3.Surface(
+                    modifier = Modifier
+                        .padding(top = 12.dp)
+                        .fillMaxWidth(),
+                    shape = androidx.compose.foundation.shape.RoundedCornerShape(8.dp),
+                    color = MaterialTheme.colorScheme.surfaceVariant
+                ) {
+                    Text(
+                        text = "No Image Available",
+                        modifier = Modifier.padding(24.dp),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+            }
         }
     }
 }
