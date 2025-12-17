@@ -59,6 +59,7 @@ const CredentialsSchema: SchemaObject = {
       minLength: 8,
     },
   },
+
 };
 
 export const CredentialsRequestBody = {
@@ -359,14 +360,19 @@ export class GoUserController {
 
     const filePath = path.join(__dirname, '../../src/CsvFiles/profanity_en.csv');
     const data = fs.readFileSync(filePath, 'utf8');
-    const profaneWords = data.split(',').map(word => word.trim().toLowerCase());
-    
+
+    // Split by lines, skip header, extract first column (the profane word)
+    const lines = data.split('\n').slice(1); // Skip header row
+    const profaneWords = lines
+      .map(line => line.split(',')[0]?.trim().toLowerCase())
+      .filter(word => word); // Remove empty entries
+
     const filteredUsers = users.filter(user => {
       if(!user.bio) return false;
-      const bioWords = user.bio.toLowerCase().split(' ');
+      const bioWords = user.bio.toLowerCase().split(/\s+/); // Split by any whitespace
       return profaneWords.some(profaneWord => bioWords.includes(profaneWord));
-    }
-    );
+    });
+
     return filteredUsers;
   }
 }
