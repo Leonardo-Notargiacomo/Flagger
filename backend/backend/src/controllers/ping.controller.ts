@@ -4,12 +4,13 @@ import {
   RestBindings,
   get,
   response,
+  ResponseObject,
 } from '@loopback/rest';
 
 /**
  * OpenAPI response for ping()
  */
-const PING_RESPONSE= {
+const PING_RESPONSE: ResponseObject = {
   description: 'Ping Response',
   content: {
     'application/json': {
