@@ -19,7 +19,6 @@ import {
   put,
   requestBody,
   response,
-  SchemaObject,
 } from '@loopback/rest';
 import {GoUser} from '../models';
 import {GoUserRepository} from '../repositories';
@@ -46,7 +45,7 @@ export class NewUserRequest extends GoUser {
   password: string;
 }
 
-const CredentialsSchema: SchemaObject = {
+const CredentialsSchema = {
   type: 'object',
   required: ['email', 'password'],
   properties: {
