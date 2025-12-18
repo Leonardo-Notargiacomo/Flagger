@@ -1,4 +1,4 @@
-package com.fontys.frontend.domain
+package com.fontys.frontend.services
 
 import com.fontys.frontend.data.CustomFlagUpdate
 import com.fontys.frontend.data.LoginResponse
@@ -10,7 +10,6 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.HeaderMap
-import retrofit2.http.Headers
 import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
