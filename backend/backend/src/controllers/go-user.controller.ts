@@ -320,6 +320,7 @@ export class GoUserController {
     }
   }
 
+  @authenticate('jwt')
   @get('/go-users/{id}/is-admin', {
     responses: {
       '200': {
@@ -344,6 +345,7 @@ export class GoUserController {
     return user.isAdmin;
   }
 
+  @authenticate('jwt')
   @get('/go-users/filter-bio')
   @response(200, {
     description: 'Filtered Users',
