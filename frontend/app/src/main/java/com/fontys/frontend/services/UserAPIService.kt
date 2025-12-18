@@ -1,4 +1,4 @@
-package com.fontys.frontend.domain
+package com.fontys.frontend.services
 
 import com.fontys.frontend.data.CustomFlagUpdate
 import com.fontys.frontend.data.LoginResponse
