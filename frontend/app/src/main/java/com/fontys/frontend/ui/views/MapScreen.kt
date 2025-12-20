@@ -83,6 +83,7 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
     val flagStyle by viewModel.flagStyle.collectAsState()
     var mapSettings by remember{ mutableStateOf(false) }
     var selectedMarkerId by remember { mutableStateOf<String?>("") }
+    var showBottomSheet by remember { mutableStateOf(false) }
 
     // Check if location permission is granted - continuously reactive
     var hasLocationPermission by remember { mutableStateOf(false) }
@@ -182,13 +183,17 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
                     snippet = "",
                     pinConfig = pinConfig,
                     onClick = {
+                        //TODO
                         selectedMarkerId = spot.locationId
                         markerState.showInfoWindow()
+                        showBottomSheet = true
                         true
                     }
                 )
             }
-
+            if (showBottomSheet) {
+                FlagSheet()
+            }
         }
 
         // Flag button with explorer theme

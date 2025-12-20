@@ -1,7 +1,9 @@
 package com.fontys.frontend.ui.viewmodels
 
+import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.fontys.frontend.data.models.Review
 import com.fontys.frontend.data.repositories.ReviewRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -23,7 +25,7 @@ class ReviewViewModel : ViewModel() {
     val review: StateFlow<ReviewState> = reviewState.asStateFlow()
 
     fun updateTitle(newTitle: String) {
-        reviewState.update { reviewState -> reviewState.copy(title=newTitle) }
+        reviewState.update { reviewState -> reviewState.copy(title = newTitle) }
     }
 
     fun updateReview(newReview: String) {
@@ -34,7 +36,38 @@ class ReviewViewModel : ViewModel() {
         reviewState.update { reviewState -> reviewState.copy(rating = newRate) }
     }
 
-    fun postReview() {
-        viewModelScope.launch { ReviewRepository().postReview(reviewState) }
+
+    fun getFlagReviews(reviews: List<Review>) {
+        viewModelScope.launch {
+            try {
+                val reviews: List<Review>
+
+            } catch (e: Exception) {
+                throw Exception(e.message)
+            }
+        }
+    }
+
+    fun getUserReviews(reviews: List<Review>) {
+        viewModelScope.launch {
+            try {
+                val reviews: List<Review>
+
+            } catch (e: Exception) {
+                throw Exception(e.message)
+            }
+        }
+    }
+
+
+    fun postReview(review: Review) {
+        viewModelScope.launch {
+            try {
+                val review: ReviewState = reviewState.value
+
+            } catch (e: Exception) {
+                throw Exception(e.message)
+            }
+        }
     }
 }
