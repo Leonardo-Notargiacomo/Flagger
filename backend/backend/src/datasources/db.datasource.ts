@@ -8,7 +8,7 @@ dotenv.config();
 const config = {
   name: 'flaggrdb',
   connector: 'postgresql',
-  url: 'postgresql://flag_admin:PHd5rfVsm5fJHpibIhVUhWJWHmjH5eVT@dpg-d53b9kur433s73c835hg-a/flagr_jfrn'
+  url: 'postgresql://flag_admin:PHd5rfVsm5fJHpibIhVUhWJWHmjH5eVT@dpg-d53b9kur433s73c835hg-a/flagr_jfrn?ssl=true'
 };
 
 // Observe application's life cycle to disconnect the datasource when
