@@ -69,7 +69,9 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+    androidTestImplementation(libs.androidx.ui.test.junit4)
+    implementation(libs.androidx.compose.material)
+
 
     // Kotlin Serialization
     implementation(libs.jetbrains.kotlinx.serialization.json)
@@ -77,7 +79,7 @@ dependencies {
     // Networking - Retrofit & OkHttp
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter.gson)
-    implementation("com.squareup.retrofit2:converter-scalars:2.9.0")
+    implementation(libs.converter.scalars)
     implementation(libs.okhttp)
     implementation(libs.okhttp.logging.interceptor)
     implementation(libs.gson)
@@ -90,20 +92,20 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
-    implementation("androidx.core:core-splashscreen:1.0.1")
+    implementation(libs.androidx.core.splashscreen)
 
     // Google Play Services - Maps & Location
     implementation(libs.play.services.maps)
     implementation(libs.play.services.location)
-    implementation("com.google.maps.android:maps-compose:4.3.3")
+    implementation(libs.maps.compose)
 
     // Image loading
-    implementation("io.coil-kt:coil-compose:2.5.0")
-    implementation("io.coil-kt:coil-gif:2.5.0")
+    implementation(libs.coil.compose)
+    implementation(libs.coil.gif)
 
     // Other utilities
-    implementation("org.json:json:20240303")
-    implementation("com.github.skydoves:colorpicker-compose:1.0.3")
+    implementation(libs.json)
+    implementation(libs.colorpicker.compose)
     // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -116,13 +118,13 @@ dependencies {
     implementation(libs.androidx.camera.camera2)
     implementation(libs.accompanist.permissions)
     // emoji
-    implementation("androidx.emoji2:emoji2-emojipicker:1.5.0")
+    implementation(libs.androidx.emoji2.emojipicker.v150)
     implementation(libs.lottie.compose)
 
-    testImplementation("junit:junit:4.13.2")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
-    testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
-    testImplementation("org.json:json:20240303")
+    testImplementation(libs.junit)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.mockwebserver)
+    testImplementation(libs.json.v20240303)
     testImplementation(kotlin("test"))
 
 }
