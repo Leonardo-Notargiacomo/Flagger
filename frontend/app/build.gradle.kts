@@ -79,7 +79,7 @@ dependencies {
     // Networking - Retrofit & OkHttp
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter.gson)
-    implementation(libs.converter.scalars)
+    implementation("com.squareup.retrofit2:converter-scalars:2.9.0")
     implementation(libs.okhttp)
     implementation(libs.okhttp.logging.interceptor)
     implementation(libs.gson)
