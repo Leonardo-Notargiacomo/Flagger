@@ -1,16 +1,22 @@
 package com.fontys.frontend.common
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
-import android.view.Surface
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.core.content.ContextCompat
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
@@ -21,9 +27,11 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import coil.ImageLoader
 import coil.decode.ImageDecoderDecoder
+import com.fontys.frontend.domain.AdminRepository
 import com.fontys.frontend.domain.UserRepository
 import com.fontys.frontend.ui.components.PermissionDialogs
 import com.fontys.frontend.ui.theme.AppTheme
+import com.fontys.frontend.ui.views.AdminScreen
 import com.fontys.frontend.ui.views.LoginView
 import com.fontys.frontend.ui.views.NavBar
 import com.fontys.frontend.ui.views.OnboardingView
@@ -32,6 +40,7 @@ import com.fontys.frontend.utils.FCMTokenManager
 import com.fontys.frontend.utils.OnboardingPreferences
 import com.fontys.frontend.utils.PermissionHandler
 import com.fontys.frontend.utils.ChallengePreferences
+import com.google.android.material.progressindicator.CircularProgressIndicator
 
 class MainActivity : ComponentActivity() {
 
@@ -109,8 +118,22 @@ class MainActivity : ComponentActivity() {
                 ) {
                     NavHost(
                         navController = navController,
-                        startDestination = startDestination
+                        startDestination = if (UserRepository.token.isEmpty()) "onboarding" else "loader"
                     ) {
+                        composable("loader") {
+                            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                CircularProgressIndicator()
+                            }
+
+                            LaunchedEffect(Unit) {
+                                kotlinx.coroutines.delay(100)
+                                val isAdmin = AdminRepository.isAdmin()
+                                val destination = if (isAdmin) "admin" else "main"
+                                navController.navigate(destination) {
+                                    popUpTo("loader") { inclusive = true }
+                                }
+                            }
+                        }
                         composable("onboarding") {
                             OnboardingView(navController)
                             // Mark onboarding as seen when this composable is launched
@@ -125,9 +148,9 @@ class MainActivity : ComponentActivity() {
                                 }
                             )
                         ) { backStackEntry ->
-                            val registrationSuccess =
-                                backStackEntry.arguments?.getBoolean("registrationSuccess") ?: false
+                            val registrationSuccess = backStackEntry.arguments?.getBoolean("registrationSuccess") ?: false
                             LoginView(navController, registrationSuccess = registrationSuccess)
+
                         }
                         composable("registration") {
                             RegistrationViewComposable(navController)
@@ -139,6 +162,9 @@ class MainActivity : ComponentActivity() {
                                 subscribeToNotifications()
                             }
                             NavBar()
+                        }
+                        composable("admin") {
+                            AdminScreen(mainNavController = navController)
                         }
                     }
 

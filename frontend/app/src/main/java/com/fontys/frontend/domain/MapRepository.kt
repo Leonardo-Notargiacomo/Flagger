@@ -155,12 +155,12 @@ class MapRepository { // No need for companion object if we want an instance for
                         } else {
                             val errorBody = response.body?.string()
                             Log.e("PlacesAPI", "Error fetching details for id=$id: ${response.code} - $errorBody")
-                            null // Return null on HTTP error
+                            null
                         }
                     }
                 } catch (e: Exception) {
                     Log.e("PlacesAPI", "Network error or parsing error for id=$id", e)
-                    null // Return null on exception
+                    null
                 }
             }
         }

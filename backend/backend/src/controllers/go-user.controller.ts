@@ -2,22 +2,24 @@ import {
   Count,
   CountSchema,
   Filter,
-  FilterExcludingWhere, model, property,
+  FilterExcludingWhere,
+  model,
+  property,
   repository,
   Where,
 } from '@loopback/repository';
 import {
-  post,
-  param,
+  del,
   get,
   getModelSchemaRef,
+  HttpErrors,
+  param,
   patch,
+  post,
   put,
-  del,
   requestBody,
   response,
   SchemaObject,
-  HttpErrors,
 } from '@loopback/rest';
 import {GoUser} from '../models';
 import {GoUserRepository} from '../repositories';
@@ -31,6 +33,8 @@ import {SecurityBindings, securityId, UserProfile} from '@loopback/security';
 import {genSalt, hash} from 'bcryptjs';
 import _ from 'lodash';
 import {Credentials, MyUserService} from '../services';
+import fs from 'fs';
+import path from 'path';
 
 
 @model()
@@ -55,6 +59,8 @@ const CredentialsSchema: SchemaObject = {
       minLength: 8,
     },
   },
+
+
 };
 
 export const CredentialsRequestBody = {
@@ -312,6 +318,63 @@ export class GoUserController {
       // If it's not a duplicate error, rethrow the original error
       throw error;
     }
+  }
+
+  @authenticate('jwt')
+  @get('/go-users/{id}/is-admin', {
+    responses: {
+      '200': {
+        description: 'Returns whether the user is an admin',
+        content: {
+          'application/json': {
+            schema: {
+              type: 'boolean',
+            },
+          },
+        },
+      },
+    },
+  })
+  async isAdmin(
+      @param.path.number('id') id: number,
+  ): Promise<boolean> {
+      const user = await this.goUserRepository.findById(id);
+      if (!user) {
+      throw new HttpErrors.NotFound(`User with id ${id} not found`);
+    }
+    return user.isAdmin;
+  }
+
+  @authenticate('jwt')
+  @get('/go-users/filter-bio')
+  @response(200, {
+    description: 'Filtered Users',
+    content: {
+      'application/json': {
+        schema: {
+          type: 'array',
+          items: getModelSchemaRef(GoUser, {includeRelations: true}),
+        },
+      },
+    },
+  })
+  async filterUsersBio(){
+    const users = await this.goUserRepository.find();
+
+    const filePath = path.join(__dirname, '../../src/CsvFiles/profanity_en.csv');
+    const data = fs.readFileSync(filePath, 'utf8');
+
+    const lines = data.split('\n').slice(1);
+    const profaneWords = lines
+      .map(line => line.split(',')[0]?.trim().toLowerCase())
+      .filter(word => word);
+
+
+    return users.filter(user => {
+      if (!user.bio) return false;
+      const bioLower = user.bio.toLowerCase();
+      return profaneWords.some(profaneWord => bioLower.includes(profaneWord));
+    });
   }
 }
 
