@@ -9,6 +9,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -22,6 +23,7 @@ import com.fontys.frontend.ui.views.RegistrationView
 import com.fontys.frontend.ui.views.DeleteAccountScreen
 import com.fontys.frontend.ui.views.MapsScreen
 import com.fontys.frontend.ui.views.ProfileScreen
+import com.fontys.frontend.ui.views.ChallengeScreen
 import com.fontys.frontend.ui.views.Profile
 import com.fontys.frontend.ui.viewmodels.ProfileViewModel
 import kotlinx.serialization.Serializable
@@ -45,6 +47,9 @@ object BadgeView
 object AccountView
 
 @Serializable
+object ChallengeView
+
+@Serializable
 object LoginView
 
 @Serializable
@@ -57,7 +62,9 @@ object RegistrationView
 data class PublicProfileView(val userId: Int)
 
 @Serializable
-object CameraView
+object CameraView{
+    const val route = "camera_view"
+}
 
 @Serializable
 object DeleteAccountView
@@ -99,7 +106,15 @@ fun NavHost(
             }
 
             composable<BadgeView> {
-                BadgeScreen(userId = UserRepository.userId)
+                // Pass the NavHostController to BadgeScreen so it can navigate to ChallengeView
+                BadgeScreen(
+                    userId = UserRepository.userId,
+                    navController = navController
+                )
+            }
+
+            composable<ChallengeView> {
+                ChallengeScreen(navController = navController)
             }
 
             composable<AccountView> {
@@ -136,7 +151,7 @@ fun NavHost(
                 NavBar(rootNavController = rootNavController)
             }
 
-            composable<CameraView> {
+            composable<CameraView>  {
                 val cameraViewModel: CameraPreviewViewModel = viewModel()
                 PictureCaptureScreen(navController, cameraViewModel)
             }
@@ -163,16 +178,16 @@ fun NavHost(
             }
 
             composable<PublicProfileView> { backStackEntry ->
-            // Type-safe navigation with Kotlin serialization
-            // The route parameters are automatically parsed from the path
-            val args = backStackEntry.arguments
-            val userId = args?.getInt("userId") ?: 0
+                // Type-safe navigation with Kotlin serialization
+                // The route parameters are automatically parsed from the path
+                val args = backStackEntry.arguments
+                val userId = args?.getInt("userId") ?: 0
 
-            PublicProfileScreen(
-                userId = userId,
-                onNavigateBack = { navController.popBackStack() }
-            )
-        }
+                PublicProfileScreen(
+                    userId = userId,
+                    onNavigateBack = { navController.popBackStack() }
+                )
+            }
         }
     }
 }

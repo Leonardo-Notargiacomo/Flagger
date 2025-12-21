@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Explore
+import androidx.compose.material.icons.outlined.Flag
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -39,7 +39,7 @@ fun LoginView(
     // Navigate to main when login succeeds
     LaunchedEffect(loginSuccess) {
         if (loginSuccess) {
-            navController.navigate("main") {
+            navController.navigate("loader") {
                 popUpTo("login") { inclusive = true }
             }
         }
@@ -55,7 +55,7 @@ fun LoginView(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        // Compass Icon
+        // Flag Icon
         Box(
             modifier = Modifier
                 .size(80.dp)
@@ -64,11 +64,9 @@ fun LoginView(
             contentAlignment = Alignment.Center
         ) {
             Icon(
-                imageVector = Icons.Outlined.Explore,
-                contentDescription = "Compass",
-                modifier = Modifier
-                    .size(48.dp)
-                    .rotate(0f),
+                imageVector = Icons.Outlined.Flag,
+                contentDescription = "Flag",
+                modifier = Modifier.size(48.dp),
                 tint = MaterialTheme.colorScheme.primary
             )
         }

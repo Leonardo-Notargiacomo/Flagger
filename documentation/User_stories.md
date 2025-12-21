@@ -64,3 +64,11 @@ As a user, I want to receive notifications when a flag or point of interest is n
 Daily Reminders
 
 As a user, I want to receive daily reminder notifications so that I’m encouraged to explore regularly.
+
+
+## admin panel
+
+[View Recent Users and Flags](artifacts/Use_Cases/Admin)
+
+As an admin, I want to view the recent users and flags places, as well as users with swearwords in their bio so I can monitor the app.
+

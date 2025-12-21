@@ -3,6 +3,7 @@ package com.fontys.frontend.ui.viewmodels
 import android.app.Application
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
@@ -11,11 +12,15 @@ import androidx.camera.core.Preview
 import androidx.camera.core.SurfaceRequest
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.lifecycle.awaitInstance
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.fontys.frontend.data.models.Badge
+import com.fontys.frontend.data.models.ExplorationEvent
+import com.fontys.frontend.data.repositories.BadgeRepository
 import com.fontys.frontend.domain.FlagRepository
 import com.fontys.frontend.domain.toBase64
 import kotlinx.coroutines.coroutineScope
@@ -36,9 +41,10 @@ class CameraPreviewViewModel : ViewModel() {
     private val _base64 = MutableStateFlow<String>("")
     val base64: StateFlow<String> = _base64
 
-    var front = true
+    var front = false  // Start with back camera (matches bindToCamera default)
     var flash = true
     val flagRepository = FlagRepository()
+    val badgeRepository = BadgeRepository()
     private fun buildImageCaptureUseCase(): ImageCapture {
         return ImageCapture.Builder()
             .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
@@ -110,9 +116,15 @@ class CameraPreviewViewModel : ViewModel() {
             object : ImageCapture.OnImageSavedCallback {
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
                     viewModelScope.launch {
+                        // Save the flag
                         flagRepository.addFlag(userid, placeId, toBase64(context, output.savedUri))
+
+                        // Check for badge unlocks (wait for it to complete!)
+                        checkForBadgeUnlocks(userid, placeId)
+
+                        // Only navigate after badge check is done
+                        onPhotoSaved(output.savedUri)
                     }
-                    onPhotoSaved(output.savedUri)
                 }
 
                 override fun onError(exception: ImageCaptureException) {
@@ -122,4 +134,48 @@ class CameraPreviewViewModel : ViewModel() {
             }
         )
    }
+
+    private suspend fun checkForBadgeUnlocks(userId: Int, placeId: String) {
+        try {
+            Log.d("CameraViewModel", "📍 Checking badges for user=$userId, place=$placeId")
+            val event = ExplorationEvent(
+                locationName = placeId,
+                latitude = null,
+                longitude = null,
+                notes = null
+            )
+            val result = badgeRepository.logExploration(userId, event)
+
+            result.onSuccess { response ->
+                Log.d("CameraViewModel", "✅ API Success: ${response.newBadges.size} badges")
+                if (response.newBadges.isNotEmpty()) {
+                    Log.d("CameraViewModel", "🏆 Badges unlocked: ${response.newBadges.map { it.name }}")
+                    PendingBadgeUnlocks.addBadges(response.newBadges)
+                } else {
+                    Log.d("CameraViewModel", "No new badges this time")
+                }
+            }
+            result.onFailure { e ->
+                Log.e("CameraViewModel", "❌ Badge check failed: ${e.message}", e)
+            }
+        } catch (e: Exception) {
+            Log.e("CameraViewModel", "💥 Exception checking badges", e)
+        }
+    }
+}
+
+// Shared object to pass badge unlocks between screens
+object PendingBadgeUnlocks {
+    private val _badges = MutableStateFlow<List<Badge>>(emptyList())
+    val badges: StateFlow<List<Badge>> = _badges
+
+    fun addBadges(newBadges: List<Badge>) {
+        _badges.value = newBadges
+    }
+
+    fun consume(): List<Badge> {
+        val current = _badges.value
+        _badges.value = emptyList()
+        return current
+    }
 }

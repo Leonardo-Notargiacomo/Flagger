@@ -11,9 +11,10 @@
 ## Main Scenario:
 
 1. User makes an attempt to mark the territory of their current presence 
-2. If the place is acknowledged by the system and within a relevant distance from it, the system marks a place as visited and puts a flag there. 
+2. If the place is acknowledged by the system and within a relevant distance from it, the system displays camera interface
 Otherwise, the fail message is displayed
-3. System displays the home page.
+3. User takes a picture from the place.
+4. System stores the flag, relocates to the home page (map) and display thr flag
 
 ## Result:
 The selected territory is marked.
