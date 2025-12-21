@@ -132,10 +132,12 @@ playwright/.cache/
 
 # Gradle
 .gradle/
+.gradle-home/
 **/build/
 !src/**/build/
 gradle-app.setting
 .gradletasknamecache
+
 
 # Keep Gradle wrapper files in VCS
 !gradle-wrapper.jar

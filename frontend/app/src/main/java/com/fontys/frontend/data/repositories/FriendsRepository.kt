@@ -3,6 +3,7 @@ package com.fontys.frontend.data.repositories
 import android.util.Log
 import com.fontys.frontend.data.models.*
 import com.fontys.frontend.data.remote.ApiClient
+import com.fontys.frontend.domain.UserRepository
 import retrofit2.Response
 import org.json.JSONObject
 
@@ -149,8 +150,23 @@ class FriendsRepository {
     // Friendships
     suspend fun getFriends(token: String): Result<List<FriendListItem>> {
         Log.d(TAG, "getFriends() called")
+        val headers = HashMap<String, String>().apply {
+            put("Accept", "application/json")
+            put("Content-Type", "application/json")
+            UserRepository.token?.let { tokens ->
+                if (tokens == token) {
+                    put("Authorization", "Bearer $token") // Add JWT token if available
+                        ?: run {
+                            // Optional: Log a warning or throw an error if token is missing for authenticated endpoint
+                            // throw IllegalStateException("JWT token is missing for authenticated request")
+                        }
+                } else {
+                    throw IllegalStateException("Invalid token provided")
+                }
+            }
+        }
         return try {
-            val response = api.getFriends("Bearer $token")
+            val response = api.getFriends(headers)
             Log.d(TAG, "getFriends() response code: ${response.code()}")
             Log.d(TAG, "getFriends() response body size: ${response.body()?.size}")
             response.body()?.forEachIndexed { index, friend ->

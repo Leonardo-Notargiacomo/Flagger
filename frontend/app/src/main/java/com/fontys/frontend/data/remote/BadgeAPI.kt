@@ -25,5 +25,4 @@ interface BadgeApi {
         @Body event: ExplorationEvent
     ): Response<ExplorationResponse>
 
-    
 }
