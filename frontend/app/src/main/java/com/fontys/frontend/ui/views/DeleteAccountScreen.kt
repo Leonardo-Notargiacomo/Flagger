@@ -82,6 +82,7 @@ fun DeleteAccountScreen(
                 fontWeight = FontWeight.Bold,
                 fontSize = 15.sp
             )
+
         }
 
         Spacer(modifier = Modifier.height(12.dp))

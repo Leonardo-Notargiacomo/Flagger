@@ -16,10 +16,13 @@ import {
   del,
   requestBody,
   response,
+  HttpErrors,
 } from '@loopback/rest';
 import {Flag} from '../models';
 import {FlagRepository} from '../repositories';
 import {authenticate} from '@loopback/authentication';
+import {applyDefaultFlagFields, getFlagQueryTimeoutMs} from '../utils/flag-query';
+import {withTimeout} from '../utils/with-timeout';
 
 @authenticate('jwt') // <---- Apply the @authenticate decorator at the class level
 export class FlagController {
@@ -167,13 +170,18 @@ export class FlagController {
     @param.path.number('userId') userId: number,
     @param.filter(Flag) filter?: Filter<Flag>,
   ): Promise<Flag[]> {
-    const flagsFilter: Filter<Flag> = {
+    const flagsFilter = applyDefaultFlagFields({
       ...filter,
       where: {
         ...filter?.where,
         userId: userId,
       },
-    };
-    return this.flagRepository.find(flagsFilter);
+    });
+
+    return withTimeout(
+      this.flagRepository.find(flagsFilter),
+      getFlagQueryTimeoutMs(),
+      new HttpErrors.GatewayTimeout('No Flags flagged'),
+    );
   }
 }

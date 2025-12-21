@@ -14,17 +14,21 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -44,15 +48,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.fontys.frontend.data.UserUpdate
+import com.fontys.frontend.data.models.ChangePasswordRequest
 import com.fontys.frontend.domain.UserRepository
 import com.fontys.frontend.ui.components.AccountField
 import com.fontys.frontend.ui.components.EditableAccountField
 import com.fontys.frontend.ui.viewmodels.ProfileViewModel
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
     userViewModel: ProfileViewModel = viewModel(),
+    onNavigateBack: () -> Unit = {},
     onLogout: () -> Unit = {},
     onDeleteAccount: () -> Unit = {}
 ) {
@@ -63,8 +70,11 @@ fun ProfileScreen(
 
     var isEditing by remember { mutableStateOf(false) }
     var editEmail by remember { mutableStateOf("") }
+    var editOldPassword by remember { mutableStateOf("") }
     var editPassword by remember { mutableStateOf("") }
+    var oldPasswordVisible by remember { mutableStateOf(false) }
     var passwordVisible by remember { mutableStateOf(false) }
+    var passwordsEquality by remember { mutableStateOf(false) }
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -78,6 +88,28 @@ fun ProfileScreen(
             .background(MaterialTheme.colorScheme.background)
             .statusBarsPadding()
     ) {
+        TopAppBar(
+            title = {
+                Text(
+                    text = "Account",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.SemiBold,
+                    color = colorScheme.onBackground
+                )
+            },
+            navigationIcon = {
+                IconButton(onClick = onNavigateBack) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back"
+                    )
+                }
+            },
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = MaterialTheme.colorScheme.background
+            )
+        )
+
         when {
             isLoading -> {
                 Box(
@@ -105,6 +137,7 @@ fun ProfileScreen(
 
                 if (!isEditing && editEmail.isEmpty()) {
                     editEmail = userData.email ?: ""
+                    editOldPassword = ""
                     editPassword = ""
                 }
 
@@ -112,17 +145,8 @@ fun ProfileScreen(
                     modifier = Modifier
                         .weight(1f)
                         .verticalScroll(rememberScrollState())
-                        .padding(top = 24.dp, start = 16.dp, end = 16.dp, bottom = 16.dp)
+                        .padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 16.dp)
                 ) {
-                    Text(
-                        text = "Account",
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.SemiBold,
-                        color = colorScheme.onBackground
-                    )
-
-                    Spacer(modifier = Modifier.height(24.dp))
-
                     if (isEditing) {
                         EditableAccountField(
                             label = "Email",
@@ -140,12 +164,43 @@ fun ProfileScreen(
 
                     if (isEditing) {
                         PasswordField(
-                            label = "Password",
+                            label = "Old Password",
+                            password = editOldPassword,
+                            onPasswordChange = {
+                                editOldPassword = it
+                                passwordsEquality =
+                                    editOldPassword.isNotBlank() &&
+                                    editPassword.isNotBlank() &&
+                                    editOldPassword == editPassword
+                            },
+                            passwordVisible = oldPasswordVisible,
+                            onToggleVisibility = { oldPasswordVisible = !oldPasswordVisible }
+                        )
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        PasswordField(
+                            label = "New Password",
                             password = editPassword,
-                            onPasswordChange = { editPassword = it },
+                            onPasswordChange = {
+                                editPassword = it
+                                passwordsEquality =
+                                    editOldPassword.isNotBlank() &&
+                                    editPassword.isNotBlank() &&
+                                    editOldPassword == editPassword
+                            },
                             passwordVisible = passwordVisible,
                             onToggleVisibility = { passwordVisible = !passwordVisible }
+
                         )
+                        if (passwordsEquality) {
+                            Text(
+                                text = "Passwords can not be the same",
+                                color = colorScheme.error,
+                                fontSize = 12.sp
+                            )
+                        }
+
                     } else {
                         AccountField(
                             label = "Password",
@@ -163,15 +218,38 @@ fun ProfileScreen(
                             Button(
                                 onClick = {
                                     coroutineScope.launch {
+                                        val isPasswordSame =
+                                            editOldPassword.isNotBlank() &&
+                                            editPassword.isNotBlank() &&
+                                            editOldPassword == editPassword
+                                        val isPasswordValid =
+                                            editOldPassword.isNotBlank() &&
+                                            editPassword.isNotBlank() &&
+                                            editOldPassword != editPassword
+                                        passwordsEquality = isPasswordSame
+                                        if (isPasswordSame) {
+                                            return@launch
+                                        }
                                         val userUpdate = UserUpdate(
-                                            id = userData.id.toString(),
+                                            id = userData.id.toIntOrNull(),
                                             userName = userData.userName,
-                                            userImage = userData.userImage,
+                                            userImage = userData.userImage?.toIntOrNull(),
                                             bio = userData.bio,
-                                            email = editEmail,
-                                            password = editPassword.takeIf { it.isNotBlank() }
+                                            email = editEmail
                                         )
-                                        userViewModel.updateUser(userData.id.toString(), userUpdate)
+                                        val passwords = if (isPasswordValid) {
+                                            ChangePasswordRequest(
+                                                currentPassword = editOldPassword,
+                                                newPassword = editPassword
+                                            )
+                                        } else {
+                                            null
+                                        }
+                                        userViewModel.updateUser(
+                                            userData.id.toString(),
+                                            userUpdate,
+                                            passwords
+                                        )
                                         isEditing = false
                                     }
                                 },
@@ -194,7 +272,9 @@ fun ProfileScreen(
                                 onClick = {
                                     isEditing = false
                                     editEmail = userData.email ?: ""
+                                    editOldPassword = ""
                                     editPassword = ""
+                                    oldPasswordVisible = false
                                     passwordVisible = false
                                 },
                                 modifier = Modifier.fillMaxWidth()
@@ -208,7 +288,11 @@ fun ProfileScreen(
                             }
                         } else {
                             Button(
-                                onClick = { isEditing = true },
+                                onClick = {
+                                    isEditing = true
+                                    editOldPassword = ""
+                                    oldPasswordVisible = false
+                                },
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .height(50.dp),
@@ -297,6 +381,8 @@ private fun PasswordField(
             }
         },
         colors = TextFieldDefaults.colors(
+            focusedTextColor = MaterialTheme.colorScheme.onBackground,
+            unfocusedTextColor = MaterialTheme.colorScheme.onBackground,
             focusedIndicatorColor = MaterialTheme.colorScheme.primary,
             unfocusedIndicatorColor = MaterialTheme.colorScheme.outline,
             cursorColor = MaterialTheme.colorScheme.primary,

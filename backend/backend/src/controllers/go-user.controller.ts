@@ -108,6 +108,12 @@ export class GoUserController {
     userId: number,
     request: ChangePasswordRequest,
   ): Promise<void> {
+    if (request.currentPassword === request.newPassword) {
+      throw new HttpErrors.BadRequest(
+        'New password must be different from current password.',
+      );
+    }
+
     const credentials = await this.userRepository.findCredentials(userId);
     if (!credentials) {
       throw new HttpErrors.NotFound('User credentials not found.');

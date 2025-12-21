@@ -1,10 +1,9 @@
 package com.fontys.frontend.data
 
 data class UserUpdate(
-    val id: String?,
+    val id: Int?,
     val userName: String?,
-    val userImage: String?,
+    val userImage: Int?,
     val bio: String?,
-    val email: String? = null,
-    val password: String? = null
+    val email: String? = null
 )

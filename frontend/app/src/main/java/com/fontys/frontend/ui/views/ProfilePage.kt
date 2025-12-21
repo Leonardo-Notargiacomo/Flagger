@@ -280,10 +280,10 @@ fun Profile(
                                         onClick = {
                                             coroutineScope.launch {
                                                 val userUpdate = UserUpdate(
-                                                    id = uD.id,
+                                                    id = uD.id.toIntOrNull(),
                                                     userName = name,
                                                     bio = bio,
-                                                    userImage = pfp
+                                                    userImage = pfp?.toIntOrNull()
                                                 )
                                                 viewModel.updateUser(uD.id, userUpdate)
                                             }

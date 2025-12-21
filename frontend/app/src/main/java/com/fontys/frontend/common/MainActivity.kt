@@ -115,7 +115,7 @@ class MainActivity : ComponentActivity() {
                             RegistrationViewComposable(navController)
                         }
                         composable("main") {
-                            NavBar()
+                            NavBar(rootNavController = navController)
                         }
                     }
 

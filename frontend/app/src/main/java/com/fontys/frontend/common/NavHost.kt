@@ -5,6 +5,9 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -62,6 +65,7 @@ object DeleteAccountView
 @Composable
 fun NavHost(
     navController: NavHostController,
+    rootNavController: NavHostController,
     padding: PaddingValues
 ) {
     Box(
@@ -102,6 +106,20 @@ fun NavHost(
                 val profileViewModel: ProfileViewModel = viewModel()
                 ProfileScreen(
                     userViewModel = profileViewModel,
+                    onNavigateBack = {
+                        if (!navController.popBackStack(ProfileView, false)) {
+                            navController.navigate(ProfileView) {
+                                launchSingleTop = true
+                            }
+                        }
+                    },
+                    onLogout = {
+                        UserRepository.token = ""
+                        UserRepository.userId = -1
+                        rootNavController.navigate("login") {
+                            popUpTo("main") { inclusive = true }
+                        }
+                    },
                     onDeleteAccount = { navController.navigate(DeleteAccountView) }
                 )
             }
@@ -115,7 +133,7 @@ fun NavHost(
             }
 
             composable<NavigationView> {
-                NavBar()
+                NavBar(rootNavController = rootNavController)
             }
 
             composable<CameraView> {
@@ -124,11 +142,22 @@ fun NavHost(
             }
 
             composable<DeleteAccountView> {
+                val profileViewModel: ProfileViewModel = viewModel()
+                val deleteSuccess by profileViewModel.deleteAccountSuccess.collectAsState()
+
+                LaunchedEffect(deleteSuccess) {
+                    if (deleteSuccess) {
+                        rootNavController.navigate("login") {
+                            popUpTo("main") { inclusive = true }
+                        }
+                        profileViewModel.clearDeleteAccountSuccess()
+                    }
+                }
+
                 DeleteAccountScreen(
                     onCancel = { navController.popBackStack() },
                     onConfirmDelete = {
-                        // TODO: integrate actual delete logic
-                        navController.popBackStack(ProfileView, inclusive = false)
+                        profileViewModel.deleteAccount(UserRepository.userId.toString())
                     }
                 )
             }

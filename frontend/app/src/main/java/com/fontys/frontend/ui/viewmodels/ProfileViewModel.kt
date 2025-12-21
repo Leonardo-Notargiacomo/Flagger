@@ -10,6 +10,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.fontys.frontend.data.UserReturn
 import com.fontys.frontend.data.UserUpdate
+import com.fontys.frontend.data.models.ChangePasswordRequest
 import com.fontys.frontend.data.models.Flag
 import com.fontys.frontend.data.models.FlagShowData
 import com.fontys.frontend.domain.MapRepository
@@ -45,6 +46,9 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
     private val FriendsNr = MutableStateFlow<Int?>(0)
     val friendsNr: StateFlow<Int?> = FriendsNr
 
+    private val _deleteAccountSuccess = MutableStateFlow(false)
+    val deleteAccountSuccess: StateFlow<Boolean> = _deleteAccountSuccess
+
 
     init {
         this.getFriends()
@@ -73,13 +77,13 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
-    fun updateUser(userId: String, userUpdate: UserUpdate) {
+    fun updateUser(userId: String, userUpdate: UserUpdate, passwords: ChangePasswordRequest? = null) {
         viewModelScope.launch {
             _isLoading.value = true
             _error.value = null
 
             try {
-                val result = userRepository.updateUser(userId, userUpdate)
+                val result = userRepository.updateUser(userId, userUpdate, passwords)
                 // Re-fetch the user data after successful update
                 getUser(userId)
             } catch (e: Exception) {
@@ -170,9 +174,33 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
                 }
             } catch (e: Exception) {
                 Log.e("UserViewModel", "Error fetching user", e)
-                _error.value = e.localizedMessage ?: "Unknown error fetching Flags"
+                _error.value = e.localizedMessage ?: "Unknown error fetching user"
                 _isLoading.value = false
             }
         }
+    }
+
+    fun deleteAccount(userId: String) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            _error.value = null
+            _deleteAccountSuccess.value = false
+
+            try {
+                userRepository.deleteAccount(userId)
+                UserRepository.token = ""
+                UserRepository.userId = -1
+                _deleteAccountSuccess.value = true
+            } catch (e: Exception) {
+                Log.e("UserViewModel", "Error deleting user", e)
+                _error.value = e.localizedMessage ?: "Unknown error deleting user"
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
+    fun clearDeleteAccountSuccess() {
+        _deleteAccountSuccess.value = false
     }
 }

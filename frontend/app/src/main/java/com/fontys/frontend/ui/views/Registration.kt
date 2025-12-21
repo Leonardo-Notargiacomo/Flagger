@@ -21,8 +21,10 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import android.widget.Toast
 import com.fontys.frontend.ui.viewmodels.RegistrationViewModel
 
 @Composable
@@ -39,11 +41,13 @@ fun RegistrationView(
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var registrationSuccess by remember { mutableStateOf(false) }
     var isLoading by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
-    // Navigate to login when registration succeeds
+    // Navigate to main after registration (user is logged in in UserRepository.register)
     LaunchedEffect(registrationSuccess) {
         if (registrationSuccess) {
-            navController.navigate("login?registrationSuccess=true") {
+            Toast.makeText(context, "Account created", Toast.LENGTH_SHORT).show()
+            navController.navigate("main") {
                 popUpTo("registration") { inclusive = true }
             }
         }

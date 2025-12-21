@@ -33,7 +33,7 @@ import com.fontys.frontend.common.NavHost
 import com.fontys.frontend.common.ProfileView
 
 @Composable
-fun NavBar() {
+fun NavBar(rootNavController: androidx.navigation.NavHostController) {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
@@ -122,10 +122,10 @@ fun NavBar() {
                     onClick = {
                         navController.navigate(ProfileView) {
                             popUpTo(navController.graph.findStartDestination().id) {
-                                saveState = true
+                                saveState = false
                             }
                             launchSingleTop = true
-                            restoreState = true
+                            restoreState = false
                         }
                     },
                     icon = {
@@ -141,6 +141,6 @@ fun NavBar() {
             }
         }
     ) { padding ->
-        NavHost(navController, padding)
+        NavHost(navController = navController, rootNavController = rootNavController, padding = padding)
     }
 }
