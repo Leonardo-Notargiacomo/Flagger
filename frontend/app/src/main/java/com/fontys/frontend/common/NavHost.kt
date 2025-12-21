@@ -23,6 +23,7 @@ import com.fontys.frontend.ui.views.ChallengeScreen
 import kotlinx.serialization.Serializable
 import com.fontys.frontend.ui.views.NavBar
 import com.fontys.frontend.ui.views.PublicProfileScreen
+import com.fontys.frontend.ui.views.ReviewView
 
 
 @Serializable
@@ -56,6 +57,12 @@ data class PublicProfileView(val userId: Int)
 object CameraView{
     const val route = "camera_view"
 }
+
+@Serializable
+object LocationView
+
+@Serializable
+object ReviewView
 
 @Composable
 fun NavHost(
@@ -108,6 +115,10 @@ fun NavHost(
 
             composable<NavigationView> {
                 NavBar()
+            }
+
+            composable<ReviewView> {
+                ReviewView(navController)
             }
 
             composable<CameraView>  {

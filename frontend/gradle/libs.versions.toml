@@ -45,6 +45,7 @@ cameraView = "1.5.2"
 emoji2Emojipicker = "1.6.0"
 foundation = "1.10.0"
 lottie = "6.7.1"
+foundationLayout = "1.10.0"
 
 [libraries]
 androidx-compose-material = { module = "androidx.compose.material:material", version.ref = "material" }
@@ -104,6 +105,7 @@ androidx-camera-view = { group = "androidx.camera", name = "camera-view", versio
 identity-jvm = { group = "com.android.identity", name = "identity-jvm", version.ref = "identityJvm" }
 androidx-emoji2-emojipicker = { group = "androidx.emoji2", name = "emoji2-emojipicker", version.ref = "emoji2Emojipicker" }
 androidx-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "foundation" }
+androidx-compose-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout", version.ref = "foundationLayout" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -1,10 +1,8 @@
 package com.fontys.frontend.ui.viewmodels
 
-import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fontys.frontend.data.models.Review
-import com.fontys.frontend.data.repositories.ReviewRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -19,10 +17,17 @@ data class ReviewState(
     val rating: Double = 0.0
 )
 
-class ReviewViewModel : ViewModel() {
+data class ReviewList(
+    val reviews: List<ReviewState> = listOf()
+)
+
+class FlagSheetViewmodel : ViewModel() {
 
     private val reviewState = MutableStateFlow(ReviewState())
     val review: StateFlow<ReviewState> = reviewState.asStateFlow()
+
+    private val reviewListState = MutableStateFlow(ReviewList())
+    val reviewList: StateFlow<ReviewList> = reviewListState.asStateFlow()
 
     fun updateTitle(newTitle: String) {
         reviewState.update { reviewState -> reviewState.copy(title = newTitle) }
@@ -37,7 +42,7 @@ class ReviewViewModel : ViewModel() {
     }
 
 
-    fun getFlagReviews(reviews: List<Review>) {
+    fun getFlagReviews()  {
         viewModelScope.launch {
             try {
                 val reviews: List<Review>
@@ -48,7 +53,7 @@ class ReviewViewModel : ViewModel() {
         }
     }
 
-    fun getUserReviews(reviews: List<Review>) {
+    fun getUserReviews() {
         viewModelScope.launch {
             try {
                 val reviews: List<Review>
@@ -70,4 +75,24 @@ class ReviewViewModel : ViewModel() {
             }
         }
     }
+
+    init {
+        loadSampleReviews()
+    }
+
+    private fun loadSampleReviews() {
+        val sampleReviews = listOf(
+            ReviewState(id = 1, title = "Amazing place!", review = "", rating = 5.0),
+            ReviewState(id = 2, title = "Beautiful scenery", review = "", rating = 4.5),
+            ReviewState(id = 3, title = "Nice spot", review = "", rating = 4.0),
+            ReviewState(id = 4, title = "Hidden gem", review = "", rating = 4.8),
+            ReviewState(id = 5, title = "Overrated", review = "", rating = 2.5),
+            ReviewState(id = 6, title = "Must visit!", review = "", rating = 5.0)
+        )
+
+        reviewListState.update {
+            ReviewList(reviews = sampleReviews)
+        }
+    }
+
 }

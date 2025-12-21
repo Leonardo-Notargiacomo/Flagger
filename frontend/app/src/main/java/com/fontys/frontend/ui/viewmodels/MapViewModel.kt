@@ -5,6 +5,10 @@ import android.Manifest
 import android.app.Application
 import android.content.pm.PackageManager
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -70,6 +74,9 @@ class MapsViewModel(application: Application) : AndroidViewModel(application) {
     val showBadgeDialog: StateFlow<Boolean> = _showBadgeDialog
     private val _showMapSettings = MutableStateFlow(false)
     val showMapSettings: StateFlow<Boolean> = _showMapSettings
+
+    private val _showBottomSheet = MutableStateFlow(false)
+    val showBottomSheet: StateFlow<Boolean> = _showBottomSheet
 
     fun loadUserLocation() {
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -206,6 +213,10 @@ class MapsViewModel(application: Application) : AndroidViewModel(application) {
             _newlyUnlockedBadges.value = pendingBadges
             _showBadgeDialog.value = true
         }
+    }
+
+    fun showBottomSheet() {
+        _showBottomSheet.value = !_showBottomSheet.value
     }
 }
 
