@@ -118,7 +118,6 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
 
     fun getFlags(userId: String) {
         viewModelScope.launch {
-            _isLoading.value = true
             _error.value = null
 
             try {
@@ -135,7 +134,6 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
 
     fun getFriends() {
         viewModelScope.launch {
-            _isLoading.value = true
             _error.value = null
 
             try {
@@ -148,14 +146,12 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
             } catch (e: Exception) {
                 Log.e("UserViewModel", "Error fetching user", e)
                 _error.value = e.localizedMessage ?: "Unknown error fetching Flags"
-                _isLoading.value = false
             }
         }
     }
 
     fun getFlagNames() {
         viewModelScope.launch {
-            _isLoading.value = true
             _error.value = null
 
             try {
@@ -169,8 +165,10 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
                 val result = mapRepo.getNames(flag.value)
                 if (result.isSuccess) {
                     flagNames.value = result.getOrNull()
+                    _isLoading.value = false
                 } else {
                     _error.value = "Failed to fetch user data."
+                    _isLoading.value = false
                 }
             } catch (e: Exception) {
                 Log.e("UserViewModel", "Error fetching user", e)
