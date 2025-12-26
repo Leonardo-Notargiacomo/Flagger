@@ -206,7 +206,24 @@ class FriendsRepository {
         return if (response.isSuccessful && response.body() != null) {
             Result.success(response.body()!!)
         } else {
-            Result.failure(Exception("HTTP ${response.code()}: ${response.message()}"))
+            // Try to extract error message from response body
+            val errorMessage = try {
+                val errorBody = response.errorBody()?.string()
+                if (!errorBody.isNullOrBlank()) {
+                    val json = JSONObject(errorBody)
+                    json.optString("error", json.optString("message", "Unknown error"))
+                } else {
+                    response.message()
+                }
+            } catch (e: Exception) {
+                response.message()
+            }
+
+            val message = when (response.code()) {
+                409 -> errorMessage // Use the actual message from backend
+                else -> "HTTP ${response.code()}: $errorMessage"
+            }
+            Result.failure(Exception(message))
         }
     }
 }
