@@ -1,2 +1,2 @@
-*.jar filter=lfs diff=lfs merge=lfs -text
-frontend/.gradle-home/** filter=lfs diff=lfs merge=lfs -text
+# LFS rules removed - LFS is not enabled on this repository
+# frontend/.gradle-home/** filter=lfs diff=lfs merge=lfs -text
