@@ -128,12 +128,9 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
         }
     }
 
-    // Use Google Map ID for custom styling
-//    val googleMapOptions = remember {
-//        GoogleMapOptions().mapId("349a2b06249ce5213e12a47b")
-//    }
+    //Use Google Map ID for custom styling
 
-    val mapProperties by remember(isDarkTheme, hasLocationPermission) {
+    /*val mapProperties by remember(isDarkTheme, hasLocationPermission) {
         mutableStateOf(
             MapProperties(
                 isMyLocationEnabled = hasLocationPermission,
@@ -143,13 +140,20 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
                 )
             )
         )
+    }*/
+
+    val googleMapOptions = remember {
+        GoogleMapOptions().mapId("349a2b06249ce5213e12a47b")
     }
 
     Box(Modifier.fillMaxSize()) {
         GoogleMap(
             modifier = Modifier.fillMaxSize(),
             cameraPositionState = cameraPositionState,
-            properties = mapProperties,
+            googleMapOptionsFactory = { googleMapOptions },
+            properties = MapProperties(
+                isMyLocationEnabled = true
+            ),
             uiSettings = MapUiSettings(
                 zoomControlsEnabled = false,
                 myLocationButtonEnabled = false
