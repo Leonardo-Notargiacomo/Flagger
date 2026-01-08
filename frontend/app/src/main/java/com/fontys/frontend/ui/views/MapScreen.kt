@@ -152,7 +152,7 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
             cameraPositionState = cameraPositionState,
             googleMapOptionsFactory = { googleMapOptions },
             properties = MapProperties(
-                isMyLocationEnabled = true
+                isMyLocationEnabled = hasLocationPermission
             ),
             uiSettings = MapUiSettings(
                 zoomControlsEnabled = false,
