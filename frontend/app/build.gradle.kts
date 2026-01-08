@@ -56,23 +56,29 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.foundation)
+    implementation(libs.androidx.compose.foundation.layout)
     implementation(libs.androidx.compose.runtime)
+    implementation(libs.androidx.compose.material)
+    implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.material.icons.extended)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.navigation.compose)
-    implementation(libs.identity.jvm)
-    implementation(libs.androidx.camera.view)
-    implementation(libs.androidx.emoji2.emojipicker)
-    implementation(libs.androidx.foundation)
-    implementation(libs.androidx.compose.material3)
-    implementation(libs.androidx.compose.foundation.layout)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
-    implementation(libs.androidx.compose.material)
 
+    // Camera
+    implementation(libs.androidx.camera.core)
+    implementation(libs.androidx.camera.compose)
+    implementation(libs.androidx.camera.lifecycle)
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.androidx.camera.view)
+    implementation(libs.accompanist.permissions)
+
+    // Emoji
+    implementation(libs.androidx.emoji2.emojipicker)
 
     // Kotlin Serialization
     implementation(libs.jetbrains.kotlinx.serialization.json)
@@ -80,7 +86,7 @@ dependencies {
     // Networking - Retrofit & OkHttp
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter.gson)
-    implementation("com.squareup.retrofit2:converter-scalars:2.9.0")
+    implementation(libs.converter.scalars)
     implementation(libs.okhttp)
     implementation(libs.okhttp.logging.interceptor)
     implementation(libs.gson)
@@ -107,27 +113,16 @@ dependencies {
     // Other utilities
     implementation(libs.json)
     implementation(libs.colorpicker.compose)
-    // Testing
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-
-    //What is the name of a daughter of a mexican photographer?: camera diaz
-    implementation(libs.androidx.camera.core)
-    implementation(libs.androidx.camera.compose)
-    implementation(libs.androidx.camera.lifecycle)
-    implementation(libs.androidx.camera.camera2)
-    implementation(libs.accompanist.permissions)
-    // emoji
-    implementation(libs.androidx.emoji2.emojipicker.v150)
     implementation(libs.lottie.compose)
+    implementation(libs.identity.jvm)
 
+    // Testing
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.mockwebserver)
-    testImplementation(libs.json.v20240303)
     testImplementation(kotlin("test"))
-
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
 }
 
 // ✅ Kotlin DSL way to configure Secrets plugin
