@@ -34,20 +34,17 @@ import com.fontys.frontend.common.NavHost
 import com.fontys.frontend.common.ProfileView
 
 @Composable
-fun NavBar() {
+fun NavBar(rootNavController: androidx.navigation.NavHostController) {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
     val hide = currentDestination?.route == CameraView.route
 
     Scaffold(
-
         modifier = Modifier.fillMaxSize(),
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         bottomBar = {
-            if(!hide) {
-
-
+            if (!hide) {
                 NavigationBar(
                     modifier = Modifier.navigationBarsPadding(),
                     containerColor = MaterialTheme.colorScheme.primaryContainer
@@ -64,11 +61,11 @@ fun NavBar() {
                         selected = currentDestination?.hierarchy?.any { it.hasRoute<MapView>() } == true,
                         onClick = {
                             navController.navigate(MapView) {
-                                popUpTo(navController.graph.findStartDestination().id) {
-                                    saveState = true
+                                popUpTo(MapView) {
+                                    inclusive = true
                                 }
                                 launchSingleTop = true
-                                restoreState = true
+                                restoreState = false
                             }
                         },
                         icon = {
@@ -128,10 +125,10 @@ fun NavBar() {
                         onClick = {
                             navController.navigate(ProfileView) {
                                 popUpTo(navController.graph.findStartDestination().id) {
-                                    saveState = true
+                                    saveState = false
                                 }
                                 launchSingleTop = true
-                                restoreState = true
+                                restoreState = false
                             }
                         },
                         icon = {
@@ -148,6 +145,6 @@ fun NavBar() {
             }
         }
     ) { padding ->
-        NavHost(navController, padding)
+        NavHost(navController = navController, rootNavController = rootNavController, padding = padding)
     }
 }

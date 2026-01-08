@@ -5,6 +5,9 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -17,12 +20,16 @@ import com.fontys.frontend.ui.views.PictureCaptureScreen
 import com.fontys.frontend.ui.views.FriendsScreen
 import com.fontys.frontend.ui.views.LoginView
 import com.fontys.frontend.ui.views.RegistrationView
+import com.fontys.frontend.ui.views.DeleteAccountScreen
 import com.fontys.frontend.ui.views.MapsScreen
 import com.fontys.frontend.ui.views.ProfileScreen
 import com.fontys.frontend.ui.views.ChallengeScreen
+import com.fontys.frontend.ui.views.Profile
+import com.fontys.frontend.ui.viewmodels.ProfileViewModel
 import kotlinx.serialization.Serializable
 import com.fontys.frontend.ui.views.NavBar
 import com.fontys.frontend.ui.views.PublicProfileScreen
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.fontys.frontend.ui.views.ReviewView
 
 
@@ -37,6 +44,9 @@ object ProfileView
 
 @Serializable
 object BadgeView
+
+@Serializable
+object AccountView
 
 @Serializable
 object ChallengeView
@@ -59,6 +69,9 @@ object CameraView{
 }
 
 @Serializable
+object DeleteAccountView
+
+@Serializable
 object LocationView
 
 @Serializable
@@ -67,6 +80,7 @@ object ReviewView
 @Composable
 fun NavHost(
     navController: NavHostController,
+    rootNavController: NavHostController,
     padding: PaddingValues
 ) {
     Box(
@@ -90,7 +104,13 @@ fun NavHost(
             }
 
             composable<ProfileView> {
-                ProfileScreen()
+                val profileViewModel: ProfileViewModel = viewModel()
+                Profile(
+                    viewModel = profileViewModel,
+                    onAccountClick = { navController.navigate(AccountView) },
+                    onEditProfile = { navController.navigate(AccountView) },
+                    onDeleteAccount = { navController.navigate(DeleteAccountView) }
+                )
             }
 
             composable<BadgeView> {
@@ -105,6 +125,28 @@ fun NavHost(
                 ChallengeScreen(navController = navController)
             }
 
+            composable<AccountView> {
+                val profileViewModel: ProfileViewModel = viewModel()
+                ProfileScreen(
+                    userViewModel = profileViewModel,
+                    onNavigateBack = {
+                        if (!navController.popBackStack(ProfileView, false)) {
+                            navController.navigate(ProfileView) {
+                                launchSingleTop = true
+                            }
+                        }
+                    },
+                    onLogout = {
+                        UserRepository.token = ""
+                        UserRepository.userId = -1
+                        rootNavController.navigate("login") {
+                            popUpTo("main") { inclusive = true }
+                        }
+                    },
+                    onDeleteAccount = { navController.navigate(DeleteAccountView) }
+                )
+            }
+
             composable<LoginView> {
                 LoginView(navController)
             }
@@ -114,7 +156,7 @@ fun NavHost(
             }
 
             composable<NavigationView> {
-                NavBar()
+                NavBar(rootNavController = rootNavController)
             }
 
             composable<ReviewView> {
@@ -124,6 +166,27 @@ fun NavHost(
             composable<CameraView>  {
                 val cameraViewModel: CameraPreviewViewModel = viewModel()
                 PictureCaptureScreen(navController, cameraViewModel)
+            }
+
+            composable<DeleteAccountView> {
+                val profileViewModel: ProfileViewModel = viewModel()
+                val deleteSuccess by profileViewModel.deleteAccountSuccess.collectAsState()
+
+                LaunchedEffect(deleteSuccess) {
+                    if (deleteSuccess) {
+                        rootNavController.navigate("login") {
+                            popUpTo("main") { inclusive = true }
+                        }
+                        profileViewModel.clearDeleteAccountSuccess()
+                    }
+                }
+
+                DeleteAccountScreen(
+                    onCancel = { navController.popBackStack() },
+                    onConfirmDelete = {
+                        profileViewModel.deleteAccount(UserRepository.userId.toString())
+                    }
+                )
             }
 
             composable<PublicProfileView> { backStackEntry ->

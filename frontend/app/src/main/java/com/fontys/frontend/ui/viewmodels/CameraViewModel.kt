@@ -41,6 +41,9 @@ class CameraPreviewViewModel : ViewModel() {
     private val _base64 = MutableStateFlow<String>("")
     val base64: StateFlow<String> = _base64
 
+    private val _isProcessing = MutableStateFlow(false)
+    val isProcessing: StateFlow<Boolean> = _isProcessing
+
     var front = false  // Start with back camera (matches bindToCamera default)
     var flash = true
     val flagRepository = FlagRepository()
@@ -103,6 +106,8 @@ class CameraPreviewViewModel : ViewModel() {
    suspend fun takePhoto(context: Context,userid : Int, placeId: String ,onPhotoSaved: (Uri?) -> Unit) {
         val imageCapture = imageCapture ?: return
 
+        _isProcessing.value = true
+
         val outputFileOptions = ImageCapture.OutputFileOptions.Builder(
             File(
                 context.cacheDir,
@@ -116,19 +121,24 @@ class CameraPreviewViewModel : ViewModel() {
             object : ImageCapture.OnImageSavedCallback {
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
                     viewModelScope.launch {
-                        // Save the flag
-                        flagRepository.addFlag(userid, placeId, toBase64(context, output.savedUri))
+                        try {
+                            // Save the flag
+                            flagRepository.addFlag(userid, placeId, toBase64(context, output.savedUri))
 
-                        // Check for badge unlocks (wait for it to complete!)
-                        checkForBadgeUnlocks(userid, placeId)
+                            // Check for badge unlocks (wait for it to complete!)
+                            checkForBadgeUnlocks(userid, placeId)
 
-                        // Only navigate after badge check is done
-                        onPhotoSaved(output.savedUri)
+                            // Only navigate after badge check is done
+                            onPhotoSaved(output.savedUri)
+                        } finally {
+                            _isProcessing.value = false
+                        }
                     }
                 }
 
                 override fun onError(exception: ImageCaptureException) {
                     exception.printStackTrace()
+                    _isProcessing.value = false
                     onPhotoSaved(null)
                 }
             }

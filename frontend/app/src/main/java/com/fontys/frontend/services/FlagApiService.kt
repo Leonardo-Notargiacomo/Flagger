@@ -20,7 +20,7 @@ interface FlagApiService {
     suspend fun getCords(@HeaderMap headers: Map<String, String>,  @Path("userId") userId: Int) : Response<List<FlagResponse>>
 
     @PATCH("user-custom-flags")
-    suspend fun customFlagUpdate(@HeaderMap headers: Map<String,String>,@Body customFlagUpdate: CustomFlagUpdate): Response<String>
+    suspend fun customFlagUpdate(@HeaderMap headers: Map<String,String>,@Body customFlagUpdate: CustomFlagUpdate): Response<CustomFlagUpdate>
     @GET ("user-custom-flag/{goUserId}")
     suspend fun userFlagStyle(@HeaderMap headers: Map<String,String>,@Path("goUserId") userId: Int) : Response<CustomFlagUpdate>
 }

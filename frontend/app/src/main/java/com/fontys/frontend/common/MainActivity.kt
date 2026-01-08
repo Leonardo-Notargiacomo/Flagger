@@ -161,7 +161,7 @@ class MainActivity : ComponentActivity() {
                                 permissionHandler.checkPermissions()
                                 subscribeToNotifications()
                             }
-                            NavBar()
+                            NavBar(rootNavController = navController)
                         }
                         composable("admin") {
                             AdminScreen(mainNavController = navController)
