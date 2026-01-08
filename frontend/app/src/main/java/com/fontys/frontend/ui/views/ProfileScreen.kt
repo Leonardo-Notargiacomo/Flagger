@@ -1,38 +1,83 @@
 package com.fontys.frontend.ui.views
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.fontys.frontend.data.UserUpdate
+import com.fontys.frontend.data.models.ChangePasswordRequest
 import com.fontys.frontend.domain.UserRepository
-import com.fontys.frontend.ui.components.*
+import com.fontys.frontend.ui.components.AccountField
+import com.fontys.frontend.ui.components.EditableAccountField
 import com.fontys.frontend.ui.viewmodels.ProfileViewModel
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileScreen(userViewModel: ProfileViewModel = viewModel()) {
+fun ProfileScreen(
+    userViewModel: ProfileViewModel = viewModel(),
+    onNavigateBack: () -> Unit = {},
+    onLogout: () -> Unit = {},
+    onDeleteAccount: () -> Unit = {}
+) {
     val user by userViewModel.user.collectAsState()
     val isLoading by userViewModel.isLoading.collectAsState()
     val error by userViewModel.error.collectAsState()
+    val colorScheme = MaterialTheme.colorScheme
 
     var isEditing by remember { mutableStateOf(false) }
-    var editUsername by remember { mutableStateOf("") }
     var editEmail by remember { mutableStateOf("") }
-    var editBio by remember { mutableStateOf("") }
+    var editOldPassword by remember { mutableStateOf("") }
+    var editPassword by remember { mutableStateOf("") }
+    var oldPasswordVisible by remember { mutableStateOf(false) }
+    var passwordVisible by remember { mutableStateOf(false) }
+    var passwordsEquality by remember { mutableStateOf(false) }
 
     val coroutineScope = rememberCoroutineScope()
 
-    // Load user data once when screen opens
     LaunchedEffect(Unit) {
         userViewModel.getUser(UserRepository.userId.toString())
     }
@@ -43,65 +88,127 @@ fun ProfileScreen(userViewModel: ProfileViewModel = viewModel()) {
             .background(MaterialTheme.colorScheme.background)
             .statusBarsPadding()
     ) {
+        TopAppBar(
+            title = {
+                Text(
+                    text = "Account",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.SemiBold,
+                    color = colorScheme.onBackground
+                )
+            },
+            navigationIcon = {
+                IconButton(onClick = onNavigateBack) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back"
+                    )
+                }
+            },
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = MaterialTheme.colorScheme.background
+            )
+        )
+
         when {
             isLoading -> {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(color = colorScheme.primary)
                 }
             }
+
             error != null -> {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(text = error ?: "Unknown error", color = MaterialTheme.colorScheme.primary)
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = error ?: "Unknown error",
+                        color = colorScheme.error
+                    )
                 }
             }
+
             user != null -> {
                 val userData = user!!
 
-                if (!isEditing) {
-                    // Populate edit fields when switching to edit mode
-                    editUsername = userData.userName
-                    editEmail = userData.email
-                    editBio = userData.bio
+                if (!isEditing && editEmail.isEmpty()) {
+                    editEmail = userData.email ?: ""
+                    editOldPassword = ""
+                    editPassword = ""
                 }
 
                 Column(
                     modifier = Modifier
                         .weight(1f)
                         .verticalScroll(rememberScrollState())
-                        .padding(top = 24.dp, start = 16.dp, end = 16.dp, bottom = 16.dp)
+                        .padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 16.dp)
                 ) {
-                    ProfilePictureSection(
-                        username = if (isEditing) editUsername else userData.userName,
-                        isEditing = isEditing,
-                        onImageEdit = { /* TODO */ }
-                    )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
                     if (isEditing) {
-                        EditableAccountField(
-                            label = "Username",
-                            value = editUsername,
-                            onValueChange = { editUsername = it }
-                        )
                         EditableAccountField(
                             label = "Email",
                             value = editEmail,
                             onValueChange = { editEmail = it }
                         )
-                        EditableAccountField(
-                            label = "Bio",
-                            value = editBio,
-                            onValueChange = { editBio = it },
-                            multiline = true
-                        )
                     } else {
-                        AccountField("Username", userData.userName)
-                        AccountField("Email", userData.email)
-                        AccountField("Bio", userData.bio, multiline = true)
+                        AccountField(
+                            label = "Email",
+                            value = userData.email ?: ""
+                        )
                     }
 
                     Spacer(modifier = Modifier.height(16.dp))
+
+                    if (isEditing) {
+                        PasswordField(
+                            label = "Old Password",
+                            password = editOldPassword,
+                            onPasswordChange = {
+                                editOldPassword = it
+                                passwordsEquality =
+                                    editOldPassword.isNotBlank() &&
+                                    editPassword.isNotBlank() &&
+                                    editOldPassword == editPassword
+                            },
+                            passwordVisible = oldPasswordVisible,
+                            onToggleVisibility = { oldPasswordVisible = !oldPasswordVisible }
+                        )
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        PasswordField(
+                            label = "New Password",
+                            password = editPassword,
+                            onPasswordChange = {
+                                editPassword = it
+                                passwordsEquality =
+                                    editOldPassword.isNotBlank() &&
+                                    editPassword.isNotBlank() &&
+                                    editOldPassword == editPassword
+                            },
+                            passwordVisible = passwordVisible,
+                            onToggleVisibility = { passwordVisible = !passwordVisible }
+
+                        )
+                        if (passwordsEquality) {
+                            Text(
+                                text = "Passwords can not be the same",
+                                color = colorScheme.error,
+                                fontSize = 12.sp
+                            )
+                        }
+
+                    } else {
+                        AccountField(
+                            label = "Password",
+                            value = "••••••••",
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(24.dp))
 
                     Column(
                         modifier = Modifier.fillMaxWidth(),
@@ -111,14 +218,38 @@ fun ProfileScreen(userViewModel: ProfileViewModel = viewModel()) {
                             Button(
                                 onClick = {
                                     coroutineScope.launch {
+                                        val isPasswordSame =
+                                            editOldPassword.isNotBlank() &&
+                                            editPassword.isNotBlank() &&
+                                            editOldPassword == editPassword
+                                        val isPasswordValid =
+                                            editOldPassword.isNotBlank() &&
+                                            editPassword.isNotBlank() &&
+                                            editOldPassword != editPassword
+                                        passwordsEquality = isPasswordSame
+                                        if (isPasswordSame) {
+                                            return@launch
+                                        }
                                         val userUpdate = UserUpdate(
-                                            id = 1,
-                                            userName = editUsername,
-                                            email = editEmail,
-                                            bio = editBio,
-                                            userImage = 0
+                                            id = userData.id.toIntOrNull(),
+                                            userName = userData.userName,
+                                            userImage = userData.userImage?.toIntOrNull(),
+                                            bio = userData.bio,
+                                            email = editEmail
                                         )
-                                        userViewModel.updateUser(userData.id, userUpdate)
+                                        val passwords = if (isPasswordValid) {
+                                            ChangePasswordRequest(
+                                                currentPassword = editOldPassword,
+                                                newPassword = editPassword
+                                            )
+                                        } else {
+                                            null
+                                        }
+                                        userViewModel.updateUser(
+                                            userData.id.toString(),
+                                            userUpdate,
+                                            passwords
+                                        )
                                         isEditing = false
                                     }
                                 },
@@ -126,46 +257,137 @@ fun ProfileScreen(userViewModel: ProfileViewModel = viewModel()) {
                                     .fillMaxWidth()
                                     .height(50.dp),
                                 colors = ButtonDefaults.buttonColors(
-                                    containerColor = MaterialTheme.colorScheme.secondary,
-                                    contentColor = MaterialTheme.colorScheme.onSecondary
-                                ),
-                                shape = RoundedCornerShape(8.dp),
-                                elevation = ButtonDefaults.buttonElevation(
-                                    defaultElevation = 0.dp,
-                                    pressedElevation = 0.dp
+                                    containerColor = colorScheme.secondary,
+                                    contentColor = colorScheme.onSecondary
                                 )
                             ) {
-                                Text("Save Changes", fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold, fontSize = 14.sp)
+                                Text(
+                                    "Save Changes",
+                                    fontWeight = FontWeight.SemiBold,
+                                    fontSize = 14.sp
+                                )
                             }
 
                             TextButton(
-                                onClick = { isEditing = false },
+                                onClick = {
+                                    isEditing = false
+                                    editEmail = userData.email ?: ""
+                                    editOldPassword = ""
+                                    editPassword = ""
+                                    oldPasswordVisible = false
+                                    passwordVisible = false
+                                },
                                 modifier = Modifier.fillMaxWidth()
                             ) {
-                                Text("Cancel", fontWeight = androidx.compose.ui.text.font.FontWeight.Medium, fontSize = 14.sp)
+                                Text(
+                                    "Cancel",
+                                    fontWeight = FontWeight.Medium,
+                                    fontSize = 14.sp,
+                                    color = colorScheme.onBackground
+                                )
                             }
                         } else {
                             Button(
-                                onClick = { isEditing = true },
+                                onClick = {
+                                    isEditing = true
+                                    editOldPassword = ""
+                                    oldPasswordVisible = false
+                                },
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .height(50.dp),
                                 colors = ButtonDefaults.buttonColors(
-                                    containerColor = MaterialTheme.colorScheme.secondary,
-                                    contentColor = MaterialTheme.colorScheme.onSecondary
-                                ),
-                                shape = RoundedCornerShape(8.dp),
-                                elevation = ButtonDefaults.buttonElevation(
-                                    defaultElevation = 0.dp,
-                                    pressedElevation = 0.dp
+                                    containerColor = colorScheme.secondary,
+                                    contentColor = colorScheme.onSecondary
                                 )
                             ) {
-                                Text("Edit Profile", fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold, fontSize = 14.sp)
+                                Text(
+                                    "Edit Account",
+                                    fontWeight = FontWeight.SemiBold,
+                                    fontSize = 14.sp
+                                )
                             }
                         }
+                    }
+
+                    Spacer(modifier = Modifier.height(32.dp))
+
+                    Button(
+                        onClick = onLogout,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(48.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = colorScheme.primary,
+                            contentColor = colorScheme.onPrimary
+                        )
+                    ) {
+                        Text("Log out", fontWeight = FontWeight.Medium, fontSize = 14.sp)
+                    }
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    OutlinedButton(
+                        onClick = onDeleteAccount,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(48.dp),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            contentColor = colorScheme.error
+                        ),
+                        border = BorderStroke(1.dp, colorScheme.error)
+                    ) {
+                        Text(
+                            "Delete Account",
+                            fontWeight = FontWeight.Medium,
+                            fontSize = 14.sp,
+                            color = colorScheme.error
+                        )
                     }
                 }
             }
         }
     }
+}
+
+@Composable
+private fun PasswordField(
+    label: String,
+    password: String,
+    onPasswordChange: (String) -> Unit,
+    passwordVisible: Boolean,
+    onToggleVisibility: () -> Unit
+) {
+    OutlinedTextField(
+        value = password,
+        onValueChange = onPasswordChange,
+        label = { Text(label) },
+        modifier = Modifier.fillMaxWidth(),
+        singleLine = true,
+        visualTransformation = if (passwordVisible) {
+            VisualTransformation.None
+        } else {
+            PasswordVisualTransformation()
+        },
+        trailingIcon = {
+            val icon = if (passwordVisible) Icons.Filled.VisibilityOff else Icons.Filled.Visibility
+            val contentDesc = if (passwordVisible) "Hide password" else "Show password"
+
+            IconButton(onClick = onToggleVisibility) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = contentDesc
+                )
+            }
+        },
+        colors = TextFieldDefaults.colors(
+            focusedTextColor = MaterialTheme.colorScheme.onBackground,
+            unfocusedTextColor = MaterialTheme.colorScheme.onBackground,
+            focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+            unfocusedIndicatorColor = MaterialTheme.colorScheme.outline,
+            cursorColor = MaterialTheme.colorScheme.primary,
+            focusedLabelColor = MaterialTheme.colorScheme.primary,
+            unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    )
 }

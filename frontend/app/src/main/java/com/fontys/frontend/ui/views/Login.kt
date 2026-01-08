@@ -8,7 +8,9 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Explore
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material.icons.outlined.Flag
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -17,6 +19,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -32,6 +35,7 @@ fun LoginView(
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var passwordVisible by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var loginSuccess by remember { mutableStateOf(false) }
     var isLoading by remember { mutableStateOf(false) }
@@ -39,7 +43,7 @@ fun LoginView(
     // Navigate to main when login succeeds
     LaunchedEffect(loginSuccess) {
         if (loginSuccess) {
-            navController.navigate("main") {
+            navController.navigate("loader") {
                 popUpTo("login") { inclusive = true }
             }
         }
@@ -55,7 +59,7 @@ fun LoginView(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        // Compass Icon
+        // Flag Icon
         Box(
             modifier = Modifier
                 .size(80.dp)
@@ -64,11 +68,9 @@ fun LoginView(
             contentAlignment = Alignment.Center
         ) {
             Icon(
-                imageVector = Icons.Outlined.Explore,
-                contentDescription = "Compass",
-                modifier = Modifier
-                    .size(48.dp)
-                    .rotate(0f),
+                imageVector = Icons.Outlined.Flag,
+                contentDescription = "Flag",
+                modifier = Modifier.size(48.dp),
                 tint = MaterialTheme.colorScheme.primary
             )
         }
@@ -111,7 +113,19 @@ fun LoginView(
             onValueChange = { password = it },
             modifier = Modifier.fillMaxWidth(),
             placeholder = { Text("Password", color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f)) },
-            visualTransformation = PasswordVisualTransformation(),
+            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+            trailingIcon = {
+                val icon = if (passwordVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
+                val contentDesc = if (passwordVisible) "Hide password" else "Show password"
+
+                IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = contentDesc,
+                        tint = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
+                    )
+                }
+            },
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = MaterialTheme.colorScheme.primary,
                 unfocusedBorderColor = MaterialTheme.colorScheme.outline,

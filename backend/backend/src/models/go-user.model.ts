@@ -1,5 +1,6 @@
 import {Entity, hasOne, model, property} from '@loopback/repository';
 import {GoUserCredentials} from './go-user-credentials.model';
+import {UserCustomFlag} from './user-custom-flag.model';
 
 @model()
 export class GoUser extends Entity {
@@ -39,8 +40,17 @@ export class GoUser extends Entity {
   })
   bio?: string;
 
+  @property({
+    type: 'boolean',
+    default: false,
+  })
+  isAdmin: boolean;
+
   @hasOne(() => GoUserCredentials, {keyTo: 'goUserId'})
   goUserCredentials: GoUserCredentials;
+
+  @hasOne(() => UserCustomFlag)
+  userCustomFlag: UserCustomFlag;
 
   constructor(data?: Partial<GoUser>) {
     super(data);

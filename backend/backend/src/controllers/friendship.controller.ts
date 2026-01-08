@@ -12,6 +12,8 @@ import {
 import {SecurityBindings, UserProfile} from '@loopback/security';
 import {GoUser, Flag} from '../models';
 import {FriendshipRepository, GoUserRepository, FlagRepository} from '../repositories';
+import {applyDefaultFlagFields, getFlagQueryTimeoutMs} from '../utils/flag-query';
+import {withTimeout} from '../utils/with-timeout';
 
 @authenticate('jwt')
 export class FriendshipController {
@@ -123,9 +125,15 @@ export class FriendshipController {
     }
 
     // 2. Get all flags where userId = friendId
-    const flags = await this.flagRepository.find({
+    const flagsFilter = applyDefaultFlagFields({
       where: {userId: friendId},
     });
+
+    const flags = await withTimeout(
+      this.flagRepository.find(flagsFilter),
+      getFlagQueryTimeoutMs(),
+      new HttpErrors.GatewayTimeout('No Flags flagged'),
+    );
 
     // 3. Return flags
     return flags;

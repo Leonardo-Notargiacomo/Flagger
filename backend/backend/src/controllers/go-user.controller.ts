@@ -2,22 +2,24 @@ import {
   Count,
   CountSchema,
   Filter,
-  FilterExcludingWhere, model, property,
+  FilterExcludingWhere,
+  model,
+  property,
   repository,
   Where,
 } from '@loopback/repository';
 import {
-  post,
-  param,
+  del,
   get,
   getModelSchemaRef,
+  HttpErrors,
+  param,
   patch,
+  post,
   put,
-  del,
   requestBody,
   response,
   SchemaObject,
-  HttpErrors,
 } from '@loopback/rest';
 import {GoUser} from '../models';
 import {GoUserRepository} from '../repositories';
@@ -28,9 +30,11 @@ import {
 } from '@loopback/authentication-jwt';
 import {authenticate, TokenService} from '@loopback/authentication';
 import {SecurityBindings, securityId, UserProfile} from '@loopback/security';
-import {genSalt, hash} from 'bcryptjs';
+import {compare, genSalt, hash} from 'bcryptjs';
 import _ from 'lodash';
 import {Credentials, MyUserService} from '../services';
+import fs from 'fs';
+import path from 'path';
 
 
 @model()
@@ -40,6 +44,22 @@ export class NewUserRequest extends GoUser {
     required: true,
   })
   password: string;
+}
+
+@model()
+export class ChangePasswordRequest {
+  @property({
+    type: 'string',
+    required: true,
+  })
+  currentPassword: string;
+
+  @property({
+    type: 'string',
+    required: true,
+    minLength: 8,
+  })
+  newPassword: string;
 }
 
 const CredentialsSchema: SchemaObject = {
@@ -55,6 +75,8 @@ const CredentialsSchema: SchemaObject = {
       minLength: 8,
     },
   },
+
+
 };
 
 export const CredentialsRequestBody = {
@@ -78,6 +100,47 @@ export class GoUserController {
     @repository(GoUserRepository)
     public goUserRepository : GoUserRepository,
   ) {}
+
+  private getAuthenticatedUserId(currentUserProfile: UserProfile): number {
+    const rawId = currentUserProfile[securityId];
+    const userId = Number(rawId);
+    if (!rawId || Number.isNaN(userId)) {
+      throw new HttpErrors.Unauthorized('Invalid user profile.');
+    }
+    return userId;
+  }
+
+  private async changePassword(
+    userId: number,
+    request: ChangePasswordRequest,
+  ): Promise<void> {
+    if (request.currentPassword === request.newPassword) {
+      throw new HttpErrors.BadRequest(
+        'New password must be different from current password.',
+      );
+    }
+
+    const credentials = await this.userRepository.findCredentials(userId);
+    if (!credentials) {
+      throw new HttpErrors.NotFound('User credentials not found.');
+    }
+
+    const passwordMatched = await compare(
+      request.currentPassword,
+      credentials.password,
+    );
+    if (!passwordMatched) {
+      throw new HttpErrors.Unauthorized('Invalid current password.');
+    }
+
+    const password = await hash(request.newPassword, await genSalt());
+    const updated = await this.userRepository
+      .goUserCredentials(userId)
+      .patch({password});
+    if (updated.count === 0) {
+      throw new HttpErrors.NotFound('User credentials not found.');
+    }
+  }
 
   @post('/go-users')
   @response(200, {
@@ -259,6 +322,56 @@ export class GoUserController {
     return currentUserProfile[securityId];
   }
 
+  @authenticate('jwt')
+  @patch('/go-users/me/password')
+  @response(204, {
+    description: 'Password updated',
+  })
+  async updateMyPassword(
+    @inject(SecurityBindings.USER)
+    currentUserProfile: UserProfile,
+    @requestBody({
+      content: {
+        'application/json': {
+          schema: getModelSchemaRef(ChangePasswordRequest, {
+            title: 'ChangeMyPasswordRequest',
+          }),
+        },
+      },
+    })
+    request: ChangePasswordRequest,
+  ): Promise<void> {
+    const userId = this.getAuthenticatedUserId(currentUserProfile);
+    await this.changePassword(userId, request);
+  }
+
+  @authenticate('jwt')
+  @patch('/go-users/{id}/password')
+  @response(204, {
+    description: 'Password updated',
+  })
+  async updatePasswordById(
+    @inject(SecurityBindings.USER)
+    currentUserProfile: UserProfile,
+    @param.path.number('id') id: number,
+    @requestBody({
+      content: {
+        'application/json': {
+          schema: getModelSchemaRef(ChangePasswordRequest, {
+            title: 'ChangePasswordByIdRequest',
+          }),
+        },
+      },
+    })
+    request: ChangePasswordRequest,
+  ): Promise<void> {
+    const currentUserId = this.getAuthenticatedUserId(currentUserProfile);
+    if (currentUserId !== id) {
+      throw new HttpErrors.Forbidden('You can only change your own password.');
+    }
+    await this.changePassword(id, request);
+  }
+
   @post('/signup', {
     responses: {
       '200': {
@@ -313,5 +426,61 @@ export class GoUserController {
       throw error;
     }
   }
-}
 
+  @authenticate('jwt')
+  @get('/go-users/{id}/is-admin', {
+    responses: {
+      '200': {
+        description: 'Returns whether the user is an admin',
+        content: {
+          'application/json': {
+            schema: {
+              type: 'boolean',
+            },
+          },
+        },
+      },
+    },
+  })
+  async isAdmin(
+      @param.path.number('id') id: number,
+  ): Promise<boolean> {
+      const user = await this.goUserRepository.findById(id);
+      if (!user) {
+      throw new HttpErrors.NotFound(`User with id ${id} not found`);
+    }
+    return user.isAdmin;
+  }
+
+  @authenticate('jwt')
+  @get('/go-users/filter-bio')
+  @response(200, {
+    description: 'Filtered Users',
+    content: {
+      'application/json': {
+        schema: {
+          type: 'array',
+          items: getModelSchemaRef(GoUser, {includeRelations: true}),
+        },
+      },
+    },
+  })
+  async filterUsersBio(){
+    const users = await this.goUserRepository.find();
+
+    const filePath = path.join(__dirname, '../../src/CsvFiles/profanity_en.csv');
+    const data = fs.readFileSync(filePath, 'utf8');
+
+    const lines = data.split('\n').slice(1);
+    const profaneWords = lines
+      .map(line => line.split(',')[0]?.trim().toLowerCase())
+      .filter(word => word);
+
+
+    return users.filter(user => {
+      if (!user.bio) return false;
+      const bioLower = user.bio.toLowerCase();
+      return profaneWords.some(profaneWord => bioLower.includes(profaneWord));
+    });
+  }
+}

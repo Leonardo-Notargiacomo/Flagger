@@ -63,6 +63,8 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.identity.jvm)
     implementation(libs.androidx.camera.view)
+    implementation(libs.androidx.emoji2.emojipicker)
+    implementation(libs.androidx.foundation)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     androidTestImplementation(platform(libs.androidx.compose.bom))
@@ -103,7 +105,7 @@ dependencies {
 
     // Other utilities
     implementation("org.json:json:20240303")
-
+    implementation("com.github.skydoves:colorpicker-compose:1.0.3")
     // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -115,6 +117,15 @@ dependencies {
     implementation(libs.androidx.camera.lifecycle)
     implementation(libs.androidx.camera.camera2)
     implementation(libs.accompanist.permissions)
+    // emoji
+    implementation("androidx.emoji2:emoji2-emojipicker:1.5.0")
+    implementation(libs.lottie.compose)
+
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+    testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
+    testImplementation("org.json:json:20240303")
+    testImplementation(kotlin("test"))
 
 }
 

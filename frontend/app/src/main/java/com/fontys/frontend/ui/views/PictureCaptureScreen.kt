@@ -19,6 +19,7 @@ import androidx.compose.material.icons.outlined.SwitchCamera
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.SegmentedButtonDefaults.Icon
@@ -30,6 +31,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -59,6 +61,7 @@ fun PictureCaptureScreen(navController: NavHostController, viewModel: CameraPrev
     val lifecycleOwner = LocalLifecycleOwner.current
     val base64 by viewModel.base64.collectAsStateWithLifecycle()
     val surfaceRequest by viewModel.surfaceRequest.collectAsStateWithLifecycle()
+    val isProcessing by viewModel.isProcessing.collectAsStateWithLifecycle()
 
 
 
@@ -100,15 +103,17 @@ fun PictureCaptureScreen(navController: NavHostController, viewModel: CameraPrev
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(24.dp)
-                .size(64.dp)
-                .background(Color.Black, CircleShape),
+                .size(64.dp),
 
-            colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.primaryContainer
+            ),
+            shape = CircleShape
         ) {
             Icon(
                 imageVector = Icons.Default.CameraAlt,
                 contentDescription = "Take picture",
-                tint = Color.White,
+                tint = MaterialTheme.colorScheme.onPrimaryContainer,
                 modifier = Modifier.size(32.dp)            )
             Spacer(modifier = Modifier.width(8.dp))
         }
@@ -121,18 +126,16 @@ fun PictureCaptureScreen(navController: NavHostController, viewModel: CameraPrev
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(24.dp)
-                .size(64.dp)
-                .background(Color.Black, CircleShape),
-            colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
-
-
-
+                .size(64.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.primaryContainer
+            ),
+            shape = CircleShape
         ) {
             Icon(
                 imageVector = Icons.Outlined.SwitchCamera,
                 contentDescription = "Camera view change",
-                tint = Color.White,
-
+                tint = MaterialTheme.colorScheme.onPrimaryContainer,
                 modifier = Modifier.size(32.dp)
             )
             Spacer(modifier = Modifier.width(8.dp))
@@ -146,22 +149,36 @@ fun PictureCaptureScreen(navController: NavHostController, viewModel: CameraPrev
             modifier = Modifier
                 .align(Alignment.BottomStart)
                 .padding(24.dp)
-                .size(64.dp)
-                .background(Color.Black, CircleShape),
-            colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
-
-
-
+                .size(64.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.primaryContainer
+            ),
+            shape = CircleShape
         ) {
             Icon(
                 imageVector = if (viewModel.flash)
                     Icons.Default.FlashOn else Icons.Default.FlashOff,
                 contentDescription = "Camera view change",
-                tint = Color.White,
-
+                tint = MaterialTheme.colorScheme.onPrimaryContainer,
                 modifier = Modifier.size(32.dp)
             )
             Spacer(modifier = Modifier.width(8.dp))
+        }
+
+        // Loading indicator overlay
+        if (isProcessing) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.7f)),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(64.dp),
+                    color = MaterialTheme.colorScheme.primary,
+                    strokeWidth = 6.dp
+                )
+            }
         }
     }
 }

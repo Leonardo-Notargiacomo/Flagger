@@ -28,6 +28,24 @@ You can also run `node .` to skip the build step.
 
 Open http://127.0.0.1:3000 in your browser.
 
+## Password endpoints
+
+The backend exposes two authenticated endpoints for changing a user password. Both require a valid JWT access token.
+
+```sh
+# Change the currently authenticated user's password
+curl -X PATCH http://127.0.0.1:3000/go-users/me/password \
+  -H "Authorization: Bearer <token>" \
+  -H "Content-Type: application/json" \
+  -d '{"currentPassword":"OldPassword123","newPassword":"NewPassword123"}'
+
+# Change password by user id (only allowed for your own id)
+curl -X PATCH http://127.0.0.1:3000/go-users/<id>/password \
+  -H "Authorization: Bearer <token>" \
+  -H "Content-Type: application/json" \
+  -d '{"currentPassword":"OldPassword123","newPassword":"NewPassword123"}'
+```
+
 ## Rebuild the project
 
 To incrementally build the project:
@@ -198,4 +216,3 @@ When LoopBack tried to resolve the metadata for `gUCToGU` in `go-user.repository
 
  **Outcome:**
 After cleaning up the repository and enforcing consistent naming, LoopBack was able to correctly resolve relation metadata. The migration executed successfully, and the relation between `GoUser` and `GoUserCredentials` now works as intended.
-

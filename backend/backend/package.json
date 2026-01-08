@@ -29,14 +29,15 @@
     "docker:run": "docker run -p 3000:3000 -d backend",
     "premigrate": "npm run build",
     "migrate": "node ./dist/migrate",
-    "seed": "node ./dist/seed-badges",
+    "seed": "node ./dist/seed-badges && node ./dist/seed-challenges",
     "seed-badges": "npm run build && node ./dist/seed-badges",
+    "seed-challenges": "npm run build && node ./dist/seed-challenges",
     "add-indexes": "npm run build && node ./dist/add-notification-indexes",
     "preopenapi-spec": "npm run build",
     "openapi-spec": "node ./dist/openapi-spec",
     "prestart": "npm run rebuild",
     "start": "npm run seed-if-needed && node -r source-map-support/register .",
-    "seed-if-needed": "node ./dist/seed-badges || true",
+    "seed-if-needed": "node ./dist/seed-badges && node ./dist/seed-challenges || true",
     "clean": "lb-clean dist *.tsbuildinfo .eslintcache",
     "rebuild": "npm run clean && npm run build"
   },
@@ -68,9 +69,12 @@
   "devDependencies": {
     "@loopback/build": "^12.0.5",
     "@loopback/eslint-config": "^16.0.1",
-    "@loopback/testlab": "^8.0.5",
+    "@loopback/testlab": "^8.0.7",
     "@types/node": "^16.18.126",
+    "@types/sinon": "^21.0.0",
     "eslint": "^8.57.1",
+    "mocha": "^11.7.5",
+    "sinon": "^21.0.0",
     "source-map-support": "^0.5.21",
     "typescript": "~5.2.2"
   }

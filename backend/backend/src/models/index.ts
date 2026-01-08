@@ -9,3 +9,6 @@ export * from './friendship.model';
 export * from './go-user-credentials.model';
 export * from './fcm-token.model';
 export * from './notification-history.model';
+export * from './user-custom-flag.model';
+export * from './challenge.model';
+export * from './user-challenge.model';

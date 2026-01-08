@@ -9,3 +9,7 @@ export * from './friend-request.controller';
 export * from './friendship.controller';
 export * from './fcm-token.controller';
 export * from './notification.controller';
+export * from './go-user-user-custom-flag.controller';
+export * from './user-custom-flag-go-user.controller';
+export * from './user-custom-flag.controller';
+export * from './challenge.controller';
