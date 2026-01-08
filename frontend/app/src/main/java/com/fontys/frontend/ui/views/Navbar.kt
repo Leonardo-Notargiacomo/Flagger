@@ -61,11 +61,11 @@ fun NavBar(rootNavController: androidx.navigation.NavHostController) {
                         selected = currentDestination?.hierarchy?.any { it.hasRoute<MapView>() } == true,
                         onClick = {
                             navController.navigate(MapView) {
-                                popUpTo(navController.graph.findStartDestination().id) {
-                                    saveState = true
+                                popUpTo(MapView) {
+                                    inclusive = true
                                 }
                                 launchSingleTop = true
-                                restoreState = true
+                                restoreState = false
                             }
                         },
                         icon = {

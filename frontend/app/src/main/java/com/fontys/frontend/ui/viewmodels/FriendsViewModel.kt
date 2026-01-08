@@ -262,6 +262,14 @@ class FriendsViewModel : ViewModel() {
 
     fun sendFriendRequest(toUserId: Int) {
         Log.d(TAG, "sendFriendRequest() called with toUserId: $toUserId")
+
+        // Check if already friends or request already sent
+        val relationshipStatus = getRelationshipStatus(toUserId)
+        if (relationshipStatus != RelationshipStatus.NONE) {
+            Log.d(TAG, "sendFriendRequest() skipped: relationship already exists ($relationshipStatus)")
+            return
+        }
+
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(currentOperation = FriendsOperation.SendingRequest, error = null)
 
@@ -278,10 +286,20 @@ class FriendsViewModel : ViewModel() {
                 },
                 onFailure = { error ->
                     Log.e(TAG, "sendFriendRequest() failed: ${error.message}", error)
-                    _uiState.value = _uiState.value.copy(
-                        currentOperation = FriendsOperation.None,
-                        error = error.message ?: "Failed to send friend request"
-                    )
+
+                    // Handle 409 errors (duplicate request) gracefully - just reload to sync state
+                    val errorMessage = error.message ?: "Failed to send friend request"
+                    if (errorMessage.contains("already", ignoreCase = true) ||
+                        errorMessage.contains("exist", ignoreCase = true)) {
+                        Log.d(TAG, "sendFriendRequest() detected duplicate, reloading state...")
+                        _uiState.value = _uiState.value.copy(currentOperation = FriendsOperation.None)
+                        loadSentRequests()
+                    } else {
+                        _uiState.value = _uiState.value.copy(
+                            currentOperation = FriendsOperation.None,
+                            error = errorMessage
+                        )
+                    }
                 }
             )
         }

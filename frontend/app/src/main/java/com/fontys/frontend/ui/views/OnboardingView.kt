@@ -54,26 +54,6 @@ fun OnboardingView(
             .background(MaterialTheme.colorScheme.background)
             .statusBarsPadding()
     ) {
-        // Skip button (top right)
-        TextButton(
-            onClick = {
-                // Navigate to login and mark onboarding as seen
-                navController.navigate("login") {
-                    popUpTo("onboarding") { inclusive = true }
-                }
-            },
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(16.dp)
-        ) {
-            Text(
-                text = "Skip",
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Medium
-            )
-        }
-
         // Main content
         Column(
             modifier = Modifier.fillMaxSize()
@@ -129,6 +109,26 @@ fun OnboardingView(
                     )
                 }
             }
+        }
+
+        // Skip button (top right) - placed after Column to be on top for touch events
+        TextButton(
+            onClick = {
+                // Navigate to login and mark onboarding as seen
+                navController.navigate("login") {
+                    popUpTo("onboarding") { inclusive = true }
+                }
+            },
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(16.dp)
+        ) {
+            Text(
+                text = "Skip",
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium
+            )
         }
     }
 }
