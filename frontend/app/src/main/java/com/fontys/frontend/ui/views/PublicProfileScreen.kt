@@ -133,6 +133,18 @@ fun PublicProfileScreen(
         label = "contentAlpha"
     )
 
+    // Navigate back after successful friend request
+    var previousStatus by remember { mutableStateOf<FriendRequestStatus>(FriendRequestStatus.NotSent) }
+    LaunchedEffect(uiState.friendRequestStatus) {
+        if (previousStatus is FriendRequestStatus.Sending &&
+            uiState.friendRequestStatus is FriendRequestStatus.Pending) {
+            // Wait for celebration animation to complete (2.5s) then navigate back
+            kotlinx.coroutines.delay(2600)
+            onNavigateBack()
+        }
+        previousStatus = uiState.friendRequestStatus
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()

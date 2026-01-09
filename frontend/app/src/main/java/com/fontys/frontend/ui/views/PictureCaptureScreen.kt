@@ -19,6 +19,7 @@ import androidx.compose.material.icons.outlined.SwitchCamera
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.SegmentedButtonDefaults.Icon
@@ -60,6 +61,7 @@ fun PictureCaptureScreen(navController: NavHostController, viewModel: CameraPrev
     val lifecycleOwner = LocalLifecycleOwner.current
     val base64 by viewModel.base64.collectAsStateWithLifecycle()
     val surfaceRequest by viewModel.surfaceRequest.collectAsStateWithLifecycle()
+    val isProcessing by viewModel.isProcessing.collectAsStateWithLifecycle()
 
 
 
@@ -161,6 +163,22 @@ fun PictureCaptureScreen(navController: NavHostController, viewModel: CameraPrev
                 modifier = Modifier.size(32.dp)
             )
             Spacer(modifier = Modifier.width(8.dp))
+        }
+
+        // Loading indicator overlay
+        if (isProcessing) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.7f)),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(64.dp),
+                    color = MaterialTheme.colorScheme.primary,
+                    strokeWidth = 6.dp
+                )
+            }
         }
     }
 }

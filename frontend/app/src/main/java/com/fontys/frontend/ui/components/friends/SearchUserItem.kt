@@ -61,7 +61,7 @@ fun SearchUserItem(
             when (relationshipStatus) {
                 RelationshipStatus.FRIENDS -> {
                     Button(
-                        onClick = { /* Navigate to friend profile or manage */ },
+                        onClick = onViewProfile,
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.secondary
                         ),
@@ -74,13 +74,9 @@ fun SearchUserItem(
                 }
                 RelationshipStatus.PENDING_SENT -> {
                     Button(
-                        onClick = { /* Maybe cancel request? */ },
-                        enabled = false, // Keep it disabled as it's just a status display here
+                        onClick = onViewProfile,
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.secondary,
-                            contentColor = MaterialTheme.colorScheme.onSecondary,
-                            disabledContainerColor = MaterialTheme.colorScheme.secondary,
-                            disabledContentColor = MaterialTheme.colorScheme.onSecondary
+                            containerColor = MaterialTheme.colorScheme.secondary
                         ),
                         shape = RoundedCornerShape(12.dp)
                     ) {
@@ -107,15 +103,13 @@ fun SearchUserItem(
                 }
                 RelationshipStatus.NONE -> {
                     Button(
-                        onClick = onSendRequest,
+                        onClick = onViewProfile,
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.secondary
                         ),
                         shape = RoundedCornerShape(12.dp)
                     ) {
-                        Icon(Icons.Default.PersonAdd, contentDescription = null)
-                        Spacer(Modifier.width(4.dp))
-                        Text("Add", fontWeight = FontWeight.Bold)
+                        Text("View Profile", fontWeight = FontWeight.Bold)
                     }
                 }
             }

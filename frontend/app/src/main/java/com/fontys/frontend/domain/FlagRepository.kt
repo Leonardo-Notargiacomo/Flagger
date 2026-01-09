@@ -4,21 +4,16 @@ import android.util.Log
 import com.fontys.frontend.config.ApiConfig
 import com.fontys.frontend.data.AddFlagRequest
 import com.fontys.frontend.data.CustomFlagUpdate
-import com.fontys.frontend.data.PlaceService
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
-import org.json.JSONObject
 import retrofit2.Retrofit
 import retrofit2.converter.scalars.ScalarsConverterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.http.POST
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
 import java.util.Date
 import com.fontys.frontend.data.FlagResponse // Import your new FlagResponse data class
+import com.fontys.frontend.services.FlagApiService
 import com.fontys.frontend.ui.views.picturedata
-import kotlinx.serialization.builtins.UIntArraySerializer
 
 
 class FlagRepository{

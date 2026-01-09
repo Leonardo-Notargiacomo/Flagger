@@ -3,6 +3,7 @@ package com.fontys.frontend.data.repositories
 import android.util.Log
 import com.fontys.frontend.data.models.*
 import com.fontys.frontend.data.remote.ApiClient
+import com.fontys.frontend.domain.UserRepository
 import retrofit2.Response
 import org.json.JSONObject
 
@@ -149,8 +150,23 @@ class FriendsRepository {
     // Friendships
     suspend fun getFriends(token: String): Result<List<FriendListItem>> {
         Log.d(TAG, "getFriends() called")
+        val headers = HashMap<String, String>().apply {
+            put("Accept", "application/json")
+            put("Content-Type", "application/json")
+            UserRepository.token?.let { tokens ->
+                if (tokens == token) {
+                    put("Authorization", "Bearer $token") // Add JWT token if available
+                        ?: run {
+                            // Optional: Log a warning or throw an error if token is missing for authenticated endpoint
+                            // throw IllegalStateException("JWT token is missing for authenticated request")
+                        }
+                } else {
+                    throw IllegalStateException("Invalid token provided")
+                }
+            }
+        }
         return try {
-            val response = api.getFriends("Bearer $token")
+            val response = api.getFriends(headers)
             Log.d(TAG, "getFriends() response code: ${response.code()}")
             Log.d(TAG, "getFriends() response body size: ${response.body()?.size}")
             response.body()?.forEachIndexed { index, friend ->
@@ -190,7 +206,24 @@ class FriendsRepository {
         return if (response.isSuccessful && response.body() != null) {
             Result.success(response.body()!!)
         } else {
-            Result.failure(Exception("HTTP ${response.code()}: ${response.message()}"))
+            // Try to extract error message from response body
+            val errorMessage = try {
+                val errorBody = response.errorBody()?.string()
+                if (!errorBody.isNullOrBlank()) {
+                    val json = JSONObject(errorBody)
+                    json.optString("error", json.optString("message", "Unknown error"))
+                } else {
+                    response.message()
+                }
+            } catch (e: Exception) {
+                response.message()
+            }
+
+            val message = when (response.code()) {
+                409 -> errorMessage // Use the actual message from backend
+                else -> "HTTP ${response.code()}: $errorMessage"
+            }
+            Result.failure(Exception(message))
         }
     }
 }
