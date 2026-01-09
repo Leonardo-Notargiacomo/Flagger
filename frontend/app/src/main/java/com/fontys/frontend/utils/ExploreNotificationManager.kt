@@ -75,6 +75,42 @@ class ExploreNotificationManager(private val context: Context) {
     }
 
     /**
+     * Show a notification with dismissal tracking
+     * Accepts a deletePendingIntent that triggers when user dismisses the notification
+     */
+    fun showCustomExplorationReminderWithTracking(
+        title: String,
+        message: String,
+        deletePendingIntent: PendingIntent
+    ) {
+        val intent = Intent(context, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+
+        val pendingIntent = PendingIntent.getActivity(
+            context,
+            0,
+            intent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
+
+        val notification = NotificationCompat.Builder(context, CHANNEL_ID)
+            .setContentText(message)
+            .setStyle(NotificationCompat.BigTextStyle()
+                .bigText(message)
+                .setBigContentTitle(title))
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setCategory(NotificationCompat.CATEGORY_REMINDER)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setAutoCancel(true)
+            .setContentIntent(pendingIntent)
+            .setDeleteIntent(deletePendingIntent)
+            .build()
+
+        notificationManager.notify(NOTIFICATION_ID, notification)
+    }
+
+    /**
      * Cancel all notifications
      */
     fun cancelAllNotifications() {
