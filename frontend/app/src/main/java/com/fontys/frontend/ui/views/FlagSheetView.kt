@@ -13,6 +13,7 @@ import androidx.compose.material3.carousel.HorizontalUncontainedCarousel
 import androidx.compose.material3.carousel.rememberCarouselState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -27,16 +28,23 @@ import com.fontys.frontend.ui.viewmodels.MapsViewModel
 fun FlagSheet(
     navController: NavController,
     viewmodel: MapsViewModel = viewModel(),
+    sheetViewmodel: FlagSheetViewmodel = viewModel(),
+    flagId: String?
 ) {
     val selected = remember { mutableIntStateOf(0) }
     val sheetState = rememberModalBottomSheetState()
-
-
 
     ModalBottomSheet(
         onDismissRequest = { viewmodel.showBottomSheet() },
         sheetState = sheetState
     ) {
+
+        LaunchedEffect(flagId) {
+            if (flagId != null) {
+                sheetViewmodel.setCurrentFlag(flagId)
+            }
+        }
+
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -64,7 +72,7 @@ fun FlagSheet(
                 OverviewTab()
             }
             if (selected.intValue == 1) {
-                ReviewView(navController)
+                ReviewView(navController, viewmodel = sheetViewmodel)
             }
         }
     }
@@ -81,7 +89,7 @@ fun OverviewTab(
         modifier = Modifier.fillMaxSize()
     ) {
         HorizontalUncontainedCarousel(
-            state = rememberCarouselState() {0},
+            state = rememberCarouselState() { 0 },
             itemWidth = 186.dp
         ) { }
     }

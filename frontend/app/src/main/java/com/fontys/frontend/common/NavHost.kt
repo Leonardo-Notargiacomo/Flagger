@@ -74,8 +74,6 @@ object DeleteAccountView
 @Serializable
 object LocationView
 
-@Serializable
-object ReviewView
 
 @Composable
 fun NavHost(
@@ -159,9 +157,6 @@ fun NavHost(
                 NavBar(rootNavController = rootNavController)
             }
 
-            composable<ReviewView> {
-                ReviewView(navController)
-            }
 
             composable<CameraView>  {
                 val cameraViewModel: CameraPreviewViewModel = viewModel()

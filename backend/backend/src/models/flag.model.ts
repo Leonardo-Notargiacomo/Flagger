@@ -1,5 +1,6 @@
-import {Entity, model, property, belongsTo} from '@loopback/repository';
+import {Entity, model, property, belongsTo, hasMany} from '@loopback/repository';
 import {GoUser} from './go-user.model';
+import {Review} from './review.model';
 
 @model()
 export class Flag extends Entity {
@@ -36,6 +37,9 @@ export class Flag extends Entity {
 
   @belongsTo(() => GoUser)
   userId: number;
+
+  @hasMany(() => Review)
+  reviews: Review[];
 
   constructor(data?: Partial<Flag>) {
     super(data);

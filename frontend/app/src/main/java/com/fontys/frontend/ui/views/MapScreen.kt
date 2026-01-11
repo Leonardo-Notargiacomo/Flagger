@@ -196,7 +196,7 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
                 )
             }
             if (viewModel.showBottomSheet.collectAsState().value) {
-                FlagSheet(navController)
+                FlagSheet(navController,flagId = selectedMarkerId!!)
             }
         }
 

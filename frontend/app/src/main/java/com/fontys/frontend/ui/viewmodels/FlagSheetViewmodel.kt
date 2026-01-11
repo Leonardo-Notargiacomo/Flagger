@@ -3,6 +3,7 @@ package com.fontys.frontend.ui.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fontys.frontend.data.models.Review
+import com.fontys.frontend.data.repositories.ReviewRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -23,11 +24,23 @@ data class ReviewList(
 
 class FlagSheetViewmodel : ViewModel() {
 
+    private val reviewRepository = ReviewRepository()
+
     private val reviewState = MutableStateFlow(ReviewState())
     val review: StateFlow<ReviewState> = reviewState.asStateFlow()
 
     private val reviewListState = MutableStateFlow(ReviewList())
     val reviewList: StateFlow<ReviewList> = reviewListState.asStateFlow()
+
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
+
+    private val _error = MutableStateFlow<String?>(null)
+    val error: StateFlow<String?> = _error.asStateFlow()
+
+    private val _currentFlagId = MutableStateFlow<String?>(null)
+
+
 
     fun updateTitle(newTitle: String) {
         reviewState.update { reviewState -> reviewState.copy(title = newTitle) }
@@ -41,14 +54,35 @@ class FlagSheetViewmodel : ViewModel() {
         reviewState.update { reviewState -> reviewState.copy(rating = newRate) }
     }
 
-
-    fun getFlagReviews()  {
+    fun setCurrentFlag(flagId: String) {
+        _currentFlagId.value = flagId
+        getFlagReviews(flagId)
+    }
+    fun getFlagReviews(flagId: String?) {
         viewModelScope.launch {
+            _isLoading.value = true
+            _error.value = null
             try {
-                val reviews: List<Review>
+                val response = reviewRepository.getFlagReviews(flagId)
 
+                if (response.isSuccessful && response.body() != null) {
+                    val reviews = response.body()!!.map { review ->
+                        ReviewState(
+                            id = review.id,
+                            title = review.title,
+                            review = review.desc,
+                            rating = review.rating ?: 0.0
+                        )
+                    }
+                    // Update the state with new reviews
+                    reviewListState.value = ReviewList(reviews = reviews)
+                } else {
+                    _error.value = "Failed to load reviews: ${response.code()}"
+                }
             } catch (e: Exception) {
-                throw Exception(e.message)
+                _error.value = e.localizedMessage ?: "Failed to load reviews"
+            } finally {
+                _isLoading.value = false
             }
         }
     }
@@ -65,34 +99,39 @@ class FlagSheetViewmodel : ViewModel() {
     }
 
 
-    fun postReview(review: Review) {
+    fun postReview(onSuccess: () -> Unit) {
         viewModelScope.launch {
-            try {
-                val review: ReviewState = reviewState.value
 
+            _isLoading.value = true
+            _error.value = null
+
+            try {
+                val response = reviewRepository.postReview(createReviewFromState())
+
+                if (response.isSuccessful) {
+                    reviewState.value = ReviewState()
+                    _currentFlagId.value?.let { flagId ->
+                        getFlagReviews(flagId)
+                    }
+                    onSuccess()
+                } else {
+                    _error.value = "Failed to post review: ${response.code()}"
+                }
             } catch (e: Exception) {
-                throw Exception(e.message)
+                _error.value = e.localizedMessage ?: "Failed to post review"
+            } finally {
+                _isLoading.value = false
             }
         }
     }
 
-    init {
-        loadSampleReviews()
-    }
-
-    private fun loadSampleReviews() {
-        val sampleReviews = listOf(
-            ReviewState(id = 1, title = "Amazing place!", review = "", rating = 5.0),
-            ReviewState(id = 2, title = "Beautiful scenery", review = "", rating = 4.5),
-            ReviewState(id = 3, title = "Nice spot", review = "", rating = 4.0),
-            ReviewState(id = 4, title = "Hidden gem", review = "", rating = 4.8),
-            ReviewState(id = 5, title = "Overrated", review = "", rating = 2.5),
-            ReviewState(id = 6, title = "Must visit!", review = "", rating = 5.0)
+    private fun createReviewFromState(): Review {
+        val currentReview = reviewState.value
+        return Review(
+            id = 0,
+            title = currentReview.title,
+            desc = currentReview.review,
+            rating = currentReview.rating
         )
-
-        reviewListState.update {
-            ReviewList(reviews = sampleReviews)
-        }
     }
-
 }
