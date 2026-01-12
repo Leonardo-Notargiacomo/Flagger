@@ -9,12 +9,12 @@ import retrofit2.http.Path
 
 interface ReviewService {
 
-    @POST("review")
-    suspend fun postReview(@Body review: Review): Response<Review>
+    @POST("flags/{flagId}/reviews")
+    suspend fun postReview(@Path("flagId") flagId: Int,@Body review: Review): Response<Review>
 
     @GET("reviews/{userId}")
     suspend fun getUserReviews(@Path("userId") userId: Int): Response<List<Review>>
 
-    @GET("flag-review/{flagId}")
-    suspend fun getFlagReviews(@Path("flagId") flagId: String?): Response<List<Review>>
+    @GET("flags/{flagId}/reviews")
+    suspend fun getFlagReviews(@Path("flagId") flagId: Int): Response<List<Review>>
 }

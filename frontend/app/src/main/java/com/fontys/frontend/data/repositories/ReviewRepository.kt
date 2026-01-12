@@ -12,11 +12,11 @@ class ReviewRepository {
         return reviewService.postReview(review)
     }
 
-    suspend fun getFlagReviews(flagId: String?): Response<List<Review>> {
-        return reviewService.getFlagReviews(flagId)
+    suspend fun postReview(flagId: Int, review: Review): Response<Review> {
+        return reviewService.postReview(flagId, review)
     }
 
-    suspend fun getUserReviews(userId: Int): Response<List<Review>> {
-        return reviewService.getUserReviews(userId)
+    suspend fun getFlagReviews(flagId: String?): Response<List<Review>> {
+        return reviewService.getFlagReviews(flagId)
     }
 }

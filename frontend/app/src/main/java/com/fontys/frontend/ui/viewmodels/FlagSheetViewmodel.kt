@@ -74,7 +74,6 @@ class FlagSheetViewmodel : ViewModel() {
                             rating = review.rating ?: 0.0
                         )
                     }
-                    // Update the state with new reviews
                     reviewListState.value = ReviewList(reviews = reviews)
                 } else {
                     _error.value = "Failed to load reviews: ${response.code()}"
@@ -87,27 +86,13 @@ class FlagSheetViewmodel : ViewModel() {
         }
     }
 
-    fun getUserReviews() {
-        viewModelScope.launch {
-            try {
-                val reviews: List<Review>
-
-            } catch (e: Exception) {
-                throw Exception(e.message)
-            }
-        }
-    }
-
 
     fun postReview(onSuccess: () -> Unit) {
         viewModelScope.launch {
-
             _isLoading.value = true
             _error.value = null
-
             try {
                 val response = reviewRepository.postReview(createReviewFromState())
-
                 if (response.isSuccessful) {
                     reviewState.value = ReviewState()
                     _currentFlagId.value?.let { flagId ->
@@ -128,7 +113,7 @@ class FlagSheetViewmodel : ViewModel() {
     private fun createReviewFromState(): Review {
         val currentReview = reviewState.value
         return Review(
-            id = 0,
+            id = currentReview.id,
             title = currentReview.title,
             desc = currentReview.review,
             rating = currentReview.rating
