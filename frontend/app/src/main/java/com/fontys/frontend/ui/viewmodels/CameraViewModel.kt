@@ -45,7 +45,7 @@ class CameraPreviewViewModel : ViewModel() {
     val isProcessing: StateFlow<Boolean> = _isProcessing
 
     var front = false  // Start with back camera (matches bindToCamera default)
-    var flash = true
+    var flash = false
     val flagRepository = FlagRepository()
     val badgeRepository = BadgeRepository()
     private fun buildImageCaptureUseCase(): ImageCapture {
