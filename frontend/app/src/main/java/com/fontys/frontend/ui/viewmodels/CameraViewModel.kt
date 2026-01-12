@@ -95,14 +95,12 @@ class CameraPreviewViewModel : ViewModel() {
         )
     }
     suspend fun flash(){
-
-        camera?.cameraControl?.enableTorch(flash)
-
         flash = !flash
-            imageCapture?.flashMode =
-                if (flash) ImageCapture.FLASH_MODE_ON
-                else ImageCapture.FLASH_MODE_OFF
-        }
+        camera?.cameraControl?.enableTorch(flash)
+        imageCapture?.flashMode =
+            if (flash) ImageCapture.FLASH_MODE_ON
+            else ImageCapture.FLASH_MODE_OFF
+    }
    suspend fun takePhoto(context: Context,userid : Int, placeId: String ,onPhotoSaved: (Uri?) -> Unit) {
         val imageCapture = imageCapture ?: return
 
