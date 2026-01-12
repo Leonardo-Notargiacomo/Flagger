@@ -8,3 +8,9 @@ data class Review(
     val desc: String,
     val rating: Double?
 )
+
+data class ReviewPost(
+    val title: String,
+    val desc: String,
+    val rating: Double?
+)

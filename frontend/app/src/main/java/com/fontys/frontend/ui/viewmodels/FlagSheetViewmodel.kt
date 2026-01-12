@@ -3,6 +3,7 @@ package com.fontys.frontend.ui.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fontys.frontend.data.models.Review
+import com.fontys.frontend.data.models.ReviewPost
 import com.fontys.frontend.data.repositories.ReviewRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -117,10 +118,9 @@ class FlagSheetViewmodel : ViewModel() {
         }
     }
 
-    private fun createReviewFromState(): Review {
+    private fun createReviewFromState(): ReviewPost {
         val currentReview = reviewState.value
-        return Review(
-            id = currentReview.id,
+        return ReviewPost(
             title = currentReview.title,
             desc = currentReview.review,
             rating = currentReview.rating

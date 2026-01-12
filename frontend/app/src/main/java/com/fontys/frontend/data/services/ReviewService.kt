@@ -1,6 +1,7 @@
 package com.fontys.frontend.data.services
 
 import com.fontys.frontend.data.models.Review
+import com.fontys.frontend.data.models.ReviewPost
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -10,7 +11,7 @@ import retrofit2.http.Path
 interface ReviewService {
 
     @POST("flags/{flagId}/reviews")
-    suspend fun postReview(@Path("flagId") flagId: Int,@Body review: Review): Response<Review>
+    suspend fun postReview(@Path("flagId") flagId: Int,@Body review: ReviewPost): Response<Review>
 
     @GET("reviews/{userId}")
     suspend fun getUserReviews(@Path("userId") userId: Int): Response<List<Review>>
