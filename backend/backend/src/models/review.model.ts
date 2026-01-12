@@ -13,6 +13,7 @@ export class Review extends Entity {
   @property({
     type: 'string',
     required: true,
+    jsonSchema: { maxLength: 100 }
   })
   title: string;
 
