@@ -95,14 +95,14 @@ class FlagSheetViewmodel : ViewModel() {
             _error.value = null
             val currentFlagId = _currentFlagId.value
 
-//            if (currentFlagId == null) {
-//                _error.value = "No flag selected"
-//                _isLoading.value = false
-//                return@launch
-//            }
+            if (currentFlagId == null) {
+                _error.value = "No flag selected"
+                _isLoading.value = false
+                return@launch
+            }
 
             try {
-                val response = reviewRepository.postReview(currentFlagId!! ,createReviewFromState())
+                val response = reviewRepository.postReview(currentFlagId ,createReviewFromState())
                 if (response.isSuccessful) {
                     reviewState.value = ReviewState()
                     getFlagReviews(currentFlagId)
