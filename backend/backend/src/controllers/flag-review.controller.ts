@@ -45,6 +45,7 @@ export class FlagReviewController {
     return this.flagRepository.reviews(id).find(filter);
   }
 
+  @authenticate('jwt')
   @post('/flags/{id}/reviews', {
     responses: {
       '200': {
