@@ -13,7 +13,7 @@ export class ReviewRepository extends DefaultCrudRepository<
   public readonly flag: BelongsToAccessor<Flag, typeof Review.prototype.id>;
 
   constructor(
-    @inject('datasources.flaggrdb') dataSource: DbDataSource, @repository.getter('FlagRepository') protected flagRepositoryGetter: Getter<FlagRepository>,
+    @inject('datasources.db') dataSource: DbDataSource, @repository.getter('FlagRepository') protected flagRepositoryGetter: Getter<FlagRepository>,
   ) {
     super(Review, dataSource);
     this.flag = this.createBelongsToAccessorFor('flag', flagRepositoryGetter,);
