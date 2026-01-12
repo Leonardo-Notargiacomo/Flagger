@@ -15,6 +15,7 @@ import {
   post,
   requestBody,
 } from '@loopback/rest';
+import {authenticate} from '@loopback/authentication';
 import {
   Flag,
   Review,
