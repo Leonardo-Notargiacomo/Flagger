@@ -45,7 +45,7 @@ class CameraPreviewViewModel : ViewModel() {
     val isProcessing: StateFlow<Boolean> = _isProcessing
 
     var front = false  // Start with back camera (matches bindToCamera default)
-    var flash = true
+    var flash = false
     val flagRepository = FlagRepository()
     val badgeRepository = BadgeRepository()
     private fun buildImageCaptureUseCase(): ImageCapture {
@@ -95,14 +95,12 @@ class CameraPreviewViewModel : ViewModel() {
         )
     }
     suspend fun flash(){
-
-        camera?.cameraControl?.enableTorch(flash)
-
         flash = !flash
-            imageCapture?.flashMode =
-                if (flash) ImageCapture.FLASH_MODE_ON
-                else ImageCapture.FLASH_MODE_OFF
-        }
+        camera?.cameraControl?.enableTorch(flash)
+        imageCapture?.flashMode =
+            if (flash) ImageCapture.FLASH_MODE_ON
+            else ImageCapture.FLASH_MODE_OFF
+    }
    suspend fun takePhoto(context: Context,userid : Int, placeId: String ,onPhotoSaved: (Uri?) -> Unit) {
         val imageCapture = imageCapture ?: return
 
