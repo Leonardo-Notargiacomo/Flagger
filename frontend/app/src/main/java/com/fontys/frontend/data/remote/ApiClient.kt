@@ -48,5 +48,6 @@ object ApiClient {
     val friendsApi: FriendsApi = retrofit.create(FriendsApi::class.java)
 
     val reviewApi: ReviewService = retrofit.create(ReviewService::class.java)
+    val notificationApi: NotificationApiService = retrofit.create(NotificationApiService::class.java)
     val challengeApi: ChallengeApi = retrofit.create(ChallengeApi::class.java)
 }
