@@ -6,7 +6,7 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 const config = {
-  name: 'flaggrdb',
+  name: 'db',
   connector: 'postgresql',
   url: process.env.DATABASE_URL
 };
