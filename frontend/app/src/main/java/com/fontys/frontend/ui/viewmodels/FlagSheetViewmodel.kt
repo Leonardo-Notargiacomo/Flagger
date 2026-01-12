@@ -38,7 +38,8 @@ class FlagSheetViewmodel : ViewModel() {
     private val _error = MutableStateFlow<String?>(null)
     val error: StateFlow<String?> = _error.asStateFlow()
 
-    private val _currentFlagId = MutableStateFlow<String?>(null)
+    private val _currentFlagId = MutableStateFlow<Int?>(null)
+    val currentFlag: StateFlow<Int?> = _currentFlagId.asStateFlow()
 
 
 
@@ -54,11 +55,11 @@ class FlagSheetViewmodel : ViewModel() {
         reviewState.update { reviewState -> reviewState.copy(rating = newRate) }
     }
 
-    fun setCurrentFlag(flagId: String) {
+    fun setCurrentFlag(flagId: Int) {
         _currentFlagId.value = flagId
         getFlagReviews(flagId)
     }
-    fun getFlagReviews(flagId: String?) {
+    fun getFlagReviews(flagId: Int) {
         viewModelScope.launch {
             _isLoading.value = true
             _error.value = null
@@ -91,13 +92,19 @@ class FlagSheetViewmodel : ViewModel() {
         viewModelScope.launch {
             _isLoading.value = true
             _error.value = null
+            val currentFlagId = _currentFlagId.value
+
+//            if (currentFlagId == null) {
+//                _error.value = "No flag selected"
+//                _isLoading.value = false
+//                return@launch
+//            }
+
             try {
-                val response = reviewRepository.postReview(createReviewFromState())
+                val response = reviewRepository.postReview(currentFlagId!! ,createReviewFromState())
                 if (response.isSuccessful) {
                     reviewState.value = ReviewState()
-                    _currentFlagId.value?.let { flagId ->
-                        getFlagReviews(flagId)
-                    }
+                    getFlagReviews(currentFlagId)
                     onSuccess()
                 } else {
                     _error.value = "Failed to post review: ${response.code()}"

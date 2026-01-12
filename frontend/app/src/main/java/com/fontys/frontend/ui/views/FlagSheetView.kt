@@ -29,7 +29,7 @@ fun FlagSheet(
     navController: NavController,
     viewmodel: MapsViewModel = viewModel(),
     sheetViewmodel: FlagSheetViewmodel = viewModel(),
-    flagId: String?
+    flagId: Int?
 ) {
     val selected = remember { mutableIntStateOf(0) }
     val sheetState = rememberModalBottomSheetState()
