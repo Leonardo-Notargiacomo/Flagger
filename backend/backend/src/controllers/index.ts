@@ -13,3 +13,6 @@ export * from './go-user-user-custom-flag.controller';
 export * from './user-custom-flag-go-user.controller';
 export * from './user-custom-flag.controller';
 export * from './challenge.controller';
+export * from './review-flag.controller';
+export * from './flag-review.controller';
+export * from './review.controller';

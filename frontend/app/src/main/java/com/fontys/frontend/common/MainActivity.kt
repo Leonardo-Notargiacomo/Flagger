@@ -8,8 +8,8 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Box
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.core.content.ContextCompat
@@ -40,6 +40,7 @@ import com.fontys.frontend.utils.FCMTokenManager
 import com.fontys.frontend.utils.OnboardingPreferences
 import com.fontys.frontend.utils.PermissionHandler
 import com.fontys.frontend.utils.ChallengePreferences
+import com.google.android.material.progressindicator.CircularProgressIndicator
 
 class MainActivity : ComponentActivity() {
 
@@ -156,7 +157,7 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("main") {
                             // Request permissions when user enters main app
-                            androidx.compose.runtime.LaunchedEffect(Unit) {
+                            LaunchedEffect(Unit) {
                                 permissionHandler.checkPermissions()
                                 subscribeToNotifications()
                             }

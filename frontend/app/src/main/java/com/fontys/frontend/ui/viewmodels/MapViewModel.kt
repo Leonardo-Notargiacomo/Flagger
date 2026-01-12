@@ -5,6 +5,10 @@ import android.Manifest
 import android.app.Application
 import android.content.pm.PackageManager
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -24,6 +28,7 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
@@ -31,6 +36,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import org.checkerframework.checker.units.qual.m
 import org.json.JSONObject
 import java.io.IOException
+import java.util.Optional.empty
 
 class MapsViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -71,6 +77,14 @@ class MapsViewModel(application: Application) : AndroidViewModel(application) {
     private val _showMapSettings = MutableStateFlow(false)
     val showMapSettings: StateFlow<Boolean> = _showMapSettings
 
+    private val _showBottomSheet = MutableStateFlow(false)
+    val showBottomSheet: StateFlow<Boolean> = _showBottomSheet
+
+    private val _currentFlag = MutableStateFlow<FlagResponse?>(null)
+    val currentFlag: StateFlow<FlagResponse?> = _currentFlag.asStateFlow()
+
+    private val _flagIdMap = MutableStateFlow<Map<String, Int>>(emptyMap())
+    val flagIdMap: StateFlow<Map<String, Int>> = _flagIdMap.asStateFlow()
     fun loadUserLocation() {
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
             == PackageManager.PERMISSION_GRANTED
@@ -147,6 +161,11 @@ class MapsViewModel(application: Application) : AndroidViewModel(application) {
             try {
                 val result = flagRepository.getFlags(userId);
                 _userFullFlags.value = flagRepository.getFullFlags(userId)
+
+                _flagIdMap.value = _userFullFlags.value.associate { flag ->
+                    flag.locationId to flag.id
+                }
+
                 val spots = mapRepository.getLatlngs(result)
                 spots.onSuccess { details ->  _userFlags.value = details }
                 _flagStyle.value= flagRepository.getUserCustomFlag(userId)
@@ -206,6 +225,10 @@ class MapsViewModel(application: Application) : AndroidViewModel(application) {
             _newlyUnlockedBadges.value = pendingBadges
             _showBadgeDialog.value = true
         }
+    }
+
+    fun showBottomSheet() {
+        _showBottomSheet.value = !_showBottomSheet.value
     }
 }
 

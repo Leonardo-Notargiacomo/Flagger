@@ -3,6 +3,7 @@ package com.fontys.frontend.data.remote
 import com.fontys.frontend.config.ApiConfig
 import com.fontys.frontend.domain.UserRepository
 import okhttp3.Interceptor
+import com.fontys.frontend.data.services.ReviewService
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -45,6 +46,8 @@ object ApiClient {
 
     val badgeApi: BadgeApi = retrofit.create(BadgeApi::class.java)
     val friendsApi: FriendsApi = retrofit.create(FriendsApi::class.java)
+
+    val reviewApi: ReviewService = retrofit.create(ReviewService::class.java)
     val notificationApi: NotificationApiService = retrofit.create(NotificationApiService::class.java)
     val challengeApi: ChallengeApi = retrofit.create(ChallengeApi::class.java)
 }

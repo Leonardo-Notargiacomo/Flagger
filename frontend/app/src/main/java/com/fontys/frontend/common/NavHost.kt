@@ -30,6 +30,8 @@ import kotlinx.serialization.Serializable
 import com.fontys.frontend.ui.views.NavBar
 import com.fontys.frontend.ui.views.PublicProfileScreen
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.fontys.frontend.ui.views.ReviewView
+
 
 @Serializable
 object MapView
@@ -68,6 +70,10 @@ object CameraView{
 
 @Serializable
 object DeleteAccountView
+
+@Serializable
+object LocationView
+
 
 @Composable
 fun NavHost(
@@ -150,6 +156,7 @@ fun NavHost(
             composable<NavigationView> {
                 NavBar(rootNavController = rootNavController)
             }
+
 
             composable<CameraView>  {
                 val cameraViewModel: CameraPreviewViewModel = viewModel()

@@ -64,6 +64,7 @@ import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.runtime.collectAsState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -83,6 +84,7 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
     val flagStyle by viewModel.flagStyle.collectAsState()
     var mapSettings by remember{ mutableStateOf(false) }
     var selectedMarkerId by remember { mutableStateOf<String?>("") }
+    val flagIdMap by viewModel.flagIdMap.collectAsState()
 
     // Check if location permission is granted - continuously reactive
     var hasLocationPermission by remember { mutableStateOf(false) }
@@ -188,12 +190,16 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
                     onClick = {
                         selectedMarkerId = spot.locationId
                         markerState.showInfoWindow()
+                        viewModel.showBottomSheet()
                         true
                     }
                 )
             }
-
-        }
+            if (viewModel.showBottomSheet.collectAsState().value) {
+                val flagId = selectedMarkerId?.let { locationId -> flagIdMap[locationId] }
+                FlagSheet(navController, flagId = flagId)
+                }
+            }
 
         // Flag button with explorer theme
         Column(
