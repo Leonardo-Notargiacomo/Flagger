@@ -280,7 +280,7 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
                 Icon(
                     painter = androidx.compose.ui.res.painterResource(id = R.drawable.ic_nihilist_penguin),
                     contentDescription = "Nihilist Penguin",
-                    modifier = Modifier.size(48.dp),
+                    modifier = Modifier.size(36.dp),
                     tint = androidx.compose.ui.graphics.Color.Unspecified
                 )
             }
