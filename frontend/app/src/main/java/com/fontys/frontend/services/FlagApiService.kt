@@ -19,8 +19,10 @@ interface FlagApiService {
     @GET("/flags/user/{userId}")
     suspend fun getCords(@HeaderMap headers: Map<String, String>,  @Path("userId") userId: Int) : Response<List<FlagResponse>>
 
-    @PATCH("user-custom-flags")
-    suspend fun customFlagUpdate(@HeaderMap headers: Map<String,String>,@Body customFlagUpdate: CustomFlagUpdate): Response<CustomFlagUpdate>
+    @PATCH("go-users/{userId}/user-custom-flag")
+    suspend fun customFlagUpdate(@HeaderMap headers: Map<String,String>, @Path("userId") userId: Int, @Body customFlagUpdate: CustomFlagUpdate): Response<CustomFlagUpdate>
+    @POST("go-users/{userId}/user-custom-flag")
+    suspend fun createCustomFlag(@HeaderMap headers: Map<String,String>, @Path("userId") userId: Int, @Body customFlagUpdate: CustomFlagUpdate): Response<CustomFlagUpdate>
     @GET ("user-custom-flag/{goUserId}")
     suspend fun userFlagStyle(@HeaderMap headers: Map<String,String>,@Path("goUserId") userId: Int) : Response<CustomFlagUpdate>
 }

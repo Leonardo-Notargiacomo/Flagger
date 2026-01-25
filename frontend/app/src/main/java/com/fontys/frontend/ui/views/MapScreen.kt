@@ -40,6 +40,7 @@ import com.fontys.frontend.R
 import com.fontys.frontend.common.CameraView
 import com.fontys.frontend.data.PlaceService
 import com.fontys.frontend.ui.components.BadgeUnlockDialog
+import com.fontys.frontend.ui.components.PenguinQuoteDialog
 import com.fontys.frontend.domain.UserRepository
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.graphics.Color
@@ -83,6 +84,7 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
     val currentUserId = UserRepository.userId
     val flagStyle by viewModel.flagStyle.collectAsState()
     var mapSettings by remember{ mutableStateOf(false) }
+    var showPenguinDialog by remember { mutableStateOf(false) }
     var selectedMarkerId by remember { mutableStateOf<String?>("") }
     val flagIdMap by viewModel.flagIdMap.collectAsState()
 
@@ -257,6 +259,32 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
                 )
             }
         }
+        // Nihilist Penguin Easter Egg button
+        Box(
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(top = 112.dp, start = 16.dp)
+        ) {
+            FloatingActionButton(
+                onClick = {
+                    showPenguinDialog = true
+                },
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                elevation = FloatingActionButtonDefaults.elevation(
+                    defaultElevation = 6.dp,
+                    pressedElevation = 8.dp
+                ),
+                modifier = Modifier.size(48.dp)
+            ) {
+                Icon(
+                    painter = androidx.compose.ui.res.painterResource(id = R.drawable.ic_nihilist_penguin),
+                    contentDescription = "Nihilist Penguin",
+                    modifier = Modifier.size(48.dp),
+                    tint = androidx.compose.ui.graphics.Color.Unspecified
+                )
+            }
+        }
         // My Location button - styled for explorer theme
         Box(
             modifier = Modifier
@@ -414,6 +442,13 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
                 viewModel.updateFlagStyle(emoji, background, border)
                 mapSettings = false
             }
+        )
+    }
+
+    // Nihilist Penguin Easter Egg dialog
+    if (showPenguinDialog) {
+        PenguinQuoteDialog(
+            onDismiss = { showPenguinDialog = false }
         )
     }
 }
@@ -763,5 +798,3 @@ private fun Color.toHexString(): String {
         (blue * 255).toInt()
     )
 }
-
-

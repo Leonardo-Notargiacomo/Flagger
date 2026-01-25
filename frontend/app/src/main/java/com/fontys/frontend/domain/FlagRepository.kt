@@ -162,14 +162,18 @@ class FlagRepository{
                     // throw IllegalStateException("JWT token is missing for authenticated request")
                 }
             }
-            val response = flagApiService.customFlagUpdate(headers, CustomFlagUpdate(background,emoji,border,userId))
+            val existing = flagApiService.userFlagStyle(headers, userId)
+            val customFlag = CustomFlagUpdate(background, emoji, border, userId)
+            val response = if (existing.isSuccessful && existing.body() != null) {
+                flagApiService.customFlagUpdate(headers, userId, customFlag)
+            } else {
+                flagApiService.createCustomFlag(headers, userId, customFlag)
+            }
 
             if (response.isSuccessful) {
-
                 println(response.message())
-            } else{
+            } else {
                 println(response.errorBody())
-
             }
         } catch (e: Exception) {
             Log.e("FlagRepository", "Error updating custom flag", e)
