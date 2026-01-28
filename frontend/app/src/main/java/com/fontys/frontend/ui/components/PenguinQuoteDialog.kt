@@ -61,12 +61,17 @@ private val nihilistQuotes = listOf(
 
 @Composable
 fun PenguinQuoteDialog(
-    onDismiss: () -> Unit
+    lastQuoteIndex: Int? = null,
+    onDismiss: (Int) -> Unit
 ) {
-    // Select a random quote
-    val quote = remember { nihilistQuotes[Random.nextInt(nihilistQuotes.size)] }
+    // Select a random quote, ensuring it's different from the last one
+    val (quote, currentIndex) = remember(lastQuoteIndex) {
+        val availableIndices = nihilistQuotes.indices.filter { it != lastQuoteIndex }
+        val newIndex = availableIndices.random()
+        nihilistQuotes[newIndex] to newIndex
+    }
 
-    Dialog(onDismissRequest = onDismiss) {
+    Dialog(onDismissRequest = { onDismiss(currentIndex) }) {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -123,7 +128,7 @@ fun PenguinQuoteDialog(
 
                 // Dismiss button
                 Button(
-                    onClick = onDismiss,
+                    onClick = { onDismiss(currentIndex) },
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primary,

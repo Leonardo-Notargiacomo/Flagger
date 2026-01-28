@@ -85,6 +85,7 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
     val flagStyle by viewModel.flagStyle.collectAsState()
     var mapSettings by remember{ mutableStateOf(false) }
     var showPenguinDialog by remember { mutableStateOf(false) }
+    var lastPenguinQuoteIndex by remember { mutableStateOf<Int?>(null) }
     var selectedMarkerId by remember { mutableStateOf<String?>("") }
     val flagIdMap by viewModel.flagIdMap.collectAsState()
 
@@ -448,7 +449,11 @@ fun MapsScreen(navController: NavController, viewModel: MapsViewModel = viewMode
     // Nihilist Penguin Easter Egg dialog
     if (showPenguinDialog) {
         PenguinQuoteDialog(
-            onDismiss = { showPenguinDialog = false }
+            lastQuoteIndex = lastPenguinQuoteIndex,
+            onDismiss = { index ->
+                lastPenguinQuoteIndex = index
+                showPenguinDialog = false
+            }
         )
     }
 }
