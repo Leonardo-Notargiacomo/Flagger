@@ -29,7 +29,7 @@ class MapRepository { // No need for companion object if we want an instance for
     // But if you insist on purely static, see Option 2 below.
 
     private val client = OkHttpClient()
-    private val API_KEY = "MAPS_API_KEY_REDACTED"
+    private val API_KEY = BuildConfig.MAPS_API_KEY
 
     private val FlagRepository = FlagRepository();
 
