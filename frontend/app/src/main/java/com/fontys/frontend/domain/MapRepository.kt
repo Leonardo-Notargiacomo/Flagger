@@ -1,5 +1,7 @@
 package com.fontys.frontend.domain
 
+import com.fontys.frontend.BuildConfig
+
 import android.util.Log
 import com.fontys.frontend.data.FlagDisplay
 import com.fontys.frontend.data.PlaceService
@@ -30,6 +32,7 @@ class MapRepository { // No need for companion object if we want an instance for
 
     private val client = OkHttpClient()
     private val API_KEY = BuildConfig.MAPS_API_KEY
+    private val PLACES_API_KEY = BuildConfig.PLACES_API_KEY
 
     private val FlagRepository = FlagRepository();
 
@@ -55,7 +58,7 @@ class MapRepository { // No need for companion object if we want an instance for
                 val request = Request.Builder()
                     .url("https://places.googleapis.com/v1/places:searchNearby")
                     .addHeader("Content-Type", "application/json")
-                    .addHeader("X-Goog-Api-Key", API_KEY)
+                    .addHeader("X-Goog-Api-Key", PLACES_API_KEY)
                     .addHeader(
                         "X-Goog-FieldMask",
                         "places.displayName,places.location,places.id,places.iconBackgroundColor,places.iconMaskBaseUri"
@@ -140,7 +143,7 @@ class MapRepository { // No need for companion object if we want an instance for
                 val request = Request.Builder()
                     .url("https://places.googleapis.com/v1/places/$id")
                     .addHeader("Content-Type", "application/json")
-                    .addHeader("X-Goog-Api-Key", API_KEY)
+                    .addHeader("X-Goog-Api-Key", PLACES_API_KEY)
                     .addHeader("X-Goog-FieldMask", "displayName,location")
                     .build()
 
@@ -208,7 +211,7 @@ class MapRepository { // No need for companion object if we want an instance for
                 val request = Request.Builder()
                     .url("https://places.googleapis.com/v1/places/$id")
                     .addHeader("Content-Type", "application/json")
-                    .addHeader("X-Goog-Api-Key", API_KEY)
+                    .addHeader("X-Goog-Api-Key", PLACES_API_KEY)
                     .addHeader("X-Goog-FieldMask", "displayName") // Request ONLY the display name
                     .build()
 

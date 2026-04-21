@@ -41,6 +41,7 @@ android {
     buildFeatures {
         viewBinding = true
         compose = true
+        buildConfig = true
     }
 }
 
@@ -129,4 +130,5 @@ dependencies {
 extensions.configure<com.google.android.libraries.mapsplatform.secrets_gradle_plugin.SecretsPluginExtension> {
     propertiesFileName = "local.properties"
     defaultPropertiesFileName = "local.properties.example"
+    ignoreList.add("sdk.*")
 }
