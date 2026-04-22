@@ -118,7 +118,7 @@ class MainActivity : ComponentActivity() {
                 ) {
                     NavHost(
                         navController = navController,
-                        startDestination = if (UserRepository.token.isEmpty()) "onboarding" else "loader"
+                        startDestination = startDestination
                     ) {
                         composable("loader") {
                             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
