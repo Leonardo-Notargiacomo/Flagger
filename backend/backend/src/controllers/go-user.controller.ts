@@ -101,6 +101,9 @@ export class GoUserController {
     public goUserRepository : GoUserRepository,
   ) {}
 
+  /**
+   * Extract and validate numeric user ID from JWT profile
+   */
   private getAuthenticatedUserId(currentUserProfile: UserProfile): number {
     const rawId = currentUserProfile[securityId];
     const userId = Number(rawId);
@@ -110,6 +113,9 @@ export class GoUserController {
     return userId;
   }
 
+  /**
+   * Change password for a user — verifies current password, hashes new one, updates credentials table
+   */
   private async changePassword(
     userId: number,
     request: ChangePasswordRequest,
@@ -265,7 +271,11 @@ export class GoUserController {
   }
 
 
- @post('/login', {
+  /**
+   * POST /login
+   * Verify email+password credentials, return a signed JWT token
+   */
+  @post('/login', {
     responses: {
       '200': {
         description: 'Token',
@@ -372,6 +382,11 @@ export class GoUserController {
     await this.changePassword(id, request);
   }
 
+  /**
+   * POST /signup
+   * Hash password, create user row, create credentials row
+   * Catches PostgreSQL unique constraint (23505) to return friendly conflict errors
+   */
   @post('/signup', {
     responses: {
       '200': {
@@ -452,6 +467,10 @@ export class GoUserController {
     return user.isAdmin;
   }
 
+  /**
+   * GET /go-users/filter-bio
+   * Admin utility — reads profanity word list from CSV, returns users whose bio contains a match
+   */
   @authenticate('jwt')
   @get('/go-users/filter-bio')
   @response(200, {

@@ -31,6 +31,10 @@ export class FlagController {
     public flagRepository : FlagRepository,
   ) {}
 
+  /**
+   * POST /flags
+   * Create a new flag (location marker) for a user
+   */
   @post('/flags')
   @response(200, {
     description: 'Flag model instance',
@@ -52,6 +56,10 @@ export class FlagController {
     return this.flagRepository.create(flag);
   }
 
+  /**
+   * GET /flags/count
+   * Return total count of flags, optionally filtered
+   */
   @get('/flags/count')
   @response(200, {
     description: 'Flag model count',
@@ -63,6 +71,10 @@ export class FlagController {
     return this.flagRepository.count(where);
   }
 
+  /**
+   * GET /flags
+   * Get all flags, optionally filtered
+   */
   @get('/flags')
   @response(200, {
     description: 'Array of Flag model instances',
@@ -81,6 +93,10 @@ export class FlagController {
     return this.flagRepository.find(filter);
   }
 
+  /**
+   * PATCH /flags
+   * Bulk update flags matching a filter
+   */
   @patch('/flags')
   @response(200, {
     description: 'Flag PATCH success count',
@@ -100,6 +116,10 @@ export class FlagController {
     return this.flagRepository.updateAll(flag, where);
   }
 
+  /**
+   * GET /flags/{id}
+   * Get a single flag by ID
+   */
   @get('/flags/{id}')
   @response(200, {
     description: 'Flag model instance',
@@ -116,6 +136,10 @@ export class FlagController {
     return this.flagRepository.findById(id, filter);
   }
 
+  /**
+   * PATCH /flags/{id}
+   * Partially update a flag by ID
+   */
   @patch('/flags/{id}')
   @response(204, {
     description: 'Flag PATCH success',
@@ -134,6 +158,10 @@ export class FlagController {
     await this.flagRepository.updateById(id, flag);
   }
 
+  /**
+   * PUT /flags/{id}
+   * Full replace of a flag by ID
+   */
   @put('/flags/{id}')
   @response(204, {
     description: 'Flag PUT success',
@@ -145,6 +173,10 @@ export class FlagController {
     await this.flagRepository.replaceById(id, flag);
   }
 
+  /**
+   * DELETE /flags/{id}
+   * Delete a flag by ID
+   */
   @del('/flags/{id}')
   @response(204, {
     description: 'Flag DELETE success',
@@ -153,6 +185,10 @@ export class FlagController {
     await this.flagRepository.deleteById(id);
   }
 
+  /**
+   * GET /flags/user/{userId}
+   * Get all flags for a specific user, with timeout protection
+   */
   @get('/flags/user/{userId}')
   @response(200, {
     description: 'Array of Flag model instances for a given user',

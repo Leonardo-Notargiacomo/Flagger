@@ -87,6 +87,9 @@ export class ChallengeService {
   }
 
 
+  /**
+   * Check if user's active challenge has passed its expiry time and mark it expired
+   */
   async checkAndExpireChallenges(userId: number): Promise<void> {
     const now = new Date();
     const activeChallenge = await this.userChallengeRepository.findOne({
@@ -103,6 +106,13 @@ export class ChallengeService {
   }
 
 
+  /**
+   * Get full challenge status for a user:
+   * - If active challenge exists → return it
+   * - If expired → mark expired, return cooldown
+   * - If on cooldown → return cooldown end time
+   * - Otherwise → return available challenges to pick from
+   */
   async getUserChallengeStatus(userId: number): Promise<ChallengeStatus> {
     const now = new Date();
 
@@ -158,6 +168,13 @@ export class ChallengeService {
     };
   }
 
+  /**
+   * Select a challenge for the user:
+   * - Guards: no cooldown, no active challenge, challenge is active, not already completed
+   * - Sets expiresAt (24h default, custom for streak type)
+   * - Sets cooldownEndsAt so user must wait after completion/expiry
+   * - Initializes progressData based on challenge type
+   */
   async selectChallenge(userId: number, challengeId: number): Promise<ChallengeSelectionResult> {
     const status = await this.getUserChallengeStatus(userId);
     if (status.isOnCooldown) {
@@ -218,6 +235,13 @@ export class ChallengeService {
   }
 
 
+  /**
+   * Check if user's active challenge condition is now met:
+   * - Expires stale challenges first
+   * - Updates progressData with latest counts
+   * - Evaluates condition (exploration_count, time_based, streak)
+   * - If met: marks completed, awards badge if configured
+   */
   async checkChallengeCompletion(userId: number): Promise<{completed: boolean, badge: Badge | null}> {
     // First, check and expire any old challenges
     await this.checkAndExpireChallenges(userId);
@@ -295,6 +319,9 @@ export class ChallengeService {
 
   /**
    * Evaluate if the challenge condition is met
+   * - exploration_count: counts exploration events within activation window
+   * - time_based: checks if any exploration happened at the target UTC hour
+   * - streak: checks if user's current streak meets the target days
    */
   protected async evaluateChallengeCondition(
     userId: number,
@@ -351,6 +378,11 @@ export class ChallengeService {
     }
   }
 
+  /**
+   * Resolve the time window for evaluating a challenge:
+   * start = activatedAt, end = min(expiresAt, now)
+   * Returns null if activatedAt is missing or window is invalid
+   */
   private resolveEvaluationWindow(
     userChallenge: UserChallenge,
     referenceDate: Date = new Date(),
